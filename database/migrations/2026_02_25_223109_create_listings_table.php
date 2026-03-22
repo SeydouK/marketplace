@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    public function up(): void    
     {
         Schema::create('listings', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('animal_type'); // poulet, mouton, boeuf, chèvre, etc.
+            $table->string('animal_type'); // poulet, mouton, boeuf, chèvre, etc., ouvrages
             $table->decimal('price', 10, 2);
             $table->string('location'); // Abidjan, Bouaké, Korhogo, etc.
             $table->string('seller_name');
