@@ -1,0 +1,65 @@
+<div class="auth-hero">
+  <div class="hero-copy">
+    <span class="badge">
+      <i class="pi pi-sign-in"></i>
+      Espace vendeur et acheteur
+    </span>
+    <h1>Connectez-vous a votre marketplace betail</h1>
+    <p class="subtitle">
+      Retrouvez vos annonces, publiez de nouveaux animaux et accedez a votre dashboard.
+    </p>
+    <ul class="pill-list">
+      <li><i class="pi pi-shield"></i> Connexion securisee</li>
+      <li><i class="pi pi-bolt"></i> Gestion rapide des annonces</li>
+      <li><i class="pi pi-map-marker"></i> Catalogue par ville</li>
+    </ul>
+  </div>
+
+  <div class="auth-card">
+    <h2>Connexion</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="text-field"
+          placeholder="email@exemple.com"
+        />
+        <p *ngIf="controlInvalid('email', 'required')" class="error-text">Email requis.</p>
+        <p *ngIf="controlInvalid('email', 'email')" class="error-text">Email invalide.</p>
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <div class="password-group">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Votre mot de passe"
+          />
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="togglePassword()"
+            aria-label="Afficher ou masquer le mot de passe"
+          >
+            <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+          </button>
+        </div>
+        <p *ngIf="controlInvalid('password', 'required')" class="error-text">Mot de passe requis.</p>
+      </div>
+
+      <button type="submit" class="primary-submit" [disabled]="form.invalid">
+        Se connecter
+      </button>
+
+      <p class="hint">
+        Pas de compte ?
+        <a routerLink="/register">Creer un compte</a>
+      </p>
+    </form>
+  </div>
+</div>

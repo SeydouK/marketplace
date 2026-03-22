@@ -1,0 +1,103 @@
+<section class="max-w-7xl mx-auto py-8 px-4" *ngIf="listing; else detailState">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <a
+      routerLink="/annonces"
+      class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Retour aux annonces
+    </a>
+
+    <span class="text-sm text-gray-500">{{ listing.location }} &middot; {{ listing.animalType | titlecase }}</span>
+  </div>
+
+  <div class="relative overflow-hidden rounded-[2rem] bg-gray-100 aspect-[16/8]">
+    <img
+      [src]="listing.image || 'https://placehold.co/1200x800?text=Annonce'"
+      [alt]="listing.title"
+      class="w-full h-full object-cover"
+    />
+
+    <div *ngIf="listing.rating" class="absolute bottom-4 left-4 bg-white px-3 py-2 rounded-xl shadow-md flex items-center gap-2">
+      <svg class="w-4 h-4 fill-current text-red-600" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+      </svg>
+      <span class="text-sm font-semibold">{{ listing.rating }}</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1.6fr_0.9fr] gap-6 mt-6">
+    <div class="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm">
+      <h1 class="text-3xl font-semibold text-gray-900 mb-3">{{ listing.title }}</h1>
+      <p class="text-gray-500 mb-6">{{ listing.location }} &middot; {{ listing.animalType | titlecase }}</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div class="rounded-2xl bg-gray-50 p-4">
+          <p class="text-sm text-gray-500 mb-1">Race</p>
+          <p class="font-semibold text-gray-900">{{ listing.breed || 'Non renseign&eacute;e' }}</p>
+        </div>
+        <div class="rounded-2xl bg-gray-50 p-4">
+          <p class="text-sm text-gray-500 mb-1">&Acirc;ge</p>
+          <p class="font-semibold text-gray-900">{{ listing.ageMonths || '-' }} mois</p>
+        </div>
+        <div class="rounded-2xl bg-gray-50 p-4">
+          <p class="text-sm text-gray-500 mb-1">Vendeur</p>
+          <p class="font-semibold text-gray-900">{{ listing.sellerName }}</p>
+        </div>
+        <div class="rounded-2xl bg-gray-50 p-4">
+          <p class="text-sm text-gray-500 mb-1">T&eacute;l&eacute;phone</p>
+          <p class="font-semibold text-gray-900">{{ listing.sellerPhone }}</p>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Description</h2>
+        <p class="text-gray-600 leading-7">
+          {{ listing.description || fallbackDescription }}
+        </p>
+      </div>
+    </div>
+
+    <aside class="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm h-fit">
+      <p class="text-3xl font-semibold text-gray-900 mb-2">{{ listing.price | number:'1.0-0' }} FCFA</p>
+      <p class="text-sm text-gray-500 mb-6">{{ listing.status | titlecase }}</p>
+
+      <div class="flex flex-col gap-3">
+        <a
+          *ngIf="auth.isLoggedIn(); else loginPrompt"
+          [href]="'tel:' + listing.sellerPhone"
+          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-medium text-white hover:bg-red-700 transition-colors"
+        >
+          Contacter le vendeur
+        </a>
+
+        <ng-template #loginPrompt>
+          <a
+            routerLink="/login"
+            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 hover:border-red-500 hover:text-red-600 transition-colors"
+          >
+            Se connecter
+          </a>
+        </ng-template>
+
+        <a
+          routerLink="/annonces"
+          class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 hover:border-red-500 hover:text-red-600 transition-colors"
+        >
+          Voir d'autres annonces
+        </a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<ng-template #detailState>
+  <section class="max-w-7xl mx-auto py-8 px-4">
+    <div class="rounded-[2rem] border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
+      <span *ngIf="loading">Chargement de l'annonce...</span>
+      <span *ngIf="!loading">Annonce introuvable.</span>
+    </div>
+  </section>
+</ng-template>

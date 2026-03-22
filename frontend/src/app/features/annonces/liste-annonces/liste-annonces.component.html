@@ -1,0 +1,72 @@
+<section class="max-w-[2520px] mx-auto py-8 px-4 lg:px-8">
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-2xl lg:text-3xl font-semibold text-gray-900">Toutes les annonces</h1>
+      <p class="text-gray-500 mt-2">
+        {{ filteredListings.length }} annonce<span *ngIf="filteredListings.length > 1">s</span> disponible<span *ngIf="filteredListings.length > 1">s</span>
+      </p>
+    </div>
+
+    <a
+      routerLink="/"
+      class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Retour &agrave; l'accueil
+    </a>
+  </div>
+
+  <div class="bg-[#f7f7f7] border border-gray-200 rounded-[2rem] p-4 lg:p-6 shadow-sm mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr_auto] gap-4 items-end">
+      <div class="flex flex-col gap-2">
+        <label for="location" class="text-sm font-semibold text-gray-700">Ville ou recherche</label>
+        <input
+          id="location"
+          [ngModel]="location"
+          (ngModelChange)="updateLocation($event)"
+          type="text"
+          placeholder="Abidjan, Korhogo, vendeur..."
+          class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-red-500"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="animalType" class="text-sm font-semibold text-gray-700">Animal</label>
+        <select
+          id="animalType"
+          [ngModel]="animalType"
+          (ngModelChange)="updateAnimalType($event)"
+          class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-red-500"
+        >
+          <option *ngFor="let animal of animalTypes" [value]="animal">
+            {{ animal ? (animal | titlecase) : 'Tous les animaux' }}
+          </option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        (click)="resetFilters()"
+        class="rounded-2xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-900 hover:border-red-500 hover:text-red-600 transition-colors"
+      >
+        R&eacute;initialiser
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6" *ngIf="filteredListings.length; else emptyState">
+    <app-listing-card
+      *ngFor="let listing of filteredListings; trackBy: trackByListing"
+      [listing]="listing"
+    ></app-listing-card>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="rounded-[2rem] border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
+      <h2 class="text-xl font-semibold text-gray-900 mb-2">Aucune annonce trouv&eacute;e</h2>
+      <p>Essaie de modifier les filtres ou de revenir sur la page d'accueil.</p>
+    </div>
+  </ng-template>
+</section>

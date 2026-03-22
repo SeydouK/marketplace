@@ -1,0 +1,22 @@
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <h1 class="text-2xl font-bold">Mes annonces</h1>
+    <a
+      routerLink="/annonces/creer"
+      class="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition inline-flex items-center gap-3"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span class="font-medium">Cr&eacute;er une annonce</span>
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" *ngIf="listings.length; else emptyState">
+    <app-listing-card *ngFor="let listing of listings" [listing]="listing"></app-listing-card>
+  </div>
+
+  <ng-template #emptyState>
+    <p class="text-gray-500">Vous n'avez encore publie aucune annonce.</p>
+  </ng-template>
+</div>
