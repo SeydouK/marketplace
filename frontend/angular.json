@@ -59,17 +59,21 @@
           "defaultConfiguration": "development"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "marketplace-frontend:build:production"
-            },
-            "development": {
-              "buildTarget": "marketplace-frontend:build:development"
+              "builder": "@angular-devkit/build-angular:dev-server",
+              "options": {
+                "proxyConfig": "proxy.conf.json",
+                "buildTarget": "marketplace-frontend:build:development"
+              },
+              "configurations": {
+                "production": {
+                  "buildTarget": "marketplace-frontend:build:production"
+                },
+                "development": {
+                  "buildTarget": "marketplace-frontend:build:development"
+                }
+              },
+              "defaultConfiguration": "development"
             }
-          },
-          "defaultConfiguration": "development"
-        }
       }
     }
   },

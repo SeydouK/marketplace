@@ -4,11 +4,19 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 import { Role } from './core/models/role.enum';
+import { VerifyEmailComponent } from './features/verify-email/verify-email.component';
+import { KycComponent } from './features/kyc/kyc.component';
+import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { KycGuard } from './features/kyc/kyc.guard';
+import { DashboardProprietaireComponent } from './features/profil/dashboard-proprietaire/dashboard-proprietaire.component';
 
 const routes: Routes = [
-  { path: 'login', redirectTo: 'auth/login', pathMatch: 'full' },
-  { path: 'register', redirectTo: 'auth/register', pathMatch: 'full' },
-  { path: 'dashboard', redirectTo: 'profil/dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'verify-email', component: VerifyEmailComponent },
+  { path: 'kyc', component: KycComponent, canActivate: [AuthGuard] },
   {
     path: '',
     loadChildren: () =>
@@ -23,9 +31,7 @@ const routes: Routes = [
   {
     path: 'annonces',
     loadChildren: () =>
-      import('./features/annonces/annonces.module').then(
-        (m) => m.AnnoncesModule
-      ),
+      import('./features/annonces/annonces.module').then((m) => m.AnnoncesModule),
   },
   {
     path: 'animaux',
@@ -34,9 +40,24 @@ const routes: Routes = [
   },
   {
     path: 'profil',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, KycGuard],  
     loadChildren: () =>
       import('./features/profil/profil.module').then((m) => m.ProfilModule),
+  },
+  { 
+    path: 'verify-email', 
+    component: VerifyEmailComponent, 
+    canActivate: [AuthGuard]  
+  },
+  {
+    path: 'dashboard',
+    component: DashboardProprietaireComponent,
+    canActivate: [AuthGuard, KycGuard]
+  },
+  { 
+    path: 'kyc', 
+    component: KycComponent, 
+    canActivate: [AuthGuard]  
   },
   {
     path: 'admin',
@@ -50,7 +71,8 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    preloadingStrategy: PreloadAllModules
+    preloadingStrategy: PreloadAllModules,
+    onSameUrlNavigation: 'reload'
   })],
   exports: [RouterModule],
 })
