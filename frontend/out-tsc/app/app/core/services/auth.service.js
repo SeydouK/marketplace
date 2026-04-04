@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Role } from '../models/role.enum';
 import * as i0 from "@angular/core";
 import * as i1 from "@angular/common/http";
 import * as i2 from "./storage.service";
@@ -9,6 +10,12 @@ export class AuthService {
     constructor(http, storage) {
         this.http = http;
         this.storage = storage;
+        this.healthValidationRoles = new Set([
+            // Role.AGENT_ANADER,
+            Role.VETERINAIRE,
+            // Role.ADMIN,
+            // Role.ADMINISTRATEUR,
+        ]);
         this.currentUserSubject = new BehaviorSubject(this.storage.getUser());
         this.currentUser$ = this.currentUserSubject.asObservable();
     }
@@ -50,6 +57,12 @@ export class AuthService {
     }
     hasRole(role) {
         return this.currentUser?.role === role;
+    }
+    hasAnyRole(roles) {
+        return !!this.currentUser?.role && roles.includes(this.currentUser.role);
+    }
+    get canAccessHealthValidation() {
+        return !!this.currentUser?.role && this.healthValidationRoles.has(this.currentUser.role);
     }
     logout() {
         this.storage.clear();

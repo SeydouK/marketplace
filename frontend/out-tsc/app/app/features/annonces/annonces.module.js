@@ -5,6 +5,7 @@ import { ListeAnnoncesComponent } from './liste-annonces/liste-annonces.componen
 import { DetailAnnonceComponent } from './detail-annonce/detail-annonce.component';
 import { CreerAnnonceComponent } from './creer-annonce/creer-annonce.component';
 import { SharedModule } from '../../shared/shared.module';
+import { Carousel } from 'primeng/carousel';
 import * as i0 from "@angular/core";
 export class AnnoncesModule {
     static { this.ɵfac = function AnnoncesModule_Factory(__ngFactoryType__) { return new (__ngFactoryType__ || AnnoncesModule)(); }; }
@@ -12,7 +13,8 @@ export class AnnoncesModule {
     static { this.ɵinj = /*@__PURE__*/ i0.ɵɵdefineInjector({ imports: [SharedModule,
             FormsModule,
             ReactiveFormsModule,
-            AnnoncesRoutingModule] }); }
+            AnnoncesRoutingModule,
+            Carousel] }); }
 }
 (() => { (typeof ngDevMode === "undefined" || ngDevMode) && i0.ɵsetClassMetadata(AnnoncesModule, [{
         type: NgModule,
@@ -27,6 +29,7 @@ export class AnnoncesModule {
                     FormsModule,
                     ReactiveFormsModule,
                     AnnoncesRoutingModule,
+                    Carousel,
                 ],
             }]
     }], null, null); })();
@@ -35,5 +38,6 @@ export class AnnoncesModule {
         CreerAnnonceComponent], imports: [SharedModule,
         FormsModule,
         ReactiveFormsModule,
-        AnnoncesRoutingModule] }); })();
+        AnnoncesRoutingModule,
+        Carousel] }); })();
 //# sourceMappingURL=annonces.module.js.map

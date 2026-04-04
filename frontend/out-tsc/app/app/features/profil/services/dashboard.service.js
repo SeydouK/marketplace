@@ -9,9 +9,6 @@ export class DashboardService {
     me() {
         return this.http.get(`${environment.apiUrl}/users/me`);
     }
-    myListings() {
-        return this.http.get(`${environment.apiUrl}/users/me/listings`);
-    }
     static { this.ɵfac = function DashboardService_Factory(__ngFactoryType__) { return new (__ngFactoryType__ || DashboardService)(i0.ɵɵinject(i1.HttpClient)); }; }
     static { this.ɵprov = /*@__PURE__*/ i0.ɵɵdefineInjectable({ token: DashboardService, factory: DashboardService.ɵfac, providedIn: 'root' }); }
 }

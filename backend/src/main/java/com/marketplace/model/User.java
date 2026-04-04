@@ -6,8 +6,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -42,7 +40,4 @@ public class User {
 
     @UpdateTimestamp
     private Instant updatedAt;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Listing> listings = new HashSet<>();
 }

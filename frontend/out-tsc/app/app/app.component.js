@@ -20,7 +20,7 @@ export class AppComponent {
 }
 (() => { (typeof ngDevMode === "undefined" || ngDevMode) && i0.ɵsetClassMetadata(AppComponent, [{
         type: Component,
-        args: [{ selector: 'app-root', standalone: false, template: "<app-header></app-header>\n<p-toast></p-toast>\n<app-loader></app-loader>\n<main class=\"app-main\">\n  <router-outlet></router-outlet>\n</main>\n<app-footer></app-footer>\n", styles: [".app-main {\n  min-height: calc(100vh - 140px);\n  padding: 0;\n}\n"] }]
+        args: [{ selector: 'app-root', standalone: false, template: "<app-header></app-header>\r\n<p-toast></p-toast>\r\n<app-loader></app-loader>\r\n<main class=\"app-main\">\r\n  <router-outlet></router-outlet>\r\n</main>\r\n<app-footer></app-footer>\r\n", styles: [".app-main {\n  min-height: calc(100vh - 140px);\n  padding: 0;\n}\n"] }]
     }], null, null); })();
 (() => { (typeof ngDevMode === "undefined" || ngDevMode) && i0.ɵsetClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 9 }); })();
 //# sourceMappingURL=app.component.js.map

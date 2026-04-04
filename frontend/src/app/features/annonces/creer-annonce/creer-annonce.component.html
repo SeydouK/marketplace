@@ -1,161 +1,44 @@
-<section class="max-w-6xl mx-auto py-8 px-4">
-  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-    <div>
-      <h1 class="text-2xl lg:text-3xl font-semibold text-gray-900">Cr&eacute;er une annonce</h1>
-      <p class="text-gray-500 mt-2">
-        Publie ton annonce dans le m&ecirc;me univers visuel que la marketplace Laravel.
-      </p>
+<section class="listing-bridge py-8 px-4 lg:px-8">
+  <div class="max-w-6xl mx-auto">
+    <div class="bridge-hero">
+      <div>
+        <p class="bridge-kicker">Nouveau fonctionnement</p>
+        <h1>Les annonces proviennent d&eacute;sormais des dossiers animaux</h1>
+        <p class="bridge-copy">
+          Il n'y a plus de cr&eacute;ation d'annonce s&eacute;par&eacute;e. Chaque animal enregistr&eacute;,
+          puis valid&eacute; sur le plan sanitaire, alimente automatiquement le catalogue visible
+          dans la rubrique annonces.
+        </p>
+      </div>
+
+      <div class="bridge-actions">
+        <a routerLink="/animaux/creer" class="bridge-cta bridge-cta--solid">
+          Enregistrer un animal
+        </a>
+        <a routerLink="/annonces" class="bridge-cta">
+          Voir le catalogue
+        </a>
+      </div>
     </div>
 
-    <a
-      routerLink="/dashboard"
-      class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-      Retour au dashboard
-    </a>
-  </div>
+    <div class="bridge-grid">
+      <article class="bridge-card">
+        <span class="bridge-step">01</span>
+        <h2>Cr&eacute;er le dossier</h2>
+        <p>Renseignez l'identit&eacute; de l'animal, ses m&eacute;dias et sa localisation.</p>
+      </article>
 
-  <div>
-    <div class="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm">
-      <form [formGroup]="form" (ngSubmit)="submit()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="md:col-span-2">
-          <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">Titre</label>
-          <input
-            id="title"
-            formControlName="title"
-            type="text"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="Ex: Mouton tabaski en bonne sant&eacute;"
-          />
-          <p *ngIf="controlInvalid('title', 'required')" class="mt-2 text-sm text-red-600">Le titre est requis.</p>
-        </div>
+      <article class="bridge-card">
+        <span class="bridge-step">02</span>
+        <h2>Valider le sanitaire</h2>
+        <p>L'agent ANADER ou le v&eacute;t&eacute;rinaire contr&ocirc;le le dossier avant diffusion.</p>
+      </article>
 
-        <div>
-          <label for="animalType" class="block text-sm font-semibold text-gray-700 mb-2">Type d'animal</label>
-          <select
-            id="animalType"
-            formControlName="animalType"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-          >
-            <option *ngFor="let animal of animalTypes" [value]="animal">{{ animal | titlecase }}</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="location" class="block text-sm font-semibold text-gray-700 mb-2">Ville</label>
-          <select
-            id="location"
-            formControlName="location"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-          >
-            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
-          </select>
-        </div>
-
-        <div class="md:col-span-2">
-          <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-          <textarea
-            id="description"
-            formControlName="description"
-            rows="5"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="D&eacute;cris l'&eacute;tat de l'animal, ses qualit&eacute;s et les modalit&eacute;s de vente."
-          ></textarea>
-        </div>
-
-        <div>
-          <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Prix</label>
-          <input
-            id="price"
-            formControlName="price"
-            type="number"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="180000"
-          />
-          <p *ngIf="controlInvalid('price', 'required')" class="mt-2 text-sm text-red-600">Le prix est requis.</p>
-          <p *ngIf="controlInvalid('price', 'min')" class="mt-2 text-sm text-red-600">Le prix doit &ecirc;tre positif.</p>
-        </div>
-
-        <div>
-          <label for="sellerPhone" class="block text-sm font-semibold text-gray-700 mb-2">T&eacute;l&eacute;phone</label>
-          <input
-            id="sellerPhone"
-            formControlName="sellerPhone"
-            type="text"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="+225 07 00 00 00 00"
-          />
-          <p *ngIf="controlInvalid('sellerPhone', 'required')" class="mt-2 text-sm text-red-600">Le t&eacute;l&eacute;phone est requis.</p>
-        </div>
-
-        <div>
-          <label for="sellerName" class="block text-sm font-semibold text-gray-700 mb-2">Nom du vendeur</label>
-          <input
-            id="sellerName"
-            formControlName="sellerName"
-            type="text"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="Nom visible sur l'annonce"
-          />
-        </div>
-
-        <div>
-          <label for="breed" class="block text-sm font-semibold text-gray-700 mb-2">Race</label>
-          <input
-            id="breed"
-            formControlName="breed"
-            type="text"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="Ex: Zebu"
-          />
-        </div>
-
-        <div>
-          <label for="ageMonths" class="block text-sm font-semibold text-gray-700 mb-2">&Acirc;ge en mois</label>
-          <input
-            id="ageMonths"
-            formControlName="ageMonths"
-            type="number"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="12"
-          />
-        </div>
-
-        <div>
-          <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-          <select
-            id="status"
-            formControlName="status"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-          >
-            <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="image" class="block text-sm font-semibold text-gray-700 mb-2">Image URL</label>
-          <input
-            id="image"
-            formControlName="image"
-            type="text"
-            class="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-red-500"
-            placeholder="https://..."
-          />
-        </div>
-
-        <div class="md:col-span-2 pt-2">
-          <button
-            type="submit"
-            class="inline-flex items-center justify-center rounded-2xl bg-red-600 px-5 py-3 font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-60"
-            [disabled]="form.invalid"
-          >
-            Cr&eacute;er l'annonce
-          </button>
-        </div>
-      </form>
+      <article class="bridge-card">
+        <span class="bridge-step">03</span>
+        <h2>Publier automatiquement</h2>
+        <p>Une fois disponible, l'animal remonte dans les annonces et le catalogue public.</p>
+      </article>
     </div>
   </div>
 </section>

@@ -10,6 +10,13 @@ import { StorageService } from './storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly healthValidationRoles = new Set<Role>([
+    // Role.AGENT_ANADER,
+    Role.VETERINAIRE,
+    // Role.ADMIN,
+    // Role.ADMINISTRATEUR,
+  ]);
+
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 
@@ -68,6 +75,14 @@ export class AuthService {
 
   hasRole(role: Role): boolean {
     return this.currentUser?.role === role;
+  }
+
+  hasAnyRole(roles: Role[]): boolean {
+    return !!this.currentUser?.role && roles.includes(this.currentUser.role);
+  }
+
+  get canAccessHealthValidation(): boolean {
+    return !!this.currentUser?.role && this.healthValidationRoles.has(this.currentUser.role);
   }
 
   logout() {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { map, Observable } from 'rxjs';
+import { Animal } from '../../animaux/models/animal.model';
+import { AnimalService } from '../../animaux/services/animal.service';
 import { Listing } from '../models/listing.model';
 
 export interface ListingFilter {
@@ -14,43 +14,90 @@ export interface ListingFilter {
 
 @Injectable({ providedIn: 'root' })
 export class ListingService {
-  private readonly baseUrl = `${environment.apiUrl}/listings`;
+  constructor(private readonly animalService: AnimalService) {}
 
-  constructor(private http: HttpClient) {}
-
-  search(filter: ListingFilter): Observable<Listing[]> {
-    return this.http.post<Listing[]>(`${this.baseUrl}/search`, filter ?? {});
+  search(filter: ListingFilter = {}): Observable<Listing[]> {
+    return this.list(filter);
   }
 
   list(filter: ListingFilter = {}): Observable<Listing[]> {
-    return this.http.get<Listing[]>(this.baseUrl, {
-      params: {
-        ...(filter.location ? { location: filter.location } : {}),
-        ...(filter.animalType ? { animalType: filter.animalType } : {}),
-        ...(filter.status ? { status: filter.status } : {}),
-        ...(filter.minPrice != null ? { minPrice: String(filter.minPrice) } : {}),
-        ...(filter.maxPrice != null ? { maxPrice: String(filter.maxPrice) } : {}),
-      },
-    });
+    return this.animalService
+      .list({
+        location: filter.location,
+        type: (filter.animalType as any) || '',
+        status: (filter.status as any) || '',
+        minPrice: filter.minPrice ?? null,
+        maxPrice: filter.maxPrice ?? null,
+      })
+      .pipe(map((animals) => animals.map((animal) => this.toListing(animal))));
   }
 
-  get(id: number): Observable<Listing> {
-    return this.http.get<Listing>(`${this.baseUrl}/${id}`);
-  }
-
-  create(listing: Partial<Listing>): Observable<Listing> {
-    return this.http.post<Listing>(this.baseUrl, listing);
-  }
-
-  update(id: number, listing: Partial<Listing>): Observable<Listing> {
-    return this.http.put<Listing>(`${this.baseUrl}/${id}`, listing);
-  }
-
-  remove(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  get(id: string): Observable<Listing> {
+    return this.animalService
+      .get(id)
+      .pipe(map((animal) => this.toListing(animal)));
   }
 
   myListings(): Observable<Listing[]> {
-    return this.http.get<Listing[]>(`${environment.apiUrl}/users/me/listings`);
+    return this.animalService
+      .mine()
+      .pipe(map((animals) => animals.map((animal) => this.toListing(animal))));
+  }
+
+  private toListing(animal: Animal): Listing {
+    const location = animal.lieuNaissance?.trim() || 'Localisation non renseignée';
+    const quantity = animal.quantity ?? 1;
+    const latestHistory = animal.history?.[0]?.description?.trim();
+
+    return {
+      id: animal.id,
+      title: animal.displayName || this.buildTitle(animal),
+      description: latestHistory || this.buildDescription(animal, location, quantity),
+      animalType: animal.type,
+      price: animal.price,
+      location,
+      sellerId: animal.sellerId,
+      sellerName: animal.sellerName,
+      sellerEmail: animal.sellerEmail,
+      image: animal.photos[0] || '',
+      gallery: animal.photos,
+      breed: animal.race || '',
+      quantity,
+      status: animal.status,
+      qrCode: animal.qrCode,
+      groupedLot: animal.groupedLot,
+      latitude: this.toCoordinate(animal.latitude),
+      longitude: this.toCoordinate(animal.longitude),
+    };
+  }
+
+  private buildTitle(animal: Animal): string {
+    if (animal.race?.trim()) {
+      return `${this.formatAnimalType(animal.type)} ${animal.race.trim()}`;
+    }
+
+    return `${this.formatAnimalType(animal.type)} ${animal.qrCode}`;
+  }
+
+  private buildDescription(animal: Animal, location: string, quantity: number): string {
+    const lotLabel = quantity > 1 ? `${quantity} têtes` : '1 tête';
+    const groupedSuffix = animal.groupedLot
+      ? 'Ce lot est suivi sous une référence commune dans le POC.'
+      : 'Le dossier sanitaire reste associé à cet animal.';
+
+    return `${lotLabel} enregistré à ${location}. ${groupedSuffix}`;
+  }
+
+  private formatAnimalType(animalType: string): string {
+    return animalType.charAt(0) + animalType.slice(1).toLowerCase();
+  }
+
+  private toCoordinate(value: unknown): number | null {
+    if (value == null || value === '') {
+      return null;
+    }
+
+    const normalized = Number(value);
+    return Number.isFinite(normalized) ? normalized : null;
   }
 }

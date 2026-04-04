@@ -11,7 +11,7 @@ export class CitySectionComponent {
   @Input({ required: true }) city!: string;
   @Input() listings: Listing[] = [];
 
-  trackByListing(_: number, listing: Listing): number {
+  trackByListing(_: number, listing: Listing): string {
     return listing.id;
   }
 }

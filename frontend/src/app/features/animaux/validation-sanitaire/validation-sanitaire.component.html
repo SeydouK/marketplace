@@ -1,0 +1,178 @@
+<section class="validation-shell py-8 px-4 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="validation-hero mb-8">
+      <div>
+        <p class="eyebrow">Validation ANADER</p>
+        <h1>Contrôle sanitaire sur le terrain</h1>
+        <p>
+          Sélectionnez un animal en attente, rattachez une fiche sanitaire
+          existante ou un nouveau document, puis validez la visite pour
+          faire passer automatiquement l'animal en <strong>DISPONIBLE</strong>.
+        </p>
+      </div>
+
+      <div class="stat-bubble">
+        <span>{{ animals.length }}</span>
+        <small>Animal{{ animals.length > 1 ? 's' : '' }} à traiter</small>
+      </div>
+    </div>
+
+    <ng-container *ngIf="!loading; else loadingState">
+      <div *ngIf="animals.length; else emptyState" class="grid grid-cols-1 xl:grid-cols-[0.8fr_1.2fr] gap-6">
+        <aside class="queue-card">
+          <div class="queue-header">
+            <h2>File d'inspection</h2>
+            <p>Les animaux restent indisponibles tant que la visite n'est pas validée.</p>
+          </div>
+
+          <div class="queue-list">
+            <button
+              *ngFor="let animal of animals"
+              type="button"
+              class="queue-item"
+              [class.queue-item--active]="animal.id === selectedAnimal?.id"
+              (click)="selectAnimal(animal)"
+            >
+              <div>
+                <strong>{{ animal.displayName }}</strong>
+                <span>{{ animal.lieuNaissance || 'Localisation non renseignée' }}</span>
+              </div>
+              <span class="queue-chip">{{ animal.quantity }} tête(s)</span>
+            </button>
+          </div>
+        </aside>
+
+        <section *ngIf="selectedAnimal" class="detail-card">
+          <div class="detail-head">
+            <div>
+              <p class="eyebrow">Fiche sélectionnée</p>
+              <h2>{{ selectedAnimal.displayName }}</h2>
+              <p class="text-sm text-[#7a2f38]">
+                QR {{ selectedAnimal.qrCode }} | Vendeur {{ selectedAnimal.sellerName }}
+              </p>
+            </div>
+            <span class="status-chip">{{ selectedAnimal.status }}</span>
+          </div>
+
+          <div class="detail-grid">
+            <article class="info-card">
+              <span class="info-label">Documents sanitaires</span>
+              <strong>{{ selectedAnimal.healthRecords.length }}</strong>
+            </article>
+            <article class="info-card">
+              <span class="info-label">Coordonnées</span>
+              <strong>{{ selectedAnimal.latitude || '-' }}, {{ selectedAnimal.longitude || '-' }}</strong>
+            </article>
+            <article class="info-card">
+              <span class="info-label">Prix</span>
+              <strong>{{ selectedAnimal.price | number: '1.0-0' }} FCFA</strong>
+            </article>
+          </div>
+
+          <div class="evidence-panel">
+            <div class="panel-block">
+              <h3>Fiches déjà chargées</h3>
+              <div *ngIf="recordOptions.length; else noRecord" class="record-list">
+                <label *ngFor="let record of recordOptions" class="record-row">
+                  <input
+                    type="radio"
+                    name="healthRecord"
+                    [checked]="form.get('healthRecordId')?.value === record.id"
+                    (change)="form.patchValue({ healthRecordId: record.id })"
+                  />
+                  <div>
+                    <strong>{{ record.documentType }} </strong>
+                    <span>{{ record.validationStatus }} | {{ record.uploadedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                </label>
+              </div>
+              <ng-template #noRecord>
+                <p class="muted-copy">Aucune fiche existante. Un document doit être téléversé.</p>
+              </ng-template>
+            </div>
+
+            <div class="panel-block">
+              <h3>Téléverser un nouveau document</h3>
+              <label class="upload-strip">
+                <input type="file" accept=".pdf,image/*" hidden (change)="uploadDocument($event)" />
+                <span>Ajouter un certificat ou une fiche de visite</span>
+              </label>
+
+              <div *ngIf="uploadedDocument" class="uploaded-row">
+                <div>
+                  <strong>{{ uploadedDocument.originalName }}</strong>
+                  <a [href]="previewDocumentUrl()" target="_blank" rel="noreferrer">Ouvrir le document</a>
+                </div>
+                <button type="button" (click)="removeUploadedDocument()">Retirer</button>
+              </div>
+            </div>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()" class="validation-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="form-label" for="validationStatus">Décision</label>
+                <select id="validationStatus" class="form-input" formControlName="validationStatus">
+                  <option *ngFor="let status of validationStatuses" [value]="status.value">
+                    {{ status.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label" for="documentType">Type de document si nouveau</label>
+                <select id="documentType" class="form-input" formControlName="documentType">
+                  <option *ngFor="let documentType of documentTypes" [value]="documentType.value">
+                    {{ documentType.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="form-label" for="visitResult">Compte rendu de visite</label>
+                <textarea
+                  id="visitResult"
+                  class="form-input min-h-[140px]"
+                  formControlName="visitResult"
+                  placeholder="Ex. : Inspection physique réalisée. Température stable, boiterie absente, fiche validée."
+                ></textarea>
+                <p *ngIf="submitted && form.get('visitResult')?.invalid" class="form-error">
+                  Le compte rendu est requis.
+                </p>
+              </div>
+
+              <div>
+                <label class="form-label" for="latitude">Latitude de visite</label>
+                <input id="latitude" type="number" class="form-input" formControlName="latitude" />
+              </div>
+
+              <div>
+                <label class="form-label" for="longitude">Longitude de visite</label>
+                <input id="longitude" type="number" class="form-input" formControlName="longitude" />
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button type="submit" class="primary-cta" [disabled]="submitting">
+                {{ submitting ? 'Validation...' : 'Valider la visite' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingState>
+      <div class="empty-state">
+        Chargement de la file de validation sanitaire...
+      </div>
+    </ng-template>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <h2>Aucun animal n'attend de validation sanitaire</h2>
+        <p>Le traitement ANADER est à jour pour le moment.</p>
+      </div>
+    </ng-template>
+  </div>
+</section>

@@ -1,17 +1,20 @@
 export interface Listing {
-  id: number;
-  userId?: number;
-  ownerName?: string;
+  id: string;
   title: string;
   description?: string;
   animalType: string;
   price: number;
   location: string;
+  sellerId: number;
   sellerName: string;
-  sellerPhone: string;
+  sellerEmail?: string;
   image?: string;
-  rating?: number;
-  ageMonths?: number;
+  gallery?: string[];
   breed?: string;
+  quantity: number;
   status: string;
+  qrCode?: string;
+  groupedLot?: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
 }

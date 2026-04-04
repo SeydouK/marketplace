@@ -9,7 +9,7 @@ export class RoleGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const roles = route.data['roles'] as Role[];
-    if (!this.auth.isLoggedIn() || !roles.includes(this.auth.currentUser?.role as Role)) {
+    if (!this.auth.isLoggedIn() || !this.auth.hasAnyRole(roles)) {
       this.router.navigate(['/']);
       return false;
     }

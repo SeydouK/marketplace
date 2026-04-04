@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackByListing(_: number, listing: Listing): number {
+  trackByListing(_: number, listing: Listing): string {
     return listing.id;
   }
 

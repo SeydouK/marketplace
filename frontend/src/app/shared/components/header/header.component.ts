@@ -59,10 +59,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   readonly animalFilters: AnimalFilterItem[] = [
     { value: '', label: 'Tout', icon: 'assets/images/infinity.png' },
-    { value: 'poulet', label: 'Poulets', icon: 'assets/images/chicken.png' },
-    { value: 'boeuf', label: 'Bovins', icon: 'assets/images/cow.png' },
-    { value: 'mouton', label: 'Moutons', icon: 'assets/images/sheep.png' },
-    { value: 'porc', label: 'Porcs', icon: 'assets/images/pig.png' },
+    { value: 'BOVIN', label: 'Bovins', icon: 'assets/images/cow.png' },
+    { value: 'OVIN', label: 'Ovins', icon: 'assets/images/sheep.png' },
+    { value: 'CAPRIN', label: 'Caprins', icon: 'assets/images/sheep.png' },
+    { value: 'PORCIN', label: 'Porcins', icon: 'assets/images/pig.png' },
+    { value: 'AUTRE', label: 'Autres', icon: 'assets/images/infinity.png' },
   ];
 
   constructor(

@@ -13,7 +13,7 @@ import { ListingService } from '../services/listing.service';
 export class DetailAnnonceComponent implements OnInit {
   listing?: Listing;
   loading = true;
-  readonly fallbackDescription = "Aucune description n'a \u00E9t\u00E9 fournie pour cette annonce.";
+  readonly fallbackDescription = "Aucune description n'a été fournie pour ce dossier animal.";
 
   constructor(
     private route: ActivatedRoute,
@@ -22,8 +22,8 @@ export class DetailAnnonceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!Number.isNaN(id)) {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
       this.listingService.get(id).subscribe({
         next: (listing) => {
           this.listing = listing;
@@ -37,5 +37,9 @@ export class DetailAnnonceComponent implements OnInit {
     }
 
     this.loading = false;
+  }
+
+  get canEdit(): boolean {
+    return !!this.listing && this.auth.currentUser?.id === this.listing.sellerId;
   }
 }

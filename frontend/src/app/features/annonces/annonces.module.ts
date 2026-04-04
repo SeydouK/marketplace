@@ -5,6 +5,7 @@ import { ListeAnnoncesComponent } from './liste-annonces/liste-annonces.componen
 import { DetailAnnonceComponent } from './detail-annonce/detail-annonce.component';
 import { CreerAnnonceComponent } from './creer-annonce/creer-annonce.component';
 import { SharedModule } from '../../shared/shared.module';
+import { Carousel } from 'primeng/carousel';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { SharedModule } from '../../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     AnnoncesRoutingModule,
+    Carousel,
   ],
 })
 export class AnnoncesModule {}
