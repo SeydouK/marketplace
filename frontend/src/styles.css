@@ -65,3 +65,113 @@ img {
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
 }
+
+.sig-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.sig-action {
+  border: 1px solid rgba(190, 24, 93, 0.16);
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  color: #9f1239;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sig-action--solid {
+  background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(190, 24, 93, 0.2);
+}
+
+.sig-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sig-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 1rem;
+}
+
+.sig-panel {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(190, 24, 93, 0.1);
+  padding: 1rem;
+}
+
+.sig-panel--stack {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.sig-map,
+.sig-map-empty {
+  min-height: 360px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 241, 242, 0.95), rgba(255, 255, 255, 0.92));
+}
+
+.sig-map-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  color: #881337;
+}
+
+.sig-caption {
+  margin: 0.85rem 0 0;
+  color: #7f1d1d;
+  line-height: 1.55;
+}
+
+.sig-tip {
+  border-radius: 18px;
+  padding: 0.95rem 1rem;
+  background: rgba(255, 241, 242, 0.92);
+  color: #881337;
+  line-height: 1.6;
+}
+
+.sig-map .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.88);
+  color: #9f1239;
+  border-radius: 12px 0 0 0;
+}
+
+.sig-map .leaflet-control-attribution a {
+  color: #9f1239;
+}
+
+.sig-map .leaflet-control-zoom {
+  border: 0;
+  box-shadow: 0 18px 30px rgba(136, 19, 55, 0.12);
+}
+
+.sig-map .leaflet-control-zoom a {
+  color: #611a24;
+  border: 0;
+}
+
+.sig-map .leaflet-container {
+  font-family: inherit;
+}
+
+@media (max-width: 767px) {
+  .sig-layout {
+    grid-template-columns: 1fr;
+  }
+}

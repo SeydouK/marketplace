@@ -26,24 +26,94 @@ export class ErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        const backendMessage = this.resolveBackendMessage(error);
+
         if (error.status === 401) {
           this.auth.logout();
           this.router.navigate(['/auth/login']);
-          this.toast.error('Session expirée. Veuillez vous reconnecter.');
+          this.toast.error(
+            backendMessage || 'Session expirée. Veuillez vous reconnecter.'
+          );
         } else if (error.status === 403) {
-          this.toast.error('Accès non autorisé');
+          this.toast.error(backendMessage || 'Accès non autorisé.');
         } else if (error.status === 404) {
-          this.toast.error('Ressource introuvable');
+          this.toast.error(backendMessage || 'Ressource introuvable.');
         } else if (error.status >= 400 && error.status < 500) {
-          const message = error.error?.message || 'Données invalides';
-          this.toast.error(message);
+          this.toast.error(backendMessage || 'Données invalides.');
         } else if (error.status >= 500) {
-          this.toast.error('Erreur serveur. Veuillez réessayer plus tard.');
+          this.toast.error(
+            backendMessage || 'Erreur serveur. Veuillez réessayer plus tard.'
+          );
+        } else if (error.status === 0) {
+          this.toast.error('Impossible de joindre le serveur.');
         } else {
-          this.toast.error(error.error?.message || 'Erreur inattendue');
+          this.toast.error(backendMessage || 'Erreur inattendue.');
         }
         return throwError(() => error);
       })
     );
+  }
+
+  private resolveBackendMessage(error: HttpErrorResponse): string | null {
+    return this.extractMessage(error.error);
+  }
+
+  private extractMessage(payload: unknown): string | null {
+    if (typeof payload === 'string') {
+      const message = payload.trim();
+      return message || null;
+    }
+
+    if (Array.isArray(payload)) {
+      for (const item of payload) {
+        const message = this.extractMessage(item);
+        if (message) {
+          return message;
+        }
+      }
+      return null;
+    }
+
+    if (!payload || typeof payload !== 'object') {
+      return null;
+    }
+
+    const record = payload as Record<string, unknown>;
+    const directMessage = this.readString(record['message']);
+    if (directMessage) {
+      return directMessage;
+    }
+
+    const nestedErrorsMessage = this.extractObjectMessage(record['errors']);
+    if (nestedErrorsMessage) {
+      return nestedErrorsMessage;
+    }
+
+    return this.extractObjectMessage(record);
+  }
+
+  private extractObjectMessage(payload: unknown): string | null {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      return null;
+    }
+
+    const values = Object.values(payload as Record<string, unknown>);
+    for (const value of values) {
+      const message = this.readString(value) || this.extractMessage(value);
+      if (message) {
+        return message;
+      }
+    }
+
+    return null;
+  }
+
+  private readString(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const normalized = value.trim();
+    return normalized || null;
   }
 }

@@ -40,8 +40,12 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/listings", "/api/listings/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/listings/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/animals/mine", "/api/animals/validation/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/files/upload").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/animals", "/api/animals/*/validation").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/animals/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/animals", "/api/animals/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthenticationProvider())

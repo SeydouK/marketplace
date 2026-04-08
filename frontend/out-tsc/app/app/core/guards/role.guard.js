@@ -9,7 +9,7 @@ export class RoleGuard {
     }
     canActivate(route) {
         const roles = route.data['roles'];
-        if (!this.auth.isLoggedIn() || !roles.includes(this.auth.currentUser?.role)) {
+        if (!this.auth.isLoggedIn() || !this.auth.hasAnyRole(roles)) {
             this.router.navigate(['/']);
             return false;
         }

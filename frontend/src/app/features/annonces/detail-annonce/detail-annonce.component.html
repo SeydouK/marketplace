@@ -1,8 +1,8 @@
-<section class="max-w-7xl mx-auto py-8 px-4" *ngIf="listing; else detailState">
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+<section class="max-w-7xl mx-auto py-6 px-4 sm:py-8" *ngIf="listing; else detailState">
+  <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
     <a
       routerLink="/annonces"
-      class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
+      class="inline-flex items-center gap-2 self-start rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-red-500 hover:text-red-700"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -10,84 +10,145 @@
       Retour aux annonces
     </a>
 
-    <span class="text-sm text-gray-500">{{ listing.location }} &middot; {{ listing.animalType | titlecase }}</span>
-  </div>
-
-  <div class="relative overflow-hidden rounded-[2rem] bg-gray-100 aspect-[16/8]">
-    <img
-      [src]="listing.image || 'https://placehold.co/1200x800?text=Annonce'"
-      [alt]="listing.title"
-      class="w-full h-full object-cover"
-    />
-
-    <div *ngIf="listing.rating" class="absolute bottom-4 left-4 bg-white px-3 py-2 rounded-xl shadow-md flex items-center gap-2">
-      <svg class="w-4 h-4 fill-current text-red-600" viewBox="0 0 24 24">
-        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-      </svg>
-      <span class="text-sm font-semibold">{{ listing.rating }}</span>
+    <div class="flex flex-wrap items-center gap-2 text-sm">
+      <span class="rounded-full bg-red-50 px-3 py-1 font-medium text-red-700">
+        {{ listing.animalType | titlecase }}
+      </span>
+      <span class="text-gray-500">{{ listing.location }}</span>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-[1.6fr_0.9fr] gap-6 mt-6">
-    <div class="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm">
-      <h1 class="text-3xl font-semibold text-gray-900 mb-3">{{ listing.title }}</h1>
-      <p class="text-gray-500 mb-6">{{ listing.location }} &middot; {{ listing.animalType | titlecase }}</p>
+  <div class="relative overflow-hidden rounded-[2rem] bg-gray-100 aspect-[16/10] sm:aspect-[16/8]">
+    <img
+      [src]="listing.image || 'https://placehold.co/1200x800/fde2e2/7f1d1d?text=Animal'"
+      [alt]="listing.title"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent p-5 sm:p-8">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-red-100">Dossier animal</p>
+          <h1 class="text-2xl font-semibold text-white sm:text-4xl">{{ listing.title }}</h1>
+          <p class="mt-2 max-w-2xl text-sm text-red-50 sm:text-base">
+            {{ listing.location }} • {{ listing.quantity }} tête<span *ngIf="listing.quantity > 1">s</span>
+          </p>
+        </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div class="rounded-2xl bg-gray-50 p-4">
-          <p class="text-sm text-gray-500 mb-1">Race</p>
-          <p class="font-semibold text-gray-900">{{ listing.breed || 'Non renseign&eacute;e' }}</p>
+        <div class="rounded-3xl bg-white/12 px-4 py-3 backdrop-blur-sm">
+          <p class="text-xs uppercase tracking-[0.2em] text-red-100">Prix indicatif</p>
+          <p class="mt-1 text-2xl font-semibold text-white sm:text-3xl">
+            {{ listing.price | number:'1.0-0' }} FCFA
+          </p>
         </div>
-        <div class="rounded-2xl bg-gray-50 p-4">
-          <p class="text-sm text-gray-500 mb-1">&Acirc;ge</p>
-          <p class="font-semibold text-gray-900">{{ listing.ageMonths || '-' }} mois</p>
-        </div>
-        <div class="rounded-2xl bg-gray-50 p-4">
-          <p class="text-sm text-gray-500 mb-1">Vendeur</p>
-          <p class="font-semibold text-gray-900">{{ listing.sellerName }}</p>
-        </div>
-        <div class="rounded-2xl bg-gray-50 p-4">
-          <p class="text-sm text-gray-500 mb-1">T&eacute;l&eacute;phone</p>
-          <p class="font-semibold text-gray-900">{{ listing.sellerPhone }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 mt-6 xl:grid-cols-[1.6fr_0.95fr]">
+    <div class="space-y-6">
+      <div class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl bg-red-50/70 p-4">
+            <p class="text-sm text-gray-500 mb-1">Race</p>
+            <p class="font-semibold text-gray-900">{{ listing.breed || 'Non renseignée' }}</p>
+          </div>
+          <div class="rounded-2xl bg-red-50/70 p-4">
+            <p class="text-sm text-gray-500 mb-1">Statut de publication</p>
+            <p class="font-semibold text-gray-900">{{ listing.status | titlecase }}</p>
+          </div>
+          <div class="rounded-2xl bg-red-50/70 p-4">
+            <p class="text-sm text-gray-500 mb-1">Propriétaire</p>
+            <p class="font-semibold text-gray-900">{{ listing.sellerName }}</p>
+          </div>
+          <div class="rounded-2xl bg-red-50/70 p-4">
+            <p class="text-sm text-gray-500 mb-1">Contact</p>
+            <p class="font-semibold text-gray-900">{{ listing.sellerEmail || 'Non renseigné' }}</p>
+          </div>
+          <div class="rounded-2xl bg-red-50/70 p-4 sm:col-span-2">
+            <p class="text-sm text-gray-500 mb-1">Référence de traçabilité</p>
+            <p class="font-semibold text-gray-900 break-all">{{ listing.qrCode || 'Non renseignée' }}</p>
+          </div>
         </div>
       </div>
 
-      <div>
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Description</h2>
+      <div class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Présentation</h2>
         <p class="text-gray-600 leading-7">
           {{ listing.description || fallbackDescription }}
         </p>
       </div>
+
+      <div *ngIf="listing.gallery?.length" class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">Galerie</h2>
+          <span class="text-sm text-gray-500">{{ listing.gallery?.length }} média(s)</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div
+            *ngFor="let image of listing.gallery"
+            class="overflow-hidden rounded-2xl bg-red-50 aspect-square"
+          >
+            <img [src]="image" [alt]="listing.title" class="h-full w-full object-cover" />
+          </div>
+        </div>
+      </div>
     </div>
 
-    <aside class="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm h-fit">
-      <p class="text-3xl font-semibold text-gray-900 mb-2">{{ listing.price | number:'1.0-0' }} FCFA</p>
-      <p class="text-sm text-gray-500 mb-6">{{ listing.status | titlecase }}</p>
+    <aside class="space-y-4 xl:sticky xl:top-6 h-fit">
+      <div class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-red-600">Actions</p>
+        <p class="mt-3 text-sm leading-6 text-gray-600">
+          Accédez au dossier complet, contactez le vendeur ou mettez à jour votre propre animal depuis cette fiche.
+        </p>
 
-      <div class="flex flex-col gap-3">
-        <a
-          *ngIf="auth.isLoggedIn(); else loginPrompt"
-          [href]="'tel:' + listing.sellerPhone"
-          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-medium text-white hover:bg-red-700 transition-colors"
-        >
-          Contacter le vendeur
-        </a>
+        <div class="mt-5 flex flex-col gap-3">
+          <ng-container *ngIf="canEdit; else publicActions">
+            <div class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-800">
+              Vous êtes le propriétaire de ce dossier. Toute modification repasse ensuite au contrôle sanitaire.
+            </div>
 
-        <ng-template #loginPrompt>
-          <a
-            routerLink="/login"
-            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 hover:border-red-500 hover:text-red-600 transition-colors"
-          >
-            Se connecter
-          </a>
-        </ng-template>
+            <a
+              [routerLink]="['/animaux', listing.id, 'editer']"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700"
+            >
+              Modifier cet animal
+            </a>
 
-        <a
-          routerLink="/annonces"
-          class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 hover:border-red-500 hover:text-red-600 transition-colors"
-        >
-          Voir d'autres annonces
-        </a>
+            <a
+              routerLink="/animaux/mes-animaux"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
+            >
+              Ouvrir mon espace éleveur
+            </a>
+          </ng-container>
+
+          <ng-template #publicActions>
+            <a
+              *ngIf="auth.isLoggedIn(); else loginPrompt"
+              [href]="listing.sellerEmail ? ('mailto:' + listing.sellerEmail) : null"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700"
+            >
+              Contacter le vendeur
+            </a>
+
+            <ng-template #loginPrompt>
+              <a
+                routerLink="/login"
+                class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 transition-colors hover:border-red-500 hover:text-red-700"
+              >
+                Se connecter
+              </a>
+            </ng-template>
+
+            <a
+              routerLink="/animaux/creer"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
+            >
+              Déposer un animal
+            </a>
+          </ng-template>
+        </div>
       </div>
     </aside>
   </div>
@@ -95,9 +156,9 @@
 
 <ng-template #detailState>
   <section class="max-w-7xl mx-auto py-8 px-4">
-    <div class="rounded-[2rem] border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
-      <span *ngIf="loading">Chargement de l'annonce...</span>
-      <span *ngIf="!loading">Annonce introuvable.</span>
+    <div class="rounded-[2rem] border border-dashed border-red-200 bg-white p-10 text-center text-gray-500">
+      <span *ngIf="loading">Chargement du dossier animal...</span>
+      <span *ngIf="!loading">Animal introuvable.</span>
     </div>
   </section>
 </ng-template>

@@ -28,6 +28,11 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'animaux',
+    loadChildren: () =>
+      import('./features/animaux/animaux.module').then((m) => m.AnimauxModule),
+  },
+  {
     path: 'profil',
     canActivate: [AuthGuard],
     loadChildren: () =>

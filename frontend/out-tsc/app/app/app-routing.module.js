@@ -24,6 +24,10 @@ const routes = [
         loadChildren: () => import('./features/annonces/annonces.module').then((m) => m.AnnoncesModule),
     },
     {
+        path: 'animaux',
+        loadChildren: () => import('./features/animaux/animaux.module').then((m) => m.AnimauxModule),
+    },
+    {
         path: 'profil',
         canActivate: [AuthGuard],
         loadChildren: () => import('./features/profil/profil.module').then((m) => m.ProfilModule),
