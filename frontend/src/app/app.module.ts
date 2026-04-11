@@ -12,9 +12,15 @@ import Lara from '@primeng/themes/lara';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
+import { VerifyEmailComponent } from './features/verify-email/verify-email.component';
+import { KycComponent } from './features/kyc/kyc.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent, 
+    KycComponent,
+    VerifyEmailComponent
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,

@@ -5,6 +5,9 @@ import { User } from '../models/user.model';
 export class StorageService {
   private readonly TOKEN_KEY = 'marketplace_token';
   private readonly USER_KEY = 'marketplace_user';
+  private readonly EMAIL_VERIFIED_KEY = 'emailVerified'; // ← ajouter
+  private readonly KYC_STATUS_KEY = 'kycStatus';         // ← ajouter
+  private readonly ROLE_KEY = 'role';                    // ← ajouter
 
   setToken(token: string) {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -26,5 +29,8 @@ export class StorageService {
   clear() {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.EMAIL_VERIFIED_KEY);
+    localStorage.removeItem(this.KYC_STATUS_KEY);     
+    localStorage.removeItem(this.ROLE_KEY);           
   }
 }

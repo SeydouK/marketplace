@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 max-w-md w-full p-10 text-center">
+
+    <!-- EN ATTENTE -->
+    <ng-container *ngIf="status === 'pending'">
+      <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-envelope text-amber-500 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Vérifiez votre email</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-6">
+        Un lien d'activation a été envoyé à votre adresse email.
+        Cliquez sur ce lien pour activer votre compte.
+      </p>
+      <div class="bg-gray-50 rounded-xl p-4 text-left mb-6">
+        <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-2">À noter</p>
+        <ul class="text-sm text-gray-500 space-y-1">
+          <li class="flex items-start gap-2">
+            <i class="pi pi-check-circle text-green-400 mt-0.5 text-xs"></i>
+            Le lien expire dans 24 heures
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="pi pi-check-circle text-green-400 mt-0.5 text-xs"></i>
+            Vérifiez vos spams si vous ne trouvez pas l'email
+          </li>
+        </ul>
+      </div>
+      <p class="text-xs text-gray-400">
+        Mauvais email ?
+        <a routerLink="/register" class="text-rose-500 hover:underline">Recommencer l'inscription</a>
+      </p>
+    </ng-container>
+
+    <!-- SUCCÈS -->
+    <ng-container *ngIf="status === 'success'">
+      <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-check-circle text-green-500 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Email confirmé !</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+        Votre adresse email a bien été vérifiée.
+        Complétez maintenant la vérification de votre identité pour accéder à la plateforme.
+      </p>
+      <button
+        (click)="goToKyc()"
+        class="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
+      >
+        Vérifier mon identité
+      </button>
+    </ng-container>
+
+    <!-- DÉJÀ VÉRIFIÉ -->
+    <ng-container *ngIf="status === 'already_verified'">
+      <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-check-circle text-blue-500 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Email déjà confirmé</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+        Votre adresse email est déjà vérifiée.
+        Complétez votre vérification d'identité pour continuer.
+      </p>
+      <button
+        (click)="goToKyc()"
+        class="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
+      >
+        Vérifier mon identité
+      </button>
+    </ng-container>
+
+    <!-- ERREUR -->
+    <ng-container *ngIf="status === 'error'">
+      <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-times-circle text-red-400 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Lien invalide</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+        Ce lien de confirmation est invalide ou a expiré.
+        Reconnectez-vous pour recevoir un nouveau lien.
+      </p>
+      <button
+        (click)="goToLogin()"
+        class="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
+      >
+        Se connecter
+      </button>
+    </ng-container>
+
+  </div>
+</div>
