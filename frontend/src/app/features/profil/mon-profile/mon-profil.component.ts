@@ -1,5 +1,5 @@
 // features/profil/mon-profil/mon-profil.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { Role } from '../../../core/models/role.enum';
@@ -31,12 +31,16 @@ interface Section {
   standalone: false,
 })
 export class MonProfilComponent implements OnInit {
+  @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
+
   profile = this.auth.currentUser;
   activeSection: SectionKey = 'infos';
   editingField: string | null = null;
   editValue = '';
   saving = false;
   successMessage = '';
+  uploadingAvatar = false;
+  avatarUrl: string | null = null;
 
   // ──────────────────────────────────────────────
   //  Sections communes à tous les rôles
@@ -190,7 +194,45 @@ export class MonProfilComponent implements OnInit {
   ngOnInit(): void {
     this.http.get<any>(`${environment.apiUrl}/users/me`).subscribe((data) => {
       this.profile = data;
+      this.avatarUrl = data?.avatarUrl ?? null;
     });
+  }
+
+  triggerAvatarUpload(): void {
+    this.avatarInput?.nativeElement.click();
+  }
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    // Prévisualisation immédiate
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.avatarUrl = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload vers le serveur
+    const formData = new FormData();
+    formData.append('avatar', file);
+    this.uploadingAvatar = true;
+
+    this.http.post<{ avatarUrl: string }>(`${environment.apiUrl}/users/me/avatar`, formData)
+      .subscribe({
+        next: (res) => {
+          this.uploadingAvatar = false;
+          this.avatarUrl = res.avatarUrl;
+          if (this.profile) (this.profile as any).avatarUrl = res.avatarUrl;
+        },
+        error: () => {
+          this.uploadingAvatar = false;
+        },
+      });
+
+    // Reset l'input pour permettre de re-sélectionner le même fichier
+    input.value = '';
   }
 
   startEdit(field: string): void {

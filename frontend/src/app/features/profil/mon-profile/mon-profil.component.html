@@ -34,22 +34,37 @@
         <ng-container *ngIf="activeSection === 'infos'">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold text-gray-900">À propos de moi</h2>
-            <button type="button" (click)="startEdit('name')"
+            <a routerLink="/profil/parametres"
               class="px-4 py-1.5 text-sm font-medium border border-gray-300 rounded-lg hover:border-gray-400 transition-colors text-gray-700">
               Modifier
-            </button>
+            </a>
           </div>
 
           <!-- Carte profil + infos côte à côte -->
           <div class="flex items-start gap-8 mb-8">
 
-            <!-- Carte avatar -->
+            <!-- Carte avatar cliquable -->
             <div class="flex-shrink-0 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col items-center gap-2 w-44">
-              <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-semibold select-none">
-                {{ avatarInitial }}
+              <!-- Zone avatar avec overlay au survol -->
+              <div class="relative group cursor-pointer" (click)="triggerAvatarUpload()">
+                <!-- Photo si disponible, sinon initiale -->
+                <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-semibold select-none overflow-hidden">
+                  <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Photo de profil"
+                    class="w-full h-full object-cover" />
+                  <span *ngIf="!avatarUrl">{{ avatarInitial }}</span>
+                </div>
+                <!-- Overlay "Changer" au survol -->
+                <div class="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span class="text-white text-xs font-medium text-center leading-tight px-1">Changer</span>
+                </div>
               </div>
+              <!-- Input file caché -->
+              <input #avatarInput type="file" accept="image/*" class="hidden"
+                (change)="onAvatarSelected($event)" />
               <p class="text-base font-bold text-gray-900 text-center">{{ profile?.name || 'Utilisateur' }}</p>
               <p class="text-sm text-gray-500">{{ roleLabel }}</p>
+              <!-- Indicateur upload en cours -->
+              <p *ngIf="uploadingAvatar" class="text-xs text-gray-400 animate-pulse">Envoi...</p>
             </div>
 
             <!-- Infos à droite -->
