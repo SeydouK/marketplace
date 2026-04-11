@@ -1,5 +1,6 @@
 package com.marketplace.service;
 
+import com.marketplace.config.FileStorageProperties;
 import com.marketplace.dto.CniVerificationResult;
 import com.marketplace.dto.KycStatusResponse;
 import com.marketplace.model.KycStatus;
@@ -7,6 +8,7 @@ import com.marketplace.model.User;
 import com.marketplace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import com.marketplace.utils.InMemoryMultipartFile;
 import java.io.IOException;
@@ -19,11 +21,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KycService {
 
+    private static final String KYC_DIRECTORY = "kyc";
+
     private final UserRepository userRepository;
     private final CniVerificationService cniVerificationService;
     private final FaceComparisonService faceComparisonService;
-
-    private static final String UPLOAD_DIR = "uploads/kyc/";
+    private final FileStorageProperties fileStorageProperties;
 
     public KycStatusResponse processCni(MultipartFile file, String email) throws Exception {
         User user = userRepository.findByEmail(email)
@@ -113,8 +116,7 @@ public class KycService {
     }
 
     private String saveFile(MultipartFile file, String prefix) throws IOException {
-        Path uploadPath = Paths.get(UPLOAD_DIR);
-        if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+        Path uploadPath = resolveKycStorageDirectory();
 
         String filename = prefix + "_" + UUID.randomUUID() + getExtension(file);
         Path filePath = uploadPath.resolve(filename);
@@ -134,5 +136,21 @@ public class KycService {
         byte[] bytes = Files.readAllBytes(filePath);
         // Wrapper simple pour retransformer un fichier sauvegardé en MultipartFile
         return new InMemoryMultipartFile(bytes, filePath.getFileName().toString());
+    }
+
+    private Path resolveKycStorageDirectory() throws IOException {
+        if (!StringUtils.hasText(fileStorageProperties.getBaseDir())) {
+            throw new IllegalStateException("Le dossier de stockage KYC n'est pas configure.");
+        }
+
+        Path storageRoot = Paths.get(fileStorageProperties.getBaseDir()).toAbsolutePath().normalize();
+        Path kycDirectory = storageRoot.resolve(KYC_DIRECTORY).normalize();
+
+        if (!kycDirectory.startsWith(storageRoot)) {
+            throw new IllegalStateException("Le chemin de stockage KYC est invalide.");
+        }
+
+        Files.createDirectories(kycDirectory);
+        return kycDirectory;
     }
 }
