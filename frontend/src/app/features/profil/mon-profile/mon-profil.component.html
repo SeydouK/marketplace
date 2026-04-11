@@ -2,8 +2,14 @@
 <div class="min-h-screen bg-white">
   <div class="max-w-6xl mx-auto px-6 py-10">
 
-    <!-- Titre page -->
-    <h1 class="text-2xl font-semibold text-gray-900 mb-8">Paramètres du compte</h1>
+    <!-- Titre page + badge rôle -->
+    <div class="flex items-center gap-3 mb-8">
+      <h1 class="text-2xl font-semibold text-gray-900">Paramètres du compte</h1>
+      <span *ngIf="roleLabel"
+        class="px-3 py-1 text-xs font-semibold rounded-full {{ roleBadgeColor }}">
+        {{ roleLabel }}
+      </span>
+    </div>
 
     <div class="flex gap-10">
 
@@ -24,32 +30,55 @@
       <!-- ═══ CONTENU ═══ -->
       <main class="flex-1 min-w-0">
 
-        <!-- A PROPOS DE MOI -->
+        <!-- ─── À PROPOS DE MOI (commun + champs rôle-spécifiques) ─── -->
         <ng-container *ngIf="activeSection === 'infos'">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">À propos de moi</h2>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">À propos de moi</h2>
+            <button type="button" (click)="startEdit('name')"
+              class="px-4 py-1.5 text-sm font-medium border border-gray-300 rounded-lg hover:border-gray-400 transition-colors text-gray-700">
+              Modifier
+            </button>
+          </div>
 
+          <!-- Carte profil + infos côte à côte -->
+          <div class="flex items-start gap-8 mb-8">
+
+            <!-- Carte avatar -->
+            <div class="flex-shrink-0 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col items-center gap-2 w-44">
+              <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-semibold select-none">
+                {{ avatarInitial }}
+              </div>
+              <p class="text-base font-bold text-gray-900 text-center">{{ profile?.name || 'Utilisateur' }}</p>
+              <p class="text-sm text-gray-500">{{ roleLabel }}</p>
+            </div>
+
+            <!-- Infos à droite -->
+            <div class="flex flex-col gap-3 pt-1">
+              <div class="flex items-center gap-2 text-sm text-gray-700">
+                <span class="text-base">📧</span>
+                <span>{{ maskedEmail }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-700">
+                <span class="text-base">🪪</span>
+                <span>Vérification d'identité :
+                  <span [ngClass]="kycApproved ? 'text-green-600 font-medium' : 'text-gray-400'">
+                    {{ kycLabel }}
+                  </span>
+                </span>
+              </div>
+              <ng-container *ngFor="let info of roleSpecificInfos">
+                <div class="flex items-center gap-2 text-sm text-gray-700">
+                  <span class="text-base">📌</span>
+                  <span>{{ info.label }} : <span class="font-medium">{{ info.value }}</span></span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <hr class="border-gray-100 mb-6" />
+
+          <!-- Champs éditables en dessous -->
           <div class="space-y-0 divide-y divide-gray-100">
-
-            <!-- Nom -->
-            <div class="flex items-center justify-between py-4">
-              <div>
-                <p class="text-sm font-medium text-gray-900">Nom officiel</p>
-                <p class="text-sm text-gray-500 mt-0.5">{{ profile?.name || 'Non renseigné' }}</p>
-              </div>
-              <button type="button" (click)="startEdit('name')"
-                class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
-                Modifier
-              </button>
-            </div>
-
-            <!-- Email -->
-            <div class="flex items-center justify-between py-4">
-              <div>
-                <p class="text-sm font-medium text-gray-900">Adresse e-mail</p>
-                <p class="text-sm text-gray-500 mt-0.5">{{ maskedEmail }}</p>
-              </div>
-              <span class="text-sm text-gray-400">Non modifiable</span>
-            </div>
 
             <!-- Téléphone -->
             <div class="flex items-center justify-between py-4">
@@ -69,18 +98,16 @@
               <span class="text-sm text-gray-300">Ajouter</span>
             </div>
 
-            <!-- KYC -->
-            <div class="flex items-center justify-between py-4">
+            <!-- KYC action si non vérifié -->
+            <div *ngIf="!kycApproved" class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Vérification d'identité</p>
                 <p class="text-sm text-gray-500 mt-0.5">{{ kycLabel }}</p>
               </div>
-              <a *ngIf="!kycApproved" routerLink="/auth/kyc"
+              <a routerLink="/auth/kyc"
                 class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
                 Commencer
               </a>
-              <span *ngIf="kycApproved"
-                class="text-sm font-medium text-green-600">Vérifié ✓</span>
             </div>
 
           </div>
@@ -106,8 +133,8 @@
           </div>
         </ng-container>
 
-        <!-- Historique de paiement-->
-        <ng-container *ngIf="activeSection === 'securite'">
+        <!-- ─── HISTORIQUE DE PAIEMENT (Acheteur + Vendeur uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'historique-paiement' && hasPaiement">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Historique de paiement</h2>
           <div class="divide-y divide-gray-100">
             <div class="flex items-center justify-between py-4">
@@ -129,13 +156,126 @@
           </div>
         </ng-container>
 
-        <!-- MON ESPACE / DASHBOARD -->
+        <!-- ─── MES COMMENTAIRES (Acheteur + Vendeur uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'commentaires' && hasCommentaires">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-xl">💬</span>
+            <h2 class="text-xl font-semibold text-gray-900">Commentaires que j'ai rédigés</h2>
+          </div>
+          <div class="rounded-2xl border border-gray-100 p-8 text-center">
+            <p class="text-sm text-gray-400">Vous n'avez pas encore rédigé de commentaires.</p>
+          </div>
+        </ng-container>
+
+        <!-- ─── MON ESPACE / DASHBOARD (commun) ─── -->
         <ng-container *ngIf="activeSection === 'dashboard'">
           <h2 class="text-xl font-semibold text-gray-900 mb-2">Mon espace</h2>
           <p class="text-sm text-gray-500 mb-6">Accédez à votre tableau de bord.</p>
           <a routerLink="/dashboard"
             class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
             Aller au tableau de bord →
+          </a>
+        </ng-container>
+
+        <!-- ─── MES ANIMAUX (Vendeur uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'mes-animaux' && isVendeur">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes animaux</h2>
+          <p class="text-sm text-gray-500 mb-6">Gérez vos fiches animaux, photos, prix et localisation.</p>
+          <a routerLink="/animaux/mes-animaux"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+            Voir mes animaux →
+          </a>
+        </ng-container>
+
+        <!-- ─── MES ANNONCES (Vendeur uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'mes-annonces' && isVendeur">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes annonces</h2>
+          <p class="text-sm text-gray-500 mb-6">Consultez et modifiez vos annonces publiées sur la marketplace.</p>
+          <a routerLink="/profil/mes-annonces"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+            Voir mes annonces →
+          </a>
+        </ng-container>
+
+        <!-- ─── DOCUMENTS SANITAIRES (Vétérinaire uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'documents-sanitaires' && isVeterinaire">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Documents sanitaires</h2>
+          <p class="text-sm text-gray-500 mb-6">
+            Créez et gérez les certificats vétérinaires, carnets de vaccination et plans de biosécurité.
+          </p>
+          <a routerLink="/animaux/validation-sanitaire"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+            Accéder aux documents →
+          </a>
+        </ng-container>
+
+        <!-- ─── FICHES VALIDÉES (Vétérinaire uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'fiches-validees' && isVeterinaire">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Fiches validées</h2>
+          <p class="text-sm text-gray-500 mb-6">
+            Historique des fiches sanitaires que vous avez validées. Chaque validation déclenche le statut DISPONIBLE.
+          </p>
+          <div class="rounded-2xl border border-gray-100 p-6 text-center text-sm text-gray-400">
+            Bientôt disponible
+          </div>
+        </ng-container>
+
+        <!-- ─── ZONE D'INTERVENTION (Vétérinaire + Agent ANADER) ─── -->
+        <ng-container *ngIf="activeSection === 'zone-intervention' && (isVeterinaire || isAgentAnader)">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">
+            {{ isAgentAnader ? 'Zone d\'affectation' : 'Zone d\'intervention' }}
+          </h2>
+          <p class="text-sm text-gray-500 mb-6">
+            <ng-container *ngIf="isVeterinaire">
+              Périmètre géographique dans lequel vous exercez votre accréditation DSV.
+            </ng-container>
+            <ng-container *ngIf="isAgentAnader">
+              Zone opérationnelle ANADER à laquelle vous êtes rattaché.
+            </ng-container>
+          </p>
+          <div class="divide-y divide-gray-100">
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Région</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ (profile)?.zoneIntervention || (profile)?.zoneAffectation || 'Non renseignée' }}</p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ─── ANIMAUX ENREGISTRÉS (Agent ANADER uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'animaux-enregistres' && isAgentAnader">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Animaux enregistrés</h2>
+          <p class="text-sm text-gray-500 mb-6">
+            Nombre d'animaux enregistrés via votre accompagnement. Chaque animal déclenche une rémunération de 500 FCFA.
+          </p>
+          <div class="divide-y divide-gray-100">
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Total animaux enregistrés</p>
+                <p class="text-2xl font-bold text-[#FF385C] mt-1">{{ (profile)?.animauxEnregistres ?? 0 }}</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Rémunération estimée</p>
+                <p class="text-2xl font-bold text-gray-700 mt-1">
+                  {{ ((profile)?.animauxEnregistres ?? 0) * 500 | number }} FCFA
+                </p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ─── SUPERVISION (Admin uniquement) ─── -->
+        <ng-container *ngIf="activeSection === 'supervision' && isAdmin">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Supervision</h2>
+          <p class="text-sm text-gray-500 mb-6">
+            Gestion des litiges, vérification des comptes et supervision globale de la plateforme.
+          </p>
+          <a routerLink="/admin"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+            Accéder au panneau admin →
           </a>
         </ng-container>
 

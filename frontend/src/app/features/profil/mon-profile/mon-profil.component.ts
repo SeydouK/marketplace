@@ -5,7 +5,19 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Role } from '../../../core/models/role.enum';
 import { environment } from '../../../../environments/environment';
 
-type SectionKey = 'infos' | 'securite' | 'dashboard';
+type SectionKey =
+  | 'infos'
+  | 'securite'
+  | 'commentaires'
+  | 'historique-paiement'
+  | 'dashboard'
+  | 'mes-animaux'
+  | 'mes-annonces'
+  | 'documents-sanitaires'
+  | 'fiches-validees'
+  | 'zone-intervention'
+  | 'animaux-enregistres'
+  | 'supervision';
 
 interface Section {
   key: SectionKey;
@@ -26,12 +38,150 @@ export class MonProfilComponent implements OnInit {
   saving = false;
   successMessage = '';
 
-  sections: Section[] = [
-    { key: 'infos', label: 'À propos de moi', icon: '👤' },
-    { key: 'securite', label: 'Historique de paiement', icon: '🔒' },
-    { key: 'dashboard', label: 'Mon espace', icon: '🏠' },
+  // ──────────────────────────────────────────────
+  //  Sections communes à tous les rôles
+  // ──────────────────────────────────────────────
+  private readonly commonSections: Section[] = [
+    { key: 'infos',     label: 'À propos de moi', icon: '👤' },
+    { key: 'dashboard', label: 'Mon espace',       icon: '🏠' },
   ];
 
+  // ──────────────────────────────────────────────
+  //  Sections exclusives par rôle
+  // ──────────────────────────────────────────────
+  private readonly roleSections: Partial<Record<Role, Section[]>> = {
+    [Role.ACHETEUR]: [
+      { key: 'historique-paiement', label: 'Historique de paiement', icon: '💳' },
+      { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
+    ],
+    [Role.USER]: [
+      { key: 'historique-paiement', label: 'Historique de paiement', icon: '💳' },
+      { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
+    ],
+    [Role.VENDEUR]: [
+      { key: 'mes-animaux',         label: 'Mes animaux',             icon: '🐄' },
+      { key: 'mes-annonces',        label: 'Mes annonces',            icon: '📋' },
+      { key: 'historique-paiement', label: 'Historique de paiement',  icon: '💳' },
+      { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
+    ],
+    [Role.VETERINAIRE]: [
+      { key: 'documents-sanitaires', label: 'Documents sanitaires', icon: '📄' },
+      { key: 'fiches-validees',      label: 'Fiches validées',       icon: '✅' },
+      { key: 'zone-intervention',    label: 'Zone d\'intervention',  icon: '📍' },
+    ],
+    [Role.AGENT_ANADER]: [
+      { key: 'animaux-enregistres', label: 'Animaux enregistrés', icon: '🏷️' },
+      { key: 'zone-intervention',   label: 'Zone d\'affectation',  icon: '📍' },
+    ],
+    [Role.ADMIN]: [
+      { key: 'supervision', label: 'Supervision', icon: '🛡️' },
+    ],
+    [Role.ADMINISTRATEUR]: [
+      { key: 'supervision', label: 'Supervision', icon: '🛡️' },
+    ],
+  };
+
+  get sections(): Section[] {
+    const role = this.profile?.role as Role | undefined;
+    const extras = role ? (this.roleSections[role] ?? []) : [];
+    return [...this.commonSections, ...extras];
+  }
+
+  // ──────────────────────────────────────────────
+  //  Informations affichées dans "À propos de moi"
+  //  selon le rôle (s'ajoutent aux champs communs)
+  // ──────────────────────────────────────────────
+  get roleSpecificInfos(): { label: string; value: string }[] {
+    const role = this.profile?.role as Role | undefined;
+    switch (role) {
+      case Role.VENDEUR:
+        return [
+          { label: 'Numéro d\'accréditation vendeur', value: (this.profile as any)?.vendeurId ?? 'Non renseigné' },
+        ];
+      case Role.VETERINAIRE:
+        return [
+          { label: 'N° accréditation DSV', value: (this.profile as any)?.accreditationDsv ?? 'Non renseigné' },
+          { label: 'Zone d\'intervention',  value: (this.profile as any)?.zoneIntervention ?? 'Non renseignée' },
+        ];
+      case Role.AGENT_ANADER:
+        return [
+          { label: 'Zone d\'affectation',  value: (this.profile as any)?.zoneAffectation ?? 'Non renseignée' },
+          { label: 'Animaux enregistrés',  value: String((this.profile as any)?.animauxEnregistres ?? 0) },
+        ];
+      case Role.ADMIN:
+      case Role.ADMINISTRATEUR:
+        return [];
+      default:
+        return [];
+    }
+  }
+
+  // ──────────────────────────────────────────────
+  //  Badge de rôle (visible dans le profil header)
+  // ──────────────────────────────────────────────
+  get roleLabel(): string {
+    const labels: Partial<Record<Role, string>> = {
+      [Role.USER]:           'Acheteur',
+      [Role.ACHETEUR]:       'Acheteur',
+      [Role.VENDEUR]:        'Vendeur',
+      [Role.VETERINAIRE]:    'Vétérinaire',
+      [Role.AGENT_ANADER]:   'Agent ANADER',
+      [Role.ADMIN]:          'Administrateur',
+      [Role.ADMINISTRATEUR]: 'Administrateur',
+    };
+    return this.profile?.role ? (labels[this.profile.role] ?? String(this.profile.role)) : '';
+  }
+
+  get roleBadgeColor(): string {
+    const colors: Partial<Record<Role, string>> = {
+      [Role.USER]:           'bg-blue-100 text-blue-700',
+      [Role.ACHETEUR]:       'bg-blue-100 text-blue-700',
+      [Role.VENDEUR]:        'bg-orange-100 text-orange-700',
+      [Role.VETERINAIRE]:    'bg-green-100 text-green-700',
+      [Role.AGENT_ANADER]:   'bg-yellow-100 text-yellow-700',
+      [Role.ADMIN]:          'bg-red-100 text-red-700',
+      [Role.ADMINISTRATEUR]: 'bg-red-100 text-red-700',
+    };
+    return this.profile?.role ? (colors[this.profile.role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
+  }
+
+  // ──────────────────────────────────────────────
+  //  Guards de section — pour l'affichage conditionnel
+  // ──────────────────────────────────────────────
+  get isVendeur(): boolean {
+    return this.profile?.role === Role.VENDEUR;
+  }
+
+  get isVeterinaire(): boolean {
+    return this.profile?.role === Role.VETERINAIRE;
+  }
+
+  get isAgentAnader(): boolean {
+    return this.profile?.role === Role.AGENT_ANADER;
+  }
+
+  get isAdmin(): boolean {
+    return this.profile?.role === Role.ADMIN || this.profile?.role === Role.ADMINISTRATEUR;
+  }
+
+  get isAcheteur(): boolean {
+    return this.profile?.role === Role.ACHETEUR || this.profile?.role === Role.USER;
+  }
+
+  get hasCommentaires(): boolean {
+    return this.isAcheteur || this.isVendeur;
+  }
+
+  get hasPaiement(): boolean {
+    return this.isAcheteur || this.isVendeur;
+  }
+
+  get avatarInitial(): string {
+    const name = this.profile?.name ?? '';
+    return name.charAt(0).toUpperCase() || '?';
+  }
+
+  // ──────────────────────────────────────────────
   constructor(
     private auth: AuthService,
     private http: HttpClient
@@ -94,24 +244,9 @@ export class MonProfilComponent implements OnInit {
   get kycLabel(): string {
     const labels: Record<string, string> = {
       APPROVED: 'Identité vérifiée',
-      PENDING: 'Vérification en cours',
+      PENDING:  'Vérification en cours',
       REJECTED: 'Vérification rejetée',
     };
     return this.kycStatus ? (labels[this.kycStatus] ?? this.kycStatus) : 'Procédure non commencée';
-  }
-
-  get roleLabel(): string {
-    const labels: Partial<Record<Role, string>> = {
-      [Role.USER]: 'Acheteur',
-      [Role.ACHETEUR]: 'Acheteur',
-      [Role.VENDEUR]: 'Vendeur',
-      [Role.VETERINAIRE]: 'Vétérinaire',
-      [Role.AGENT_ANADER]: 'Agent ANADER',
-      [Role.ADMIN]: 'Administrateur',
-      [Role.ADMINISTRATEUR]: 'Administrateur',
-    };
-    return this.profile?.role
-      ? (labels[this.profile.role] ?? String(this.profile.role))
-      : '';
   }
 }
