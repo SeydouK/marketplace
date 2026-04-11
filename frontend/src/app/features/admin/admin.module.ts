@@ -1,10 +1,20 @@
+// admin/admin.module.ts
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { SharedModule } from '../../shared/shared.module';
 import { AdminRoutingModule } from './admin-routing.module';
-import { AdminHomeComponent } from './admin-home.component';
+import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
+import { GestionUtilisateursComponent } from './gestion-utilisateurs/gestion-utilisateurs.component';
+import { GestionAnnoncesComponent } from './gestion-annonces/gestion-annonces.component';
+import { GestionLitigesComponent } from './gestion-litiges/gestion-litiges.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
-  declarations: [AdminHomeComponent],
-  imports: [CommonModule, AdminRoutingModule],
+  declarations: [
+    DashboardAdminComponent,
+    GestionUtilisateursComponent,
+    GestionAnnoncesComponent,
+    GestionLitigesComponent,
+  ],
+  imports: [SharedModule, AdminRoutingModule, RouterModule],
 })
 export class AdminModule {}

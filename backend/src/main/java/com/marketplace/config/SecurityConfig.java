@@ -46,6 +46,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/animals", "/api/animals/*/validation").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/animals/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/animals", "/api/animals/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/annonces").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/annonces/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthenticationProvider())

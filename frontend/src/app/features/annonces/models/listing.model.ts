@@ -1,20 +1,29 @@
+export type AnimalStatus = 'DISPONIBLE' | 'EN_ATTENTE' | 'EN_ATTENTE_VALIDATION' | 'VENDU' | 'INDISPONIBLE';
+
 export interface Listing {
   id: string;
-  title: string;
-  description?: string;
-  animalType: string;
+  type?: string;        
+  race?: string;
+  lieuNaissance?: string;
+  displayName?: string;
   price: number;
-  location: string;
-  sellerId: number;
-  sellerName: string;
+  photos?: string[];
+  videos?: string[];
+  quantity?: number;
+  latitude?: number;
+  longitude?: number;
+  status?: AnimalStatus;
+  sellerId?: number;
+  sellerName?: string;
   sellerEmail?: string;
-  image?: string;
-  gallery?: string[];
-  breed?: string;
-  quantity: number;
-  status: string;
   qrCode?: string;
   groupedLot?: boolean;
-  latitude?: number | null;
-  longitude?: number | null;
+  createdAt?: string;
+
+  title?: string;         // = displayName
+  image?: string;         // = photos[0]
+  gallery?: string[];     // = photos
+  location?: string;      // = lieuNaissance
+  animalType?: string;    // = type
+  breed?: string;         // = race
 }

@@ -1,0 +1,67 @@
+<!-- acheteur/dashboard-acheteur/dashboard-acheteur.component.html -->
+<section class="dashboard-shell max-w-7xl mx-auto py-8 px-4">
+  <div class="dashboard-hero">
+    <div>
+      <p class="dashboard-eyebrow">Espace acheteur</p>
+      <h1>Bonjour, {{ profile?.name || 'Acheteur' }}</h1>
+      <p class="dashboard-copy">
+        Trouvez des animaux vérifiés, achetez en toute sécurité grâce au
+        <strong>paiement séquestre</strong> et suivez vos commandes en temps réel.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <article class="dashboard-card">
+      <span class="dashboard-label">Achats en cours</span>
+      <strong class="dashboard-value">{{ activeOrdersCount }}</strong>
+    </article>
+    <article class="dashboard-card">
+      <span class="dashboard-label">Achats terminés</span>
+      <strong class="dashboard-value">{{ completedOrdersCount }}</strong>
+    </article>
+    <article class="dashboard-card">
+      <span class="dashboard-label">Statut KYC</span>
+      <strong class="dashboard-value dashboard-value--small">
+        {{ profile?.kycStatus || 'En attente' }}
+      </strong>
+    </article>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-semibold text-[#611a24] mb-4">Actions rapides</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <a routerLink="/acheteur/marketplace" class="dashboard-action dashboard-action--solid">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span class="font-medium">Parcourir la marketplace</span>
+      </a>
+
+      <a routerLink="/acheteur/mes-achats" class="dashboard-action">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        <span class="font-medium">Mes achats &amp; escrow</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Bannière devenir vendeur -->
+  <div class="mt-8 rounded-xl border border-[#611a24]/20 bg-[#611a24]/5 p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+    <div class="flex-1">
+      <h3 class="font-semibold text-[#611a24]">Vous souhaitez vendre du bétail ?</h3>
+      <p class="text-sm text-gray-600 mt-1">
+        Complétez votre profil vendeur pour publier vos annonces sur la plateforme.
+      </p>
+    </div>
+    <a routerLink="/acheteur/devenir-vendeur"
+      class="shrink-0 bg-[#611a24] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#7a2030] transition">
+      Devenir vendeur
+    </a>
+  </div>
+</section>

@@ -148,13 +148,13 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.allListings.filter((listing) => {
       const matchesLocation =
         !normalizedLocation ||
-        this.normalizeText(listing.location).includes(normalizedLocation) ||
-        this.normalizeText(listing.title).includes(normalizedLocation) ||
-        this.normalizeText(listing.breed || '').includes(normalizedLocation) ||
-        this.normalizeText(listing.sellerName || '').includes(normalizedLocation);
-      const matchesAnimal =
-        !normalizedAnimalType ||
-        this.normalizeText(listing.animalType) === normalizedAnimalType;
+        this.normalizeText(listing.location ?? '').includes(normalizedLocation) ||
+        this.normalizeText(listing.title ?? '').includes(normalizedLocation) ||
+        this.normalizeText(listing.breed ?? '').includes(normalizedLocation) ||
+        this.normalizeText(listing.sellerName ?? '').includes(normalizedLocation);
+        const matchesAnimal =
+          !normalizedAnimalType ||
+          this.normalizeText(listing.animalType ?? '') === normalizedAnimalType;
 
       return matchesLocation && matchesAnimal;
     });
@@ -640,7 +640,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     const badgeShadow = active
       ? '0 18px 34px rgba(127,29,29,0.32)'
       : '0 16px 30px rgba(127,29,29,0.14)';
-    const typeLabel = this.formatAnimalType(listing.animalType);
+    const typeLabel = this.formatAnimalType(listing.animalType ?? '');
     const priceLabel = new Intl.NumberFormat('fr-FR', {
       maximumFractionDigits: 0,
     }).format(listing.price);

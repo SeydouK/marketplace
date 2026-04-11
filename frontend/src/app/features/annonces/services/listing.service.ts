@@ -1,103 +1,86 @@
+// annonces/services/listing.service.ts
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { Animal } from '../../animaux/models/animal.model';
-import { AnimalService } from '../../animaux/services/animal.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { Listing } from '../models/listing.model';
+import { map } from 'rxjs/operators';
 
-export interface ListingFilter {
-  location?: string;
-  animalType?: string;
-  status?: string;
-  minPrice?: number | null;
+export interface ListingPage {
+  content: Listing[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+}
+
+export interface ListingSearchParams {
+  species?: string;
+  region?: string;
   maxPrice?: number | null;
+  certified?: string;
+  page?: number;
+  size?: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ListingService {
-  constructor(private readonly animalService: AnimalService) {}
+  private base = `${environment.apiUrl}/animals`;
 
-  search(filter: ListingFilter = {}): Observable<Listing[]> {
-    return this.list(filter);
-  }
+  constructor(private http: HttpClient) {}
 
-  list(filter: ListingFilter = {}): Observable<Listing[]> {
-    return this.animalService
-      .list({
-        location: filter.location,
-        type: (filter.animalType as any) || '',
-        status: (filter.status as any) || '',
-        minPrice: filter.minPrice ?? null,
-        maxPrice: filter.maxPrice ?? null,
-      })
-      .pipe(map((animals) => animals.map((animal) => this.toListing(animal))));
-  }
-
-  get(id: string): Observable<Listing> {
-    return this.animalService
-      .get(id)
-      .pipe(map((animal) => this.toListing(animal)));
-  }
-
+  // Annonces du vendeur connecté
   myListings(): Observable<Listing[]> {
-    return this.animalService
-      .mine()
-      .pipe(map((animals) => animals.map((animal) => this.toListing(animal))));
+    return this.http.get<Listing[]>(`${this.base}/mes-annonces`);
   }
 
-  private toListing(animal: Animal): Listing {
-    const location = animal.lieuNaissance?.trim() || 'Localisation non renseignée';
-    const quantity = animal.quantity ?? 1;
-    const latestHistory = animal.history?.[0]?.description?.trim();
+  // Recherche marketplace publique
+  searchListings(params: ListingSearchParams): Observable<ListingPage> {
+    let httpParams = new HttpParams();
+    if (params.species) httpParams = httpParams.set('espece', params.species);
+    if (params.region) httpParams = httpParams.set('region', params.region);
+    if (params.maxPrice) httpParams = httpParams.set('prixMax', params.maxPrice);
+    if (params.certified === 'true') httpParams = httpParams.set('certifie', 'true');
+    if (params.page !== undefined) httpParams = httpParams.set('page', params.page);
+    if (params.size !== undefined) httpParams = httpParams.set('size', params.size);
+    return this.http.get<ListingPage>(`${this.base}`, { params: httpParams });
+  }
 
+
+  search(params: { location?: string; animalType?: string }): Observable<Listing[]> {
+    let httpParams = new HttpParams();
+    if (params.location) httpParams = httpParams.set('location', params.location);
+    if (params.animalType) httpParams = httpParams.set('type', params.animalType);
+
+    return this.http.get<any[]>(`${this.base}`, { params: httpParams }).pipe(
+      map(animals => animals.map(a => this.toListingFrontend(a)))
+    );
+  }
+
+  private toListingFrontend(a: any): Listing {
     return {
-      id: animal.id,
-      title: animal.displayName || this.buildTitle(animal),
-      description: latestHistory || this.buildDescription(animal, location, quantity),
-      animalType: animal.type,
-      price: animal.price,
-      location,
-      sellerId: animal.sellerId,
-      sellerName: animal.sellerName,
-      sellerEmail: animal.sellerEmail,
-      image: animal.photos[0] || '',
-      gallery: animal.photos,
-      breed: animal.race || '',
-      quantity,
-      status: animal.status,
-      qrCode: animal.qrCode,
-      groupedLot: animal.groupedLot,
-      latitude: this.toCoordinate(animal.latitude),
-      longitude: this.toCoordinate(animal.longitude),
+      ...a,
+      id: String(a.id),
+      title: a.displayName || a.race || a.type || 'Animal',
+      animalType: a.type,
+      location: a.lieuNaissance || '',
+      breed: a.race,
+      image: a.photos?.[0] || '',
+      gallery: a.photos || [],
     };
   }
 
-  private buildTitle(animal: Animal): string {
-    if (animal.race?.trim()) {
-      return `${this.formatAnimalType(animal.type)} ${animal.race.trim()}`;
-    }
-
-    return `${this.formatAnimalType(animal.type)} ${animal.qrCode}`;
+  getListing(id: number): Observable<Listing> {
+    return this.http.get<Listing>(`${this.base}/${id}`);
   }
 
-  private buildDescription(animal: Animal, location: string, quantity: number): string {
-    const lotLabel = quantity > 1 ? `${quantity} têtes` : '1 tête';
-    const groupedSuffix = animal.groupedLot
-      ? 'Ce lot est suivi sous une référence commune dans le POC.'
-      : 'Le dossier sanitaire reste associé à cet animal.';
-
-    return `${lotLabel} enregistré à ${location}. ${groupedSuffix}`;
+  deleteListing(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 
-  private formatAnimalType(animalType: string): string {
-    return animalType.charAt(0) + animalType.slice(1).toLowerCase();
-  }
-
-  private toCoordinate(value: unknown): number | null {
-    if (value == null || value === '') {
-      return null;
-    }
-
-    const normalized = Number(value);
-    return Number.isFinite(normalized) ? normalized : null;
+  // Ajouter cette méthode au service
+  get(id: string): Observable<Listing> {
+    return this.http.get<any>(`${this.base}/${id}`).pipe(
+      map(a => this.toListingFrontend(a))
+    );
   }
 }

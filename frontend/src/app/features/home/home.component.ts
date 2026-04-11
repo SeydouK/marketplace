@@ -51,11 +51,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.allListings.filter((listing) => {
       const matchesAnimal =
         !this.animalFilter ||
-        this.normalizeText(listing.animalType) === this.normalizeText(this.animalFilter);
+        this.normalizeText(listing.animalType ?? '') === this.normalizeText(this.animalFilter);
       const matchesSearch =
         !normalizedSearch ||
-        this.normalizeText(listing.title).includes(normalizedSearch) ||
-        this.normalizeText(listing.location).includes(normalizedSearch);
+        this.normalizeText(listing.title ?? '').includes(normalizedSearch) ||
+        this.normalizeText(listing.location ?? '').includes(normalizedSearch);
       return matchesAnimal && matchesSearch;
     });
   }

@@ -1,0 +1,54 @@
+<!-- admin/gestion-annonces/gestion-annonces.component.html -->
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Modération des annonces</h1>
+    <div class="flex gap-2">
+      <button *ngFor="let f of filters"
+        (click)="setFilter(f.value)"
+        [class.bg-[#611a24]]="activeFilter === f.value"
+        [class.text-white]="activeFilter === f.value"
+        class="px-4 py-2 rounded-lg text-sm border border-[#611a24]/30 hover:bg-[#611a24]/10 transition">
+        {{ f.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-xl border border-gray-200">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3 text-left">Animal</th>
+          <th class="px-4 py-3 text-left">Vendeur</th>
+          <th class="px-4 py-3 text-left">Prix</th>
+          <th class="px-4 py-3 text-left">Statut sanitaire</th>
+          <th class="px-4 py-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let listing of listings" class="hover:bg-gray-50 transition">
+          <td class="px-4 py-3 font-medium">{{ listing.animalName }}</td>
+          <td class="px-4 py-3 text-gray-500">{{ listing.sellerName }}</td>
+          <td class="px-4 py-3 font-medium text-[#611a24]">{{ listing.price | number }} FCFA</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getSanitaryBadge(listing.sanitaryStatus)">
+              {{ listing.sanitaryStatus }}
+            </span>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex gap-2">
+              <button (click)="approve(listing)"
+                class="text-xs px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                Approuver
+              </button>
+              <button (click)="suspend(listing)"
+                class="text-xs px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                Suspendre
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

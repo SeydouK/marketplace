@@ -1,20 +1,20 @@
+// vendeur/dashboard-vendeur/dashboard-vendeur.component.ts
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
-import { DashboardService } from '../services/dashboard.service';
+import { DashboardService } from '../../profil/services/dashboard.service';
 
 @Component({
-  selector: 'app-dashboard-proprietaire',
-  templateUrl: './dashboard-proprietaire.component.html',
-  styleUrls: ['./dashboard-proprietaire.component.css'],
+  selector: 'app-dashboard-vendeur',
+  templateUrl: './dashboard-vendeur.component.html',
   standalone: false,
 })
-export class DashboardProprietaireComponent implements OnInit {
+export class DashboardVendeurComponent implements OnInit {
   profile?: User;
 
   constructor(
     private dashboardService: DashboardService,
-    private readonly auth: AuthService
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {

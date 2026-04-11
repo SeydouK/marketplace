@@ -1,0 +1,145 @@
+<!-- features/profil/mon-profil/mon-profil.component.html -->
+<div class="min-h-screen bg-white">
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- Titre page -->
+    <h1 class="text-2xl font-semibold text-gray-900 mb-8">Paramètres du compte</h1>
+
+    <div class="flex gap-10">
+
+      <!-- ═══ SIDEBAR ═══ -->
+      <aside class="hidden md:flex flex-col gap-1 w-60 flex-shrink-0">
+        <button *ngFor="let section of sections"
+          type="button"
+          (click)="activeSection = section.key"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors text-left w-full"
+          [ngClass]="activeSection === section.key
+            ? 'bg-gray-100 font-semibold text-gray-900'
+            : 'text-gray-600 hover:bg-gray-50 font-medium'">
+          <span class="text-lg">{{ section.icon }}</span>
+          {{ section.label }}
+        </button>
+      </aside>
+
+      <!-- ═══ CONTENU ═══ -->
+      <main class="flex-1 min-w-0">
+
+        <!-- A PROPOS DE MOI -->
+        <ng-container *ngIf="activeSection === 'infos'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">À propos de moi</h2>
+
+          <div class="space-y-0 divide-y divide-gray-100">
+
+            <!-- Nom -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Nom officiel</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ profile?.name || 'Non renseigné' }}</p>
+              </div>
+              <button type="button" (click)="startEdit('name')"
+                class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
+                Modifier
+              </button>
+            </div>
+
+            <!-- Email -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Adresse e-mail</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ maskedEmail }}</p>
+              </div>
+              <span class="text-sm text-gray-400">Non modifiable</span>
+            </div>
+
+            <!-- Téléphone -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Numéro de téléphone</p>
+                <p class="text-sm text-gray-400 mt-0.5">Bientôt disponible</p>
+              </div>
+              <span class="text-sm text-gray-300">Ajouter</span>
+            </div>
+
+            <!-- Adresse résidentielle -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Adresse résidentielle</p>
+                <p class="text-sm text-gray-400 mt-0.5">Bientôt disponible</p>
+              </div>
+              <span class="text-sm text-gray-300">Ajouter</span>
+            </div>
+
+            <!-- KYC -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Vérification d'identité</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ kycLabel }}</p>
+              </div>
+              <a *ngIf="!kycApproved" routerLink="/auth/kyc"
+                class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
+                Commencer
+              </a>
+              <span *ngIf="kycApproved"
+                class="text-sm font-medium text-green-600">Vérifié ✓</span>
+            </div>
+
+          </div>
+
+          <!-- Formulaire inline modification nom -->
+          <div *ngIf="editingField === 'name'"
+            class="mt-6 p-5 bg-gray-50 rounded-2xl border border-gray-200">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">Modifier le nom</h3>
+            <input type="text" [(ngModel)]="editValue" name="editName"
+              class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF385C]/30 focus:border-[#FF385C] transition mb-3"/>
+            <div class="flex gap-2 justify-end">
+              <button type="button" (click)="cancelEdit()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+                Annuler
+              </button>
+              <button type="button" (click)="saveField()"
+                [disabled]="saving"
+                class="px-5 py-2 text-sm font-semibold bg-[#FF385C] text-white rounded-xl hover:bg-[#e0314f] disabled:opacity-50 transition-colors">
+                {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+            </div>
+            <p *ngIf="successMessage" class="text-sm text-green-600 mt-2">{{ successMessage }}</p>
+          </div>
+        </ng-container>
+
+        <!-- Historique de paiement-->
+        <ng-container *ngIf="activeSection === 'securite'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Historique de paiement</h2>
+          <div class="divide-y divide-gray-100">
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Mot de passe</p>
+                <p class="text-sm text-gray-400 mt-0.5">Modifié il y a plus de 3 mois</p>
+              </div>
+              <button type="button" class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C]">
+                Modifier
+              </button>
+            </div>
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Authentification à deux facteurs</p>
+                <p class="text-sm text-gray-400 mt-0.5">Bientôt disponible</p>
+              </div>
+              <span class="text-sm text-gray-300">Activer</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- MON ESPACE / DASHBOARD -->
+        <ng-container *ngIf="activeSection === 'dashboard'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Mon espace</h2>
+          <p class="text-sm text-gray-500 mb-6">Accédez à votre tableau de bord.</p>
+          <a routerLink="/dashboard"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+            Aller au tableau de bord →
+          </a>
+        </ng-container>
+
+      </main>
+    </div>
+  </div>
+</div>

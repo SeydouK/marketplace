@@ -1,17 +1,13 @@
+// shared/components/header/header.component.ts
 import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { User } from '../../../core/models/user.model';
+import { Role } from '../../../core/models/role.enum';
 import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
 
-type HeaderNavItem = {
-  key: 'homes' | 'experiences' | 'services';
-  route: string;
-  desktopLabel: string;
-  mobileLabel: string;
-  icon: string;
-};
+type TabKey = 'logements' | 'experiences' | 'services';
 
 type AnimalFilterItem = {
   value: string;
@@ -31,31 +27,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   menuOpen = false;
   animalFilter = '';
   searchTerm = '';
+  activeTab: TabKey = 'logements';
   private readonly subscriptions = new Subscription();
-
-  readonly navItems: HeaderNavItem[] = [
-    {
-      key: 'homes',
-      route: '/',
-      desktopLabel: 'Accueil',
-      mobileLabel: 'Accueil',
-      icon: 'assets/images/home.png',
-    },
-    {
-      key: 'experiences',
-      route: '/experiences',
-      desktopLabel: 'Annonces',
-      mobileLabel: 'Exp\u00E9riences',
-      icon: 'assets/images/light-bulb.png',
-    },
-    {
-      key: 'services',
-      route: '/services',
-      desktopLabel: 'Services',
-      mobileLabel: 'Services',
-      icon: 'assets/images/bell.png',
-    },
-  ];
 
   readonly animalFilters: AnimalFilterItem[] = [
     { value: '', label: 'Tout', icon: 'assets/images/infinity.png' },
@@ -63,7 +36,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { value: 'OVIN', label: 'Ovins', icon: 'assets/images/sheep.png' },
     { value: 'CAPRIN', label: 'Caprins', icon: 'assets/images/sheep.png' },
     { value: 'PORCIN', label: 'Porcins', icon: 'assets/images/pig.png' },
-    { value: 'AUTRE', label: 'Autres', icon: 'assets/images/infinity.png' },
   ];
 
   constructor(
@@ -75,11 +47,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUrl = this.router.url;
+    this.syncTabFromUrl(this.currentUrl);
 
     this.subscriptions.add(
-      this.auth.currentUser$.subscribe((user) => {
-        this.currentUser = user;
-      })
+      this.auth.currentUser$.subscribe((user) => (this.currentUser = user))
     );
 
     this.subscriptions.add(
@@ -87,20 +58,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (event instanceof NavigationEnd) {
           this.currentUrl = event.urlAfterRedirects;
           this.menuOpen = false;
+          this.syncTabFromUrl(this.currentUrl);
         }
       })
     );
 
     this.subscriptions.add(
-      this.uiState.animalFilter$.subscribe((animalFilter) => {
-        this.animalFilter = animalFilter;
-      })
+      this.uiState.animalFilter$.subscribe((f) => (this.animalFilter = f))
     );
 
     this.subscriptions.add(
-      this.uiState.searchTerm$.subscribe((searchTerm) => {
-        this.searchTerm = searchTerm;
-      })
+      this.uiState.searchTerm$.subscribe((t) => (this.searchTerm = t))
     );
   }
 
@@ -132,19 +100,66 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.uiState.setAnimalFilter(filter);
   }
 
-  updateSearchTerm(value: string): void {
-    this.uiState.setSearchTerm(value);
+  setActiveTab(tab: TabKey): void {
+    this.activeTab = tab;
   }
 
-  isPageActive(key: HeaderNavItem['key']): boolean {
-    if (key === 'homes') {
-      return this.currentUrl === '/';
-    }
+  focusSearch(): void {
+    // Peut ouvrir un modal de recherche plus tard
+  }
 
-    return this.currentUrl.startsWith(`/${key}`);
+  private syncTabFromUrl(url: string): void {
+    if (url.startsWith('/annonces')) this.activeTab = 'experiences';
+    else if (url.startsWith('/services')) this.activeTab = 'services';
+    else this.activeTab = 'logements';
+  }
+
+  // ── Getters ──────────────────────────────────
+
+  get animalFilterLabel(): string {
+    return this.animalFilters.find((f) => f.value === this.animalFilter)?.label ?? '';
+  }
+
+  get isAcheteur(): boolean {
+    return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]);
+  }
+
+  get isVendeur(): boolean {
+    return this.auth.hasRole(Role.VENDEUR);
+  }
+
+  get isVeterinaire(): boolean {
+    return this.auth.hasRole(Role.VETERINAIRE);
+  }
+
+  get isAnader(): boolean {
+    return this.auth.hasRole(Role.AGENT_ANADER);
+  }
+
+  get isAdmin(): boolean {
+    return this.auth.hasAnyRole([Role.ADMIN, Role.ADMINISTRATEUR]);
   }
 
   get currentUserInitial(): string {
     return (this.currentUser?.name ?? '?').charAt(0).toUpperCase();
+  }
+
+  get isHomePage(): boolean {
+    return this.currentUrl === '/' || this.currentUrl === '';
+  }
+
+  get roleLabel(): string {
+    const labels: Partial<Record<Role, string>> = {
+      [Role.USER]: 'Acheteur',
+      [Role.ACHETEUR]: 'Acheteur',
+      [Role.VENDEUR]: 'Vendeur',
+      [Role.VETERINAIRE]: 'Vétérinaire',
+      [Role.AGENT_ANADER]: 'Agent ANADER',
+      [Role.ADMIN]: 'Administrateur',
+      [Role.ADMINISTRATEUR]: 'Administrateur',
+    };
+    return this.currentUser?.role
+      ? (labels[this.currentUser.role] ?? String(this.currentUser.role))
+      : '';
   }
 }

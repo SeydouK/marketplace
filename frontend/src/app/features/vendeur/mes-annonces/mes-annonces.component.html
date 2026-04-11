@@ -1,0 +1,49 @@
+<!-- vendeur/mes-annonces/mes-annonces.component.html -->
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <h1 class="text-2xl font-bold">Mes annonces publiées</h1>
+    <a routerLink="/animaux/creer"
+      class="bg-[#611a24] text-white px-5 py-3 rounded-lg hover:bg-[#7a2030] transition inline-flex items-center gap-3">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span class="font-medium">Enregistrer un animal</span>
+    </a>
+  </div>
+
+  <!-- Filtres statut -->
+  <div class="flex gap-2 mb-6 flex-wrap">
+    <button *ngFor="let f of statusFilters"
+      (click)="setFilter(f.value)"
+      [class.bg-[#611a24]]="activeFilter === f.value"
+      [class.text-white]="activeFilter === f.value"
+      [class.border-[#611a24]]="activeFilter === f.value"
+      class="px-3 py-1.5 rounded-full text-sm border border-gray-300 hover:border-[#611a24] transition">
+      {{ f.label }}
+    </button>
+  </div>
+
+  <!-- Grille annonces -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+    *ngIf="filteredListings.length; else emptyState">
+    <app-listing-card
+      *ngFor="let listing of filteredListings"
+      [listing]="listing"
+      [showActions]="true"
+      (onDelete)="deleteListing($event)">
+    </app-listing-card>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="text-center py-16 text-gray-400">
+      <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <p>Aucune annonce dans cette catégorie.</p>
+      <a routerLink="/animaux/creer" class="mt-3 inline-block text-sm text-[#611a24] underline">
+        Enregistrer votre premier animal
+      </a>
+    </div>
+  </ng-template>
+</div>
