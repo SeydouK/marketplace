@@ -30,7 +30,7 @@
       <!-- ═══ CONTENU ═══ -->
       <main class="flex-1 min-w-0">
 
-        <!-- ─── À PROPOS DE MOI (commun + champs rôle-spécifiques) ─── -->
+        <!-- ─── À PROPOS DE MOI ─── -->
         <ng-container *ngIf="activeSection === 'infos'">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold text-gray-900">À propos de moi</h2>
@@ -45,83 +45,130 @@
 
             <!-- Carte avatar cliquable -->
             <div class="flex-shrink-0 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col items-center gap-2 w-44">
-              <!-- Zone avatar avec overlay au survol -->
               <div class="relative group cursor-pointer" (click)="triggerAvatarUpload()">
-                <!-- Photo si disponible, sinon initiale -->
                 <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-semibold select-none overflow-hidden">
                   <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Photo de profil"
                     class="w-full h-full object-cover" />
                   <span *ngIf="!avatarUrl">{{ avatarInitial }}</span>
                 </div>
-                <!-- Overlay "Changer" au survol -->
                 <div class="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <span class="text-white text-xs font-medium text-center leading-tight px-1">Changer</span>
                 </div>
               </div>
-              <!-- Input file caché -->
               <input #avatarInput type="file" accept="image/*" class="hidden"
                 (change)="onAvatarSelected($event)" />
               <p class="text-base font-bold text-gray-900 text-center">{{ profile?.name || 'Utilisateur' }}</p>
               <p class="text-sm text-gray-500">{{ roleLabel }}</p>
-              <!-- Indicateur upload en cours -->
               <p *ngIf="uploadingAvatar" class="text-xs text-gray-400 animate-pulse">Envoi...</p>
             </div>
 
-            <!-- Infos à droite -->
-            <div class="flex flex-col gap-3 pt-1">
+            <!-- ── Infos alignées à droite de la photo ── -->
+            <div class="flex-1 flex flex-col gap-3 pt-2">
+
+              <!-- Email -->
               <div class="flex items-center gap-2 text-sm text-gray-700">
-                <span class="text-base">📧</span>
+                <span class="text-base leading-none">📧</span>
                 <span>{{ maskedEmail }}</span>
               </div>
+
+              <!-- Statut KYC — labels calqués sur l'enum Java -->
               <div class="flex items-center gap-2 text-sm text-gray-700">
-                <span class="text-base">🪪</span>
-                <span>Vérification d'identité :
-                  <span [ngClass]="kycApproved ? 'text-green-600 font-medium' : 'text-gray-400'">
-                    {{ kycLabel }}
-                  </span>
+                <span class="text-base leading-none">🪪</span>
+                <span>Identité :&nbsp;
+                  <!-- VALIDATED = approuvé -->
+                  <span *ngIf="kycApproved"
+                    class="text-green-600 font-semibold">✓ Vérifiée</span>
+                  <!-- En cours -->
+                  <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')"
+                    class="text-amber-500 font-medium">⏳ En cours</span>
+                  <!-- CNI vérifiée, selfie manquant -->
+                  <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'"
+                    class="text-blue-500 font-medium">📷 Selfie requis</span>
+                  <!-- Rejeté -->
+                  <span *ngIf="!kycApproved && kycStatus === 'REJECTED'"
+                    class="text-red-500 font-medium">✗ Rejetée</span>
+                  <!-- Non commencée -->
+                  <span *ngIf="!kycApproved && (!kycStatus)"
+                    class="text-gray-400">Non commencée</span>
                 </span>
               </div>
+
+              <!-- Champs spécifiques au rôle -->
               <ng-container *ngFor="let info of roleSpecificInfos">
                 <div class="flex items-center gap-2 text-sm text-gray-700">
-                  <span class="text-base">📌</span>
-                  <span>{{ info.label }} : <span class="font-medium">{{ info.value }}</span></span>
+                  <span class="text-base leading-none">📌</span>
+                  <span>{{ info.label }} :&nbsp;<span class="font-medium">{{ info.value }}</span></span>
                 </div>
               </ng-container>
+
             </div>
           </div>
 
           <hr class="border-gray-100 mb-6" />
 
-          <!-- Champs éditables en dessous -->
-          <div class="space-y-0 divide-y divide-gray-100">
+          <!-- Champs en lecture seule — modifiables via /profil/parametres -->
+          <div class="divide-y divide-gray-100">
+
+            <!-- Nom officiel -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Nom de famille</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ profile?.name || 'Information non fournie' }}</p>
+              </div>
+            </div>
+
+            <!-- Prénom -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Prénom d'usage</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ profile?.surname || 'Information non fournie' }}</p>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="flex items-center justify-between py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Adresse e-mail</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ maskedEmail }}</p>
+              </div>
+              <span class="text-xs text-gray-400">Non modifiable</span>
+            </div>
 
             <!-- Téléphone -->
             <div class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Numéro de téléphone</p>
-                <p class="text-sm text-gray-400 mt-0.5">Bientôt disponible</p>
+                <p class="text-sm text-gray-500 mt-0.5">
+                  {{ profile?.phone || 'Ajoutez un numéro pour que les acheteurs confirmés puissent vous joindre.' }}
+                </p>
               </div>
-              <span class="text-sm text-gray-300">Ajouter</span>
             </div>
 
             <!-- Adresse résidentielle -->
             <div class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Adresse résidentielle</p>
-                <p class="text-sm text-gray-400 mt-0.5">Bientôt disponible</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ profile?.address || 'Information non fournie' }}</p>
               </div>
-              <span class="text-sm text-gray-300">Ajouter</span>
             </div>
 
-            <!-- KYC action si non vérifié -->
-            <div *ngIf="!kycApproved" class="flex items-center justify-between py-4">
+            <!-- KYC — uniquement si non validé -->
+            <div *ngIf="!kycApproved && kycStatus !== 'PENDING' && kycStatus !== 'CNI_UPLOADED'"
+              class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Vérification d'identité</p>
-                <p class="text-sm text-gray-500 mt-0.5">{{ kycLabel }}</p>
+                <p class="text-sm mt-0.5"
+                  [ngClass]="{
+                    'text-blue-500': kycStatus === 'CNI_VERIFIED',
+                    'text-red-400':  kycStatus === 'REJECTED',
+                    'text-gray-400': !kycStatus
+                  }">
+                  {{ kycLabel }}
+                </p>
               </div>
-              <a routerLink="/auth/kyc"
+              <a routerLink="/kyc"
                 class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
-                Commencer
+                {{ kycStatus === 'REJECTED' ? 'Réessayer' : kycStatus === 'CNI_VERIFIED' ? 'Prendre un selfie' : 'Commencer' }}
               </a>
             </div>
 
@@ -148,7 +195,7 @@
           </div>
         </ng-container>
 
-        <!-- ─── HISTORIQUE DE PAIEMENT (Acheteur + Vendeur uniquement) ─── -->
+        <!-- ─── HISTORIQUE DE PAIEMENT (Acheteur + Vendeur) ─── -->
         <ng-container *ngIf="activeSection === 'historique-paiement' && hasPaiement">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Historique de paiement</h2>
           <div class="divide-y divide-gray-100">
@@ -171,7 +218,7 @@
           </div>
         </ng-container>
 
-        <!-- ─── MES COMMENTAIRES (Acheteur + Vendeur uniquement) ─── -->
+        <!-- ─── MES COMMENTAIRES (Acheteur + Vendeur) ─── -->
         <ng-container *ngIf="activeSection === 'commentaires' && hasCommentaires">
           <div class="flex items-center gap-3 mb-6">
             <span class="text-xl">💬</span>
@@ -252,7 +299,9 @@
             <div class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Région</p>
-                <p class="text-sm text-gray-500 mt-0.5">{{ (profile)?.zoneIntervention || (profile)?.zoneAffectation || 'Non renseignée' }}</p>
+                <p class="text-sm text-gray-500 mt-0.5">
+                  {{ profile?.zoneIntervention || profile?.zoneAffectation || 'Non renseignée' }}
+                </p>
               </div>
             </div>
           </div>
@@ -268,14 +317,14 @@
             <div class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Total animaux enregistrés</p>
-                <p class="text-2xl font-bold text-[#FF385C] mt-1">{{ (profile)?.animauxEnregistres ?? 0 }}</p>
+                <p class="text-2xl font-bold text-[#FF385C] mt-1">{{ profile?.animauxEnregistres ?? 0 }}</p>
               </div>
             </div>
             <div class="flex items-center justify-between py-4">
               <div>
                 <p class="text-sm font-medium text-gray-900">Rémunération estimée</p>
                 <p class="text-2xl font-bold text-gray-700 mt-1">
-                  {{ ((profile)?.animauxEnregistres ?? 0) * 500 | number }} FCFA
+                  {{ (profile?.animauxEnregistres ?? 0) * 500 | number }} FCFA
                 </p>
               </div>
             </div>

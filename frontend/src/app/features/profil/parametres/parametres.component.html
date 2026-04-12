@@ -49,7 +49,7 @@
 
             <div class="flex items-start justify-between py-5">
               <div>
-                <p class="text-sm font-semibold text-gray-900">Nom officiel</p>
+                <p class="text-sm font-semibold text-gray-900">Nom de famille</p>
                 <p class="text-sm text-gray-500 mt-1">{{ profile?.name || 'Non renseigné' }}</p>
               </div>
               <button type="button" (click)="startEdit('name')"
@@ -90,18 +90,7 @@
               </button>
             </div>
 
-            <div class="flex items-start justify-between py-5">
-              <div>
-                <p class="text-sm font-semibold text-gray-900">Vérification d'identité (KYC)</p>
-                <p class="text-sm text-gray-400 mt-1">{{ kycLabel }}</p>
-              </div>
-              <a *ngIf="!kycApproved" routerLink="/auth/kyc"
-                class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
-                Commencer
-              </a>
-              <span *ngIf="kycApproved"
-                class="text-sm font-semibold text-green-600 flex-shrink-0 ml-4">Vérifié ✓</span>
-            </div>
+            
 
             <div class="flex items-start justify-between py-5">
               <div>

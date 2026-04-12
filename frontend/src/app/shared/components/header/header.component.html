@@ -57,25 +57,24 @@
       <div *ngIf="!isHomePage" class="flex-1"></div>
 
       <!-- Droite -->
-      <div class="flex items-center gap-3 flex-shrink-0 w-44 justify-end">
+      <div class="flex items-center gap-3 flex-shrink-0 justify-end">
         <a *ngIf="isAcheteur || !currentUser" routerLink="/devenir-vendeur"
           class="text-sm font-semibold text-gray-700 hover:bg-gray-100 px-4 py-2.5 rounded-full transition-colors whitespace-nowrap">
           Devenir vendeur
         </a>
 
         <button type="button"
-          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors flex-shrink-0">
           <img src="assets/images/globe.png" alt="langue" class="h-5 w-5"/>
         </button>
 
         <!-- Bouton menu -->
-        <div class="relative">
+        <div class="relative flex-shrink-0">
           <button type="button" (click)="toggleMenu()"
-            class="relative flex items-center gap-3 px-3 py-2.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-all bg-white">
-            <img src="assets/images/menu.png" class="h-5 w-5" alt="menu"/>
-            <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm"
-              [class.bg-[#FF385C]]="currentUser"
-              [class.bg-gray-400]="!currentUser">
+            class="relative flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-all bg-white">
+            <img src="assets/images/menu.png" class="h-5 w-5 flex-shrink-0" alt="menu"/>
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 overflow-hidden"
+              [ngClass]="currentUser ? 'bg-[#FF385C]' : 'bg-gray-400'">
               {{ currentUser ? currentUserInitial : '?' }}
             </div>
             <span *ngIf="currentUser"

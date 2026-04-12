@@ -3,6 +3,8 @@ import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
+import Tesseract from 'tesseract.js';
+import { UserStatusService } from '../../../core/services/user-status.service';
 
 @Component({
   selector: 'app-register',
@@ -13,6 +15,7 @@ import { ToastService } from '../../../core/services/toast.service';
 export class RegisterComponent {
   form = this.fb.group(
     {
+      surname: ['', Validators.required],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -31,7 +34,8 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private toast: ToastService
+    private toast: ToastService,
+    private userStatusService: UserStatusService
   ) {}
 
   togglePassword(): void {
@@ -61,14 +65,24 @@ export class RegisterComponent {
     this.submitted = true;
     if (this.form.invalid) return;
 
-    const { name, email, password } = this.form.getRawValue();
-    this.auth.register({ name: name!, email: email!, password: password! }).subscribe({
-      next: () => {
-        this.toast.success('Compte cree avec succes');
-        this.router.navigate(['/']);
+    const { surname, name, email, password } = this.form.getRawValue();
+    this.auth.register({ surname: surname!, name: name!, email: email!, password: password! }).subscribe({
+      next: (res: any) => {
+        localStorage.setItem("token", res.token);
+        this.userStatusService.update({
+          emailVerified: res.emailVerified,
+          kycStatus: res.kycStatus,
+          role: res.role,
+        });
+        this.toast.success('Compte crée avec succès');
+        this.router.navigate(['/verify-email']);
       },
+      error:(err) => {
+        this.toast.error(err.error.message || "Erreur inscription");
+      }
     });
   }
+
 
   private passwordMatchValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

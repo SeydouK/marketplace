@@ -5,15 +5,21 @@ import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 import { RoleRedirectGuard } from './core/guards/role-redirect.guard';
 import { Role } from './core/models/role.enum';
+import { VerifyEmailComponent } from './features/verify-email/verify-email.component';
+import { KycComponent } from './features/kyc/kyc.component';
+import { KycGuard } from './features/kyc/kyc.guard';
 
 const routes: Routes = [
+  // Redirect racine
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+
   // Raccourcis legacy
-  { path: 'login', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: 'login',    redirectTo: 'auth/login',    pathMatch: 'full' },
   { path: 'register', redirectTo: 'auth/register', pathMatch: 'full' },
 
-  // Page d'accueil publique (cards, carte, recherche) — pas de guard
+  // Page d'accueil publique
   {
-    path: '',
+    path: 'home',
     loadChildren: () =>
       import('./features/home/home.module').then((m) => m.HomeModule),
   },
@@ -26,6 +32,20 @@ const routes: Routes = [
       import('./features/auth/auth.module').then((m) => m.AuthModule),
   },
 
+  // Vérification e-mail
+  {
+    path: 'verify-email',
+    component: VerifyEmailComponent,
+    canActivate: [AuthGuard],
+  },
+
+  // KYC
+  {
+    path: 'kyc',
+    component: KycComponent,
+    canActivate: [AuthGuard],
+  },
+
   // Annonces publiques
   {
     path: 'annonces',
@@ -36,11 +56,11 @@ const routes: Routes = [
   // Dashboard : redirect vers le bon espace selon le rôle
   {
     path: 'dashboard',
-    canActivate: [RoleRedirectGuard],
+    canActivate: [AuthGuard, RoleRedirectGuard],
     children: [],
   },
 
-  // Acheteur (USER / ACHETEUR — rôle par défaut)
+  // Acheteur (USER / ACHETEUR)
   {
     path: 'acheteur',
     canActivate: [AuthGuard, RoleGuard],
@@ -85,7 +105,7 @@ const routes: Routes = [
       import('./features/admin/admin.module').then((m) => m.AdminModule),
   },
 
-  // Animaux (vendeur + vétérinaire + anader)
+  // Animaux (vendeur + vétérinaire + anader + admin)
   {
     path: 'animaux',
     canActivate: [AuthGuard, RoleGuard],
@@ -97,16 +117,20 @@ const routes: Routes = [
   // Profil
   {
     path: 'profil',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, KycGuard],
     loadChildren: () =>
       import('./features/profil/profil.module').then((m) => m.ProfilModule),
   },
 
-  { path: '**', redirectTo: '' },
+  // Fallback
+  { path: '**', redirectTo: '/home' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
+  imports: [RouterModule.forRoot(routes, {
+    preloadingStrategy: PreloadAllModules,
+    onSameUrlNavigation: 'reload',
+  })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

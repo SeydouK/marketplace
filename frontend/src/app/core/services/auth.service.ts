@@ -7,6 +7,7 @@ import { JwtResponse } from '../models/jwt-response.model';
 import { User } from '../models/user.model';
 import { Role } from '../models/role.enum';
 import { StorageService } from './storage.service';
+import { UserStatusService } from './user-status.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 
-  constructor(private http: HttpClient, private storage: StorageService) {
+  constructor(private http: HttpClient, private storage: StorageService, private userStatusService: UserStatusService) {
     this.currentUserSubject = new BehaviorSubject<User | null>(this.storage.getUser());
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
@@ -43,11 +44,18 @@ export class AuthService {
           this.storage.setToken(res.token);
           this.storage.setUser(user);
           this.currentUserSubject.next(user);
+
+          this.userStatusService.update({
+            emailVerified: res.emailVerified,
+            kycStatus: res.kycStatus,
+            role: res.role,
+          });
         })
       );
   }
 
   register(data: {
+    surname: string;
     name: string;
     email: string;
     password: string;
@@ -65,6 +73,12 @@ export class AuthService {
           this.storage.setToken(res.token);
           this.storage.setUser(user);
           this.currentUserSubject.next(user);
+
+          this.userStatusService.update({
+            emailVerified: res.emailVerified,
+            kycStatus: res.kycStatus,
+            role: res.role,
+          });
         })
       );
   }
@@ -88,5 +102,6 @@ export class AuthService {
   logout() {
     this.storage.clear();
     this.currentUserSubject.next(null);
+    this.userStatusService.clear();
   }
 }

@@ -6,6 +6,7 @@ import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.enum';
 import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
+import { NgOptimizedImage } from '@angular/common';
 
 type TabKey = 'logements' | 'experiences' | 'services';
 
@@ -145,7 +146,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   get isHomePage(): boolean {
-    return this.currentUrl === '/' || this.currentUrl === '';
+    return (
+      this.currentUrl === '/' ||
+      this.currentUrl === '' ||
+      this.currentUrl === '/home' ||
+      this.currentUrl.startsWith('/home?')
+    );
   }
 
   get roleLabel(): string {

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { Role } from '../../../core/models/role.enum';
 import { environment } from '../../../../environments/environment';
+import { UserStatusService } from '../../../core/services/user-status.service';
 
 type SectionKey =
   | 'infos'
@@ -188,7 +189,8 @@ export class MonProfilComponent implements OnInit {
   // ──────────────────────────────────────────────
   constructor(
     private auth: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private userStatusService: UserStatusService
   ) {}
 
   ngOnInit(): void {
@@ -268,27 +270,28 @@ export class MonProfilComponent implements OnInit {
   }
 
   get maskedEmail(): string {
-    const email = this.profile?.email ?? '';
-    const [local, domain] = email.split('@');
-    if (!domain) return email;
-    const masked = local.charAt(0) + '***' + local.slice(-1);
-    return `${masked}@${domain}`;
+    return this.profile?.email ?? '';
   }
-
+  
   get kycStatus(): string | undefined {
-    return (this.profile as any)?.kycStatus;
+    const fromStatus = this.userStatusService.snapshot?.kycStatus;
+    return fromStatus ?? (this.profile as any)?.kycStatus;
   }
 
   get kycApproved(): boolean {
-    return this.kycStatus === 'APPROVED';
+    return this.kycStatus === 'VALIDATED' || this.kycStatus === 'APPROVED';
   }
 
   get kycLabel(): string {
     const labels: Record<string, string> = {
-      APPROVED: 'Identité vérifiée',
-      PENDING:  'Vérification en cours',
-      REJECTED: 'Vérification rejetée',
+      PENDING:      'Vérification en cours',
+      CNI_UPLOADED: 'CNI reçue — en attente de traitement',
+      CNI_VERIFIED: 'CNI vérifiée — selfie requis',
+      VALIDATED:    'Identité vérifiée',
+      REJECTED:     'Vérification rejetée',
     };
     return this.kycStatus ? (labels[this.kycStatus] ?? this.kycStatus) : 'Procédure non commencée';
   }
+
+  
 }

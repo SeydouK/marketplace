@@ -6,4 +6,6 @@ export interface JwtResponse {
   email: string;
   role: Role;
   name: string;
+  emailVerified: boolean;
+  kycStatus: string;
 }

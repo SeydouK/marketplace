@@ -9,9 +9,10 @@ import { CitySectionComponent } from './components/city-section/city-section.com
 import { Menubar } from 'primeng/menubar';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { StatusBannerComponent } from './components/status-banner/status-banner.component';
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent],
+  declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent, StatusBannerComponent],
   imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner],
   exports: [
     HeaderComponent,
@@ -23,6 +24,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
     Button,
     ProgressSpinner,
     CommonModule,
+    StatusBannerComponent
   ],
 })
 export class SharedModule {}
