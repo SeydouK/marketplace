@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { Role } from '../../../core/models/role.enum';
 import { environment } from '../../../../environments/environment';
+import { UserStatusService } from '../../../core/services/user-status.service';
 
 @Component({
   selector: 'app-dashboard-vendeur',
@@ -22,6 +23,7 @@ export class DashboardVendeurComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private http: HttpClient,
+    private userStatusService: UserStatusService,
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +59,9 @@ export class DashboardVendeurComponent implements OnInit {
 
   // ── KYC ──
   get kycApproved(): boolean {
-    return (this.profile as any)?.kycStatus === 'APPROVED';
+    const status = this.userStatusService.snapshot?.kycStatus
+                ?? (this.profile as any)?.kycStatus;
+    return status === 'VALIDATED' || status === 'APPROVED';
   }
 
   // ── Accès validation sanitaire (vendeur vérifié seulement) ──

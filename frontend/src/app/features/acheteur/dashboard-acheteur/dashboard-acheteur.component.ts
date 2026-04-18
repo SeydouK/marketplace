@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
+import { UserStatusService } from '../../../core/services/user-status.service';
 
 @Component({
   selector: 'app-dashboard-acheteur',
@@ -20,6 +21,7 @@ export class DashboardAcheteurComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private http: HttpClient,
+    private userStatusService: UserStatusService,
   ) {}
 
   ngOnInit(): void {
@@ -42,8 +44,9 @@ export class DashboardAcheteurComponent implements OnInit {
 
   // ── KYC ──
   get kycApproved(): boolean {
-    return (this.profile as any)?.kycStatus === 'APPROVED'
-        || (this.profile as any)?.kycStatus === 'VALIDATED';
+    const status = this.userStatusService.snapshot?.kycStatus
+                ?? (this.profile as any)?.kycStatus;
+    return status === 'VALIDATED' || status === 'APPROVED';
   }
 
   // ── Pourcentages pour la barre de progression ──
