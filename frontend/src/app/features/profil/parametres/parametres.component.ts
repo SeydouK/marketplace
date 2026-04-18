@@ -26,13 +26,16 @@ export class ParametresComponent implements OnInit {
   saving = false;
   successMessage = '';
 
+  // Mobile : null = liste visible, string = section ouverte
+  mobileActiveSection: SectionKey | null = null;
+
   sections: Section[] = [
-    { key: 'infos', label: 'Informations personnelles', icon: '👤' },
-    { key: 'securite', label: 'Connexion et sécurité', icon: '🔒' },
-    { key: 'confidentialite', label: 'Confidentialité', icon: '🤝' },
-    { key: 'notifications', label: 'Notifications', icon: '🔔' },
-    { key: 'paiements', label: 'Paiements', icon: '💳' },
-    { key: 'langues', label: 'Langues et devise', icon: '🌐' },
+    { key: 'infos',           label: 'Informations personnelles', icon: '👤' },
+    { key: 'securite',        label: 'Connexion et sécurité',     icon: '🔒' },
+    { key: 'confidentialite', label: 'Confidentialité',           icon: '🤝' },
+    { key: 'notifications',   label: 'Notifications',             icon: '🔔' },
+    { key: 'paiements',       label: 'Paiements',                 icon: '💳' },
+    { key: 'langues',         label: 'Langues et devise',         icon: '🌐' },
   ];
 
   constructor(
@@ -51,6 +54,24 @@ export class ParametresComponent implements OnInit {
     this.cancelEdit();
   }
 
+  // ── Navigation mobile ──────────────────────────
+  openMobileSection(key: SectionKey): void {
+    this.mobileActiveSection = key;
+    this.activeSection = key;
+    this.cancelEdit();
+  }
+
+  closeMobileSection(): void {
+    this.mobileActiveSection = null;
+    this.cancelEdit();
+  }
+
+  get activeSectionLabel(): string {
+    const all = [...this.sections, { key: 'pro' as SectionKey, label: 'Espace vendeur', icon: '🏪' }];
+    return all.find(s => s.key === this.activeSection)?.label ?? '';
+  }
+
+  // ── Edition inline ─────────────────────────────
   startEdit(field: string): void {
     this.editingField = field;
     this.editValue = field === 'name' ? (this.profile?.name ?? '') : '';
@@ -82,6 +103,7 @@ export class ParametresComponent implements OnInit {
       });
   }
 
+  // ── Getters ────────────────────────────────────
   get maskedEmail(): string {
     const email = this.profile?.email ?? '';
     const [local, domain] = email.split('@');
@@ -100,7 +122,7 @@ export class ParametresComponent implements OnInit {
   get kycLabel(): string {
     const labels: Record<string, string> = {
       APPROVED: 'Identité vérifiée',
-      PENDING: 'Vérification en cours',
+      PENDING:  'Vérification en cours',
       REJECTED: 'Vérification rejetée',
     };
     return this.kycStatus ? (labels[this.kycStatus] ?? this.kycStatus) : 'Procédure non commencée';

@@ -1,65 +1,161 @@
-<div class="auth-hero">
-  <div class="hero-copy">
-    <span class="badge">
-      <i class="pi pi-sign-in"></i>
-      Espace vendeur et acheteur
-    </span>
-    <h1>Connectez-vous a votre marketplace betail</h1>
-    <p class="subtitle">
-      Retrouvez vos annonces, publiez de nouveaux animaux et accedez a votre dashboard.
-    </p>
-    <ul class="pill-list">
-      <li><i class="pi pi-shield"></i> Connexion securisee</li>
-      <li><i class="pi pi-bolt"></i> Gestion rapide des annonces</li>
-      <li><i class="pi pi-map-marker"></i> Catalogue par ville</li>
-    </ul>
-  </div>
+<!-- features/auth/login/login.component.html -->
 
-  <div class="auth-card">
-    <h2>Connexion</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-      <div class="field">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          class="text-field"
-          placeholder="email@exemple.com"
-        />
-        <p *ngIf="controlInvalid('email', 'required')" class="error-text">Email requis.</p>
-        <p *ngIf="controlInvalid('email', 'email')" class="error-text">Email invalide.</p>
+<!-- ════ MOBILE ════ -->
+<div class="md:hidden min-h-screen bg-white flex flex-col">
+  <div class="flex-1 flex flex-col items-center justify-center px-6 py-10">
+
+    <!-- Cas 1 : utilisateur reconnu -->
+    <ng-container *ngIf="savedUser; else freshLogin">
+
+      <div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-bold mb-4">
+        {{ savedUserInitial }}
       </div>
 
-      <div class="field">
-        <label for="password">Mot de passe</label>
-        <div class="password-group">
+      <h2 class="text-xl font-bold text-gray-900 text-center mb-2">
+        Ravis de vous revoir, {{ savedUser.name }}
+      </h2>
+
+      <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <span>{{ maskedSavedEmail }}</span>
+      </div>
+
+      <p class="text-xs text-gray-400 text-center mb-8 leading-relaxed max-w-xs">
+        Nous vous enverrons peut-être un code de connexion par e-mail ou par SMS.
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-sm">
+        <div class="relative mb-4">
           <input
-            id="password"
             [type]="showPassword ? 'text' : 'password'"
             formControlName="password"
-            placeholder="Votre mot de passe"
-          />
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="togglePassword()"
-            aria-label="Afficher ou masquer le mot de passe"
-          >
-            <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            placeholder="Mot de passe"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm pr-12
+              focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition"/>
+          <button type="button" (click)="togglePassword()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
           </button>
         </div>
-        <p *ngIf="controlInvalid('password', 'required')" class="error-text">Mot de passe requis.</p>
-      </div>
+        <p *ngIf="controlInvalid('password', 'required')" class="text-xs text-red-500 -mt-2 mb-3">Mot de passe requis.</p>
 
-      <button type="submit" class="primary-submit" [disabled]="form.invalid">
-        Se connecter
+        <button type="submit" [disabled]="form.invalid"
+          class="w-full py-4 bg-[#FF385C] text-white text-sm font-semibold rounded-xl
+            hover:bg-[#e0314f] disabled:opacity-50 transition-colors mb-4">
+          Se connecter
+        </button>
+      </form>
+
+      <button type="button" (click)="clearSavedUser()"
+        class="text-sm font-semibold text-gray-700 underline hover:text-gray-900 transition-colors">
+        Ce n'est pas vous ?
       </button>
 
-      <p class="hint">
-        Pas de compte ?
-        <a routerLink="/register">Creer un compte</a>
+    </ng-container>
+
+    <!-- Cas 2 : pas d'utilisateur reconnu -->
+    <ng-template #freshLogin>
+
+      <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Connexion</h2>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-sm">
+        <div class="mb-4">
+          <input type="email" formControlName="email"
+            placeholder="Adresse e-mail"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm
+              focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition"/>
+          <p *ngIf="controlInvalid('email', 'required')" class="text-xs text-red-500 mt-1">Email requis.</p>
+          <p *ngIf="controlInvalid('email', 'email')" class="text-xs text-red-500 mt-1">Email invalide.</p>
+        </div>
+
+        <div class="relative mb-4">
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+            placeholder="Mot de passe"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm pr-12
+              focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition"/>
+          <button type="button" (click)="togglePassword()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </button>
+        </div>
+        <p *ngIf="controlInvalid('password', 'required')" class="text-xs text-red-500 -mt-2 mb-3">Mot de passe requis.</p>
+
+        <button type="submit" [disabled]="form.invalid"
+          class="w-full py-4 bg-[#FF385C] text-white text-sm font-semibold rounded-xl
+            hover:bg-[#e0314f] disabled:opacity-50 transition-colors mb-5">
+          Se connecter
+        </button>
+
+        <p class="text-center text-sm text-gray-500">
+          Pas de compte ?
+          <a routerLink="/auth/register" class="font-semibold text-gray-900 underline hover:text-[#FF385C]">
+            Créer un compte
+          </a>
+        </p>
+      </form>
+
+    </ng-template>
+  </div>
+</div>
+
+
+<!-- ════ DESKTOP ════ -->
+<div class="hidden md:block">
+  <div class="auth-hero">
+    <div class="hero-copy">
+      <span class="badge">
+        <i class="pi pi-sign-in"></i>
+        Espace vendeur et acheteur
+      </span>
+      <h1>Connectez-vous à votre marketplace bétail</h1>
+      <p class="subtitle">
+        Retrouvez vos annonces, publiez de nouveaux animaux et accédez à votre dashboard.
       </p>
-    </form>
+      <ul class="pill-list">
+        <li><i class="pi pi-shield"></i> Connexion sécurisée</li>
+        <li><i class="pi pi-bolt"></i> Gestion rapide des annonces</li>
+        <li><i class="pi pi-map-marker"></i> Catalogue par ville</li>
+      </ul>
+    </div>
+
+    <div class="auth-card">
+      <h2>Connexion</h2>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email"
+            class="text-field" placeholder="email@exemple.com"/>
+          <p *ngIf="controlInvalid('email', 'required')" class="error-text">Email requis.</p>
+          <p *ngIf="controlInvalid('email', 'email')" class="error-text">Email invalide.</p>
+        </div>
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <div class="password-group">
+            <input id="password" [type]="showPassword ? 'text' : 'password'"
+              formControlName="password" placeholder="Votre mot de passe"/>
+            <button type="button" class="eye-btn" (click)="togglePassword()">
+              <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+          <p *ngIf="controlInvalid('password', 'required')" class="error-text">Mot de passe requis.</p>
+        </div>
+        <button type="submit" class="primary-submit" [disabled]="form.invalid">
+          Se connecter
+        </button>
+        <p class="hint">
+          Pas de compte ?
+          <a routerLink="/auth/register">Créer un compte</a>
+        </p>
+      </form>
+    </div>
   </div>
 </div>
