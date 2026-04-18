@@ -6,14 +6,15 @@
 <main class="app-main" [class.pb-20]="showHeader">
   <router-outlet></router-outlet>
 </main>
-<app-footer></app-footer>
-
+<div class="hidden md:block">
+  <app-footer></app-footer>
+</div>
 <!-- Bottom nav mobile — visible uniquement sur les pages publiques -->
 <nav *ngIf="showHeader"
   class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 pb-safe">
   <div class="flex items-center justify-around px-2 py-2">
 
-    <a routerLink="/" routerLinkActive="text-[#FF385C]" [routerLinkActiveOptions]="{exact: true}"
+    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"
       class="flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -22,7 +23,7 @@
       <span class="text-[10px] font-medium">Explorer</span>
     </a>
 
-    <a routerLink="/favoris" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/favoris" routerLinkActive="active-link"
       class="flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,7 +32,7 @@
       <span class="text-[10px] font-medium">Favoris</span>
     </a>
 
-    <a routerLink="/annonces" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/annonces" routerLinkActive="active-link"
       class="flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -40,7 +41,7 @@
       <span class="text-[10px] font-medium">Annonces</span>
     </a>
 
-    <a routerLink="/messages" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/messages" routerLinkActive="active-link"
       class="relative flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -50,7 +51,7 @@
       <span class="text-[10px] font-medium">Messages</span>
     </a>
 
-    <a routerLink="/profil" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/profil" routerLinkActive="active-link"
       class="flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

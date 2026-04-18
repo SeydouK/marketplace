@@ -2,3 +2,27 @@
   min-height: calc(100vh - 140px);
   padding: 0;
 }
+
+.app-main {
+  min-height: calc(100vh - 140px);
+  padding: 0;
+}
+
+/* Active state bottom nav — colore icône ET label */
+a.text-\[\#FF385C\] svg {
+  stroke: #FF385C;
+}
+
+/* Active state bottom nav mobile */
+nav a.active-link {
+  color: #FF385C;
+}
+
+nav a.active-link svg {
+  stroke: #FF385C;
+}
+
+nav a.active-link span {
+  color: #FF385C;
+  font-weight: 700;
+}
