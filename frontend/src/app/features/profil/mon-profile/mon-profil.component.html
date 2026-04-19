@@ -1,14 +1,14 @@
 <!-- features/profil/mon-profil/mon-profil.component.html -->
 
 <!-- ════════════════════════════════════
-     VERSION DESKTOP (inchangée)
+     VERSION DESKTOP
 ════════════════════════════════════ -->
 <div class="hidden md:block min-h-screen bg-white">
   <div class="max-w-6xl mx-auto px-6 py-10">
 
     <!-- Titre page + badge rôle -->
     <div class="flex items-center gap-3 mb-8">
-      <h1 class="text-2xl font-semibold text-gray-900">Paramètres du compte</h1>
+      <h1 class="text-2xl font-semibold text-gray-900">Profil</h1>
       <span *ngIf="roleLabel"
         class="px-3 py-1 text-xs font-semibold rounded-full {{ roleBadgeColor }}">
         {{ roleLabel }}
@@ -113,7 +113,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
-          <span class="text-sm font-medium text-gray-800">Paramètres du compte</span>
+          <span class="text-sm font-medium text-gray-800">Profil</span>
         </div>
         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -511,6 +511,18 @@
       Aller au tableau de bord →
     </a>
   </ng-container>
+
+  <!-- ─── MES FAVORIS ─── -->
+  <ng-container *ngIf="activeSection === 'favoris'">
+    <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes favoris</h2>
+    <p class="text-sm text-gray-500 mb-6">Les annonces que vous avez sauvegardées.</p>
+    <a routerLink="/favoris"
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      Voir mes favoris →
+    </a>
+  </ng-container>
+    
+
 
   <!-- ─── MES ANIMAUX ─── -->
   <ng-container *ngIf="activeSection === 'mes-animaux' && isVendeur">

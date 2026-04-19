@@ -13,6 +13,7 @@ type SectionKey =
   | 'commentaires'
   | 'historique-paiement'
   | 'dashboard'
+  | 'favoris'  
   | 'mes-animaux'
   | 'mes-annonces'
   | 'documents-sanitaires'
@@ -67,10 +68,12 @@ export class MonProfilComponent implements OnInit, OnDestroy {
     [Role.ACHETEUR]: [
       { key: 'historique-paiement', label: 'Historique de paiement', icon: '💳' },
       { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
+      { key: 'favoris',             label: 'Mes favoris',             icon: '❤️' }
     ],
     [Role.USER]: [
       { key: 'historique-paiement', label: 'Historique de paiement', icon: '💳' },
       { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
+      { key: 'favoris',             label: 'Mes favoris',             icon: '❤️' },
     ],
     [Role.VENDEUR]: [
       { key: 'mes-animaux',         label: 'Mes animaux',             icon: '🐄' },
