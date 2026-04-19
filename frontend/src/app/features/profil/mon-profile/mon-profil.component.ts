@@ -57,7 +57,7 @@ export class MonProfilComponent implements OnInit, OnDestroy {
 
   readonly mobileQuickSections = [
     { key: 'historique', label: 'Achats précédents', icon: '🛍️', isNew: false },
-    { key: 'commentaires', label: 'Connexions', icon: '🤝', isNew: true },
+    { key: 'dashboard', label: 'Mon espace', icon: '🏠', isNew: false }, 
   ];
 
   // ──────────────────────────────────────────────
@@ -328,6 +328,10 @@ export class MonProfilComponent implements OnInit, OnDestroy {
   closeMobilePanel(): void {
     this.mobilePanelOpen = false;
     document.body.style.overflow = '';
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   // ──────────────────────────────────────────────

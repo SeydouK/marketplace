@@ -26,3 +26,9 @@ nav a.active-link span {
   color: #FF385C;
   font-weight: 700;
 }
+
+@media (max-width: 768px) {
+  .app-main {
+    padding-bottom: 6rem; /* 96px = hauteur navbar + marge */
+  }
+}
