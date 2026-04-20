@@ -55,6 +55,8 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   region = '';
   maxPrice: number | null = null;
   statusFilter = '';
+  dateFrom = '';
+  dateTo = '';
 
   loading = true;
   mapUnavailable = false;
@@ -179,7 +181,14 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         !this.statusFilter ||
         this.normalizeText(listing.status ?? '') === this.normalizeText(this.statusFilter);
 
-      return matchesLocation && matchesAnimal && matchesRegion && matchesPrice && matchesStatus;
+      // Filtre date de publication
+      const createdAt = listing.createdAt ? new Date(listing.createdAt).getTime() : null;
+      const matchesDateFrom =
+        !this.dateFrom || (createdAt !== null && createdAt >= new Date(this.dateFrom).getTime());
+      const matchesDateTo =
+        !this.dateTo || (createdAt !== null && createdAt <= new Date(this.dateTo + 'T23:59:59').getTime());
+
+      return matchesLocation && matchesAnimal && matchesRegion && matchesPrice && matchesStatus && matchesDateFrom && matchesDateTo;
     });
   }
 
@@ -289,12 +298,24 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.onFilterChange();
   }
 
+  updateDateFrom(value: string): void {
+    this.dateFrom = value;
+    this.onFilterChange();
+  }
+
+  updateDateTo(value: string): void {
+    this.dateTo = value;
+    this.onFilterChange();
+  }
+
   resetFilters(): void {
     this.location = '';
     this.animalType = '';
     this.region = '';
     this.maxPrice = null;
     this.statusFilter = '';
+    this.dateFrom = '';
+    this.dateTo = '';
     this.uiState.setSearchTerm('');
     this.uiState.setAnimalFilter('');
     this.onFilterChange();

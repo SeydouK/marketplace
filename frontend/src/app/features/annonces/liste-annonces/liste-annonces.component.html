@@ -109,6 +109,28 @@
         </select>
       </div>
 
+      <!-- Date de publication : du -->
+      <div class="toolbar-field">
+        <label for="dateFrom">Publié depuis</label>
+        <input
+          id="dateFrom"
+          type="date"
+          [ngModel]="dateFrom"
+          (ngModelChange)="updateDateFrom($event)"
+        />
+      </div>
+
+      <!-- Date de publication : au -->
+      <div class="toolbar-field">
+        <label for="dateTo">Publié jusqu'au</label>
+        <input
+          id="dateTo"
+          type="date"
+          [ngModel]="dateTo"
+          (ngModelChange)="updateDateTo($event)"
+        />
+      </div>
+
       <button type="button" class="toolbar-reset" (click)="resetFilters()">
         Réinitialiser
       </button>
