@@ -92,29 +92,107 @@
 
     <!-- Ligne 2 : Barre de recherche -->
     <div *ngIf="isHomePage" class="flex justify-center px-8 pb-5">
-        <div class="flex items-center border border-gray-200 rounded-full shadow-md hover:shadow-lg transition-shadow bg-white w-full max-w-3xl">
-          <button type="button"
-            class="flex-1 text-left px-6 py-4 hover:bg-gray-50 rounded-l-full transition-colors border-r border-gray-200 group">
-            <p class="text-xs font-bold text-gray-900">Lieu</p>
-            <p class="text-sm text-gray-400 mt-0.5">{{ searchTerm || 'Chercher une région...' }}</p>
+      <div class="flex items-center border border-gray-200 rounded-full shadow-md hover:shadow-lg transition-shadow bg-white w-full max-w-3xl relative">
+    
+        <button type="button" (click)="openSearchPanel('region')"
+          class="flex-1 text-left px-6 py-4 hover:bg-gray-50 rounded-l-full transition-colors border-r border-gray-200">
+          <p class="text-xs font-bold text-gray-900">Région</p>
+          <p class="text-sm mt-0.5" [class.text-gray-400]="!searchRegion" [class.text-gray-800]="searchRegion">
+            {{ searchRegion || 'Chercher une région...' }}
+          </p>
+        </button>
+    
+        <button type="button" (click)="openSearchPanel('date')"
+          class="flex-1 text-left px-6 py-4 hover:bg-gray-50 transition-colors border-r border-gray-200">
+          <p class="text-xs font-bold text-gray-900">Date de publication</p>
+          <p class="text-sm mt-0.5" [class.text-gray-400]="!searchDate" [class.text-gray-800]="searchDate">
+            {{ searchDate || 'Quand ?' }}
+          </p>
+        </button>
+    
+        <button type="button" (click)="openSearchPanel('budget')"
+          class="flex-1 text-left px-6 py-4 hover:bg-gray-50 transition-colors">
+          <p class="text-xs font-bold text-gray-900">Budget max</p>
+          <p class="text-sm mt-0.5" [class.text-gray-400]="!searchBudget" [class.text-gray-800]="searchBudget">
+            {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Prix maximum' }}
+          </p>
+        </button>
+    
+        <div class="pr-2 pl-1">
+          <button type="button" (click)="submitSearch()"
+            class="w-12 h-12 bg-[#FF385C] rounded-full flex items-center justify-center hover:bg-[#e0314f] transition-colors">
+            <img src="assets/images/find.png" alt="search" class="w-5 h-5"/>
           </button>
-          <button type="button"
-            class="flex-1 text-left px-6 py-4 hover:bg-gray-50 transition-colors border-r border-gray-200 group">
-            <p class="text-xs font-bold text-gray-900">Date de publication</p>
-            <p class="text-sm text-gray-400 mt-0.5">{{ searchTerm || 'Chercher une date...' }}</p>
-          </button>
-          <button type="button"
-            class="flex-1 text-left px-6 py-4 hover:bg-gray-50 transition-colors group">
-            <p class="text-xs font-bold text-gray-900">Budget</p>
-            <p class="text-sm text-gray-400 mt-0.5">Prix maximum</p>
-          </button>
-          <div class="pr-2 pl-1">
-            <button type="button"
-              class="w-12 h-12 bg-[#FF385C] rounded-full flex items-center justify-center hover:bg-[#e0314f] transition-colors">
-              <img src="assets/images/find.png" alt="search" class="w-5 h-5"/>
+        </div>
+    
+        <!-- Panneaux déroulants -->
+        <div *ngIf="activeSearchPanel === 'region'" class="search-panel absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-4">
+          <p class="text-xs font-semibold text-gray-500 uppercase mb-3">Suggestions de régions</p>
+          <div *ngFor="let r of regionSuggestions" (click)="selectRegion(r.value)"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <span class="text-lg">🌍</span>
+            <div>
+              <p class="text-sm font-medium text-gray-900">{{ r.label }}</p>
+              <p class="text-xs text-gray-500">{{ r.sub }}</p>
+            </div>
+          </div>
+        </div>
+    
+        <div *ngIf="activeSearchPanel === 'date'" class="search-panel absolute top-full left-1/4 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-5">
+          <!-- Toggle exact / flexible -->
+          <div class="flex bg-gray-100 rounded-full p-1 w-fit mx-auto mb-5">
+            <button [class.bg-white]="dateMode==='exact'" [class.shadow-sm]="dateMode==='exact'"
+              class="px-5 py-1.5 rounded-full text-sm transition-all" (click)="dateMode='exact'">Dates exactes</button>
+            <button [class.bg-white]="dateMode==='flexible'" [class.shadow-sm]="dateMode==='flexible'"
+              class="px-5 py-1.5 rounded-full text-sm transition-all" (click)="dateMode='flexible'">Flexible</button>
+          </div>
+    
+          <div *ngIf="dateMode === 'exact'">
+            <div class="flex justify-between items-center mb-3">
+              <button (click)="prevCalMonth()" class="p-1 rounded-lg hover:bg-gray-100">‹</button>
+              <span class="text-sm font-semibold">{{ calMonthLabel }}</span>
+              <button (click)="nextCalMonth()" class="p-1 rounded-lg hover:bg-gray-100">›</button>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-400 mb-1">
+              <span *ngFor="let d of calDays">{{ d }}</span>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-center">
+              <span *ngFor="let d of calEmptyDays"></span>
+              <button *ngFor="let d of calDaysInMonth"
+                (click)="selectCalDay(d)"
+                [class.bg-[#FF385C]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
+                [class.text-gray-300]="isPastDay(d)" [class.cursor-default]="isPastDay(d)"
+                class="text-sm py-1.5 rounded-lg hover:bg-gray-100 transition-colors">{{ d }}</button>
+            </div>
+          </div>
+    
+          <div *ngIf="dateMode === 'flexible'" class="flex flex-wrap gap-2">
+            <button *ngFor="let opt of flexDateOptions"
+              (click)="selectFlexDate(opt)"
+              [class.border-[#FF385C]]="searchDate === opt" [class.bg-red-50]="searchDate === opt"
+              class="px-4 py-2 rounded-full border text-sm transition-all hover:border-gray-400">
+              {{ opt }}
             </button>
           </div>
         </div>
+    
+        <div *ngIf="activeSearchPanel === 'budget'" class="search-panel absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-5">
+          <p class="text-sm text-gray-500 mb-2">Prix maximum (FCFA)</p>
+          <p class="text-2xl font-semibold text-gray-900 mb-4">
+            {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Pas de limite' }}
+          </p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button *ngFor="let p of budgetPresets" (click)="selectBudgetPreset(p)"
+              [class.border-[#FF385C]]="searchBudget === p.value" [class.bg-red-50]="searchBudget === p.value"
+              class="px-3 py-1.5 rounded-full border text-sm hover:border-gray-400 transition-all">
+              {{ p.label }}
+            </button>
+          </div>
+          <input type="range" min="0" max="2000000" step="50000" [value]="searchBudget || 0"
+            (input)="searchBudget = +$any($event.target).value"
+            class="w-full accent-[#FF385C]"/>
+        </div>
+      </div>
     </div>
 
     <!-- Ligne 3 : Filtres animaux -->

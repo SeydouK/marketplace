@@ -30,6 +30,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   searchTerm = '';
   activeTab: TabKey = 'logements';
   private readonly subscriptions = new Subscription();
+  activeSearchPanel: 'region' | 'date' | 'budget' | null = null;
+  searchRegion = '';
+  searchDate = '';
+  searchBudget: number | null = null;
+  dateMode: 'exact' | 'flexible' = 'exact';
+  calYear = new Date().getFullYear();
+  calMonth = new Date().getMonth();
 
   readonly animalFilters: AnimalFilterItem[] = [
     { value: '', label: 'Tout', icon: 'assets/images/infinity.png' },
@@ -37,6 +44,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { value: 'OVIN', label: 'Ovins', icon: 'assets/images/sheep.png' },
     { value: 'CAPRIN', label: 'Caprins', icon: 'assets/images/sheep.png' },
     { value: 'PORCIN', label: 'Porcins', icon: 'assets/images/pig.png' },
+  ];
+
+  readonly calDays = ['L','M','M','J','V','S','D'];
+  readonly flexDateOptions = ['7 derniers jours','30 derniers jours','3 derniers mois','6 derniers mois','Cette année'];
+  readonly regionSuggestions = [
+    { value: 'KORHOGO',      label: 'Korhogo',      sub: "Zone d'élevage principale" },
+    { value: 'BOUAKE',       label: 'Bouaké',        sub: 'Marché central' },
+    { value: 'ABIDJAN',      label: 'Abidjan',       sub: 'Grand marché' },
+    { value: 'YAMOUSSOUKRO', label: 'Yamoussoukro',  sub: 'Capitale' },
+    { value: 'SAN_PEDRO',    label: 'San-Pédro',     sub: 'Zone côtière' },
+  ];
+  readonly budgetPresets = [
+    { label: '100 000',   value: 100000 },
+    { label: '250 000',   value: 250000 },
+    { label: '500 000',   value: 500000 },
+    { label: '1 000 000', value: 1000000 },
+    { label: 'Sans limite', value: 0 },
   ];
 
   constructor(
@@ -81,6 +105,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onDocumentClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target as Node)) {
       this.menuOpen = false;
+      this.activeSearchPanel = null;
     }
   }
 
@@ -167,5 +192,51 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.currentUser?.role
       ? (labels[this.currentUser.role] ?? String(this.currentUser.role))
       : '';
+  }
+
+  get calMonthLabel(): string {
+    return ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août',
+      'Septembre','Octobre','Novembre','Décembre'][this.calMonth] + ' ' + this.calYear;
+  }
+  get calEmptyDays(): null[] {
+    return Array((new Date(this.calYear, this.calMonth, 1).getDay() + 6) % 7).fill(null);
+  }
+  get calDaysInMonth(): number[] {
+    return Array.from({ length: new Date(this.calYear, this.calMonth + 1, 0).getDate() }, (_, i) => i + 1);
+  }
+  isSelectedDay(d: number): boolean {
+    return false;
+  }
+  isPastDay(d: number): boolean {
+    return new Date(this.calYear, this.calMonth, d) < new Date(new Date().setHours(0,0,0,0));
+  }
+  
+  openSearchPanel(panel: 'region' | 'date' | 'budget'): void {
+    this.activeSearchPanel = this.activeSearchPanel === panel ? null : panel;
+  }
+  selectRegion(value: string): void {
+    const r = this.regionSuggestions.find(x => x.value === value);
+    this.searchRegion = r?.label ?? value;
+    this.uiState.setSearchTerm(value);
+    this.activeSearchPanel = 'date';
+  }
+  selectCalDay(d: number): void {
+    const dt = new Date(this.calYear, this.calMonth, d);
+    this.searchDate = `Depuis le ${d} ${this.calMonthLabel.split(' ')[0].slice(0,3)} ${this.calYear}`;
+    this.activeSearchPanel = 'budget';
+  }
+  selectFlexDate(opt: string): void {
+    this.searchDate = opt;
+    this.activeSearchPanel = 'budget';
+  }
+  selectBudgetPreset(p: { label: string; value: number }): void {
+    this.searchBudget = p.value || null;
+  }
+  prevCalMonth(): void { if (this.calMonth === 0) { this.calMonth = 11; this.calYear--; } else this.calMonth--; }
+  nextCalMonth(): void { if (this.calMonth === 11) { this.calMonth = 0; this.calYear++; } else this.calMonth++; }
+  submitSearch(): void {
+    if (this.searchRegion) this.uiState.setSearchTerm(this.searchRegion);
+    this.router.navigate(['/annonces']);
+    this.activeSearchPanel = null;
   }
 }
