@@ -6,6 +6,7 @@ import com.marketplace.service.AnimalService;
 import com.marketplace.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,11 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserProfileDTO> me() {
         return ResponseEntity.ok(userService.getCurrentProfile());
+    }
+
+    @PostMapping("/me/seller-request")
+    public ResponseEntity<UserProfileDTO> requestSellerAccess() {
+        return ResponseEntity.ok(userService.requestSellerAccess());
     }
 
     @GetMapping("/me/animals")

@@ -13,7 +13,7 @@ export class MesAchatsComponent implements OnInit {
   constructor(private saleService: SaleService) {}
 
   ngOnInit(): void {
-    this.saleService.getMyPurchases().subscribe((p) => (this.purchases = p));
+    /*this.saleService.getMyPurchases().subscribe((p) => (this.purchases = p));*/
   }
 
   confirmReception(purchase: Sale): void {

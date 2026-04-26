@@ -26,9 +26,9 @@
   </div>
 
   <!-- ═══════════════════════════════════════════
-       STATISTIQUES CHEPTEL — 5 KPIs
+       STATISTIQUES CHEPTEL
   ═══════════════════════════════════════════ -->
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
     <!-- Total animaux -->
     <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
@@ -37,11 +37,11 @@
       <a routerLink="/animaux/mes-animaux" class="text-xs text-[#FF385C] underline mt-1 inline-block">Voir tout</a>
     </article>
 
-    <!-- Disponibles à la vente -->
+    <!-- Disponibles -->
     <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
       <p class="text-xs text-gray-500 mb-1">Disponibles</p>
       <p class="text-2xl font-bold text-green-600">{{ availableCount }}</p>
-      <p class="text-xs text-gray-400 mt-1">Fiche validée ✓</p>
+      <p class="text-xs text-gray-400 mt-1">Fiche validée</p>
     </article>
 
     <!-- En attente validation -->
@@ -49,20 +49,6 @@
       <p class="text-xs text-gray-500 mb-1">En attente</p>
       <p class="text-2xl font-bold text-amber-500">{{ pendingHealthValidationCount }}</p>
       <p class="text-xs text-gray-400 mt-1">Validation sanitaire</p>
-    </article>
-
-    <!-- Vendus ce mois -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">Vendus ce mois</p>
-      <p class="text-2xl font-bold text-gray-900">{{ profile?.monthlySalesCount ?? 0 }}</p>
-      <p class="text-xs text-gray-400 mt-1">Transactions conclues</p>
-    </article>
-
-    <!-- Revenus en attente (escrow) -->
-    <article class="bg-white border border-blue-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">En escrow</p>
-      <p class="text-2xl font-bold text-blue-600">{{ escrowCount }}</p>
-      <p class="text-xs text-gray-400 mt-1">Paiements bloqués</p>
     </article>
 
   </div>
@@ -81,27 +67,11 @@
           {{ pendingHealthValidationCount }} animal(s) en attente de validation sanitaire
         </p>
         <p class="text-xs text-amber-600 mt-0.5">
-          Ces animaux ne peuvent pas être vendus tant que le vétérinaire n'a pas validé leurs fiches.
+          Ces animaux restent en attente tant que le vétérinaire n'a pas validé leurs fiches.
         </p>
       </div>
       <a routerLink="/animaux/mes-animaux"
         class="text-xs font-semibold text-amber-800 underline flex-shrink-0">Voir →</a>
-    </div>
-
-    <!-- Escrow en attente de livraison -->
-    <div *ngIf="escrowCount > 0"
-      class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl">
-      <span class="text-xl flex-shrink-0">💰</span>
-      <div class="flex-1">
-        <p class="text-sm font-semibold text-blue-800">
-          {{ escrowCount }} paiement(s) bloqué(s) en séquestre
-        </p>
-        <p class="text-xs text-blue-600 mt-0.5">
-          Les fonds seront libérés après confirmation de réception par l'acheteur.
-        </p>
-      </div>
-      <a routerLink="/vendeur/mes-ventes"
-        class="text-xs font-semibold text-blue-800 underline flex-shrink-0">Suivre →</a>
     </div>
 
   </div>
@@ -133,19 +103,6 @@
           <span class="text-sm font-medium">Mes annonces publiées</span>
         </a>
 
-        <a routerLink="/vendeur/mes-ventes"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
-          <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-          </svg>
-          <span class="text-sm font-medium">Suivi des ventes &amp; escrow</span>
-          <span *ngIf="escrowCount > 0"
-            class="ml-auto text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-            {{ escrowCount }}
-          </span>
-        </a>
-
         <a routerLink="/animaux/mes-animaux"
           class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,19 +110,6 @@
               d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
           </svg>
           <span class="text-sm font-medium">Registre du cheptel</span>
-        </a>
-
-        <a *ngIf="canAccessHealthValidation" routerLink="/animaux/validation"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-amber-200 text-amber-800 rounded-xl hover:border-amber-300 transition-colors">
-          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span class="text-sm font-medium">Validation sanitaire ANADER</span>
-          <span *ngIf="pendingHealthValidationCount > 0"
-            class="ml-auto text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
-            {{ pendingHealthValidationCount }}
-          </span>
         </a>
 
       </div>
@@ -180,7 +124,6 @@
         <div class="flex h-2 w-full overflow-hidden">
           <div class="bg-green-500 transition-all" [style.width]="availablePercent + '%'"></div>
           <div class="bg-amber-400 transition-all" [style.width]="pendingPercent + '%'"></div>
-          <div class="bg-gray-300 transition-all" [style.width]="soldPercent + '%'"></div>
         </div>
 
         <div class="divide-y divide-gray-50">
@@ -208,17 +151,6 @@
             <span class="text-sm font-bold text-gray-900">{{ pendingHealthValidationCount }}</span>
           </div>
 
-          <!-- VENDU -->
-          <div class="flex items-center justify-between px-5 py-3.5">
-            <div class="flex items-center gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-gray-400 flex-shrink-0"></span>
-              <div>
-                <p class="text-sm font-medium text-gray-900">VENDU</p>
-                <p class="text-xs text-gray-400">Transaction conclue — archivé blockchain</p>
-              </div>
-            </div>
-            <span class="text-sm font-bold text-gray-900">{{ soldCount }}</span>
-          </div>
         </div>
 
       </div>

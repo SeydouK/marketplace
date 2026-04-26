@@ -13,7 +13,7 @@ export class ValidationEleveursComponent implements OnInit {
   constructor(private anaderService: AnaderService) {}
 
   ngOnInit(): void {
-    this.load();
+   /* this.load();*/
   }
 
   load(): void {

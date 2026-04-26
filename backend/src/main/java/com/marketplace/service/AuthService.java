@@ -74,7 +74,8 @@ public class AuthService {
                 user.getRole(),
                 user.getName(),
                 user.isEmailVerified(),
-                user.getKycStatus() 
+                user.getKycStatus(),
+                user.isDevenirVendeur()
         );
 
     }
@@ -96,7 +97,8 @@ public class AuthService {
             user.getRole(),
             user.getName(),
             user.isEmailVerified(), 
-            user.getKycStatus()       
+            user.getKycStatus(),
+            user.isDevenirVendeur()
         );
     }
 

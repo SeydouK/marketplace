@@ -13,7 +13,7 @@ export class GestionLitigesComponent implements OnInit {
   constructor(private disputeService: AdminDisputeService) {}
 
   ngOnInit(): void {
-    this.load();
+    /*this.load();*/
   }
 
   load(): void {

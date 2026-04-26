@@ -26,9 +26,9 @@ export class InspectionsComponent implements OnInit {
   constructor(private vetService: VeterinaireService) {}
 
   ngOnInit(): void {
-    this.vetService.getInspections().subscribe((data) => {
+   /* this.vetService.getInspections().subscribe((data) => {
       this.inspections = data as Inspection[];
-    });
+    });*/
   }
 
   startInspection(insp: Inspection): void {

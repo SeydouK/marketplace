@@ -8,4 +8,5 @@ export interface JwtResponse {
   name: string;
   emailVerified: boolean;
   kycStatus: string;
+  devenirVendeur: boolean;
 }

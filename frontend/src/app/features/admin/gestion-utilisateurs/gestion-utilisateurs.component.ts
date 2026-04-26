@@ -1,8 +1,7 @@
-// admin/gestion-utilisateurs/gestion-utilisateurs.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AdminService } from '../services/admin.service';
-import { User } from '../../../core/models/user.model';
+import { Observable } from 'rxjs';
+import { AdminService, AdminUser } from '../services/admin.service';
 import { Role } from '../../../core/models/role.enum';
 
 @Component({
@@ -11,38 +10,49 @@ import { Role } from '../../../core/models/role.enum';
   standalone: false,
 })
 export class GestionUtilisateursComponent implements OnInit {
-  users: User[] = [];
+  users: AdminUser[] = [];
   activeFilter = 'all';
   currentPage = 0;
   totalPages = 1;
+  totalElements = 0;
+  loading = false;
+  updatingUserId?: number;
 
-  filters = [
+  readonly roles = Object.values(Role);
+  readonly filters = [
     { label: 'Tous', value: 'all' },
     { label: 'KYC en attente', value: 'pending-kyc' },
     { label: 'Vendeurs', value: Role.VENDEUR },
-    { label: 'Acheteurs', value: Role.ACHETEUR },
+    { label: 'Acheteurs', value: Role.USER },
   ];
 
   constructor(
-    private adminService: AdminService,
-    private route: ActivatedRoute
+    private readonly adminService: AdminService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      if (params['filter']) {
-        this.activeFilter = params['filter'];
-      }
+      this.activeFilter = params['filter'] || 'all';
+      this.currentPage = 0;
       this.loadUsers();
     });
   }
 
   loadUsers(): void {
+    this.loading = true;
     this.adminService
       .getUsers({ filter: this.activeFilter, page: this.currentPage, size: 20 })
-      .subscribe((page) => {
-        this.users = page.content;
-        this.totalPages = page.totalPages;
+      .subscribe({
+        next: (page) => {
+          this.users = page.content;
+          this.totalPages = page.totalPages;
+          this.totalElements = page.totalElements;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
       });
   }
 
@@ -52,30 +62,43 @@ export class GestionUtilisateursComponent implements OnInit {
     this.loadUsers();
   }
 
-  validateKyc(user: User): void {
-    if (!user.id) return;
-    this.adminService.validateKyc(user.id).subscribe(() => this.loadUsers());
+  validateKyc(user: AdminUser): void {
+    this.runUserAction(user, () => this.adminService.validateKyc(user.id));
   }
 
-  rejectKyc(user: User): void {
+  rejectKyc(user: AdminUser): void {
     const reason = prompt('Motif du rejet :');
-    if (!reason || !user.id) return;
-    this.adminService.rejectKyc(user.id, reason).subscribe(() => this.loadUsers());
+    if (!reason) {
+      return;
+    }
+
+    this.runUserAction(user, () => this.adminService.rejectKyc(user.id, reason));
   }
 
-  changeRole(user: User): void {
-    const roles = Object.values(Role).join(', ');
-    const newRole = prompt(`Nouveau rôle (${roles}) :`) as Role;
-    if (!newRole || !user.id) return;
-    this.adminService.updateUserRole(user.id, newRole).subscribe(() => this.loadUsers());
+  changeRole(user: AdminUser, role: Role): void {
+    if (role === user.role) {
+      return;
+    }
+
+    this.runUserAction(user, () => this.adminService.updateUserRole(user.id, role));
   }
 
   prevPage(): void {
-    if (this.currentPage > 0) { this.currentPage--; this.loadUsers(); }
+    if (this.currentPage <= 0) {
+      return;
+    }
+
+    this.currentPage--;
+    this.loadUsers();
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) { this.currentPage++; this.loadUsers(); }
+    if (this.currentPage >= this.totalPages - 1) {
+      return;
+    }
+
+    this.currentPage++;
+    this.loadUsers();
   }
 
   getRoleBadgeClass(role?: Role): string {
@@ -91,12 +114,35 @@ export class GestionUtilisateursComponent implements OnInit {
     return role ? (map[role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
   }
 
-  getKycBadgeClass(status?: string): string {
+  getKycBadgeClass(status?: string | null): string {
     const map: Record<string, string> = {
-      APPROVED: 'bg-green-100 text-green-800',
+      VALIDATED: 'bg-green-100 text-green-800',
+      CNI_VERIFIED: 'bg-blue-100 text-blue-800',
+      CNI_UPLOADED: 'bg-blue-100 text-blue-800',
       PENDING: 'bg-yellow-100 text-yellow-800',
       REJECTED: 'bg-red-100 text-red-800',
     };
     return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
+  }
+
+  canModerateKyc(status?: string | null): boolean {
+    return !!status && ['PENDING', 'CNI_UPLOADED', 'CNI_VERIFIED'].includes(status);
+  }
+
+  trackByUserId(_: number, user: AdminUser): number {
+    return user.id;
+  }
+
+  private runUserAction(user: AdminUser, action: () => Observable<AdminUser>): void {
+    this.updatingUserId = user.id;
+    action().subscribe({
+      next: () => this.loadUsers(),
+      error: () => {
+        this.updatingUserId = undefined;
+      },
+      complete: () => {
+        this.updatingUserId = undefined;
+      },
+    });
   }
 }

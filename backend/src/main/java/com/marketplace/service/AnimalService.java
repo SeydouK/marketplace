@@ -6,7 +6,10 @@ import com.marketplace.dto.AnimalHealthDocumentInput;
 import com.marketplace.dto.AnimalHealthRecordDTO;
 import com.marketplace.dto.AnimalHistoryEventDTO;
 import com.marketplace.dto.AnimalSearchFilterDTO;
+import com.marketplace.dto.AnimalStatsDTO;
 import com.marketplace.dto.AnimalValidationRequest;
+import com.marketplace.dto.AdminListingDTO;
+import com.marketplace.dto.AdminListingPageDTO;
 import com.marketplace.exception.BadRequestException;
 import com.marketplace.exception.ForbiddenException;
 import com.marketplace.exception.ResourceNotFoundException;
@@ -26,6 +29,10 @@ import com.marketplace.repository.AnimalHistoryEventRepository;
 import com.marketplace.repository.AnimalRepository;
 import com.marketplace.repository.AnimalSellerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -244,6 +251,24 @@ public class AnimalService {
     }
 
     @Transactional(readOnly = true)
+    public AnimalStatsDTO getMyAnimalStats() {
+        User currentUser = userService.getCurrentUser();
+        List<Animal> animals = animalSellerRepository.findBySellerOrderByAssociationDateDesc(currentUser)
+                .stream()
+                .map(AnimalSeller::getAnimal)
+                .distinct()
+                .toList();
+
+        long available = animals.stream()
+                .filter(animal -> animal.getStatus() == AnimalStatus.DISPONIBLE)
+                .count();
+        long unavailable = animals.stream()
+                .filter(animal -> animal.getStatus() == AnimalStatus.INDISPONIBLE)
+                .count();
+        return new AnimalStatsDTO(animals.size(), available, unavailable);
+    }
+
+    @Transactional(readOnly = true)
     public List<AnimalDTO> listPendingValidations() {
         User currentUser = userService.getCurrentUser();
         ensureHealthAgentRole(currentUser);
@@ -305,6 +330,63 @@ public class AnimalService {
     @Transactional(readOnly = true)
     public long countPendingValidations() {
         return animalRepository.countByStatus(AnimalStatus.INDISPONIBLE);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminListingPageDTO listAdminListings(AnimalStatus status, int page, int size) {
+        ensureAdminRole(userService.getCurrentUser());
+
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        Pageable pageable = PageRequest.of(
+                safePage,
+                safeSize,
+                Sort.by(Sort.Direction.DESC, "updatedAt")
+        );
+
+        Page<Animal> animals = status == null
+                ? animalRepository.findAll(pageable)
+                : animalRepository.findByStatus(status, pageable);
+
+        return new AdminListingPageDTO(
+                animals.getContent().stream().map(this::toAdminListingDto).toList(),
+                animals.getTotalElements(),
+                animals.getTotalPages(),
+                animals.getNumber()
+        );
+    }
+
+    @Transactional
+    public AdminListingDTO publishAdminListing(UUID animalId) {
+        User currentUser = userService.getCurrentUser();
+        ensureAdminRole(currentUser);
+        Animal animal = findAnimal(animalId);
+        return updateAdminListingStatus(animal, AnimalStatus.DISPONIBLE, currentUser);
+    }
+
+    @Transactional
+    public AdminListingDTO suspendAdminListing(UUID animalId) {
+        User currentUser = userService.getCurrentUser();
+        ensureAdminRole(currentUser);
+        Animal animal = findAnimal(animalId);
+        return updateAdminListingStatus(animal, AnimalStatus.INDISPONIBLE, currentUser);
+    }
+
+    private AdminListingDTO updateAdminListingStatus(Animal animal, AnimalStatus targetStatus, User actor) {
+        AnimalStatus previousStatus = animal.getStatus();
+        if (previousStatus != targetStatus) {
+            animal.setStatus(targetStatus);
+            animalRepository.save(animal);
+            saveHistoryEvent(
+                    animal,
+                    actor,
+                    HistoryEventType.CHANGEMENT_STATUT,
+                    "Statut modere par administrateur : " + previousStatus + " -> " + targetStatus + ".",
+                    null,
+                    null
+            );
+        }
+        return toAdminListingDto(animal);
     }
 
     private AnimalHealthRecord resolveHealthRecord(Animal animal, AnimalValidationRequest request) {
@@ -404,6 +486,29 @@ public class AnimalService {
         return dto;
     }
 
+    private AdminListingDTO toAdminListingDto(Animal animal) {
+        AnimalSeller animalSeller = animalSellerRepository.findByAnimalId(animal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Association vendeur introuvable pour cet animal."));
+        User seller = animalSeller.getSeller();
+
+        return new AdminListingDTO(
+                animal.getId(),
+                buildDisplayName(animal),
+                animal.getType(),
+                animal.getRace(),
+                animal.getBirthLocation(),
+                animal.getPrice(),
+                animal.getQuantity(),
+                animal.getStatus(),
+                toList(animal.getPhotos()),
+                seller.getId(),
+                seller.getName(),
+                seller.getEmail(),
+                animal.getCreatedAt(),
+                animal.getUpdatedAt()
+        );
+    }
+
     private boolean canViewUnpublishedAnimal(User user, AnimalSeller animalSeller) {
         return animalSeller.getSeller().getId().equals(user.getId())
                 || EnumSet.of(Role.AGENT_ANADER, Role.VETERINAIRE, Role.ADMIN, Role.ADMINISTRATEUR)
@@ -471,6 +576,12 @@ public class AnimalService {
     private void ensureHealthAgentRole(User user) {
         if (!EnumSet.of(/*Role.AGENT_ANADER,*/ Role.VETERINAIRE/*, Role.ADMIN, Role.ADMINISTRATEUR*/).contains(user.getRole())) {
             throw new ForbiddenException("Cette action est réservée à un vétérinaire.");
+        }
+    }
+
+    private void ensureAdminRole(User user) {
+        if (!EnumSet.of(Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
+            throw new ForbiddenException("Cette action est reservee aux administrateurs.");
         }
     }
 

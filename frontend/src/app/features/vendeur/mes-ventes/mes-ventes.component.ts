@@ -21,10 +21,10 @@ export class MesVentesComponent implements OnInit {
   constructor(private saleService: SaleService) {}
 
   ngOnInit(): void {
-    this.saleService.getMySales().subscribe((sales) => {
+    /*this.saleService.getMySales().subscribe((sales) => {
       this.sales = sales;
       this.updateTabCounts();
-    });
+    });*/
   }
 
   updateTabCounts(): void {

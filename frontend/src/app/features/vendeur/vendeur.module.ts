@@ -5,6 +5,7 @@ import { VendeurRoutingModule } from './vendeur-routing.module';
 import { DashboardVendeurComponent } from './dashboard-vendeur/dashboard-vendeur.component';
 import { MesAnnoncesComponent } from './mes-annonces/mes-annonces.component';
 import { MesVentesComponent } from './mes-ventes/mes-ventes.component';
+import { ListeAnnoncesModule } from '../annonces/liste-annonces/liste-annonces.module';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,6 @@ import { MesVentesComponent } from './mes-ventes/mes-ventes.component';
     MesAnnoncesComponent,
     MesVentesComponent,
   ],
-  imports: [SharedModule, VendeurRoutingModule],
+  imports: [SharedModule, ListeAnnoncesModule, VendeurRoutingModule],
 })
 export class VendeurModule {}

@@ -6,6 +6,8 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  emailVerified?: boolean;
+  devenirVendeur?: boolean;
 
   // KYC
   kycStatus?: 'PENDING' | 'APPROVED' | 'REJECTED';

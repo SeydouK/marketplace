@@ -1,9 +1,16 @@
-<!-- admin/gestion-annonces/gestion-annonces.component.html -->
 <div class="max-w-7xl mx-auto py-6 px-4">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold">Modération des annonces</h1>
-    <div class="flex gap-2">
-      <button *ngFor="let f of filters"
+  <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Gestion des annonces</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {{ totalElements }} annonce{{ totalElements > 1 ? 's' : '' }}
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button
+        *ngFor="let f of filters"
+        type="button"
         (click)="setFilter(f.value)"
         [class.bg-[#611a24]]="activeFilter === f.value"
         [class.text-white]="activeFilter === f.value"
@@ -13,36 +20,82 @@
     </div>
   </div>
 
-  <div class="overflow-x-auto rounded-xl border border-gray-200">
+  <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
     <table class="w-full text-sm">
       <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
         <tr>
-          <th class="px-4 py-3 text-left">Animal</th>
+          <th class="px-4 py-3 text-left">Annonce</th>
           <th class="px-4 py-3 text-left">Vendeur</th>
           <th class="px-4 py-3 text-left">Prix</th>
-          <th class="px-4 py-3 text-left">Statut sanitaire</th>
-          <th class="px-4 py-3 text-left">Actions</th>
+          <th class="px-4 py-3 text-left">Statut</th>
+          <th class="px-4 py-3 text-left">Quantite</th>
+          <th class="px-4 py-3 text-right">Actions</th>
         </tr>
       </thead>
+
       <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let listing of listings" class="hover:bg-gray-50 transition">
-          <td class="px-4 py-3 font-medium">{{ listing.animalName }}</td>
-          <td class="px-4 py-3 text-gray-500">{{ listing.sellerName }}</td>
-          <td class="px-4 py-3 font-medium text-[#611a24]">{{ listing.price | number }} FCFA</td>
+        <tr *ngIf="loading">
+          <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+            Chargement des annonces...
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && listings.length === 0">
+          <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+            Aucune annonce trouvee.
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="let listing of listings; trackBy: trackByListingId"
+          class="hover:bg-gray-50 transition">
           <td class="px-4 py-3">
-            <span class="px-2 py-1 rounded-full text-xs font-medium"
-              [ngClass]="getSanitaryBadge(listing.sanitaryStatus)">
-              {{ listing.sanitaryStatus }}
+            <div class="font-medium text-gray-900">
+              {{ listing.displayName || listing.race || listing.type }}
+            </div>
+            <div class="text-xs text-gray-500">
+              {{ listing.type }}{{ listing.lieuNaissance ? ' - ' + listing.lieuNaissance : '' }}
+            </div>
+          </td>
+
+          <td class="px-4 py-3">
+            <div class="text-gray-700">{{ listing.sellerName || 'N/A' }}</div>
+            <div class="text-xs text-gray-500">{{ listing.sellerEmail || 'Email indisponible' }}</div>
+          </td>
+
+          <td class="px-4 py-3 font-medium text-[#611a24]">
+            {{ listing.price | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3">
+            <span
+              class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getStatusBadge(listing.status)">
+              {{ listing.status }}
             </span>
           </td>
+
+          <td class="px-4 py-3 text-gray-700">
+            {{ listing.quantity || 1 }}
+          </td>
+
           <td class="px-4 py-3">
-            <div class="flex gap-2">
-              <button (click)="approve(listing)"
-                class="text-xs px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                Approuver
+            <div class="flex justify-end gap-2">
+              <button
+                type="button"
+                *ngIf="listing.status === 'INDISPONIBLE'"
+                (click)="approve(listing)"
+                [disabled]="updatingListingId === listing.id"
+                class="text-xs px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50">
+                Publier
               </button>
-              <button (click)="suspend(listing)"
-                class="text-xs px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+
+              <button
+                type="button"
+                *ngIf="listing.status === 'DISPONIBLE'"
+                (click)="suspend(listing)"
+                [disabled]="updatingListingId === listing.id"
+                class="text-xs px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50">
                 Suspendre
               </button>
             </div>
@@ -50,5 +103,26 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="flex items-center justify-between mt-4 text-sm text-gray-500" *ngIf="totalPages > 1">
+    <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+    <div class="flex gap-2">
+      <button
+        type="button"
+        (click)="prevPage()"
+        [disabled]="currentPage === 0 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">
+        Precedent
+      </button>
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">
+        Suivant
+      </button>
+    </div>
   </div>
 </div>
