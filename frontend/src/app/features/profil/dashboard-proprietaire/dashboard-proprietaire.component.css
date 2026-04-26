@@ -84,6 +84,18 @@
   border-color: transparent;
 }
 
+.dashboard-action--notice {
+  background:
+    linear-gradient(135deg, rgba(253, 230, 138, 0.42) 0%, rgba(255, 248, 220, 0.9) 100%);
+  color: #78350f;
+}
+
 .dashboard-action--wide {
   grid-column: 1 / -1;
+}
+
+.dashboard-action__copy {
+  margin: 0.3rem 0 0;
+  color: inherit;
+  line-height: 1.55;
 }

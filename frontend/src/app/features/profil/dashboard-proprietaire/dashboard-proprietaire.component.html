@@ -32,6 +32,7 @@
     <h2 class="text-xl font-semibold text-[#611a24] mb-4">Actions rapides</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <a
+        *ngIf="canAccessSellerArea; else sellerAccessNotice"
         routerLink="/animaux/creer"
         class="dashboard-action dashboard-action--solid"
       >
@@ -64,3 +65,21 @@
     </div>
   </div>
 </section>
+
+<ng-template #sellerAccessNotice>
+  <article class="dashboard-action dashboard-action--notice">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 2v8m0 0v2" />
+    </svg>
+    <div>
+      <span class="font-medium">
+        {{ sellerRequestPending ? 'Demande vendeur en attente' : 'Acces vendeur requis' }}
+      </span>
+      <p class="dashboard-action__copy">
+        {{ sellerRequestPending
+          ? 'Votre demande a bien ete transmise. Vous pourrez creer vos annonces apres validation par un administrateur.'
+          : 'Utilisez le menu Devenir vendeur pour envoyer votre demande avant de publier vos animaux.' }}
+      </p>
+    </div>
+  </article>
+</ng-template>

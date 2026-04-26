@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Role } from '../../../core/models/role.enum';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { DashboardService } from '../services/dashboard.service';
@@ -33,5 +34,13 @@ export class DashboardProprietaireComponent implements OnInit {
 
   get canAccessHealthValidation(): boolean {
     return this.auth.canAccessHealthValidation;
+  }
+
+  get canAccessSellerArea(): boolean {
+    return !!this.profile?.role && [Role.VENDEUR, Role.ADMIN, Role.ADMINISTRATEUR].includes(this.profile.role);
+  }
+
+  get sellerRequestPending(): boolean {
+    return !!this.profile?.devenirVendeur;
   }
 }

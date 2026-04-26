@@ -457,7 +457,7 @@ public class AnimalService {
     }
 
     private void ensureSellerRole(User user) {
-        if (!EnumSet.of(Role.USER, Role.VENDEUR, Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
+        if (!EnumSet.of(Role.VENDEUR, Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
             throw new ForbiddenException("Seuls les vendeurs vérifiés peuvent enregistrer des animaux.");
         }
     }

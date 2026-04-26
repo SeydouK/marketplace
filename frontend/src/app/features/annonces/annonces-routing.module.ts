@@ -4,6 +4,7 @@ import { ListeAnnoncesComponent } from './liste-annonces/liste-annonces.componen
 import { DetailAnnonceComponent } from './detail-annonce/detail-annonce.component';
 import { CreerAnnonceComponent } from './creer-annonce/creer-annonce.component';
 import { AuthGuard } from '../../core/guards/auth.guard';
+import { SellerGuard } from '../../core/guards/seller.guard';
 import { KycGuard } from '../kyc/kyc.guard';
 
 const routes: Routes = [
@@ -11,7 +12,7 @@ const routes: Routes = [
   { 
     path: 'creer', 
     component: CreerAnnonceComponent, 
-    canActivate: [AuthGuard, KycGuard] 
+    canActivate: [AuthGuard, SellerGuard, KycGuard] 
   },
   { path: ':id', component: DetailAnnonceComponent },
 ];

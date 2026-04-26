@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 type HeaderNavItem = {
   key: 'homes' | 'experiences' | 'services';
@@ -29,6 +30,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   currentUrl = '/';
   menuOpen = false;
+  sellerRequestModalOpen = false;
+  sellerRequestSubmitting = false;
   animalFilter = '';
   searchTerm = '';
   private readonly subscriptions = new Subscription();
@@ -70,7 +73,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public auth: AuthService,
     private readonly router: Router,
     private readonly elementRef: ElementRef<HTMLElement>,
-    private readonly uiState: MarketplaceUiService
+    private readonly uiState: MarketplaceUiService,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +85,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.currentUser = user;
       })
     );
+
+    if (this.auth.isLoggedIn()) {
+      this.subscriptions.add(this.auth.refreshCurrentUser().subscribe());
+    }
 
     this.subscriptions.add(
       this.router.events.subscribe((event) => {
@@ -116,6 +124,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
+    this.sellerRequestModalOpen = false;
     this.auth.logout();
     this.router.navigate(['/']);
   }
@@ -126,6 +135,47 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   closeMenu(): void {
     this.menuOpen = false;
+  }
+
+  openSellerRequestModal(): void {
+    if (!this.currentUser) {
+      this.closeMenu();
+      void this.router.navigate(['/login']);
+      return;
+    }
+
+    if (this.auth.canAccessSellerArea || this.auth.isSellerRequestPending) {
+      return;
+    }
+
+    this.closeMenu();
+    this.sellerRequestModalOpen = true;
+  }
+
+  closeSellerRequestModal(): void {
+    if (this.sellerRequestSubmitting) {
+      return;
+    }
+
+    this.sellerRequestModalOpen = false;
+  }
+
+  submitSellerRequest(): void {
+    if (this.sellerRequestSubmitting || !this.currentUser) {
+      return;
+    }
+
+    this.sellerRequestSubmitting = true;
+    this.auth.requestSellerAccess().subscribe({
+      next: () => {
+        this.sellerRequestSubmitting = false;
+        this.sellerRequestModalOpen = false;
+        this.toast.success('Votre demande vendeur a ete transmise a l administration.');
+      },
+      error: () => {
+        this.sellerRequestSubmitting = false;
+      },
+    });
   }
 
   setAnimalFilter(filter: string): void {
@@ -146,5 +196,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   get currentUserInitial(): string {
     return (this.currentUser?.name ?? '?').charAt(0).toUpperCase();
+  }
+
+  get canAccessSellerArea(): boolean {
+    return this.auth.canAccessSellerArea;
+  }
+
+  get canAccessAdminArea(): boolean {
+    return this.auth.canAccessAdminArea;
+  }
+
+  get sellerRequestPending(): boolean {
+    return this.auth.isSellerRequestPending;
   }
 }

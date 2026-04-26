@@ -1,3 +1,0 @@
-ALTER TABLE users
-ADD COLUMN badge_verifie BOOLEAN DEFAULT FALSE;
-

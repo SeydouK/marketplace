@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**"
                         ).permitAll()
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "ADMINISTRATEUR")
                         .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/animals/mine", "/api/animals/validation/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/files/upload").authenticated()

@@ -3,13 +3,13 @@ import * as i0 from "@angular/core";
 import * as i1 from "../services/auth.service";
 import * as i2 from "@angular/router";
 export class AuthGuard {
-    constructor(auth, router) {
-        this.auth = auth;
+    constructor(authService, router) {
+        this.authService = authService;
         this.router = router;
     }
     canActivate() {
-        if (!this.auth.isLoggedIn()) {
-            this.router.navigate(['/auth/login']);
+        if (!this.authService.isLoggedIn()) {
+            this.router.navigate(['/login']);
             return false;
         }
         return true;

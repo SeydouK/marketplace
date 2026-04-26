@@ -12,6 +12,8 @@ import Lara from '@primeng/themes/lara';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
+import { VerifyEmailComponent } from './features/verify-email/verify-email.component';
+import { KycComponent } from './features/kyc/kyc.component';
 import * as i0 from "@angular/core";
 export class AppModule {
     static { this.ɵfac = function AppModule_Factory(__ngFactoryType__) { return new (__ngFactoryType__ || AppModule)(); }; }
@@ -32,7 +34,11 @@ export class AppModule {
 (() => { (typeof ngDevMode === "undefined" || ngDevMode) && i0.ɵsetClassMetadata(AppModule, [{
         type: NgModule,
         args: [{
-                declarations: [AppComponent],
+                declarations: [
+                    AppComponent,
+                    KycComponent,
+                    VerifyEmailComponent
+                ],
                 imports: [
                     BrowserModule,
                     HttpClientModule,
@@ -51,7 +57,9 @@ export class AppModule {
                 bootstrap: [AppComponent],
             }]
     }], null, null); })();
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(AppModule, { declarations: [AppComponent], imports: [BrowserModule,
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(AppModule, { declarations: [AppComponent,
+        KycComponent,
+        VerifyEmailComponent], imports: [BrowserModule,
         HttpClientModule,
         AppRoutingModule,
         SharedModule,

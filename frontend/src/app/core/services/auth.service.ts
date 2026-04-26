@@ -11,6 +11,17 @@ import { UserStatusService } from './user-status.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly sellerRoles = new Set<Role>([
+    Role.VENDEUR,
+    Role.ADMIN,
+    Role.ADMINISTRATEUR,
+  ]);
+
+  private readonly adminRoles = new Set<Role>([
+    Role.ADMIN,
+    Role.ADMINISTRATEUR,
+  ]);
+
   private readonly healthValidationRoles = new Set<Role>([
     // Role.AGENT_ANADER,
     Role.VETERINAIRE,
@@ -33,25 +44,7 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http
       .post<JwtResponse>(`${environment.apiUrl}/auth/login`, { email, password })
-      .pipe(
-        tap((res) => {
-          const user: User = {
-            id: res.id,
-            email: res.email,
-            role: res.role,
-            name: res.name,
-          };
-          this.storage.setToken(res.token);
-          this.storage.setUser(user);
-          this.currentUserSubject.next(user);
-
-          this.userStatusService.update({
-            emailVerified: res.emailVerified,
-            kycStatus: res.kycStatus,
-            role: res.role,
-          });
-        })
-      );
+      .pipe(tap((res) => this.applyAuthResponse(res)));
   }
 
   register(data: {
@@ -62,25 +55,19 @@ export class AuthService {
   }) {
     return this.http
       .post<JwtResponse>(`${environment.apiUrl}/auth/register`, data)
-      .pipe(
-        tap((res) => {
-          const user: User = {
-            id: res.id,
-            email: res.email,
-            role: res.role,
-            name: res.name,
-          };
-          this.storage.setToken(res.token);
-          this.storage.setUser(user);
-          this.currentUserSubject.next(user);
+      .pipe(tap((res) => this.applyAuthResponse(res)));
+  }
 
-          this.userStatusService.update({
-            emailVerified: res.emailVerified,
-            kycStatus: res.kycStatus,
-            role: res.role,
-          });
-        })
-      );
+  refreshCurrentUser(): Observable<User> {
+    return this.http
+      .get<User>(`${environment.apiUrl}/users/me`)
+      .pipe(tap((user) => this.setCurrentUser(user)));
+  }
+
+  requestSellerAccess(): Observable<User> {
+    return this.http
+      .post<User>(`${environment.apiUrl}/users/me/seller-request`, {})
+      .pipe(tap((user) => this.setCurrentUser(user)));
   }
 
   isLoggedIn(): boolean {
@@ -95,6 +82,18 @@ export class AuthService {
     return !!this.currentUser?.role && roles.includes(this.currentUser.role);
   }
 
+  get canAccessSellerArea(): boolean {
+    return !!this.currentUser?.role && this.sellerRoles.has(this.currentUser.role);
+  }
+
+  get canAccessAdminArea(): boolean {
+    return !!this.currentUser?.role && this.adminRoles.has(this.currentUser.role);
+  }
+
+  get isSellerRequestPending(): boolean {
+    return !!this.currentUser?.devenirVendeur;
+  }
+
   get canAccessHealthValidation(): boolean {
     return !!this.currentUser?.role && this.healthValidationRoles.has(this.currentUser.role);
   }
@@ -103,5 +102,31 @@ export class AuthService {
     this.storage.clear();
     this.currentUserSubject.next(null);
     this.userStatusService.clear();
+  }
+
+  private applyAuthResponse(response: JwtResponse): void {
+    const user: User = {
+      id: response.id,
+      email: response.email,
+      role: response.role,
+      name: response.name,
+      emailVerified: response.emailVerified,
+      kycStatus: response.kycStatus,
+      devenirVendeur: response.devenirVendeur,
+    };
+
+    this.storage.setToken(response.token);
+    this.setCurrentUser(user);
+  }
+
+  private setCurrentUser(user: User): void {
+    this.storage.setUser(user);
+    this.currentUserSubject.next(user);
+
+    this.userStatusService.update({
+      emailVerified: user.emailVerified ?? false,
+      kycStatus: user.kycStatus ?? null,
+      role: user.role,
+    });
   }
 }

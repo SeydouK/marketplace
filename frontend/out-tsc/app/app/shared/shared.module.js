@@ -9,6 +9,7 @@ import { CitySectionComponent } from './components/city-section/city-section.com
 import { Menubar } from 'primeng/menubar';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { StatusBannerComponent } from './components/status-banner/status-banner.component';
 import * as i0 from "@angular/core";
 export class SharedModule {
     static { this.ɵfac = function SharedModule_Factory(__ngFactoryType__) { return new (__ngFactoryType__ || SharedModule)(); }; }
@@ -18,7 +19,7 @@ export class SharedModule {
 (() => { (typeof ngDevMode === "undefined" || ngDevMode) && i0.ɵsetClassMetadata(SharedModule, [{
         type: NgModule,
         args: [{
-                declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent],
+                declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent, StatusBannerComponent],
                 imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner],
                 exports: [
                     HeaderComponent,
@@ -30,10 +31,11 @@ export class SharedModule {
                     Button,
                     ProgressSpinner,
                     CommonModule,
+                    StatusBannerComponent
                 ],
             }]
     }], null, null); })();
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(SharedModule, { declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent], imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner], exports: [HeaderComponent,
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(SharedModule, { declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent, StatusBannerComponent], imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner], exports: [HeaderComponent,
         FooterComponent,
         LoaderComponent,
         ListingCardComponent,
@@ -41,5 +43,6 @@ export class SharedModule {
         Menubar,
         Button,
         ProgressSpinner,
-        CommonModule] }); })();
+        CommonModule,
+        StatusBannerComponent] }); })();
 //# sourceMappingURL=shared.module.js.map

@@ -1,17 +1,79 @@
-<section class="max-w-7xl mx-auto py-6 px-4">
-  <h1 class="text-2xl font-bold mb-6">Espace admin</h1>
+<section class="admin-shell max-w-7xl mx-auto py-8 px-4">
+  <div class="admin-hero">
+    <div>
+      <p class="admin-eyebrow">Administration</p>
+      <h1>Demandes de passage vendeur</h1>
+      <p class="admin-copy">
+        Validez ici les utilisateurs qui ont demand&eacute; l'acc&egrave;s vendeur. L'approbation fait passer le
+        compte au r&ocirc;le <strong>VENDEUR</strong> et retire la demande en attente.
+      </p>
+    </div>
+    <div class="admin-pill">
+      <span>Demandes en attente</span>
+      <strong>{{ pendingCount }}</strong>
+    </div>
+  </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-gray-500 text-sm font-medium">Administration</h2>
-      <p class="text-3xl font-bold text-gray-900 mt-2">...</p>
+  <div class="admin-panel mt-8">
+    <div class="admin-panel__header">
+      <div>
+        <h2>File d'approbation</h2>
+        <p>Les demandes les plus r&eacute;centes apparaissent en premier.</p>
+      </div>
+      <button type="button" class="admin-refresh" (click)="loadSellerRequests()" [disabled]="loading">
+        {{ loading ? 'Actualisation...' : 'Actualiser' }}
+      </button>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 md:col-span-2">
-      <p class="text-gray-600 leading-7">
-        Le tableau de bord administrateur n'existe pas dans le Laravel actuel. Cette page reste volontairement simple
-        et align&eacute;e visuellement sur le dashboard pour ne pas introduire un design divergent.
-      </p>
+    <div *ngIf="loading" class="admin-state">
+      Chargement des demandes vendeur...
+    </div>
+
+    <div *ngIf="!loading && !sellerRequests.length" class="admin-state admin-state--empty">
+      Aucune demande vendeur en attente pour le moment.
+    </div>
+
+    <div *ngIf="!loading && sellerRequests.length" class="admin-grid">
+      <article
+        *ngFor="let request of sellerRequests; trackBy: trackByRequestId"
+        class="admin-card"
+      >
+        <div class="admin-card__header">
+          <div>
+            <h3>{{ request.name }} {{ request.surname }}</h3>
+            <p>{{ request.email }}</p>
+          </div>
+          <span class="admin-status">Demande ouverte</span>
+        </div>
+
+        <dl class="admin-meta">
+          <div>
+            <dt>R&ocirc;le actuel</dt>
+            <dd>{{ request.role }}</dd>
+          </div>
+          <div>
+            <dt>Email v&eacute;rifi&eacute;</dt>
+            <dd>{{ request.emailVerified ? 'Oui' : 'Non' }}</dd>
+          </div>
+          <div>
+            <dt>KYC</dt>
+            <dd>{{ request.kycStatus || 'N/A' }}</dd>
+          </div>
+          <div>
+            <dt>Derni&egrave;re mise &agrave; jour</dt>
+            <dd>{{ request.updatedAt | date:'short' }}</dd>
+          </div>
+        </dl>
+
+        <button
+          type="button"
+          class="admin-approve"
+          [disabled]="approvingRequestId === request.id"
+          (click)="approve(request)"
+        >
+          {{ approvingRequestId === request.id ? 'Validation...' : 'Approuver et passer VENDEUR' }}
+        </button>
+      </article>
     </div>
   </div>
 </section>

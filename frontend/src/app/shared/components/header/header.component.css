@@ -1,3 +1,137 @@
 :host {
   display: block;
 }
+
+.seller-promo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.seller-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.seller-status-badge--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.seller-status-badge--active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.seller-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.seller-modal {
+  width: min(100%, 34rem);
+  padding: 1.5rem;
+  border-radius: 28px;
+  border: 1px solid rgba(225, 29, 72, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.18), transparent 28%),
+    linear-gradient(180deg, #fff8f8 0%, #ffffff 100%);
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.24);
+}
+
+.seller-modal__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #be123c 0%, #fb7185 100%);
+  color: #fff;
+}
+
+.seller-modal__title {
+  margin: 1rem 0 0;
+  color: #611a24;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.seller-modal__copy {
+  margin: 0.85rem 0 0;
+  color: #7f1d1d;
+  line-height: 1.7;
+}
+
+.seller-modal__details {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.15rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(190, 24, 93, 0.12);
+  color: #4c0519;
+  font-size: 0.95rem;
+}
+
+.seller-modal__details p {
+  margin: 0;
+}
+
+.seller-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.seller-modal__button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+}
+
+.seller-modal__button--ghost {
+  background: #fdf2f8;
+  color: #9d174d;
+}
+
+.seller-modal__button--solid {
+  background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+  color: #fff;
+}
+
+.seller-modal__button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .seller-modal {
+    padding: 1.25rem;
+    border-radius: 22px;
+  }
+
+  .seller-modal__actions {
+    flex-direction: column-reverse;
+  }
+}
