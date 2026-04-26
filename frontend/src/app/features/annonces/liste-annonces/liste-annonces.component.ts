@@ -381,6 +381,20 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     void this.router.navigate(['/animaux/creer']);
   }
 
+  openListingDetails(listing: Listing, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.closePreview();
+    void this.router.navigate(['/annonces', listing.id]);
+  }
+
+  editListing(listing: Listing, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.closePreview();
+    void this.router.navigate(['/animaux', listing.id, 'editer']);
+  }
+
   openPreview(listing: Listing, event?: Event): void {
     event?.preventDefault();
     event?.stopPropagation();

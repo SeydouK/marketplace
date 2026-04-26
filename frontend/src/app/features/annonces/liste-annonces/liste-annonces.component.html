@@ -165,16 +165,21 @@
                     <button type="button" class="animal-action animal-action--ghost" (click)="openPreview(listing, $event)">
                       Aperçu
                     </button>
-                    <a [routerLink]="['/annonces', listing.id]" class="animal-action animal-action--solid">
+                    <button
+                      type="button"
+                      class="animal-action animal-action--solid"
+                      (click)="openListingDetails(listing, $event)"
+                    >
                       Voir le dossier
-                    </a>
-                    <a
+                    </button>
+                    <button
                       *ngIf="isMineCatalog"
-                      [routerLink]="['/animaux', listing.id, 'editer']"
+                      type="button"
                       class="animal-action animal-action--ghost"
+                      (click)="editListing(listing, $event)"
                     >
                       Modifier
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -269,9 +274,9 @@
               <button type="button" class="animal-action animal-action--ghost" (click)="openPreview(highlightedListing)">
                 Aperçu
               </button>
-              <a [routerLink]="['/annonces', highlightedListing.id]" class="animal-action animal-action--solid">
+              <button type="button" class="animal-action animal-action--solid" (click)="openListingDetails(highlightedListing, $event)">
                 Fiche complète
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -358,9 +363,9 @@
       </div>
 
       <div class="preview-actions">
-        <a [routerLink]="['/annonces', previewListing.id]" class="animal-action animal-action--solid" (click)="closePreview()">
+        <button type="button" class="animal-action animal-action--solid" (click)="openListingDetails(previewListing, $event)">
           Ouvrir la fiche complète
-        </a>
+        </button>
 
         <a
           *ngIf="!isMineCatalog && auth.isLoggedIn() && previewListing.sellerEmail"
@@ -370,14 +375,14 @@
           Contacter le vendeur
         </a>
 
-        <a
+        <button
           *ngIf="canEditPreview"
-          [routerLink]="['/animaux', previewListing.id, 'editer']"
+          type="button"
           class="animal-action animal-action--ghost"
-          (click)="closePreview()"
+          (click)="editListing(previewListing, $event)"
         >
           Modifier ce dossier
-        </a>
+        </button>
       </div>
     </div>
   </div>
