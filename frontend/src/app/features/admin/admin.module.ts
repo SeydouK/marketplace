@@ -7,6 +7,7 @@ import { GestionUtilisateursComponent } from './gestion-utilisateurs/gestion-uti
 import { GestionAnnoncesComponent } from './gestion-annonces/gestion-annonces.component';
 import { GestionLitigesComponent } from './gestion-litiges/gestion-litiges.component';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,6 @@ import { RouterModule } from '@angular/router';
     GestionAnnoncesComponent,
     GestionLitigesComponent,
   ],
-  imports: [SharedModule, AdminRoutingModule, RouterModule],
+  imports: [SharedModule, AdminRoutingModule, RouterModule, FormsModule],
 })
 export class AdminModule {}

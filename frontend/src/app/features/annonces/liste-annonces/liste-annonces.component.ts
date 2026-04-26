@@ -4,17 +4,21 @@ import {
   ElementRef,
   HostListener,
   Inject,
+  Input,
   NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
 import { Listing } from '../models/listing.model';
 import { ListingService } from '../services/listing.service';
+
+type ListingCatalogMode = 'public' | 'mine';
 
 @Component({
   selector: 'app-liste-annonces',
@@ -24,6 +28,8 @@ import { ListingService } from '../services/listing.service';
 })
 export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy {
   private static leafletLoadPromise?: Promise<any>;
+
+  @Input() mode?: ListingCatalogMode;
 
   @ViewChild('resultsPanel') resultsPanel?: ElementRef<HTMLElement>;
 
@@ -54,6 +60,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   previewListing?: Listing;
   currentPage = 1;
   pageSize = 4;
+  catalogMode: ListingCatalogMode = 'public';
 
   readonly placeholderImage = 'https://placehold.co/960x720/fde2e2/7f1d1d?text=Animal';
   readonly defaultMapCenter = {
@@ -75,22 +82,91 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     private readonly uiState: MarketplaceUiService,
     public readonly auth: AuthService,
     private readonly zone: NgZone,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
     @Inject(DOCUMENT) private readonly document: Document
   ) {}
 
   ngOnInit(): void {
     this.pageSize = this.computePageSize();
+    this.catalogMode = this.resolveCatalogMode();
 
+    this.loadListings();
+
+    if (this.isMineCatalog) {
+      return;
+    }
+
+    this.bindGlobalSearchState();
+  }
+
+  get isMineCatalog(): boolean {
+    return this.catalogMode === 'mine';
+  }
+
+  get heroKicker(): string {
+    return this.isMineCatalog ? 'Espace vendeur' : 'Marché bétail';
+  }
+
+  get heroTitle(): string {
+    return this.isMineCatalog
+      ? 'Mes animaux publiés'
+      : 'Parcourir les animaux disponibles avec une vraie lecture terrain';
+  }
+
+  get heroCopy(): string {
+    return this.isMineCatalog
+      ? 'Retrouvez uniquement les dossiers animaux rattachés à votre compte vendeur.'
+      : 'Ce catalogue réunit les dossiers validés, leur implantation sur la carte et un aperçu rapide avant consultation complète.';
+  }
+
+  get publishedStatLabel(): string {
+    return this.isMineCatalog ? 'mes dossiers' : 'dossiers publiés';
+  }
+
+  get resultsTitle(): string {
+    return this.isMineCatalog ? 'Mes animaux' : 'Catalogue disponible';
+  }
+
+  get resultsCaption(): string {
+    return this.isMineCatalog
+      ? 'Consultez vos dossiers, ouvrez un aperçu ou modifiez un animal depuis sa fiche.'
+      : "Cliquez sur un dossier pour l'ouvrir en aperçu, ou utilisez la carte pour cibler un animal.";
+  }
+
+  get emptyTitle(): string {
+    return this.isMineCatalog ? 'Aucun animal enregistré' : 'Aucun animal trouvé';
+  }
+
+  get emptyMessage(): string {
+    return this.isMineCatalog
+      ? 'Enregistrez un animal pour le voir apparaître dans votre espace vendeur.'
+      : 'Modifiez vos critères de recherche pour relancer le catalogue.';
+  }
+
+  private loadListings(): void {
+    this.loading = true;
     this.subscriptions.add(
-      this.listingService.search({}).subscribe((listings) => {
-        this.allListings = listings;
-        this.loading = false;
-        this.ensureSelectionStillVisible();
-        this.ensurePaginationState();
-        this.queueMapRefresh();
+      (this.isMineCatalog ? this.listingService.myListings() : this.listingService.search({})).subscribe({
+        next: (listings) => {
+          this.allListings = listings;
+          this.loading = false;
+          this.ensureSelectionStillVisible();
+          this.ensurePaginationState();
+          this.queueMapRefresh();
+        },
+        error: () => {
+          this.allListings = [];
+          this.loading = false;
+          this.ensureSelectionStillVisible();
+          this.ensurePaginationState();
+          this.queueMapRefresh();
+        },
       })
     );
+  }
 
+  private bindGlobalSearchState(): void {
     this.subscriptions.add(
       this.uiState.searchTerm$.subscribe((term) => {
         this.location = term;
@@ -108,6 +184,11 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         this.queueMapRefresh();
       })
     );
+  }
+
+  private resolveCatalogMode(): ListingCatalogMode {
+    const routeMode = this.route.snapshot.data['listingSource'];
+    return this.mode === 'mine' || routeMode === 'mine' ? 'mine' : 'public';
   }
 
   ngAfterViewInit(): void {
@@ -269,14 +350,18 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   updateLocation(value: string): void {
     this.location = value;
-    this.uiState.setSearchTerm(value);
+    if (!this.isMineCatalog) {
+      this.uiState.setSearchTerm(value);
+    }
     this.ensureSelectionStillVisible();
     this.queueMapRefresh();
   }
 
   updateAnimalType(value: string): void {
     this.animalType = value;
-    this.uiState.setAnimalFilter(value);
+    if (!this.isMineCatalog) {
+      this.uiState.setAnimalFilter(value);
+    }
     this.ensureSelectionStillVisible();
     this.queueMapRefresh();
   }
@@ -284,10 +369,16 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   resetFilters(): void {
     this.location = '';
     this.animalType = '';
-    this.uiState.setSearchTerm('');
-    this.uiState.setAnimalFilter('');
+    if (!this.isMineCatalog) {
+      this.uiState.setSearchTerm('');
+      this.uiState.setAnimalFilter('');
+    }
     this.ensureSelectionStillVisible();
     this.queueMapRefresh();
+  }
+
+  goToCreateAnimal(): void {
+    void this.router.navigate(['/animaux/creer']);
   }
 
   openPreview(listing: Listing, event?: Event): void {

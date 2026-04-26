@@ -20,6 +20,6 @@ export class DashboardVeterinaireComponent implements OnInit {
 
   ngOnInit(): void {
     this.profile = this.auth.currentUser;
-    this.vetService.getStats().subscribe((s) => (this.stats = s));
+    /*this.vetService.getStats().subscribe((s) => (this.stats = s));*/
   }
 }

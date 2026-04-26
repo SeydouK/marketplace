@@ -55,6 +55,10 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.USER;
 
+    @Builder.Default
+    @Column(name = "devenir_vendeur", nullable = false)
+    private boolean devenirVendeur = false;
+
     @CreationTimestamp
     private Instant createdAt;
 

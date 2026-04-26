@@ -2,12 +2,9 @@
   <div class="max-w-[1600px] mx-auto">
     <div class="catalog-hero mb-8">
       <div>
-        <p class="catalog-kicker">Marché bétail</p>
-        <h1>Parcourir les animaux disponibles avec une vraie lecture terrain</h1>
-        <p class="catalog-copy">
-          Ce catalogue réunit les dossiers validés, leur implantation sur la carte
-          et un aperçu rapide avant consultation complète.
-        </p>
+        <p class="catalog-kicker">{{ heroKicker }}</p>
+        <h1>{{ heroTitle }}</h1>
+        <p class="catalog-copy">{{ heroCopy }}</p>
 
         <div class="hero-chips" *ngIf="animalTypeChips.length">
           <button
@@ -21,12 +18,21 @@
             <strong>{{ chip.count }}</strong>
           </button>
         </div>
+
+        <button
+          *ngIf="isMineCatalog && allListings.length"
+          type="button"
+          class="hero-primary-action"
+          (click)="goToCreateAnimal()"
+        >
+          Enregistrer un animal
+        </button>
       </div>
 
       <div class="hero-stats">
         <div class="hero-stat">
           <span class="hero-stat__value">{{ filteredListings.length }}</span>
-          <span class="hero-stat__label">dossiers publiés</span>
+          <span class="hero-stat__label">{{ publishedStatLabel }}</span>
         </div>
         <div class="hero-stat">
           <span class="hero-stat__value">{{ mappedListings.length }}</span>
@@ -74,10 +80,8 @@
         <ng-container *ngIf="filteredListings.length; else emptyState">
           <div class="results-header">
             <div>
-              <p class="results-title">Catalogue disponible</p>
-              <p class="results-caption">
-                Cliquez sur un dossier pour l’ouvrir en aperçu, ou utilisez la carte pour cibler un animal.
-              </p>
+              <p class="results-title">{{ resultsTitle }}</p>
+              <p class="results-caption">{{ resultsCaption }}</p>
             </div>
             <div class="results-badge">
               {{ visibleRangeStart }}-{{ visibleRangeEnd }} sur {{ filteredListings.length }}
@@ -163,6 +167,13 @@
                     </button>
                     <a [routerLink]="['/annonces', listing.id]" class="animal-action animal-action--solid">
                       Voir le dossier
+                    </a>
+                    <a
+                      *ngIf="isMineCatalog"
+                      [routerLink]="['/animaux', listing.id, 'editer']"
+                      class="animal-action animal-action--ghost"
+                    >
+                      Modifier
                     </a>
                   </div>
                 </div>
@@ -272,8 +283,16 @@
 <ng-template #emptyState>
   <div class="empty-state empty-state--inline">
     <i class="pi pi-inbox"></i>
-    <h2>Aucun animal trouvé</h2>
-    <p>Modifiez vos critères de recherche pour relancer le catalogue.</p>
+    <h2>{{ emptyTitle }}</h2>
+    <p>{{ emptyMessage }}</p>
+    <button
+      *ngIf="isMineCatalog"
+      type="button"
+      class="animal-action animal-action--solid"
+      (click)="goToCreateAnimal()"
+    >
+      Enregistrer un animal
+    </button>
   </div>
 </ng-template>
 
@@ -344,7 +363,7 @@
         </a>
 
         <a
-          *ngIf="auth.isLoggedIn() && previewListing.sellerEmail"
+          *ngIf="!isMineCatalog && auth.isLoggedIn() && previewListing.sellerEmail"
           [href]="'mailto:' + previewListing.sellerEmail"
           class="animal-action animal-action--ghost"
         >

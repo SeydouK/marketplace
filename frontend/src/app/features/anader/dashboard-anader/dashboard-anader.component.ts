@@ -20,6 +20,6 @@ export class DashboardAnaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.profile = this.auth.currentUser;
-    this.anaderService.getStats().subscribe((s) => (this.stats = s));
+   /* this.anaderService.getStats().subscribe((s) => (this.stats = s));*/
   }
 }

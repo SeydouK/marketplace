@@ -3,6 +3,7 @@ package com.marketplace.controller;
 import com.marketplace.dto.AnimalCreateRequest;
 import com.marketplace.dto.AnimalDTO;
 import com.marketplace.dto.AnimalSearchFilterDTO;
+import com.marketplace.dto.AnimalStatsDTO;
 import com.marketplace.dto.AnimalValidationRequest;
 import com.marketplace.model.AnimalStatus;
 import com.marketplace.model.AnimalType;
@@ -89,6 +90,11 @@ public class AnimalController {
     @GetMapping("/mine")
     public ResponseEntity<List<AnimalDTO>> mine() {
         return ResponseEntity.ok(animalService.listMyAnimals());
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<AnimalStatsDTO> stats() {
+        return ResponseEntity.ok(animalService.getMyAnimalStats());
     }
 
     @GetMapping("/validation/pending")

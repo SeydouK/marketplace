@@ -2,9 +2,14 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
-import { Role } from '../../../core/models/role.enum';
 import { environment } from '../../../../environments/environment';
 import { UserStatusService } from '../../../core/services/user-status.service';
+
+interface SellerAnimalStats {
+  total: number;
+  available: number;
+  unavailable: number;
+}
 
 @Component({
   selector: 'app-dashboard-vendeur',
@@ -17,8 +22,7 @@ export class DashboardVendeurComponent implements OnInit {
   // Compteurs cheptel
   animalsCount = 0;
   availableCount = 0;        // statut DISPONIBLE
-  soldCount = 0;             // statut VENDU
-  escrowCount = 0;           // transactions escrow en cours
+  pendingCount = 0;          // statut INDISPONIBLE / validation en attente
 
   constructor(
     private auth: AuthService,
@@ -31,17 +35,16 @@ export class DashboardVendeurComponent implements OnInit {
       this.profile = d;
     });
 
-    this.http.get<any>(`${environment.apiUrl}/animals/stats`).subscribe(stats => {
-      this.animalsCount              = stats.total          ?? 0;
-      this.availableCount            = stats.available      ?? 0;
-      this.soldCount                 = stats.sold           ?? 0;
-      this.escrowCount               = stats.escrowPending  ?? 0;
+    this.http.get<SellerAnimalStats>(`${environment.apiUrl}/animals/stats`).subscribe(stats => {
+      this.animalsCount = stats.total ?? 0;
+      this.availableCount = stats.available ?? 0;
+      this.pendingCount = stats.unavailable ?? 0;
     });
   }
 
   // ── Nombre d'animaux EN_ATTENTE de validation sanitaire ──
   get pendingHealthValidationCount(): number {
-    return Math.max(0, this.animalsCount - this.availableCount - this.soldCount);
+    return this.pendingCount;
   }
 
   // ── Pourcentages pour la barre de progression ──
@@ -53,19 +56,10 @@ export class DashboardVendeurComponent implements OnInit {
     return this.animalsCount ? Math.round((this.pendingHealthValidationCount / this.animalsCount) * 100) : 0;
   }
 
-  get soldPercent(): number {
-    return this.animalsCount ? Math.round((this.soldCount / this.animalsCount) * 100) : 0;
-  }
-
   // ── KYC ──
   get kycApproved(): boolean {
     const status = this.userStatusService.snapshot?.kycStatus
                 ?? (this.profile as any)?.kycStatus;
     return status === 'VALIDATED' || status === 'APPROVED';
-  }
-
-  // ── Accès validation sanitaire (vendeur vérifié seulement) ──
-  get canAccessHealthValidation(): boolean {
-    return this.profile?.role === Role.VENDEUR && this.kycApproved;
   }
 }

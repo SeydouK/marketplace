@@ -30,19 +30,41 @@ export class ListingService {
 
   // Annonces du vendeur connecté
   myListings(): Observable<Listing[]> {
-    return this.http.get<Listing[]>(`${this.base}/mes-annonces`);
+    return this.http.get<any[]>(`${this.base}/mine`).pipe(
+      map((animals) => animals.map((animal) => this.toListingFrontend(animal)))
+    );
   }
 
   // Recherche marketplace publique
   searchListings(params: ListingSearchParams): Observable<ListingPage> {
     let httpParams = new HttpParams();
-    if (params.species) httpParams = httpParams.set('espece', params.species);
-    if (params.region) httpParams = httpParams.set('region', params.region);
-    if (params.maxPrice) httpParams = httpParams.set('prixMax', params.maxPrice);
-    if (params.certified === 'true') httpParams = httpParams.set('certifie', 'true');
+    if (params.species) httpParams = httpParams.set('type', params.species);
+    if (params.region) httpParams = httpParams.set('location', params.region);
+    if (params.maxPrice) httpParams = httpParams.set('maxPrice', params.maxPrice);
     if (params.page !== undefined) httpParams = httpParams.set('page', params.page);
     if (params.size !== undefined) httpParams = httpParams.set('size', params.size);
-    return this.http.get<ListingPage>(`${this.base}`, { params: httpParams });
+    return this.http.get<any[] | ListingPage>(`${this.base}`, { params: httpParams }).pipe(
+      map((response) => {
+        if (Array.isArray(response)) {
+          const listings = response.map((animal) => this.toListingFrontend(animal));
+          const page = params.page ?? 0;
+          const size = (params.size ?? listings.length) || 1;
+          const start = page * size;
+
+          return {
+            content: listings.slice(start, start + size),
+            totalElements: listings.length,
+            totalPages: Math.max(1, Math.ceil(listings.length / size)),
+            number: page,
+          };
+        }
+
+        return {
+          ...response,
+          content: response.content.map((animal) => this.toListingFrontend(animal)),
+        };
+      })
+    );
   }
 
 

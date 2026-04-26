@@ -14,7 +14,59 @@ export interface AdminStats {
 }
 
 export interface UserPage {
-  content: User[];
+  content: AdminUser[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+}
+
+export interface AdminUser {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  role: Role;
+  emailVerified: boolean;
+  kycStatus: string | null;
+  devenirVendeur: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SellerRequest {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  role: Role;
+  emailVerified: boolean;
+  kycStatus: string | null;
+  devenirVendeur: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU';
+
+export interface AdminListing {
+  id: string;
+  displayName: string;
+  type: string;
+  race: string | null;
+  lieuNaissance: string | null;
+  price: number;
+  quantity: number;
+  status: AdminListingStatus;
+  photos: string[];
+  sellerId: number;
+  sellerName: string;
+  sellerEmail: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminListingPage {
+  content: AdminListing[];
   totalElements: number;
   totalPages: number;
   number: number;
@@ -38,16 +90,40 @@ export class AdminService {
     return this.http.get<UserPage>(`${this.base}/users`, { params: httpParams });
   }
 
-  updateUserRole(userId: number, role: Role): Observable<User> {
-    return this.http.patch<User>(`${this.base}/users/${userId}/role`, { role });
+  listSellerRequests(): Observable<SellerRequest[]> {
+    return this.http.get<SellerRequest[]>(`${this.base}/seller-requests`);
   }
 
-  validateKyc(userId: number): Observable<User> {
-    return this.http.post<User>(`${this.base}/users/${userId}/kyc/validate`, {});
+  approveSellerRequest(userId: number): Observable<SellerRequest> {
+    return this.http.post<SellerRequest>(`${this.base}/seller-requests/${userId}/approve`, {});
   }
 
-  rejectKyc(userId: number, reason: string): Observable<User> {
-    return this.http.post<User>(`${this.base}/users/${userId}/kyc/reject`, { reason });
+  getListings(params?: { status?: AdminListingStatus | 'all'; page?: number; size?: number }): Observable<AdminListingPage> {
+    let httpParams = new HttpParams();
+    if (params?.status && params.status !== 'all') httpParams = httpParams.set('status', params.status);
+    if (params?.page !== undefined) httpParams = httpParams.set('page', params.page);
+    if (params?.size !== undefined) httpParams = httpParams.set('size', params.size);
+    return this.http.get<AdminListingPage>(`${this.base}/annonces`, { params: httpParams });
+  }
+
+  approveListing(listingId: string): Observable<AdminListing> {
+    return this.http.post<AdminListing>(`${this.base}/annonces/${listingId}/approuver`, {});
+  }
+
+  suspendListing(listingId: string): Observable<AdminListing> {
+    return this.http.post<AdminListing>(`${this.base}/annonces/${listingId}/suspendre`, {});
+  }
+
+  updateUserRole(userId: number, role: Role): Observable<AdminUser> {
+    return this.http.patch<AdminUser>(`${this.base}/users/${userId}/role`, { role });
+  }
+
+  validateKyc(userId: number): Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.base}/users/${userId}/kyc/validate`, {});
+  }
+
+  rejectKyc(userId: number, reason: string): Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.base}/users/${userId}/kyc/reject`, { reason });
   }
 
   suspendUser(userId: number): Observable<User> {

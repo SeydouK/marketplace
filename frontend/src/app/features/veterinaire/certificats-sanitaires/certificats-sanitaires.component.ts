@@ -20,7 +20,7 @@ export class CertificatsSanitairesComponent implements OnInit {
   constructor(private vetService: VeterinaireService) {}
 
   ngOnInit(): void {
-    this.vetService.getCertificates().subscribe((c) => (this.certificates = c));
+   /* this.vetService.getCertificates().subscribe((c) => (this.certificates = c));*/
   }
 
   submitCertificate(): void {

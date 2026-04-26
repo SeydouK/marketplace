@@ -1,6 +1,7 @@
 package com.marketplace.dto;
 
 import com.marketplace.model.Role;
+import com.marketplace.model.KycStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,9 @@ public class UserProfileDTO {
     private String name;
     private String email;
     private Role role;
+    private boolean emailVerified;
+    private KycStatus kycStatus;
+    private boolean devenirVendeur;
     private long animalsCount;
     private long pendingHealthValidationCount;
 
@@ -19,6 +23,9 @@ public class UserProfileDTO {
             String name,
             String email,
             Role role,
+            boolean emailVerified,
+            KycStatus kycStatus,
+            boolean devenirVendeur,
             long animalsCount,
             long pendingHealthValidationCount
     ) {
@@ -26,6 +33,9 @@ public class UserProfileDTO {
         this.name = name;
         this.email = email;
         this.role = role;
+        this.emailVerified = emailVerified;
+        this.kycStatus = kycStatus;
+        this.devenirVendeur = devenirVendeur;
         this.animalsCount = animalsCount;
         this.pendingHealthValidationCount = pendingHealthValidationCount;
     }
