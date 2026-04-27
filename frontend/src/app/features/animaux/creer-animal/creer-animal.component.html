@@ -1,5 +1,5 @@
-<section class="animal-shell py-6 px-4 sm:py-8 lg:px-8">
-  <div class="max-w-7xl mx-auto">
+<section class="ui-page ui-page--wide animal-shell">
+  <div class="animal-container">
     <div class="hero-panel mb-8">
       <div class="hero-copy">
         <p class="eyebrow">{{ heroEyebrow }}</p>
@@ -10,7 +10,7 @@
 
         <div
           *ngIf="editMode"
-          class="mt-5 rounded-[1.5rem] border border-red-200 bg-red-50/85 px-4 py-4 text-sm leading-6 text-red-900"
+          class="ui-alert ui-alert--warning edit-alert"
         >
           Les informations mises à jour sont conservées dans le dossier, puis soumises à nouveau à la validation sanitaire avant republication.
         </div>
@@ -44,7 +44,7 @@
       <form class="space-y-6" [formGroup]="form" (ngSubmit)="submit()">
         <div
           *ngIf="loadingAnimal"
-          class="rounded-[1.5rem] border border-red-200 bg-white/90 px-4 py-4 text-sm text-red-800 shadow-sm"
+          class="rounded-[1.5rem] border border-[#fecdca] bg-white/90 px-4 py-4 text-sm text-[#912018] shadow-sm"
         >
           Chargement du dossier en cours...
         </div>

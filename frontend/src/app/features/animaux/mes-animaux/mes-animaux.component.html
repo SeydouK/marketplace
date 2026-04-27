@@ -1,83 +1,84 @@
-<section class="animals-shell py-8 px-4 lg:px-8">
-  <div class="max-w-7xl mx-auto">
-    <div class="animals-hero mb-8">
-      <div>
-        <p class="eyebrow">Suivi vendeur</p>
-        <h1>Mon cheptel digitalisé</h1>
-        <p>
-          Retrouvez les animaux rattachés à votre compte, leur QR code,
-          leur statut de disponibilité et l'état du dossier sanitaire.
-        </p>
-      </div>
-
-      <div class="hero-actions">
-        <a routerLink="/animaux/creer" class="hero-cta hero-cta--solid">Ajouter un animal</a>
-        <a *ngIf="canAccessHealthValidation" routerLink="/animaux/validation" class="hero-cta">
-          Accès validation ANADER
-        </a>
-      </div>
+<section class="ui-page ui-page--wide ui-stack">
+  <header class="ui-header">
+    <div>
+      <p class="ui-eyebrow">Suivi vendeur</p>
+      <h1>Mon cheptel digitalise</h1>
+      <p class="ui-copy">
+        Retrouvez vos animaux, leur QR code, leur disponibilité et l'état du dossier sanitaire.
+      </p>
     </div>
 
-    <div class="metric-strip mb-8">
-      <article class="metric-panel">
-        <span class="metric-value">{{ animals.length }}</span>
-        <span class="metric-label">Animaux rattachés</span>
-      </article>
-      <article class="metric-panel">
-        <span class="metric-value">{{ pendingCount }}</span>
-        <span class="metric-label">En attente de validation</span>
-      </article>
-      <article class="metric-panel">
-        <span class="metric-value">{{ availableCount }}</span>
-        <span class="metric-label">Disponibles après validation</span>
-      </article>
+    <div class="animal-actions">
+      <a routerLink="/animaux/creer" class="ui-button ui-button--primary">Ajouter un animal</a>
+      <a *ngIf="canAccessHealthValidation" routerLink="/animaux/validation" class="ui-button">
+        Validation ANADER
+      </a>
     </div>
+  </header>
 
-    <div *ngIf="!loading && animals.length; else emptyState" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+  <div class="ui-grid ui-grid--3">
+    <article class="ui-card ui-card--padded">
+      <span class="ui-stat__label">Animaux rattachés</span>
+      <strong class="ui-stat__value">{{ animals.length }}</strong>
+    </article>
+    <article class="ui-card ui-card--padded">
+      <span class="ui-stat__label">En attente</span>
+      <strong class="ui-stat__value">{{ pendingCount }}</strong>
+    </article>
+    <article class="ui-card ui-card--padded">
+      <span class="ui-stat__label">Disponibles</span>
+      <strong class="ui-stat__value">{{ availableCount }}</strong>
+    </article>
+  </div>
+
+  <ng-container *ngIf="!loading; else loadingState">
+    <div *ngIf="animals.length; else emptyState" class="animal-grid">
       <article *ngFor="let animal of animals" class="animal-card">
         <div class="animal-media">
           <img [src]="coverOf(animal)" [alt]="animal.displayName" />
-          <span class="status-pill" [attr.data-status]="animal.status">{{ animal.status }}</span>
+          <span class="ui-badge" [ngClass]="animal.status === 'DISPONIBLE' ? 'ui-badge--success' : 'ui-badge--warning'">
+            {{ animal.status }}
+          </span>
         </div>
 
         <div class="animal-content">
           <div class="animal-topline">
             <div>
-              <p class="animal-type">{{ animal.type }}</p>
+              <span class="animal-type">{{ animal.type }}</span>
               <h2>{{ animal.displayName }}</h2>
             </div>
-            <div class="price-chip">{{ animal.price | number: '1.0-0' }} FCFA</div>
+            <strong class="price-chip">{{ animal.price | number: '1.0-0' }} FCFA</strong>
           </div>
 
-          <div class="detail-grid">
+          <dl class="detail-grid">
             <div>
-              <span class="detail-label">QR code</span>
-              <strong>{{ animal.qrCode }}</strong>
+              <dt>QR code</dt>
+              <dd>{{ animal.qrCode }}</dd>
             </div>
             <div>
-              <span class="detail-label">Lieu</span>
-              <strong>{{ animal.lieuNaissance || 'Non renseigné' }}</strong>
+              <dt>Lieu</dt>
+              <dd>{{ animal.lieuNaissance || 'Non renseigne' }}</dd>
             </div>
             <div>
-              <span class="detail-label">Quantité</span>
-              <strong>{{ animal.quantity }} tête(s)</strong>
+              <dt>Quantité</dt>
+              <dd>{{ animal.quantity }} tete(s)</dd>
             </div>
             <div>
-              <span class="detail-label">Sanitaire</span>
-              <strong>{{ healthStateLabel(animal) }}</strong>
+              <dt>Sanitaire</dt>
+              <dd>{{ healthStateLabel(animal) }}</dd>
             </div>
-          </div>
+          </dl>
 
           <div class="health-block">
-            <div class="health-line">
-              <span>Documents chargés</span>
+            <div>
+              <span>Documents charges</span>
               <strong>{{ animal.healthRecords.length }}</strong>
             </div>
-            <div class="health-line">
+            <div>
               <span>Dernier événement</span>
               <strong>{{ animal.history[0]?.eventType || 'ENREGISTREMENT' }}</strong>
             </div>
-            <div class="health-line">
+            <div>
               <span>Contact vendeur</span>
               <strong>{{ animal.sellerEmail }}</strong>
             </div>
@@ -85,19 +86,26 @@
         </div>
       </article>
     </div>
+  </ng-container>
 
-    <ng-template #emptyState>
-      <div class="empty-card">
-        <p *ngIf="loading">Chargement de vos animaux...</p>
-        <ng-container *ngIf="!loading">
-          <h2>Aucun animal enregistré pour le moment</h2>
-          <p>
-            Lancez l'enregistrement vendeur pour créer votre premier animal,
-            ajouter ses pièces et préparer sa validation sanitaire.
-          </p>
-          <a routerLink="/animaux/creer" class="hero-cta hero-cta--solid">Commencer l'enregistrement</a>
-        </ng-container>
+  <ng-template #loadingState>
+    <div class="ui-empty">
+      <div>
+        <h2>Chargement des animaux</h2>
+        <p>Nous récupérons les dossiers rattachés à votre compte.</p>
       </div>
-    </ng-template>
-  </div>
+    </div>
+  </ng-template>
+
+  <ng-template #emptyState>
+    <div class="ui-empty">
+      <div>
+        <h2>Aucun animal enregistré</h2>
+        <p>Lancez l'enregistrement vendeur pour créer votre premier dossier animal.</p>
+        <a routerLink="/animaux/creer" class="ui-button ui-button--primary empty-action">
+          Commencer l'enregistrement
+        </a>
+      </div>
+    </div>
+  </ng-template>
 </section>

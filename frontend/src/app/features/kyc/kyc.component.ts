@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
@@ -7,9 +7,10 @@ import { UserStatusService } from '../../core/services/user-status.service';
 @Component({
   selector: 'app-kyc',
   templateUrl: './kyc.component.html',
+  styleUrls: ['./kyc.component.css'],
   standalone: false,
 })
-export class KycComponent {
+export class KycComponent implements OnDestroy {
   step: 'cni' | 'selfie' | 'result' = 'cni';
   kycStatus: 'success' | 'rejected' | null = null;
   message = '';
@@ -26,6 +27,8 @@ export class KycComponent {
   selfieFile: File | null = null;
   selfiePreview: string | null = null;
   cameraActive = false;
+  private cniPreviewObjectUrl: string | null = null;
+  private selfiePreviewObjectUrl: string | null = null;
 
   // NOTE: HttpHeaders + token retiré — l'AuthInterceptor s'en charge globalement.
   // StorageService n'est plus nécessaire ici.
@@ -41,10 +44,12 @@ export class KycComponent {
   onCniSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
-    this.cniFile = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => (this.cniPreview = e.target?.result as string);
-    reader.readAsDataURL(this.cniFile);
+    const file = input.files[0];
+    this.revokeObjectUrl(this.cniPreviewObjectUrl);
+    this.cniFile = file;
+    this.cniPreviewObjectUrl = URL.createObjectURL(file);
+    this.cniPreview = this.cniPreviewObjectUrl;
+    input.value = '';
   }
 
   submitCni(): void {
@@ -99,6 +104,8 @@ export class KycComponent {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d')!.drawImage(video, 0, 0);
+    this.revokeObjectUrl(this.selfiePreviewObjectUrl);
+    this.selfiePreviewObjectUrl = null;
     this.selfiePreview = canvas.toDataURL('image/jpeg');
     canvas.toBlob((blob) => {
       if (blob) this.selfieFile = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
@@ -108,6 +115,8 @@ export class KycComponent {
   }
 
   resetSelfie(): void {
+    this.revokeObjectUrl(this.selfiePreviewObjectUrl);
+    this.selfiePreviewObjectUrl = null;
     this.selfiePreview = null;
     this.selfieFile = null;
   }
@@ -115,11 +124,13 @@ export class KycComponent {
   onSelfieSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
-    this.selfieFile = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => (this.selfiePreview = e.target?.result as string);
-    reader.readAsDataURL(this.selfieFile);
+    const file = input.files[0];
+    this.revokeObjectUrl(this.selfiePreviewObjectUrl);
+    this.selfieFile = file;
+    this.selfiePreviewObjectUrl = URL.createObjectURL(file);
+    this.selfiePreview = this.selfiePreviewObjectUrl;
     this.cameraActive = false;
+    input.value = '';
   }
 
   submitSelfie(): void {
@@ -159,10 +170,25 @@ export class KycComponent {
   retry(): void {
     this.step = 'cni';
     this.kycStatus = null;
+    this.revokeObjectUrl(this.cniPreviewObjectUrl);
+    this.revokeObjectUrl(this.selfiePreviewObjectUrl);
+    this.cniPreviewObjectUrl = null;
+    this.selfiePreviewObjectUrl = null;
     this.cniFile = null;
     this.cniPreview = null;
     this.selfieFile = null;
     this.selfiePreview = null;
     this.message = '';
+  }
+
+  ngOnDestroy(): void {
+    this.revokeObjectUrl(this.cniPreviewObjectUrl);
+    this.revokeObjectUrl(this.selfiePreviewObjectUrl);
+  }
+
+  private revokeObjectUrl(url: string | null): void {
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
   }
 }

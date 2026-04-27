@@ -1,45 +1,38 @@
-<!-- anader/validation-eleveurs/validation-eleveurs.component.html -->
-<div class="max-w-7xl mx-auto py-6 px-4">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold">Validation des éleveurs</h1>
-    <span class="text-sm text-gray-500">{{ farmers.length }} dossier(s) en attente</span>
-  </div>
+<section class="ui-page ui-stack">
+  <header class="ui-header">
+    <div>
+      <p class="ui-eyebrow">ANADER</p>
+      <h1>Validation des éleveurs</h1>
+      <p class="ui-copy">{{ farmers.length }} dossier(s) en attente.</p>
+    </div>
+  </header>
 
-  <div *ngIf="farmers.length === 0" class="text-center py-16 text-gray-400">
-    <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
-    <p>Aucun éleveur en attente de validation.</p>
-  </div>
-
-  <div class="space-y-4" *ngIf="farmers.length > 0">
-    <div *ngFor="let farmer of farmers"
-      class="rounded-xl border border-gray-200 bg-white p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="font-semibold text-gray-900">{{ farmer.name }}</span>
-          <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-            {{ farmer.zone }}
-          </span>
-        </div>
-        <p class="text-sm text-gray-500">{{ farmer.phone }}</p>
-        <p class="text-sm text-gray-400 mt-1">
-          {{ farmer.animalsCount }} animal(aux) · Soumis le {{ farmer.submittedAt | date:'dd/MM/yyyy' }}
-        </p>
-      </div>
-
-      <div class="flex gap-2 shrink-0">
-        <button (click)="validate(farmer)"
-          class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition font-medium">
-          Valider
-        </button>
-        <button (click)="reject(farmer)"
-          class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition font-medium">
-          Rejeter
-        </button>
-      </div>
+  <div *ngIf="farmers.length === 0" class="ui-empty">
+    <div>
+      <h2>Aucun éleveur en attente</h2>
+      <p>Les nouveaux dossiers soumis apparaîtront ici.</p>
     </div>
   </div>
-</div>
+
+  <div class="ui-stack" *ngIf="farmers.length > 0">
+    <article *ngFor="let farmer of farmers" class="ui-card ui-card--padded">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="ui-section-title !mb-0">{{ farmer.name }}</h2>
+            <span class="ui-badge ui-badge--warning">{{ farmer.zone }}</span>
+          </div>
+          <p class="mt-2 text-sm text-gray-500">{{ farmer.phone }}</p>
+          <p class="mt-1 text-sm text-gray-400">
+            {{ farmer.animalsCount }} animal(aux) · Soumis le {{ farmer.submittedAt | date:'dd/MM/yyyy' }}
+          </p>
+        </div>
+
+        <div class="flex shrink-0 gap-2">
+          <button type="button" (click)="validate(farmer)" class="ui-button ui-button--success">Valider</button>
+          <button type="button" (click)="reject(farmer)" class="ui-button ui-button--danger">Rejeter</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

@@ -80,11 +80,11 @@ export class GestionAnnoncesComponent implements OnInit {
 
   getStatusBadge(status?: string): string {
     const map: Record<string, string> = {
-      DISPONIBLE: 'bg-green-100 text-green-800',
-      INDISPONIBLE: 'bg-amber-100 text-amber-800',
-      VENDU: 'bg-gray-100 text-gray-600',
+      DISPONIBLE: 'ui-badge--success',
+      INDISPONIBLE: 'ui-badge--warning',
+      VENDU: '',
     };
-    return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
+    return status ? (map[status] ?? '') : '';
   }
 
   trackByListingId(_: number, listing: AdminListing): string {

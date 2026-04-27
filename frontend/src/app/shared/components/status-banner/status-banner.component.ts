@@ -33,14 +33,18 @@ export class StatusBannerComponent implements OnInit, OnDestroy {
   }
 
   get showEmailBanner(): boolean {
-    return this.isLoggedIn && !!this.status && !this.status.emailVerified;
+    return this.isLoggedIn &&
+           !!this.status &&
+           !this.status.emailVerified &&
+           !this.router.url.startsWith('/verify-email');
   }
 
   get showKycBanner(): boolean {
     return this.isLoggedIn &&
            !!this.status &&
            this.status.emailVerified &&
-           this.status.kycStatus !== 'VALIDATED';
+           this.status.kycStatus !== 'VALIDATED' &&
+           !this.router.url.startsWith('/kyc');
   }
 
   goToVerifyEmail(): void { this.router.navigate(['/verify-email']); }

@@ -3,32 +3,45 @@
   padding: 0;
 }
 
-.app-main {
-  min-height: calc(100vh - 140px);
-  padding: 0;
+/* Active state bottom nav: icon and label */
+a.text-\[\#7f1d1d\] svg {
+  stroke: var(--ui-brand);
 }
 
-/* Active state bottom nav — colore icône ET label */
-a.text-\[\#FF385C\] svg {
-  stroke: #FF385C;
-}
-
-/* Active state bottom nav mobile */
 nav a.active-link {
-  color: #FF385C;
+  color: var(--ui-brand);
 }
 
 nav a.active-link svg {
-  stroke: #FF385C;
+  stroke: var(--ui-brand);
 }
 
 nav a.active-link span {
-  color: #FF385C;
+  color: var(--ui-brand);
   font-weight: 700;
+}
+
+.mobile-bottom-nav .nav-item {
+  min-width: 0;
+  flex: 1 1 0;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.mobile-bottom-nav svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.mobile-bottom-nav span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
   .app-main {
-    padding-bottom: 6rem; /* 96px = hauteur navbar + marge */
+    padding-bottom: 6rem;
   }
 }
