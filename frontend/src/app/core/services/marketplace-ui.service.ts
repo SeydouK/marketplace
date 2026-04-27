@@ -13,7 +13,10 @@ export class MarketplaceUiService {
   readonly animalFilter$ = this._animalFilter.asObservable();
   readonly maxPrice$     = this._maxPrice.asObservable();
   readonly dateFrom$     = this._dateFrom.asObservable();
+  private readonly _region = new BehaviorSubject<string>('');
+  readonly region$ = this._region.asObservable();
 
+  setRegion(value: string): void { this._region.next(value); }
   setSearchTerm(value: string): void   { this._searchTerm.next(value); }
   setAnimalFilter(value: string): void { this._animalFilter.next(value); }
   setMaxPrice(value: number | null): void { this._maxPrice.next(value); }
@@ -24,5 +27,6 @@ export class MarketplaceUiService {
     this._animalFilter.next('');
     this._maxPrice.next(null);
     this._dateFrom.next('');
+    this._region.next('');
   }
 }

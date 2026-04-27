@@ -64,6 +64,8 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   previewListing?: Listing;
   currentPage = 1;
   pageSize = 4;
+  showMoreFilters = false;
+  mobileMapOpen = false;
 
   readonly placeholderImage = 'https://placehold.co/960x720/fde2e2/7f1d1d?text=Animal';
   readonly defaultMapCenter = {
@@ -112,6 +114,13 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.subscriptions.add(
       this.uiState.animalFilter$.subscribe((filter) => {
         this.animalType = filter;
+        this.onFilterChange();
+      })
+    );
+
+    this.subscriptions.add(
+      this.uiState.region$.subscribe((r) => {
+        this.region = r;
         this.onFilterChange();
       })
     );
@@ -175,7 +184,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         !normalizedAnimalType ||
         this.normalizeText(listing.animalType ?? '') === normalizedAnimalType;
 
-      // Filtre région
+      // Filtre région — compare avec listing.location (ex: "Korhogo, Côte d'Ivoire")
       const matchesRegion =
         !normalizedRegion ||
         this.normalizeText(listing.location ?? '').includes(normalizedRegion);
@@ -341,6 +350,14 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.toggleBodyScroll(false);
     this.focusListingOnMap(listing);
     this.refreshMarkerStyles();
+  }
+
+  toggleMobileMap(): void {
+    this.mobileMapOpen = !this.mobileMapOpen;
+    if (this.mobileMapOpen) {
+      // Laisse le DOM se mettre à jour avant d'initialiser la carte mobile
+      setTimeout(() => void this.ensureMapReady(), 50);
+    }
   }
 
   closePreview(): void {

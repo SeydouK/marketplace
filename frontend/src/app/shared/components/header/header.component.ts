@@ -208,7 +208,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   submitSearch(): void {
-    this.uiState.setSearchTerm(this.searchRegion ?? '');
+    this.uiState.setRegion(this.searchRegion ?? '');
     this.uiState.setMaxPrice(this.searchBudget);
     this.uiState.setDateFrom(this.searchDate ?? '');
     this.activeSearchPanel = null;

@@ -69,17 +69,13 @@
       <!-- Région (ex-marketplace) -->
       <div class="toolbar-field">
         <label for="region">Région</label>
-        <select
-          id="region"
-          [ngModel]="region"
-          (ngModelChange)="updateRegion($event)"
-        >
+        <select id="region" [ngModel]="region" (ngModelChange)="updateRegion($event)">
           <option value="">Toutes</option>
-          <option value="ABIDJAN">Abidjan</option>
-          <option value="BOUAKE">Bouaké</option>
-          <option value="KORHOGO">Korhogo</option>
-          <option value="YAMOUSSOUKRO">Yamoussoukro</option>
-          <option value="SAN_PEDRO">San-Pédro</option>
+          <option value="Abidjan">Abidjan</option>
+          <option value="Bouaké">Bouaké</option>
+          <option value="Korhogo">Korhogo</option>
+          <option value="Yamoussoukro">Yamoussoukro</option>
+          <option value="San-Pédro">San-Pédro</option>
         </select>
       </div>
 
