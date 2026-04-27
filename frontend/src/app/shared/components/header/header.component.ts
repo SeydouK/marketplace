@@ -86,7 +86,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   filteredMobileRegions = [...this.allMobileRegions];
 
-
   // ── Constructor ──────────────────────────────────────────────────────────
   constructor(
     public readonly auth: AuthService,
@@ -158,8 +157,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectRegion(value: string): void {
     const r = this.regionSuggestions.find((x) => x.value === value);
     this.searchRegion = r?.label ?? value;
-    this.uiState.setSearchTerm(value);
-    this.activeSearchPanel = 'date';
+    this.activeSearchPanel = 'date'; // avance au panneau suivant, sans naviguer
   }
 
   selectCalDay(d: number): void {
@@ -210,9 +208,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   submitSearch(): void {
-    if (this.searchRegion) this.uiState.setSearchTerm(this.searchRegion);
+    this.uiState.setSearchTerm(this.searchRegion ?? '');
+    this.uiState.setMaxPrice(this.searchBudget);
+    this.uiState.setDateFrom(this.searchDate ?? '');
     this.activeSearchPanel = null;
     this.router.navigate(['/annonces']);
+  }
+
+  resetDesktopSearch(): void {
+    this.searchRegion = '';
+    this.searchDate   = '';
+    this.searchBudget = null;
+    this.activeSearchPanel = null;
+    this.uiState.resetAll();
   }
 
   // ── Recherche mobile ─────────────────────────────────────────────────────

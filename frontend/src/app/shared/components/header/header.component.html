@@ -112,6 +112,16 @@
           </p>
         </button>
 
+        <!-- Bouton reset (visible si au moins un filtre actif) -->
+        <button *ngIf="searchRegion || searchDate || searchBudget"
+          type="button" (click)="resetDesktopSearch()"
+          class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-100 transition-colors mx-2 flex-shrink-0"
+          title="Réinitialiser les filtres">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
         <div class="pr-2 pl-1">
           <button type="button" (click)="submitSearch()"
             class="w-12 h-12 bg-[#FF385C] rounded-full flex items-center justify-center hover:bg-[#e0314f] transition-colors">
@@ -124,12 +134,16 @@
           class="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-4">
           <p class="text-xs font-semibold text-gray-500 uppercase mb-3">Suggestions de régions</p>
           <div *ngFor="let r of regionSuggestions" (click)="selectRegion(r.value)"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 cursor-pointer">
+            class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 cursor-pointer"
+            [class.bg-gray-50]="searchRegion === r.label">
             <span class="text-lg">🌍</span>
-            <div>
+            <div class="flex-1">
               <p class="text-sm font-medium text-gray-900">{{ r.label }}</p>
               <p class="text-xs text-gray-500">{{ r.sub }}</p>
             </div>
+            <svg *ngIf="searchRegion === r.label" class="w-4 h-4 text-[#FF385C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
           </div>
         </div>
 

@@ -105,18 +105,28 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.subscriptions.add(
       this.uiState.searchTerm$.subscribe((term) => {
         this.location = term;
-        this.ensureSelectionStillVisible();
-        this.ensurePaginationState();
-        this.queueMapRefresh();
+        this.onFilterChange();
       })
     );
 
     this.subscriptions.add(
       this.uiState.animalFilter$.subscribe((filter) => {
         this.animalType = filter;
-        this.ensureSelectionStillVisible();
-        this.ensurePaginationState();
-        this.queueMapRefresh();
+        this.onFilterChange();
+      })
+    );
+
+    this.subscriptions.add(
+      this.uiState.maxPrice$.subscribe((price) => {
+        this.maxPrice = price;
+        this.onFilterChange();
+      })
+    );
+
+    this.subscriptions.add(
+      this.uiState.dateFrom$.subscribe((date) => {
+        this.dateFrom = date;
+        this.onFilterChange();
       })
     );
   }
@@ -309,15 +319,14 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   resetFilters(): void {
-    this.location = '';
-    this.animalType = '';
-    this.region = '';
-    this.maxPrice = null;
+    this.location     = '';
+    this.animalType   = '';
+    this.region       = '';
+    this.maxPrice     = null;
     this.statusFilter = '';
-    this.dateFrom = '';
-    this.dateTo = '';
-    this.uiState.setSearchTerm('');
-    this.uiState.setAnimalFilter('');
+    this.dateFrom     = '';
+    this.dateTo       = '';
+    this.uiState.resetAll();
     this.onFilterChange();
   }
 
