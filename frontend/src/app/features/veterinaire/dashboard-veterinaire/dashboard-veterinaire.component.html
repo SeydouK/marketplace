@@ -1,17 +1,15 @@
-<!-- veterinaire/dashboard-veterinaire/dashboard-veterinaire.component.html -->
-<section class="dashboard-shell max-w-7xl mx-auto py-8 px-4">
-  <div class="dashboard-hero">
+<section class="dashboard-shell ui-stack">
+  <header class="dashboard-hero">
     <div>
       <p class="dashboard-eyebrow">Espace vétérinaire</p>
       <h1>Bonjour Dr {{ profile?.name }}</h1>
       <p class="dashboard-copy">
-        Gérez les <strong>certificats sanitaires</strong>, validez les inspections
-        et assurez la traçabilité de santé des animaux sur la plateforme.
+        Gérez les certificats sanitaires, validez les inspections et assurez la traçabilité santé des animaux.
       </p>
     </div>
-  </div>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+  <div class="ui-grid ui-grid--3">
     <article class="dashboard-card">
       <span class="dashboard-label">Inspections en attente</span>
       <strong class="dashboard-value">{{ stats?.pendingInspections ?? '—' }}</strong>
@@ -26,42 +24,25 @@
     </article>
   </div>
 
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold text-[#611a24] mb-4">Actions</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+  <section>
+    <h2 class="ui-section-title">Actions</h2>
+    <div class="ui-grid ui-grid--2">
       <a routerLink="/veterinaire/certificats" class="dashboard-action dashboard-action--solid">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="font-medium">Certificats sanitaires</span>
+        <i class="pi pi-verified" aria-hidden="true"></i>
+        <span>Certificats sanitaires</span>
       </a>
-
       <a routerLink="/veterinaire/inspections" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-        <span class="font-medium">Inspections planifiées</span>
+        <i class="pi pi-calendar" aria-hidden="true"></i>
+        <span>Inspections planifiées</span>
       </a>
-
       <a routerLink="/animaux/validation" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="font-medium">Validation sanitaire ANADER</span>
+        <i class="pi pi-check-circle" aria-hidden="true"></i>
+        <span>Validation sanitaire ANADER</span>
       </a>
-
-      <a routerLink="/animaux" class="dashboard-action dashboard-action--wide">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span class="font-medium">Rechercher un animal</span>
+      <a routerLink="/animaux" class="dashboard-action">
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <span>Rechercher un animal</span>
       </a>
-
     </div>
-  </div>
+  </section>
 </section>

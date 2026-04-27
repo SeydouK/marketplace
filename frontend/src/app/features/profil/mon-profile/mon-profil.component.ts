@@ -31,6 +31,7 @@ interface Section {
 @Component({
   selector: 'app-mon-profil',
   templateUrl: './mon-profil.component.html',
+  styleUrls: ['./mon-profil.component.css'],
   standalone: false,
 })
 export class MonProfilComponent implements OnInit, OnDestroy {
@@ -152,8 +153,8 @@ export class MonProfilComponent implements OnInit, OnDestroy {
       [Role.VENDEUR]:        'bg-orange-100 text-orange-700',
       [Role.VETERINAIRE]:    'bg-green-100 text-green-700',
       [Role.AGENT_ANADER]:   'bg-yellow-100 text-yellow-700',
-      [Role.ADMIN]:          'bg-red-100 text-red-700',
-      [Role.ADMINISTRATEUR]: 'bg-red-100 text-red-700',
+      [Role.ADMIN]:          'bg-[#fee4e2] text-[#b42318]',
+      [Role.ADMINISTRATEUR]: 'bg-[#fee4e2] text-[#b42318]',
     };
     return this.profile?.role ? (colors[this.profile.role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
   }

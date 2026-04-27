@@ -1,18 +1,15 @@
-<!-- anader/dashboard-anader/dashboard-anader.component.html -->
-<section class="dashboard-shell max-w-7xl mx-auto py-8 px-4">
-  <div class="dashboard-hero">
+<section class="dashboard-shell ui-stack">
+  <header class="dashboard-hero">
     <div>
       <p class="dashboard-eyebrow">Espace ANADER</p>
       <h1>Bonjour, {{ profile?.name }}</h1>
       <p class="dashboard-copy">
-        Accompagnez les éleveurs sur le terrain : enregistrement des animaux,
-        insertion des <strong>puces RFID</strong> et validation des dossiers
-        en attente de conformité.
+        Accompagnez les éleveurs : enregistrement des animaux, suivi RFID et validation des dossiers terrain.
       </p>
     </div>
-  </div>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+  <div class="ui-grid ui-grid--3">
     <article class="dashboard-card">
       <span class="dashboard-label">Éleveurs accompagnés</span>
       <strong class="dashboard-value">{{ stats?.accompagnedFarmers ?? '—' }}</strong>
@@ -27,53 +24,33 @@
     </article>
   </div>
 
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold text-[#611a24] mb-4">Actions terrain</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+  <section>
+    <h2 class="ui-section-title">Actions terrain</h2>
+    <div class="ui-grid ui-grid--2">
       <a routerLink="/anader/validation" class="dashboard-action dashboard-action--solid">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-        </svg>
-        <span class="font-medium">Valider les éleveurs</span>
+        <i class="pi pi-check-circle" aria-hidden="true"></i>
+        <span>Valider les éleveurs</span>
       </a>
-
       <a routerLink="/animaux/creer" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 4v16m8-8H4"/>
-        </svg>
-        <span class="font-medium">Enregistrer un animal</span>
+        <i class="pi pi-plus" aria-hidden="true"></i>
+        <span>Enregistrer un animal</span>
       </a>
-
       <a routerLink="/animaux/mes-animaux" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-        </svg>
-        <span class="font-medium">Animaux en attente RFID</span>
+        <i class="pi pi-list" aria-hidden="true"></i>
+        <span>Animaux en attente RFID</span>
       </a>
-
       <a routerLink="/anader/statistiques" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-        </svg>
-        <span class="font-medium">Statistiques de ma zone</span>
+        <i class="pi pi-chart-bar" aria-hidden="true"></i>
+        <span>Statistiques de ma zone</span>
       </a>
-
     </div>
-  </div>
+  </section>
 
-  <!-- Rappel rôle terrain -->
-  <div class="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-5">
-    <h3 class="font-semibold text-amber-900 text-sm mb-2">Périmètre agent ANADER</h3>
-    <ul class="text-sm text-amber-800 space-y-1 list-disc list-inside">
-      <li>Saisie des données et photos au nom des éleveurs</li>
-      <li>Confirmation de l'insertion des puces RFID</li>
-      <li>Accompagnement à la mise en conformité documentaire</li>
-      <li>Les documents sanitaires officiels sont créés par les <strong>vétérinaires agréés DSV uniquement</strong></li>
-    </ul>
+  <div class="ui-alert ui-alert--warning">
+    <i class="pi pi-info-circle" aria-hidden="true"></i>
+    <p>
+      <strong>Périmètre ANADER.</strong>
+      Les documents sanitaires officiels restent créés par les vétérinaires agréés DSV.
+    </p>
   </div>
 </section>

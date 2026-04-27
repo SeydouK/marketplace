@@ -3,7 +3,7 @@
 <!-- ════════════════════════════════════
      VERSION DESKTOP
 ════════════════════════════════════ -->
-<div class="hidden md:block min-h-screen bg-white">
+<div class="ui-page ui-page--wide profile-page hidden md:block">
   <div class="max-w-6xl mx-auto px-6 py-10">
 
     <!-- Titre page + badge rôle -->
@@ -43,7 +43,7 @@
 <!-- ════════════════════════════════════
      VERSION MOBILE
 ════════════════════════════════════ -->
-<div class="md:hidden min-h-screen bg-white">
+<div class="ui-page profile-page md:hidden">
 
   <!-- Page principale profil -->
   <div class="px-4 pt-6 pb-24">
@@ -80,7 +80,7 @@
           (click)="openSectionPanel(section.key)"
           class="relative bg-white border border-gray-100 rounded-2xl shadow-sm p-4 text-left hover:shadow-md transition-shadow overflow-hidden">
           <span *ngIf="section.isNew"
-            class="absolute top-2 left-2 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
+            class="absolute top-2 left-2 bg-[#7f1d1d] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
           <div class="mt-4 mb-2 text-2xl">{{ section.icon }}</div>
           <p class="text-sm font-semibold text-gray-800 leading-tight">{{ section.label }}</p>
         </button>
@@ -282,7 +282,7 @@
               <span *ngIf="kycApproved" class="text-green-600 font-semibold">✓ Vérifiée</span>
               <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium">⏳ En cours</span>
               <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'" class="text-blue-500 font-medium">📷 Selfie requis</span>
-              <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-red-500 font-medium">✗ Rejetée</span>
+              <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-[#b42318] font-medium">✗ Rejetée</span>
               <span *ngIf="!kycApproved && !kycStatus" class="text-gray-400">Non commencée</span>
             </span>
           </div>
@@ -331,7 +331,7 @@
                 }">{{ kycLabel }}</p>
             </div>
             <a routerLink="/kyc" (click)="closeMobilePanel()"
-              class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
+              class="text-sm font-medium text-gray-900 underline hover:text-[#7f1d1d] transition-colors">
               {{ kycStatus === 'REJECTED' ? 'Réessayer' : kycStatus === 'CNI_VERIFIED' ? 'Selfie' : 'Commencer' }}
             </a>
           </div>
@@ -411,7 +411,7 @@
             <span *ngIf="kycApproved" class="text-green-600 font-semibold">✓ Vérifiée</span>
             <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium">⏳ En cours</span>
             <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'" class="text-blue-500 font-medium">📷 Selfie requis</span>
-            <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-red-500 font-medium">✗ Rejetée</span>
+            <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-[#b42318] font-medium">✗ Rejetée</span>
             <span *ngIf="!kycApproved && !kycStatus" class="text-gray-400">Non commencée</span>
           </span>
         </div>
@@ -470,7 +470,7 @@
             }">{{ kycLabel }}</p>
         </div>
         <a routerLink="/kyc"
-          class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
+          class="text-sm font-medium text-gray-900 underline hover:text-[#7f1d1d] transition-colors">
           {{ kycStatus === 'REJECTED' ? 'Réessayer' : kycStatus === 'CNI_VERIFIED' ? 'Prendre un selfie' : 'Commencer' }}
         </a>
       </div>
@@ -486,7 +486,7 @@
           <p class="text-sm font-medium text-gray-900">Mot de passe</p>
           <p class="text-sm text-gray-400 mt-0.5">Modifié il y a plus de 3 mois</p>
         </div>
-        <button type="button" class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C]">Modifier</button>
+        <button type="button" class="text-sm font-medium text-gray-900 underline hover:text-[#7f1d1d]">Modifier</button>
       </div>
     </div>
   </ng-container>
@@ -507,7 +507,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mon espace</h2>
     <p class="text-sm text-gray-500 mb-6">Accédez à votre tableau de bord.</p>
     <a routerLink="/dashboard"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#7f1d1d] text-white text-sm font-semibold rounded-xl hover:bg-[#611a24] transition-colors">
       Aller au tableau de bord →
     </a>
   </ng-container>
@@ -517,7 +517,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes favoris</h2>
     <p class="text-sm text-gray-500 mb-6">Les annonces que vous avez sauvegardées.</p>
     <a routerLink="/favoris"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#7f1d1d] text-white text-sm font-semibold rounded-xl hover:bg-[#611a24] transition-colors">
       Voir mes favoris →
     </a>
   </ng-container>
@@ -529,7 +529,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes animaux</h2>
     <p class="text-sm text-gray-500 mb-6">Gérez vos fiches animaux, photos, prix et localisation.</p>
     <a routerLink="/animaux/mes-animaux"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#7f1d1d] text-white text-sm font-semibold rounded-xl hover:bg-[#611a24] transition-colors">
       Voir mes animaux →
     </a>
   </ng-container>
@@ -539,7 +539,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes annonces</h2>
     <p class="text-sm text-gray-500 mb-6">Consultez et modifiez vos annonces publiées.</p>
     <a routerLink="/vendeur/mes-annonces"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#7f1d1d] text-white text-sm font-semibold rounded-xl hover:bg-[#611a24] transition-colors">
       Voir mes annonces →
     </a>
   </ng-container>
@@ -549,7 +549,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Documents sanitaires</h2>
     <p class="text-sm text-gray-500 mb-6">Créez et gérez les certificats vétérinaires.</p>
     <a routerLink="/animaux/validation-sanitaire"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#7f1d1d] text-white text-sm font-semibold rounded-xl hover:bg-[#611a24] transition-colors">
       Accéder aux documents →
     </a>
   </ng-container>
@@ -575,7 +575,7 @@
     <div class="divide-y divide-gray-100">
       <div class="py-4">
         <p class="text-sm font-medium text-gray-900">Total animaux enregistrés</p>
-        <p class="text-2xl font-bold text-[#FF385C] mt-1">{{ profile?.animauxEnregistres ?? 0 }}</p>
+        <p class="text-2xl font-bold text-[#7f1d1d] mt-1">{{ profile?.animauxEnregistres ?? 0 }}</p>
       </div>
       <div class="py-4">
         <p class="text-sm font-medium text-gray-900">Rémunération estimée</p>
@@ -589,7 +589,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Supervision</h2>
     <p class="text-sm text-gray-500 mb-6">Gestion des litiges et supervision globale.</p>
     <a routerLink="/admin"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#7f1d1d] text-white text-sm font-semibold rounded-xl hover:bg-[#611a24] transition-colors">
       Accéder au panneau admin →
     </a>
   </ng-container>

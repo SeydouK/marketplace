@@ -1,70 +1,41 @@
-<div class="auth-hero">
-  <div class="hero-copy">
-    <span class="badge">
-      <i class="pi pi-user-plus"></i>
-      Nouveau sur la plateforme
-    </span>
-    <h1>Creez votre compte Marketplace</h1>
-    <p class="subtitle">
-      Publiez vos annonces de betail, suivez vos ventes et retrouvez facilement les offres par ville.
+<section class="ui-page auth-shell">
+  <div class="auth-copy">
+    <p class="ui-eyebrow">Nouveau compte</p>
+    <h1>Créer votre compte Marketplace</h1>
+    <p>
+      Publiez vos animaux, suivez vos ventes et accedez aux offres par ville depuis un espace unique.
     </p>
   </div>
 
   <div class="auth-card">
     <h2>Inscription</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-      <div class="field">
-        <label for="surname">Nom</label>
-        <input
-          id="surname"
-          type="text"
-          formControlName="surname"
-          class="text-field"
-          placeholder="Votre nom de famille"
-        />
-        <p *ngIf="controlInvalid('surname', 'required')" class="error-text">Nom requis.</p>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <div class="form-grid">
+        <div class="ui-field">
+          <label for="surname">Nom</label>
+          <input id="surname" type="text" formControlName="surname" autocomplete="family-name" placeholder="Votre nom" />
+          <p *ngIf="controlInvalid('surname', 'required')" class="error-text">Nom requis.</p>
+        </div>
+
+        <div class="ui-field">
+          <label for="name">Prénom</label>
+          <input id="name" type="text" formControlName="name" autocomplete="given-name" placeholder="Votre prénom" />
+          <p *ngIf="controlInvalid('name','required')" class="error-text">Prénom requis.</p>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="name">Prénom</label>
-        <input 
-        id="name"
-        type="text"
-        formControlName ="name"
-        class="text-field"
-        placeholder="Votre prénom"
-        />
-        <p *ngIf="controlInvalid('name','required')" class="error-text">Prénom requis.</p>
-      </div>
-
-      <div class="field">
+      <div class="ui-field">
         <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          class="text-field"
-          placeholder="email@exemple.com"
-        />
+        <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="email@exemple.com" />
         <p *ngIf="controlInvalid('email', 'required')" class="error-text">Email requis.</p>
         <p *ngIf="controlInvalid('email', 'email')" class="error-text">Email invalide.</p>
       </div>
 
-      <div class="field">
+      <div class="ui-field">
         <label for="password">Mot de passe</label>
         <div class="password-group">
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            formControlName="password"
-            placeholder="Au moins 6 caracteres"
-          />
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="togglePassword()"
-            aria-label="Afficher ou masquer le mot de passe"
-          >
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="new-password" />
+          <button type="button" class="icon-button" (click)="togglePassword()" aria-label="Afficher ou masquer le mot de passe">
             <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
           </button>
         </div>
@@ -74,40 +45,31 @@
         </p>
       </div>
 
-      <div class="field">
+      <div class="ui-field">
         <label for="passwordConfirmation">Confirmation</label>
         <div class="password-group">
           <input
             id="passwordConfirmation"
             [type]="showPasswordConfirmation ? 'text' : 'password'"
             formControlName="passwordConfirmation"
-            placeholder="Retapez votre mot de passe"
+            autocomplete="new-password"
           />
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="togglePasswordConfirmation()"
-            aria-label="Afficher ou masquer la confirmation du mot de passe"
-          >
+          <button type="button" class="icon-button" (click)="togglePasswordConfirmation()" aria-label="Afficher ou masquer la confirmation du mot de passe">
             <i class="pi" [ngClass]="showPasswordConfirmation ? 'pi-eye-slash' : 'pi-eye'"></i>
           </button>
         </div>
-        <p *ngIf="controlInvalid('passwordConfirmation', 'required')" class="error-text">
-          Confirmation requise.
-        </p>
-        <p *ngIf="formInvalid('passwordMismatch')" class="error-text">
-          Les mots de passe ne correspondent pas.
-        </p>
-      </div>      
+        <p *ngIf="controlInvalid('passwordConfirmation', 'required')" class="error-text">Confirmation requise.</p>
+        <p *ngIf="formInvalid('passwordMismatch')" class="error-text">Les mots de passe ne correspondent pas.</p>
+      </div>
 
-      <button type="submit" class="primary-submit" [disabled]="form.invalid">
-        Creer mon compte
+      <button type="submit" class="ui-button ui-button--primary ui-button--block" [disabled]="form.invalid">
+        Créer mon compte
       </button>
 
-      <p class="hint">
-        Vous avez deja un compte ?
+      <p class="auth-hint">
+        Vous avez déjà un compte ?
         <a routerLink="/login">Se connecter</a>
       </p>
     </form>
   </div>
-</div>
+</section>

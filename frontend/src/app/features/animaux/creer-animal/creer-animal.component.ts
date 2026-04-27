@@ -99,7 +99,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       value: 'AUTRE',
       label: 'Autre',
-      hint: 'Espèces complémentaires prises en charge dans le POC.',
+      hint: 'Autres espèces suivies dans le dossier animal.',
     },
   ];
 

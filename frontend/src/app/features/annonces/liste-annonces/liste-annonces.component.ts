@@ -55,6 +55,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   location = '';
   animalType = '';
   loading = true;
+  loadError = false;
   mapUnavailable = false;
   activeListingId?: string;
   previewListing?: Listing;
@@ -63,6 +64,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   catalogMode: ListingCatalogMode = 'public';
 
   readonly placeholderImage = 'https://placehold.co/960x720/fde2e2/7f1d1d?text=Animal';
+  readonly skeletonItems = Array.from({ length: 4 });
   readonly defaultMapCenter = {
     latitude: 7.539989,
     longitude: -5.54708,
@@ -144,13 +146,23 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
       : 'Modifiez vos critères de recherche pour relancer le catalogue.';
   }
 
+  get primaryActionLabel(): string {
+    return this.isMineCatalog ? 'Enregistrer un animal' : 'Explorer les dossiers';
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!this.location || !!this.animalType;
+  }
+
   private loadListings(): void {
     this.loading = true;
+    this.loadError = false;
     this.subscriptions.add(
       (this.isMineCatalog ? this.listingService.myListings() : this.listingService.search({})).subscribe({
         next: (listings) => {
           this.allListings = listings;
           this.loading = false;
+          this.loadError = false;
           this.ensureSelectionStillVisible();
           this.ensurePaginationState();
           this.queueMapRefresh();
@@ -158,6 +170,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         error: () => {
           this.allListings = [];
           this.loading = false;
+          this.loadError = true;
           this.ensureSelectionStillVisible();
           this.ensurePaginationState();
           this.queueMapRefresh();
@@ -375,6 +388,19 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     this.ensureSelectionStillVisible();
     this.queueMapRefresh();
+  }
+
+  retryLoadListings(): void {
+    this.loadListings();
+  }
+
+  runPrimaryAction(): void {
+    if (this.isMineCatalog) {
+      this.goToCreateAnimal();
+      return;
+    }
+
+    this.scrollResultsIntoView();
   }
 
   goToCreateAnimal(): void {

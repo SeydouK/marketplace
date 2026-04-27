@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { UserStatusService } from '../../core/services/user-status.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-verify-email',
   templateUrl: './verify-email.component.html',
+  styleUrls: ['./verify-email.component.css'],
   standalone: false,
 })
 export class VerifyEmailComponent implements OnInit {
@@ -42,9 +44,7 @@ export class VerifyEmailComponent implements OnInit {
       return;
     }
 
-    this.http.get<any>('/api/kyc/status', {
-      headers: new HttpHeaders({ Authorization: `Bearer ${token}` })
-    }).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/kyc/status`).subscribe({
       next: (res) => {
         if (res.emailVerified) {
           // Email déjà vérifié — rediriger directement vers KYC

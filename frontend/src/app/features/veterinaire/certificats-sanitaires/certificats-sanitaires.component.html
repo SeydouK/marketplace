@@ -1,33 +1,27 @@
-<!-- veterinaire/certificats-sanitaires/certificats-sanitaires.component.html -->
-<div class="max-w-7xl mx-auto py-6 px-4">
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-    <h1 class="text-2xl font-bold">Certificats sanitaires</h1>
-    <button (click)="showForm = !showForm"
-      class="bg-[#611a24] text-white px-5 py-3 rounded-lg hover:bg-[#7a2030] transition inline-flex items-center gap-3">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
-      <span class="font-medium">Émettre un certificat</span>
+<section class="ui-page ui-stack">
+  <header class="ui-header">
+    <div>
+      <p class="ui-eyebrow">Vétérinaire</p>
+      <h1>Certificats sanitaires</h1>
+      <p class="ui-copy">Émettez et suivez les certificats liés aux dossiers animaux.</p>
+    </div>
+    <button type="button" (click)="showForm = !showForm" class="ui-button ui-button--primary">
+      <i class="pi pi-plus" aria-hidden="true"></i>
+      <span>Émettre un certificat</span>
     </button>
-  </div>
+  </header>
 
-  <!-- Formulaire émission -->
-  <div *ngIf="showForm"
-    class="mb-6 rounded-xl border border-gray-200 bg-white p-6">
-    <h2 class="text-lg font-semibold mb-4">Nouveau certificat</h2>
-    <form (ngSubmit)="submitCertificate()" #certForm="ngForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-      <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium text-gray-700">ID Animal</label>
-        <input type="text" name="animalId" [(ngModel)]="newCert.animalId" required
-          placeholder="ex : 00124"
-          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#611a24]"/>
+  <section *ngIf="showForm" class="ui-card ui-card--padded">
+    <h2 class="ui-section-title">Nouveau certificat</h2>
+    <form (ngSubmit)="submitCertificate()" #certForm="ngForm" class="ui-filterbar">
+      <div class="ui-field">
+        <label for="cert-animal">ID Animal</label>
+        <input id="cert-animal" type="text" name="animalId" [(ngModel)]="newCert.animalId" required placeholder="ex : 00124" />
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium text-gray-700">Type de certificat</label>
-        <select name="type" [(ngModel)]="newCert.type" required
-          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#611a24]">
+      <div class="ui-field">
+        <label for="cert-type">Type de certificat</label>
+        <select id="cert-type" name="type" [(ngModel)]="newCert.type" required>
           <option value="">Choisir...</option>
           <option value="CERTIFICAT_VETERINAIRE">Certificat vétérinaire</option>
           <option value="CARNET_VACCINATION">Carnet de vaccination</option>
@@ -36,43 +30,36 @@
         </select>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium text-gray-700">Date d'expiration</label>
-        <input type="date" name="expiresAt" [(ngModel)]="newCert.expiresAt" required
-          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#611a24]"/>
+      <div class="ui-field">
+        <label for="cert-expires">Date d'expiration</label>
+        <input id="cert-expires" type="date" name="expiresAt" [(ngModel)]="newCert.expiresAt" required />
       </div>
 
-      <div class="flex items-end">
-        <button type="submit" [disabled]="!certForm.valid"
-          class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-40 transition font-medium text-sm">
-          Émettre et signer
-        </button>
-      </div>
-
+      <button type="submit" [disabled]="!certForm.valid" class="ui-button ui-button--success">
+        Émettre et signer
+      </button>
     </form>
-  </div>
+  </section>
 
-  <!-- Tableau des certificats -->
-  <div class="overflow-x-auto rounded-xl border border-gray-200">
-    <table class="w-full text-sm">
-      <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+  <div class="ui-table-wrap">
+    <table class="ui-table">
+      <thead>
         <tr>
-          <th class="px-4 py-3 text-left">Animal</th>
-          <th class="px-4 py-3 text-left">Type</th>
-          <th class="px-4 py-3 text-left">Émis le</th>
-          <th class="px-4 py-3 text-left">Expire le</th>
-          <th class="px-4 py-3 text-left">Statut</th>
+          <th>Animal</th>
+          <th>Type</th>
+          <th>Émis le</th>
+          <th>Expire le</th>
+          <th>Statut</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let cert of certificates" class="hover:bg-gray-50">
-          <td class="px-4 py-3 font-medium">{{ cert.animalName }}</td>
-          <td class="px-4 py-3 text-gray-600">{{ getTypeLabel(cert.type) }}</td>
-          <td class="px-4 py-3 text-gray-500">{{ cert.issuedAt | date:'dd/MM/yyyy' }}</td>
-          <td class="px-4 py-3 text-gray-500">{{ cert.expiresAt | date:'dd/MM/yyyy' }}</td>
-          <td class="px-4 py-3">
-            <span class="px-2 py-1 rounded-full text-xs font-medium"
-              [ngClass]="getCertBadge(cert.status)">
+      <tbody>
+        <tr *ngFor="let cert of certificates">
+          <td><strong>{{ cert.animalName }}</strong></td>
+          <td>{{ getTypeLabel(cert.type) }}</td>
+          <td>{{ cert.issuedAt | date:'dd/MM/yyyy' }}</td>
+          <td>{{ cert.expiresAt | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="ui-badge" [ngClass]="getCertBadge(cert.status)">
               {{ cert.status }}
             </span>
           </td>
@@ -80,9 +67,11 @@
       </tbody>
     </table>
 
-    <p *ngIf="certificates.length === 0"
-      class="text-center text-gray-400 text-sm py-10">
-      Aucun certificat émis pour l'instant.
-    </p>
+    <div *ngIf="certificates.length === 0" class="ui-empty m-4">
+      <div>
+        <h2>Aucun certificat émis</h2>
+        <p>Les certificats signés apparaîtront dans ce registre.</p>
+      </div>
+    </div>
   </div>
-</div>
+</section>

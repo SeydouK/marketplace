@@ -16,6 +16,7 @@ interface Section {
 @Component({
   selector: 'app-parametres',
   templateUrl: './parametres.component.html',
+  styleUrls: ['./parametres.component.css'],
   standalone: false,
 })
 export class ParametresComponent implements OnInit {
