@@ -1,5 +1,5 @@
 <!-- features/profil/parametres/parametres.component.html -->
-<section class="ui-page ui-page--wide settings-page">
+<div class="min-h-screen bg-white">
 
   <!-- ════ MOBILE : Flèche retour + titre ════ -->
   <div class="md:hidden flex items-center gap-3 px-4 py-4 border-b border-gray-100">
@@ -101,7 +101,7 @@
 
     </div>
   </div>
-</section>
+</div>
 
 <!-- ════════════════════════════════════
      TEMPLATE CONTENU DES SECTIONS
@@ -119,7 +119,7 @@
           <p class="text-sm text-gray-500 mt-1">{{ profile?.name || 'Non renseigné' }}</p>
         </div>
         <button type="button" (click)="startEdit('name')"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Modifier
         </button>
       </div>
@@ -130,7 +130,7 @@
           <p class="text-sm text-gray-400 mt-1">Information non fournie</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Ajouter
         </button>
       </div>
@@ -151,7 +151,7 @@
           </p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Ajouter
         </button>
       </div>
@@ -162,7 +162,7 @@
           <p class="text-sm text-gray-400 mt-1">Information non fournie</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Ajouter
         </button>
       </div>
@@ -173,7 +173,7 @@
           <p class="text-sm text-gray-400 mt-1">Information non fournie</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Ajouter
         </button>
       </div>
@@ -184,7 +184,7 @@
           <p class="text-sm text-gray-400 mt-1">Information non fournie</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Ajouter
         </button>
       </div>
@@ -197,7 +197,7 @@
       <h3 class="text-sm font-semibold text-gray-900 mb-1">Quel est votre nom officiel ?</h3>
       <p class="text-xs text-gray-500 mb-4">Ce nom doit correspondre au nom figurant sur votre pièce d'identité.</p>
       <input type="text" [(ngModel)]="editValue"
-        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7f1d1d]/20 focus:border-[#7f1d1d] transition mb-4"/>
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition mb-4"/>
       <div class="flex gap-2 justify-end">
         <button type="button" (click)="cancelEdit()"
           class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
@@ -222,7 +222,7 @@
           <p class="text-sm text-gray-400 mt-1">Dernière modification il y a plus de 3 mois</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Modifier
         </button>
       </div>
@@ -239,7 +239,7 @@
           <p class="text-sm text-gray-400 mt-1">Gérez les appareils connectés à votre compte</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Gérer
         </button>
       </div>
@@ -257,7 +257,7 @@
           <p class="text-sm text-gray-400 mt-1">Votre profil est visible par tous les utilisateurs</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Modifier
         </button>
       </div>
@@ -267,7 +267,7 @@
           <p class="text-sm text-gray-400 mt-1">Supprimez définitivement votre compte et vos données</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-[#b42318] underline hover:text-[#b42318] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-red-500 underline hover:text-red-600 transition-colors flex-shrink-0 ml-4">
           Supprimer
         </button>
       </div>
@@ -286,7 +286,7 @@
         </div>
         <label class="relative inline-flex items-center cursor-pointer ml-4">
           <input type="checkbox" class="sr-only peer" checked/>
-          <div class="w-10 h-6 bg-gray-200 peer-checked:bg-[#7f1d1d] rounded-full transition-colors
+          <div class="w-10 h-6 bg-gray-200 peer-checked:bg-[#FF385C] rounded-full transition-colors
             after:content-[''] after:absolute after:top-0.5 after:left-0.5
             after:bg-white after:rounded-full after:w-5 after:h-5
             after:transition-transform peer-checked:after:translate-x-4"></div>
@@ -299,7 +299,7 @@
         </div>
         <label class="relative inline-flex items-center cursor-pointer ml-4">
           <input type="checkbox" class="sr-only peer" checked/>
-          <div class="w-10 h-6 bg-gray-200 peer-checked:bg-[#7f1d1d] rounded-full transition-colors
+          <div class="w-10 h-6 bg-gray-200 peer-checked:bg-[#FF385C] rounded-full transition-colors
             after:content-[''] after:absolute after:top-0.5 after:left-0.5
             after:bg-white after:rounded-full after:w-5 after:h-5
             after:transition-transform peer-checked:after:translate-x-4"></div>
@@ -312,7 +312,7 @@
         </div>
         <label class="relative inline-flex items-center cursor-pointer ml-4">
           <input type="checkbox" class="sr-only peer"/>
-          <div class="w-10 h-6 bg-gray-200 peer-checked:bg-[#7f1d1d] rounded-full transition-colors
+          <div class="w-10 h-6 bg-gray-200 peer-checked:bg-[#FF385C] rounded-full transition-colors
             after:content-[''] after:absolute after:top-0.5 after:left-0.5
             after:bg-white after:rounded-full after:w-5 after:h-5
             after:transition-transform peer-checked:after:translate-x-4"></div>
@@ -339,7 +339,7 @@
           <p class="text-sm text-gray-400 mt-1">Consultez toutes vos transactions escrow</p>
         </div>
         <a routerLink="/acheteur/mes-achats"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Voir
         </a>
       </div>
@@ -356,7 +356,7 @@
           <p class="text-sm text-gray-500 mt-1">Français</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Modifier
         </button>
       </div>
@@ -366,7 +366,7 @@
           <p class="text-sm text-gray-500 mt-1">FCFA — Franc CFA</p>
         </div>
         <button type="button"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Modifier
         </button>
       </div>
@@ -384,7 +384,7 @@
           <p class="text-sm text-gray-400 mt-1">Gérez vos animaux publiés</p>
         </div>
         <a routerLink="/vendeur/mes-annonces"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Accéder
         </a>
       </div>
@@ -394,7 +394,7 @@
           <p class="text-sm text-gray-400 mt-1">Suivez vos transactions en cours</p>
         </div>
         <a routerLink="/vendeur/mes-ventes"
-          class="text-sm font-semibold text-gray-900 underline hover:text-[#7f1d1d] transition-colors flex-shrink-0 ml-4">
+          class="text-sm font-semibold text-gray-900 underline hover:text-[#FF385C] transition-colors flex-shrink-0 ml-4">
           Accéder
         </a>
       </div>

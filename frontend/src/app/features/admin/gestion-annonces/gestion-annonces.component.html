@@ -1,88 +1,92 @@
-<section class="ui-page">
-  <header class="ui-header">
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
     <div>
-      <p class="ui-eyebrow">Administration</p>
-      <h1>Gestion des annonces</h1>
-      <p class="ui-copy">{{ totalElements }} annonce{{ totalElements > 1 ? 's' : '' }} au total.</p>
+      <h1 class="text-2xl font-bold text-gray-900">Gestion des annonces</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {{ totalElements }} annonce{{ totalElements > 1 ? 's' : '' }}
+      </p>
     </div>
 
-    <div class="ui-tabs" aria-label="Filtres annonces">
+    <div class="flex flex-wrap gap-2">
       <button
         *ngFor="let f of filters"
         type="button"
         (click)="setFilter(f.value)"
-        class="ui-tab"
-        [class.ui-tab--active]="activeFilter === f.value"
-      >
+        [class.bg-[#611a24]]="activeFilter === f.value"
+        [class.text-white]="activeFilter === f.value"
+        class="px-4 py-2 rounded-lg text-sm border border-[#611a24]/30 hover:bg-[#611a24]/10 transition">
         {{ f.label }}
       </button>
     </div>
-  </header>
+  </div>
 
-  <div class="ui-table-wrap">
-    <table class="ui-table">
-      <thead>
+  <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
         <tr>
-          <th>Annonce</th>
-          <th>Vendeur</th>
-          <th>Prix</th>
-          <th>Statut</th>
-          <th>Quantité</th>
-          <th class="text-right">Actions</th>
+          <th class="px-4 py-3 text-left">Annonce</th>
+          <th class="px-4 py-3 text-left">Vendeur</th>
+          <th class="px-4 py-3 text-left">Prix</th>
+          <th class="px-4 py-3 text-left">Statut</th>
+          <th class="px-4 py-3 text-left">Quantite</th>
+          <th class="px-4 py-3 text-right">Actions</th>
         </tr>
       </thead>
 
-      <tbody>
+      <tbody class="divide-y divide-gray-100">
         <tr *ngIf="loading">
-          <td colspan="6">
-            <div class="flex items-center justify-center gap-3 py-8">
-              <span class="ui-spinner"></span>
-              <span>Chargement des annonces...</span>
-            </div>
+          <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+            Chargement des annonces...
           </td>
         </tr>
 
         <tr *ngIf="!loading && listings.length === 0">
-          <td colspan="6">
-            <div class="ui-empty">
-              <div>
-                <h2>Aucune annonce trouvée</h2>
-                <p>Changez de filtre ou revenez plus tard.</p>
-              </div>
-            </div>
+          <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+            Aucune annonce trouvee.
           </td>
         </tr>
 
-        <tr *ngFor="let listing of listings; trackBy: trackByListingId">
-          <td>
-            <div class="ui-table-title">{{ listing.displayName || listing.race || listing.type }}</div>
-            <div>{{ listing.type }}{{ listing.lieuNaissance ? ' - ' + listing.lieuNaissance : '' }}</div>
+        <tr
+          *ngFor="let listing of listings; trackBy: trackByListingId"
+          class="hover:bg-gray-50 transition">
+          <td class="px-4 py-3">
+            <div class="font-medium text-gray-900">
+              {{ listing.displayName || listing.race || listing.type }}
+            </div>
+            <div class="text-xs text-gray-500">
+              {{ listing.type }}{{ listing.lieuNaissance ? ' - ' + listing.lieuNaissance : '' }}
+            </div>
           </td>
 
-          <td>
-            <div class="ui-table-title">{{ listing.sellerName || 'N/A' }}</div>
-            <div>{{ listing.sellerEmail || 'Email indisponible' }}</div>
+          <td class="px-4 py-3">
+            <div class="text-gray-700">{{ listing.sellerName || 'N/A' }}</div>
+            <div class="text-xs text-gray-500">{{ listing.sellerEmail || 'Email indisponible' }}</div>
           </td>
 
-          <td><strong>{{ listing.price | number }} FCFA</strong></td>
+          <td class="px-4 py-3 font-medium text-[#611a24]">
+            {{ listing.price | number }} FCFA
+          </td>
 
-          <td>
-            <span class="ui-badge" [ngClass]="getStatusBadge(listing.status)">
+          <td class="px-4 py-3">
+            <span
+              class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getStatusBadge(listing.status)">
               {{ listing.status }}
             </span>
           </td>
 
-          <td>{{ listing.quantity || 1 }}</td>
+          <td class="px-4 py-3 text-gray-700">
+            {{ listing.quantity || 1 }}
+          </td>
 
-          <td>
+          <td class="px-4 py-3">
             <div class="flex justify-end gap-2">
               <button
                 type="button"
                 *ngIf="listing.status === 'INDISPONIBLE'"
                 (click)="approve(listing)"
                 [disabled]="updatingListingId === listing.id"
-                class="ui-button ui-button--success"
-              >
+                class="text-xs px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50">
                 Publier
               </button>
 
@@ -91,8 +95,7 @@
                 *ngIf="listing.status === 'DISPONIBLE'"
                 (click)="suspend(listing)"
                 [disabled]="updatingListingId === listing.id"
-                class="ui-button ui-button--danger"
-              >
+                class="text-xs px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50">
                 Suspendre
               </button>
             </div>
@@ -102,15 +105,24 @@
     </table>
   </div>
 
-  <nav class="mt-4 flex items-center justify-between gap-3 text-sm text-gray-500" *ngIf="totalPages > 1" aria-label="Pagination annonces">
+  <div class="flex items-center justify-between mt-4 text-sm text-gray-500" *ngIf="totalPages > 1">
     <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
     <div class="flex gap-2">
-      <button type="button" (click)="prevPage()" [disabled]="currentPage === 0 || loading" class="ui-button">
-        Précédent
+      <button
+        type="button"
+        (click)="prevPage()"
+        [disabled]="currentPage === 0 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">
+        Precedent
       </button>
-      <button type="button" (click)="nextPage()" [disabled]="currentPage >= totalPages - 1 || loading" class="ui-button">
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">
         Suivant
       </button>
     </div>
-  </nav>
-</section>
+  </div>
+</div>

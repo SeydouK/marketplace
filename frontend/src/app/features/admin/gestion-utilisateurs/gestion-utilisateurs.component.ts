@@ -103,26 +103,26 @@ export class GestionUtilisateursComponent implements OnInit {
 
   getRoleBadgeClass(role?: Role): string {
     const map: Partial<Record<Role, string>> = {
-      [Role.ADMIN]: 'ui-badge--danger',
-      [Role.ADMINISTRATEUR]: 'ui-badge--danger',
-      [Role.VENDEUR]: 'ui-badge--info',
-      [Role.VETERINAIRE]: 'ui-badge--warning',
-      [Role.AGENT_ANADER]: 'ui-badge--success',
-      [Role.ACHETEUR]: '',
-      [Role.USER]: '',
+      [Role.ADMIN]: 'bg-red-100 text-red-800',
+      [Role.ADMINISTRATEUR]: 'bg-red-100 text-red-800',
+      [Role.VENDEUR]: 'bg-blue-100 text-blue-800',
+      [Role.VETERINAIRE]: 'bg-amber-100 text-amber-800',
+      [Role.AGENT_ANADER]: 'bg-green-100 text-green-800',
+      [Role.ACHETEUR]: 'bg-gray-100 text-gray-700',
+      [Role.USER]: 'bg-gray-100 text-gray-700',
     };
-    return role ? (map[role] ?? '') : '';
+    return role ? (map[role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
   }
 
   getKycBadgeClass(status?: string | null): string {
     const map: Record<string, string> = {
-      VALIDATED: 'ui-badge--success',
-      CNI_VERIFIED: 'ui-badge--info',
-      CNI_UPLOADED: 'ui-badge--info',
-      PENDING: 'ui-badge--warning',
-      REJECTED: 'ui-badge--danger',
+      VALIDATED: 'bg-green-100 text-green-800',
+      CNI_VERIFIED: 'bg-blue-100 text-blue-800',
+      CNI_UPLOADED: 'bg-blue-100 text-blue-800',
+      PENDING: 'bg-yellow-100 text-yellow-800',
+      REJECTED: 'bg-red-100 text-red-800',
     };
-    return status ? (map[status] ?? '') : '';
+    return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
   }
 
   canModerateKyc(status?: string | null): boolean {

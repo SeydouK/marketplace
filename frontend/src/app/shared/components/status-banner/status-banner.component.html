@@ -1,21 +1,39 @@
-<div *ngIf="showEmailBanner" class="status-banner status-banner--warning">
-  <div>
-    <i class="pi pi-envelope" aria-hidden="true"></i>
-    <p>
-      <strong>Confirmez votre adresse email</strong>
-      <span>Vérifiez votre boîte mail et cliquez sur le lien d'activation.</span>
+<!-- Bannière email non vérifié -->
+<div
+  *ngIf="showEmailBanner"
+  class="w-full bg-amber-50 border-b border-amber-200 px-4 py-3 flex items-center justify-between gap-4"
+>
+  <div class="flex items-center gap-3">
+    <i class="pi pi-envelope text-amber-500"></i>
+    <p class="text-sm text-amber-800">
+      <span class="font-medium">Confirmez votre adresse email</span>
+      — vérifiez votre boîte mail et cliquez sur le lien d'activation.
     </p>
   </div>
-  <button type="button" (click)="goToVerifyEmail()">Voir les instructions</button>
+  <button
+    (click)="goToVerifyEmail()"
+    class="shrink-0 text-xs font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors"
+  >
+    Voir les instructions
+  </button>
 </div>
 
-<div *ngIf="showKycBanner" class="status-banner status-banner--brand">
-  <div>
-    <i class="pi pi-id-card" aria-hidden="true"></i>
-    <p>
-      <strong>Vérifiez votre identité</strong>
-      <span>Obligatoire pour publier des annonces et accéder au tableau de bord.</span>
+<!-- Bannière KYC non complété -->
+<div
+  *ngIf="showKycBanner"
+  class="w-full bg-rose-50 border-b border-rose-200 px-4 py-3 flex items-center justify-between gap-4"
+>
+  <div class="flex items-center gap-3">
+    <i class="pi pi-id-card text-rose-500"></i>
+    <p class="text-sm text-rose-800">
+      <span class="font-medium">Vérifiez votre identité (KYC)</span>
+      — obligatoire pour publier des annonces et accéder au tableau de bord.
     </p>
   </div>
-  <button type="button" (click)="goToKyc()">Vérifier maintenant</button>
+  <button
+    (click)="goToKyc()"
+    class="shrink-0 text-xs font-medium text-rose-700 bg-rose-100 hover:bg-rose-200 px-3 py-1.5 rounded-lg transition-colors"
+  >
+    Vérifier maintenant
+  </button>
 </div>

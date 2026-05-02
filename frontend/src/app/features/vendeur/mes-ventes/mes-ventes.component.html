@@ -1,80 +1,89 @@
-<section class="ui-page ui-stack">
-  <header class="ui-header">
-    <div>
-      <p class="ui-eyebrow">Vendeur</p>
-      <h1>Mes ventes &amp; escrow</h1>
-      <p class="ui-copy">Suivez les ventes, confirmations acheteur et paiements libérés.</p>
-    </div>
-  </header>
+<!-- vendeur/mes-ventes/mes-ventes.component.html -->
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <h1 class="text-2xl font-bold mb-6">Mes ventes &amp; escrow</h1>
 
-  <div class="ui-tabs" aria-label="Filtres ventes">
-    <button
-      *ngFor="let tab of tabs"
-      type="button"
+  <!-- Onglets statut -->
+  <div class="flex gap-2 mb-6 border-b border-gray-200">
+    <button *ngFor="let tab of tabs"
       (click)="setTab(tab.value)"
-      class="ui-tab"
-      [class.ui-tab--active]="activeTab === tab.value"
-    >
+      [class.border-b-2]="activeTab === tab.value"
+      [class.border-[#611a24]]="activeTab === tab.value"
+      [class.text-[#611a24]]="activeTab === tab.value"
+      class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#611a24] transition -mb-px">
       {{ tab.label }}
-      <span *ngIf="tab.count" class="ui-badge ui-badge--brand ml-1">{{ tab.count }}</span>
+      <span *ngIf="tab.count" class="ml-1.5 px-1.5 py-0.5 rounded-full bg-[#611a24]/10 text-[#611a24] text-xs">
+        {{ tab.count }}
+      </span>
     </button>
   </div>
 
-  <div *ngIf="filteredSales.length === 0" class="ui-empty">
-    <div>
-      <h2>Aucune vente</h2>
-      <p>Aucune vente ne correspond à cet onglet.</p>
-    </div>
+  <div *ngIf="filteredSales.length === 0" class="text-center py-16 text-gray-400">
+    <p>Aucune vente dans cette catégorie.</p>
   </div>
 
-  <div class="ui-stack">
-    <article *ngFor="let sale of filteredSales" class="ui-card ui-card--padded">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+  <div class="space-y-4">
+    <div *ngFor="let sale of filteredSales"
+      class="rounded-xl border border-gray-200 bg-white p-5">
+
+      <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+        <!-- Info animal -->
         <div class="flex-1 min-w-0">
-          <div class="flex flex-wrap items-center gap-2">
-            <h2 class="ui-section-title !mb-0">{{ sale.animalName }}</h2>
-            <span class="ui-badge" [ngClass]="getEscrowBadgeClass(sale.escrowStatus)">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-semibold text-gray-900">{{ sale.animalName }}</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+              [ngClass]="getEscrowBadgeClass(sale.escrowStatus)">
               {{ getEscrowLabel(sale.escrowStatus) }}
             </span>
           </div>
-          <p class="mt-2 text-sm text-gray-500">
+          <p class="text-sm text-gray-500">
             Acheteur : {{ sale.buyerName }} · {{ sale.createdAt | date:'dd/MM/yyyy' }}
           </p>
-          <p class="mt-1 font-semibold text-[#7f1d1d]">
+          <p class="text-sm font-semibold text-[#611a24] mt-1">
             {{ sale.amount | number }} FCFA
           </p>
         </div>
 
+        <!-- Actions selon statut escrow -->
         <div class="shrink-0">
-          <span *ngIf="sale.escrowStatus === 'FUNDS_LOCKED'" class="ui-badge ui-badge--warning">
-            Attente réception acheteur
+          <!-- Vendeur attend confirmation acheteur -->
+          <span *ngIf="sale.escrowStatus === 'FUNDS_LOCKED'"
+            class="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg inline-block">
+            En attente de réception acheteur
           </span>
-          <span *ngIf="sale.escrowStatus === 'RELEASED'" class="ui-badge ui-badge--success">
-            Paiement reçu
+
+          <!-- Fonds libérés -->
+          <span *ngIf="sale.escrowStatus === 'RELEASED'"
+            class="text-xs text-green-700 bg-green-50 border border-green-200 px-3 py-2 rounded-lg inline-block">
+            Paiement reçu ✓
           </span>
-          <span *ngIf="sale.escrowStatus === 'DISPUTED'" class="ui-badge ui-badge--danger">
+
+          <!-- Litige ouvert -->
+          <span *ngIf="sale.escrowStatus === 'DISPUTED'"
+            class="text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg inline-block">
             Litige en cours
           </span>
         </div>
       </div>
 
-      <div class="mt-4 flex items-center gap-0 overflow-x-auto text-xs text-gray-500">
+      <!-- Timeline escrow -->
+      <div class="mt-4 flex items-center gap-0 text-xs text-gray-400 overflow-x-auto">
         <ng-container *ngFor="let step of getEscrowSteps(sale.escrowStatus); let last = last">
-          <div class="flex shrink-0 items-center gap-1">
-            <div
-              class="flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white"
-              [class.bg-[#7f1d1d]]="step.done"
-              [class.bg-gray-200]="!step.done"
-            >
+          <div class="flex items-center gap-1 shrink-0">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px]"
+              [class.bg-[#611a24]]="step.done"
+              [class.bg-gray-200]="!step.done">
               {{ step.done ? '✓' : '' }}
             </div>
-            <span [class.text-[#7f1d1d]]="step.done" [class.font-semibold]="step.done">
+            <span [class.text-[#611a24]]="step.done" [class.font-medium]="step.done">
               {{ step.label }}
             </span>
           </div>
-          <div *ngIf="!last" class="mx-1 h-px w-8 shrink-0" [class.bg-[#7f1d1d]]="step.done" [class.bg-gray-200]="!step.done"></div>
+          <div *ngIf="!last" class="w-8 h-px mx-1 shrink-0"
+            [class.bg-[#611a24]]="step.done"
+            [class.bg-gray-200]="!step.done">
+          </div>
         </ng-container>
       </div>
-    </article>
+    </div>
   </div>
-</section>
+</div>

@@ -1,132 +1,453 @@
-<header class="app-header">
-  <div class="app-header__bar">
-    <a routerLink="/home" class="app-brand" (click)="closeMenu()" aria-label="Accueil BétailMarket">
-      <span class="app-brand__mark">BM</span>
-      <span class="app-brand__text">BétailMarket</span>
-    </a>
+<!-- shared/components/header/header.component.html -->
+<header class="bg-white border-b border-gray-100">
 
-    <nav class="app-nav" aria-label="Navigation principale">
-      <a routerLink="/home" routerLinkActive="app-nav__link--active" [routerLinkActiveOptions]="{ exact: true }" class="app-nav__link">
-        Accueil
-      </a>
-      <a routerLink="/annonces" routerLinkActive="app-nav__link--active" class="app-nav__link">
-        Catalogue
-      </a>
-      <a *ngIf="isAcheteur" routerLink="/acheteur/mes-achats" routerLinkActive="app-nav__link--active" class="app-nav__link">
-        Achats
-      </a>
-      <a *ngIf="isVendeur" routerLink="/vendeur/mes-annonces" routerLinkActive="app-nav__link--active" class="app-nav__link">
-        Ventes
-      </a>
-      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="app-nav__link--active" class="app-nav__link">
-        Admin
-      </a>
-    </nav>
+  <!-- ════ DESKTOP ════ -->
+  <div class="hidden md:block">
 
-    <div class="app-header__actions">
-      <a *ngIf="!currentUser" routerLink="/auth/login" class="ui-button">
-        Connexion
-      </a>
-      <a *ngIf="!currentUser" routerLink="/auth/register" class="ui-button ui-button--primary">
-        Créer un compte
-      </a>
+    <!-- Ligne 1 : Logo | Tabs | Menu -->
+    <div class="flex items-center justify-between px-8 py-4 gap-6">
 
-      <a *ngIf="isAcheteur" routerLink="/devenir-vendeur" class="app-seller-link">
-        Devenir vendeur
-      </a>
+      <!-- Logo -->
+      <div class="flex-shrink-0 w-44">
+        <a routerLink="/">
+          <img src="assets/images/airbnb-desktop.png" class="h-9 w-auto" alt="BétailMarket"/>
+        </a>
+      </div>
 
-      <div class="app-menu">
-        <button
-          type="button"
-          class="app-menu__trigger"
-          (click)="toggleMenu()"
-          [attr.aria-expanded]="menuOpen"
-          aria-haspopup="menu"
-        >
-          <span class="app-menu__avatar">{{ currentUser ? currentUserInitial : '?' }}</span>
-          <span class="app-menu__meta">
-            <strong>{{ currentUser ? (currentUser.name || 'Compte') : 'Invité' }}</strong>
-            <small>{{ currentUser ? roleLabel : 'Menu' }}</small>
-          </span>
-          <i class="pi pi-chevron-down" aria-hidden="true"></i>
+      <!-- Tabs centraux -->
+      <div *ngIf="isHomePage" class="flex items-center gap-2 flex-1 justify-center">
+        <div class="flex items-center gap-2 flex-1 justify-center">
+
+          <a routerLink="/" (click)="setActiveTab('logements')"
+            class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
+            [ngClass]="activeTab === 'logements' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+            <img src="assets/images/home.png" class="h-8 w-8" alt="Annonces"/>
+            <span class="text-sm font-semibold">Annonces</span>
+            <span *ngIf="activeTab === 'logements'"
+              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gray-900 rounded-full"></span>
+          </a>
+
+          <a routerLink="/annonces" (click)="setActiveTab('experiences')"
+            class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
+            [ngClass]="activeTab === 'experiences' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+            <div class="relative">
+              <img src="assets/images/light-bulb.png" class="h-8 w-8" alt="Expériences"/>
+              <span class="absolute -top-2 -right-6 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
+            </div>
+            <span class="text-sm font-semibold">Expériences</span>
+            <span *ngIf="activeTab === 'experiences'"
+              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gray-900 rounded-full"></span>
+          </a>
+
+          <a routerLink="/services" (click)="setActiveTab('services')"
+            class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
+            [ngClass]="activeTab === 'services' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+            <div class="relative">
+              <img src="assets/images/bell.png" class="h-8 w-8" alt="Services"/>
+              <span class="absolute -top-2 -right-6 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
+            </div>
+            <span class="text-sm font-semibold">Services</span>
+            <span *ngIf="activeTab === 'services'"
+              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gray-900 rounded-full"></span>
+          </a>
+
+        </div>
+      </div>
+
+      <div *ngIf="!isHomePage" class="flex-1"></div>
+
+      <!-- Droite -->
+      <div class="flex items-center gap-3 flex-shrink-0 justify-end">
+        <a *ngIf="isAcheteur || !currentUser" routerLink="/devenir-vendeur"
+          class="text-sm font-semibold text-gray-700 hover:bg-gray-100 px-4 py-2.5 rounded-full transition-colors whitespace-nowrap">
+          Devenir vendeur
+        </a>
+
+        <button type="button"
+          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors flex-shrink-0">
+          <img src="assets/images/globe.png" alt="langue" class="h-5 w-5"/>
         </button>
 
-        <div *ngIf="menuOpen" class="app-menu__panel" role="menu">
-          <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+        <!-- Bouton menu -->
+        <div class="relative flex-shrink-0">
+          <button type="button" (click)="toggleMenu()"
+            class="relative flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-all bg-white">
+            <img src="assets/images/menu.png" class="h-5 w-5 flex-shrink-0" alt="menu"/>
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 overflow-hidden"
+              [ngClass]="currentUser ? 'bg-[#FF385C]' : 'bg-gray-400'">
+              {{ currentUser ? currentUserInitial : '?' }}
+            </div>
+            <span *ngIf="currentUser"
+              class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#FF385C] rounded-full border-2 border-white"></span>
+          </button>
+
+          <!-- Dropdown -->
+          <div *ngIf="menuOpen"
+            class="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+            <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Ligne 2 : Barre de recherche -->
+    <div *ngIf="isHomePage" class="flex justify-center px-8 pb-5">
+        <div class="flex items-center border border-gray-200 rounded-full shadow-md hover:shadow-lg transition-shadow bg-white w-full max-w-3xl">
+          <button type="button"
+            class="flex-1 text-left px-6 py-4 hover:bg-gray-50 rounded-l-full transition-colors border-r border-gray-200 group">
+            <p class="text-xs font-bold text-gray-900">Lieu</p>
+            <p class="text-sm text-gray-400 mt-0.5">{{ searchTerm || 'Chercher une région...' }}</p>
+          </button>
+          <button type="button"
+            class="flex-1 text-left px-6 py-4 hover:bg-gray-50 transition-colors border-r border-gray-200 group">
+            <p class="text-xs font-bold text-gray-900">Date de publication</p>
+            <p class="text-sm text-gray-400 mt-0.5">{{ searchTerm || 'Chercher une date...' }}</p>
+          </button>
+          <button type="button"
+            class="flex-1 text-left px-6 py-4 hover:bg-gray-50 transition-colors group">
+            <p class="text-xs font-bold text-gray-900">Budget</p>
+            <p class="text-sm text-gray-400 mt-0.5">Prix maximum</p>
+          </button>
+          <div class="pr-2 pl-1">
+            <button type="button"
+              class="w-12 h-12 bg-[#FF385C] rounded-full flex items-center justify-center hover:bg-[#e0314f] transition-colors">
+              <img src="assets/images/find.png" alt="search" class="w-5 h-5"/>
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <!-- Ligne 3 : Filtres animaux -->
+    <div *ngIf="isHomePage" class="flex items-center justify-center gap-10 ...">
+        <button *ngFor="let filter of animalFilters" type="button"
+          (click)="setAnimalFilter(filter.value)"
+          class="flex-shrink-0 flex flex-col items-center gap-2 pb-2 border-b-2 transition-all"
+          [ngClass]="animalFilter === filter.value
+            ? 'border-gray-900 opacity-100'
+            : 'border-transparent opacity-50 hover:opacity-90 hover:border-gray-200'">
+          <img [src]="filter.icon" class="h-7 w-7" [alt]="filter.label"/>
+          <span class="text-xs font-medium text-gray-700 whitespace-nowrap">{{ filter.label }}</span>
+        </button>
+    </div>
   </div>
 
-  <div *ngIf="isHomePage" class="app-search">
-    <button type="button" class="app-search__field" (click)="focusSearch()">
-      <span>Recherche</span>
-      <strong>{{ searchTerm || 'Ville, race, vendeur...' }}</strong>
-    </button>
-    <button type="button" class="app-search__field" (click)="focusSearch()">
-      <span>Espèce</span>
-      <strong>{{ animalFilterLabel || 'Toutes les espèces' }}</strong>
-    </button>
-    <a routerLink="/annonces" class="app-search__button" aria-label="Explorer le catalogue">
-      <i class="pi pi-search" aria-hidden="true"></i>
-    </a>
+  <!-- ════ MOBILE ════ -->
+  <div class="flex flex-col md:hidden">
+    <!-- Barre de recherche -->
+    <div *ngIf="isHomePage" class="px-4 pt-3 pb-2">
+      <button type="button" (click)="toggleMenu()"
+        class="w-full flex items-center gap-3 px-5 py-4 border border-gray-300 rounded-full shadow-sm bg-white">
+        <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <span class="text-sm font-semibold text-gray-700">Commencer ma recherche</span>
+      </button>
+    </div>
+    
+
+    <!-- Header minimaliste hors home : logo + menu -->
+    <div *ngIf="!isHomePage && currentUser" class="flex items-center justify-end px-4 py-3">
+      <button type="button" routerLink="/notifications"
+        class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF385C] rounded-full border border-white"></span>
+      </button>
+    </div>
+
+    <!-- Tabs (Logements / Expériences / Services) -->
+    <div *ngIf="isHomePage" class="flex justify-center gap-4 px-4 py-6 pb-1 border-b border-gray-100">
+      <a routerLink="/" (click)="setActiveTab('logements')"
+        class="flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
+        [ngClass]="activeTab === 'logements' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
+        <img src="assets/images/home.png" class="h-7 w-7" alt="Annonces"/>
+        <span class="text-xs font-semibold">Logements</span>
+      </a>
+
+      <a routerLink="/annonces" (click)="setActiveTab('experiences')"
+        class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
+        [ngClass]="activeTab === 'experiences' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
+        <img src="assets/images/light-bulb.png" class="h-7 w-7" alt="Expériences"/>
+        <span class="text-xs font-semibold">Expériences</span>
+        <span class="absolute -top-1 right-0 bg-[#FF385C] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+      </a>
+
+      <a routerLink="/services" (click)="setActiveTab('services')"
+        class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
+        [ngClass]="activeTab === 'services' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
+        <img src="assets/images/bell.png" class="h-7 w-7" alt="Services"/>
+        <span class="text-xs font-semibold">Services</span>
+        <span class="absolute -top-1 right-0 bg-[#FF385C] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+      </a>
+    </div>
+
+    <!-- Dropdown sur home mobile -->
+    <div *ngIf="menuOpen && isHomePage"
+      class="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+      <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+    </div>
+
   </div>
 
-  <div *ngIf="isHomePage" class="app-filter-row" aria-label="Filtres rapides">
-    <button
-      *ngFor="let filter of animalFilters"
-      type="button"
-      class="app-filter"
-      [class.app-filter--active]="animalFilter === filter.value"
-      [attr.aria-pressed]="animalFilter === filter.value"
-      (click)="setAnimalFilter(filter.value)"
-    >
-      <img [src]="filter.icon" [alt]="filter.label" />
-      <span>{{ filter.label }}</span>
-    </button>
-  </div>
 </header>
 
+<!-- Template partagé dropdown (mobile + desktop) -->
 <ng-template #dropdownContent>
   <ng-container *ngIf="!currentUser">
-    <a routerLink="/annonces" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Explorer les annonces
-    </a>
-    <a routerLink="/auth/login" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Connexion
-    </a>
-    <a routerLink="/auth/register" (click)="closeMenu()" class="app-menu__item app-menu__item--strong" role="menuitem">
-      Inscription
-    </a>
+    <div class="p-2">
+      <a routerLink="/auth/login" (click)="closeMenu()"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        Favoris
+      </a>
+      <a routerLink="/annonces" (click)="closeMenu()"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        Explorer les annonces
+      </a>
+    </div>
+    <div class="border-t border-gray-100 p-2">
+      <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600">Centre d'aide</a>
+    </div>
+    <div class="border-t border-gray-100 p-4">
+      <div class="flex flex-col gap-2">
+        <a routerLink="/auth/login" (click)="closeMenu()"
+          class="w-full text-center px-4 py-2.5 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+          Connexion
+        </a>
+        <a routerLink="/auth/register" (click)="closeMenu()"
+          class="w-full text-center px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors">
+          Inscription
+        </a>
+      </div>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="currentUser">
-    <a *ngIf="isAcheteur" routerLink="/acheteur/mes-achats" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Mes achats
-    </a>
-    <a *ngIf="isVendeur" routerLink="/vendeur/mes-annonces" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Mes annonces
-    </a>
-    <a *ngIf="isVendeur" routerLink="/animaux/mes-animaux" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Mes animaux
-    </a>
-    <a *ngIf="isVeterinaire" routerLink="/veterinaire/certificats" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Certificats sanitaires
-    </a>
-    <a *ngIf="isAnader" routerLink="/anader/validation" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Validation éleveurs
-    </a>
-    <a *ngIf="isAdmin" routerLink="/admin/utilisateurs" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Utilisateurs
-    </a>
-    <a routerLink="/profil" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Profil
-    </a>
-    <a routerLink="/profil/parametres" (click)="closeMenu()" class="app-menu__item" role="menuitem">
-      Paramètres
-    </a>
-    <button type="button" (click)="logout()" class="app-menu__item app-menu__item--button" role="menuitem">
-      Déconnexion
-    </button>
+    <div class="p-2">
+
+      <!-- ACHETEUR / USER -->
+      <ng-container *ngIf="isAcheteur">
+        <a routerLink="/acheteur/mes-achats" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          Mes achats
+        </a>
+        <a routerLink="/favoris" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+          Favoris
+        </a>
+        <a routerLink="/messages" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Messages
+        </a>
+        <a routerLink="/profil" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Profil
+        </a>
+      </ng-container>
+
+      <!-- VENDEUR -->
+      <ng-container *ngIf="isVendeur">
+        <a routerLink="/vendeur/mes-annonces" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Mes annonces
+        </a>
+        <a routerLink="/animaux/mes-animaux" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+          </svg>
+          Mes animaux
+        </a>
+        <a routerLink="/vendeur/mes-ventes" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          Mes ventes
+        </a>
+        <a routerLink="/messages" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Messages
+        </a>
+        <a routerLink="/profil" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Profil
+        </a>
+      </ng-container>
+
+      <!-- VÉTÉRINAIRE -->
+      <ng-container *ngIf="isVeterinaire">
+        <a routerLink="/veterinaire/certificats" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Certificats sanitaires
+        </a>
+        <a routerLink="/veterinaire/inspections" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Inspections
+        </a>
+        <a routerLink="/messages" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Messages
+        </a>
+        <a routerLink="/profil" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Profil
+        </a>
+      </ng-container>
+
+      <!-- ANADER -->
+      <ng-container *ngIf="isAnader">
+        <a routerLink="/anader/validation" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          Validation éleveurs
+        </a>
+        <a routerLink="/anader/statistiques" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Statistiques zone
+        </a>
+        <a routerLink="/profil" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Profil
+        </a>
+      </ng-container>
+
+      <!-- ADMIN -->
+      <ng-container *ngIf="isAdmin">
+        <a routerLink="/admin/utilisateurs" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Utilisateurs
+        </a>
+        <a routerLink="/admin/annonces" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+          </svg>
+          Modération
+        </a>
+        <a routerLink="/admin/litiges" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          Litiges
+        </a>
+        <a routerLink="/profil" (click)="closeMenu()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm text-gray-700 transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Profil
+        </a>
+      </ng-container>
+
+    </div>
+
+    <!-- Section du bas : paramètres + Devenir vendeur (acheteur seulement) -->
+    <div class="border-t border-gray-100 p-2">
+      <a routerLink="/profil/parametres" (click)="closeMenu()"
+        class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600 transition-colors">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Paramètres du compte
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600 transition-colors">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+        </svg>
+        Langues et devise
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600 transition-colors">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Centre d'aide
+      </a>
+    </div>
+
+    <!-- Bloc Devenir vendeur — ACHETEUR uniquement -->
+    <div *ngIf="isAcheteur" class="border-t border-gray-100 mx-4 my-2 p-4 rounded-xl bg-gray-50">
+      <div class="flex items-start gap-3">
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-gray-900">Devenir vendeur</p>
+          <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
+            Devenir vendeur et gagner des revenus supplémentaires, c'est facile.
+          </p>
+        </div>
+        <svg class="w-12 h-12 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100 p-2">
+      <a *ngIf="isAcheteur" href="#" class="flex items-center px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600 transition-colors">
+        Parrainer un vendeur
+      </a>
+      <a href="#" class="flex items-center px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600 transition-colors">
+        Cartes cadeaux
+      </a>
+      <button type="button" (click)="logout()"
+        class="w-full flex items-center px-4 py-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-600 text-left transition-colors">
+        Déconnexion
+      </button>
+    </div>
+
   </ng-container>
 </ng-template>

@@ -43,11 +43,11 @@ export class MesAchatsComponent implements OnInit {
 
   getBadgeClass(status: EscrowStatus): string {
     const map: Record<EscrowStatus, string> = {
-      PENDING: '',
-      FUNDS_LOCKED: 'ui-badge--warning',
-      RELEASED: 'ui-badge--success',
-      DISPUTED: 'ui-badge--danger',
-      REFUNDED: 'ui-badge--info',
+      PENDING: 'bg-gray-100 text-gray-600',
+      FUNDS_LOCKED: 'bg-amber-100 text-amber-800',
+      RELEASED: 'bg-green-100 text-green-800',
+      DISPUTED: 'bg-red-100 text-red-800',
+      REFUNDED: 'bg-blue-100 text-blue-800',
     };
     return map[status];
   }

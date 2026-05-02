@@ -43,10 +43,10 @@ export class CertificatsSanitairesComponent implements OnInit {
 
   getCertBadge(status: string): string {
     const map: Record<string, string> = {
-      VALID: 'ui-badge--success',
-      EXPIRED: 'ui-badge--danger',
-      PENDING: 'ui-badge--warning',
+      VALID: 'bg-green-100 text-green-800',
+      EXPIRED: 'bg-red-100 text-red-800',
+      PENDING: 'bg-amber-100 text-amber-800',
     };
-    return map[status] ?? '';
+    return map[status] ?? 'bg-gray-100 text-gray-600';
   }
 }
