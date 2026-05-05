@@ -122,6 +122,12 @@ const routes: Routes = [
       import('./features/profil/profil.module').then((m) => m.ProfilModule),
   },
 
+  // Favoris 
+  {
+    path: 'favoris',
+    loadChildren: () =>
+      import('./features/favoris/favoris.module').then((m) => m.FavorisModule),
+  },
   // Fallback
   { path: '**', redirectTo: '/home' },
 ];
