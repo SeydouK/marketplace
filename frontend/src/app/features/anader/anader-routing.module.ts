@@ -1,15 +1,39 @@
-// anader/anader-routing.module.ts
+// features/anader/anader-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardAnaderComponent } from './dashboard-anader/dashboard-anader.component';
-import { ValidationEleveursComponent } from './validation-eleveurs/validation-eleveurs.component';
-import { StatistiquesZoneComponent } from './statistiques-zone/statistiques-zone.component';
+import { AuthGuard } from '../../core/guards/auth.guard';
+
+// Les routes ici sont relatives au préfixe déclaré dans app-routing.module.ts
+// Ex: { path: 'anader', loadChildren: () => import('./features/anader/anader.module') }
+// → /anader          redirige vers /anader/dashboard
+// → /anader/dashboard  charge le dashboard
 
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardAnaderComponent },
-  { path: 'validation', component: ValidationEleveursComponent },
-  { path: 'statistiques', component: StatistiquesZoneComponent },
+  {
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
+  },
+  {
+    path: 'dashboard',
+    component: DashboardAnaderComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['AGENT_ANADER'] }
+  },
+  // Décommenter au fur et à mesure de la création des composants :
+  // {
+  //   path: 'validation',
+  //   component: ValidationEleveursComponent,
+  //   canActivate: [AuthGuard],
+  //   data: { roles: ['AGENT_ANADER'] }
+  // },
+  // {
+  //   path: 'statistiques',
+  //   component: StatistiquesZoneComponent,
+  //   canActivate: [AuthGuard],
+  //   data: { roles: ['AGENT_ANADER'] }
+  // },
 ];
 
 @NgModule({

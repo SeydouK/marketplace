@@ -1,18 +1,7 @@
 package com.marketplace.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -63,13 +52,52 @@ public class Animal {
     private Integer quantity = 1;
 
     private Double longitude;
-
     private Double latitude;
+
+    /** Région administrative (ex: "PORO", "GBÊKÊ", "ABIDJAN") */
+    @Column(name = "region")
+    private String region;
+
+    /** Ville / localité (ex: "Korhogo", "Bouaké") */
+    @Column(name = "ville")
+    private String ville;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "statut", nullable = false)
     private AnimalStatus status = AnimalStatus.INDISPONIBLE;
 
+    // ── Vendeur propriétaire ──────────────────────────────
+    /**
+     * Propriétaire de l'animal (rôle VENDEUR).
+     * FK → users.id (BIGINT, GenerationType.IDENTITY)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    private User owner;
+
+    // ── RFID ─────────────────────────────────────────────
+    /**
+     * Numéro unique de la boucle auriculaire RFID (ISO 11784/11785).
+     * Format typique : 15 chiffres, ex: "982000123456789".
+     * NULL tant que l'agent ANADER n'a pas encore inséré la puce.
+     */
+    @Column(name = "rfid_tag", unique = true)
+    private String rfidTag;
+
+    /** Horodatage de l'insertion physique de la puce par l'agent ANADER */
+    @Column(name = "rfid_inserted_at")
+    private Instant rfidInsertedAt;
+
+    /**
+     * Agent ANADER qui a confirmé l'insertion.
+     * Utilisé pour le calcul de rémunération (500 FCFA / puce).
+     * FK → users.id (BIGINT)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rfid_inserted_by", referencedColumnName = "id")
+    private User rfidInsertedBy;
+
+    // ── Audit ─────────────────────────────────────────────
     @CreationTimestamp
     @Column(name = "date_creation", nullable = false, updatable = false)
     private Instant createdAt;

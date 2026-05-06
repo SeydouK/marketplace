@@ -19,7 +19,7 @@ import { KycComponent } from './features/kyc/kyc.component';
   declarations: [
     AppComponent, 
     KycComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
   ],
   imports: [
     BrowserModule,

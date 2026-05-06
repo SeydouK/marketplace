@@ -1,6 +1,5 @@
 package com.marketplace.model;
 
-import com.marketplace.model.KycStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,8 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
-
-@Data 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,16 +33,20 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    /** Numéro de téléphone mobile (ex: "+225 07 00 00 00 00") */
+    @Column(name = "phone", length = 20)
+    private String phone;
+
     @Builder.Default
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Boolean badgeVerifie = false;
 
-    @Column(name="email_verification_token")
+    @Column(name = "email_verification_token")
     private String emailVerificationToken;
 
     @Builder.Default
-    @Column(name="email_verified")
-    private boolean emailVerified = false; 
+    @Column(name = "email_verified")
+    private boolean emailVerified = false;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -65,11 +67,7 @@ public class User {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    // @Builder.Default
-    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private Set<Listing> listings = new HashSet<>();
+    private String cniUrl;
 
-    private String cniUrl; 
-    
     private String selfieUrl;
 }
