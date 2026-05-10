@@ -31,21 +31,42 @@ public interface AnimalRepository extends JpaRepository<Animal, UUID> {
     // ── Dashboard ANADER ──────────────────────────────────────────────────────
 
     /**
-     * Animaux DISPONIBLE sans puce RFID, avec filtre optionnel par région.
-     * Ce sont les animaux que l'agent ANADER doit aller équiper.
+     * Animaux sans puce RFID (tous statuts sauf VENDU), filtre optionnel par région.
+     *
+     * CAST(region AS string) évite l'erreur PostgreSQL "function upper(bytea) does not exist"
+     * causée par le binding JDBC du paramètre nullable :region en bytea.
      */
-    @Query("""
-        SELECT a FROM Animal a
-        LEFT JOIN FETCH a.owner
-        WHERE a.status = 'DISPONIBLE'
-          AND a.rfidTag IS NULL
-          AND (:region IS NULL OR UPPER(a.region) = UPPER(:region))
-        ORDER BY a.createdAt ASC
-        """)
-    Page<Animal> findDisponibleSansRfid(
+    @Query(
+        value = """
+            SELECT a FROM Animal a
+            LEFT JOIN FETCH a.owner
+            WHERE a.status <> :vendu
+              AND a.rfidTag IS NULL
+              AND (:region IS NULL OR UPPER(CAST(a.region AS string)) = UPPER(CAST(:region AS string)))
+            ORDER BY a.createdAt ASC
+            """,
+        countQuery = """
+            SELECT COUNT(a) FROM Animal a
+            WHERE a.status <> :vendu
+              AND a.rfidTag IS NULL
+              AND (:region IS NULL OR UPPER(CAST(a.region AS string)) = UPPER(CAST(:region AS string)))
+            """
+    )
+    Page<Animal> findSansRfid(
+        @Param("vendu")  AnimalStatus vendu,
         @Param("region") String region,
         Pageable pageable
     );
+
+    /**
+     * Comptage cohérent avec findSansRfid.
+     */
+    @Query("""
+        SELECT COUNT(a) FROM Animal a
+        WHERE a.status <> :vendu
+          AND a.rfidTag IS NULL
+        """)
+    long countSansRfidHorsVendu(@Param("vendu") AnimalStatus vendu);
 
     /** Nombre total de puces insérées par un agent donné */
     long countByRfidInsertedBy(User agent);
@@ -63,6 +84,5 @@ public interface AnimalRepository extends JpaRepository<Animal, UUID> {
         @Param("finMois")   Instant finMois
     );
 
-    /** Nombre d'animaux DISPONIBLE sans RFID (tous agents confondus) */
     long countByStatusAndRfidTagIsNull(AnimalStatus status);
 }
