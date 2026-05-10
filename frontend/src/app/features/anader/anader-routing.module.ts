@@ -21,19 +21,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['AGENT_ANADER'] }
   },
-  // Décommenter au fur et à mesure de la création des composants :
-  // {
-  //   path: 'validation',
-  //   component: ValidationEleveursComponent,
-  //   canActivate: [AuthGuard],
-  //   data: { roles: ['AGENT_ANADER'] }
-  // },
-  // {
-  //   path: 'statistiques',
-  //   component: StatistiquesZoneComponent,
-  //   canActivate: [AuthGuard],
-  //   data: { roles: ['AGENT_ANADER'] }
-  // },
+  {
+    path: 'statistiques',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({

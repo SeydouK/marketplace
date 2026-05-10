@@ -64,7 +64,7 @@ public class AnaderService {
 
         long total    = animalRepository.countByRfidInsertedBy(agent);
         long mois     = animalRepository.countRfidInseresCeMois(agent, debutMois, finMois);
-        long sansPuce = animalRepository.countByStatusAndRfidTagIsNull(AnimalStatus.DISPONIBLE);
+        long sansPuce = animalRepository.countSansRfidHorsVendu(AnimalStatus.VENDU);
 
         return new AnaderStatsResponse(
             mois,
@@ -83,7 +83,7 @@ public class AnaderService {
         String regionFilter = (region != null && !region.isBlank()) ? region.trim() : null;
 
         return animalRepository
-            .findDisponibleSansRfid(regionFilter, pageable)
+            .findSansRfid(AnimalStatus.VENDU, regionFilter, pageable)
             .map(this::toResponse);
     }
 
@@ -124,7 +124,7 @@ public class AnaderService {
             owner = new AnimalSansRfidResponse.OwnerSummary(
                 a.getOwner().getId(),
                 a.getOwner().getName(),
-                a.getOwner().getPhone()  //  Ajouter getPhone() à User si absent
+                a.getOwner().getPhone()  // ⚠️ Ajouter getPhone() à User si absent
             );
         }
         return new AnimalSansRfidResponse(
