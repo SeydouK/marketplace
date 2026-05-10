@@ -45,18 +45,20 @@
       </div>
     </div>
 
+    <!-- ── Barre de filtres fusionnée ── -->
     <div class="catalog-toolbar mb-6">
       <div class="toolbar-field toolbar-field--wide">
-        <label for="location">Zone ou recherche</label>
+        <label for="location">Trouver un éleveur</label>
         <input
           id="location"
           [ngModel]="location"
           (ngModelChange)="updateLocation($event)"
           type="text"
-          placeholder="Korhogo, Bouaké, N'Dama, éleveur..."
+          placeholder="Entrez le nom de l'éleveur..."
         />
       </div>
 
+      <!-- Espèce (ex-annonces, valeurs complétées avec AVICOLE) -->
       <div class="toolbar-field">
         <label for="animalType">Espèce</label>
         <select
@@ -70,6 +72,67 @@
         </select>
       </div>
 
+      <!-- Région (ex-marketplace) -->
+      <div class="toolbar-field">
+        <label for="region">Région</label>
+        <select id="region" [ngModel]="region" (ngModelChange)="updateRegion($event)">
+          <option value="">Toutes</option>
+          <option value="Abidjan">Abidjan</option>
+          <option value="Bouaké">Bouaké</option>
+          <option value="Korhogo">Korhogo</option>
+          <option value="Yamoussoukro">Yamoussoukro</option>
+          <option value="San-Pédro">San-Pédro</option>
+        </select>
+      </div>
+
+      <!-- Prix max (ex-marketplace) -->
+      <div class="toolbar-field">
+        <label for="maxPrice">Prix max (FCFA)</label>
+        <input
+          id="maxPrice"
+          type="number"
+          [ngModel]="maxPrice"
+          (ngModelChange)="updateMaxPrice($event)"
+          placeholder="ex : 500 000"
+        />
+      </div>
+
+      <!-- Statut (disponible / indisponible) -->
+      <div class="toolbar-field">
+        <label for="statusFilter">Statut</label>
+        <select
+          id="statusFilter"
+          [ngModel]="statusFilter"
+          (ngModelChange)="updateStatusFilter($event)"
+        >
+          <option value="">Tous</option>
+          <option value="DISPONIBLE">Disponible</option>
+          <option value="INDISPONIBLE">Indisponible</option>
+        </select>
+      </div>
+
+      <!-- Date de publication : du -->
+      <div class="toolbar-field">
+        <label for="dateFrom">Publié depuis</label>
+        <input
+          id="dateFrom"
+          type="date"
+          [ngModel]="dateFrom"
+          (ngModelChange)="updateDateFrom($event)"
+        />
+      </div>
+
+      <!-- Date de publication : au -->
+      <div class="toolbar-field">
+        <label for="dateTo">Publié jusqu'au</label>
+        <input
+          id="dateTo"
+          type="date"
+          [ngModel]="dateTo"
+          (ngModelChange)="updateDateTo($event)"
+        />
+      </div>
+
       <button type="button" class="toolbar-reset" (click)="resetFilters()">
         Réinitialiser
       </button>
@@ -80,8 +143,10 @@
         <ng-container *ngIf="filteredListings.length; else emptyState">
           <div class="results-header">
             <div>
-              <p class="results-title">{{ resultsTitle }}</p>
-              <p class="results-caption">{{ resultsCaption }}</p>
+              <p class="results-title">Catalogue disponible</p>
+              <p class="results-caption">
+                Cliquez sur un dossier pour l’ouvrir en aperçu, ou utilisez la carte pour cibler un animal.
+              </p>
             </div>
             <div class="results-badge">
               {{ visibleRangeStart }}-{{ visibleRangeEnd }} sur {{ filteredListings.length }}
@@ -116,6 +181,7 @@
                   <span class="animal-badge">
                     {{ listing.status | titlecase }}
                   </span>
+
                 </div>
 
                 <button
@@ -288,16 +354,8 @@
 <ng-template #emptyState>
   <div class="empty-state empty-state--inline">
     <i class="pi pi-inbox"></i>
-    <h2>{{ emptyTitle }}</h2>
-    <p>{{ emptyMessage }}</p>
-    <button
-      *ngIf="isMineCatalog"
-      type="button"
-      class="animal-action animal-action--solid"
-      (click)="goToCreateAnimal()"
-    >
-      Enregistrer un animal
-    </button>
+    <h2>Aucun animal trouvé</h2>
+    <p>Modifiez vos critères de recherche pour relancer le catalogue.</p>
   </div>
 </ng-template>
 
@@ -327,6 +385,7 @@
       <div class="preview-topline">
         <span class="animal-badge animal-badge--solid">{{ previewListing.animalType | titlecase }}</span>
         <span class="animal-badge">{{ previewListing.status | titlecase }}</span>
+
       </div>
 
       <h2>{{ previewListing.title }}</h2>
