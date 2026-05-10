@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
-
+import { Role } from './core/models/role.enum';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +41,10 @@ export class AppComponent implements OnInit {
 
   get isLoggedIn(): boolean {
     return !!this.auth.currentUser;
+  }
+
+  get isAnaderOrVet(): boolean {
+    return this.auth.hasAnyRole([Role.AGENT_ANADER, Role.VETERINAIRE]);
   }
 
   // True si on est sur une route où mobile cache header + navbar

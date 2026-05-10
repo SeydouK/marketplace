@@ -36,8 +36,7 @@
       </svg>
       <span class="text-[10px] font-medium">Explorer</span>
     </a>
-
-    <a routerLink="/favoris" routerLinkActive="active-link"
+    <a *ngIf="!isAnaderOrVet" routerLink="/favoris" routerLinkActive="active-link"
       class="nav-item flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

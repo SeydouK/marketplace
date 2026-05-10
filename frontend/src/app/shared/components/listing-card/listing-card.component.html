@@ -6,12 +6,13 @@
       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
     />
 
-    <button
-      type="button"
-      (click)="toggleFavori($event)"
-      [title]="isFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'"
-      class="absolute top-3 right-3 p-2 hover:scale-110 transition-transform"
-    >
+      <button
+        *ngIf="canFavorite"
+        type="button"
+        (click)="toggleFavori($event)"
+        [title]="isFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+        class="absolute top-3 right-3 p-2 hover:scale-110 transition-transform"
+      >
       <svg
         class="w-6 h-6 transition-colors"
         [class.fill-none]="!isFavori"

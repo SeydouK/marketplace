@@ -2,6 +2,8 @@
 import { Component, Input } from '@angular/core';
 import { Listing } from '../../../features/annonces/models/listing.model';
 import { FavorisService } from '../../../core/services/favoris.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Role } from '../../../core/models/role.enum';
 
 @Component({
   selector: 'app-listing-card',
@@ -12,10 +14,17 @@ import { FavorisService } from '../../../core/services/favoris.service';
 export class ListingCardComponent {
   @Input({ required: true }) listing!: Listing;
 
-  constructor(private readonly favorisService: FavorisService) {}
+  constructor(private readonly favorisService: FavorisService, private auth: AuthService) {}
 
   get isFavori(): boolean {
     return this.favorisService.isFavori(this.listing.id);
+  }
+
+  get canFavorite(): boolean {
+    const user = this.auth.currentUser;
+    if (!user) return false;
+    const excluded = [Role.AGENT_ANADER, Role.VETERINAIRE, Role.ADMIN, Role.ADMINISTRATEUR];
+    return !excluded.some(role => this.auth.hasRole(role));
   }
 
   toggleFavori(event: Event): void {
