@@ -438,7 +438,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
             : "Le dossier animal a été enregistré. Il reste en attente de validation sanitaire."
         );
         void this.router.navigate(
-          this.editMode ? ['/annonces', animal.id] : ['/animaux/mes-animaux']
+          this.editMode ? ['/annonces', animal.id] : ['/annonces/mes-annonces']
         );
       },
       error: () => {

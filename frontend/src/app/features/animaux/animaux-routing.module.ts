@@ -4,25 +4,18 @@ import { AuthGuard } from '../../core/guards/auth.guard';
 import { RoleGuard } from '../../core/guards/role.guard';
 import { Role } from '../../core/models/role.enum';
 import { CreerAnimalComponent } from './creer-animal/creer-animal.component';
-import { MesAnimauxComponent } from './mes-animaux/mes-animaux.component';
 import { ValidationSanitaireComponent } from './validation-sanitaire/validation-sanitaire.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'mes-animaux', pathMatch: 'full' },
+  { path: '', redirectTo: '/annonces/mes-annonces', pathMatch: 'full' },
   { path: 'creer', component: CreerAnimalComponent, canActivate: [AuthGuard] },
   { path: ':id/editer', component: CreerAnimalComponent, canActivate: [AuthGuard] },
-  { path: 'mes-animaux', component: MesAnimauxComponent, canActivate: [AuthGuard] },
   {
     path: 'validation',
     component: ValidationSanitaireComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: {
-      roles: [
-        // Role.AGENT_ANADER,
-        Role.VETERINAIRE,
-        // Role.ADMIN,
-        // Role.ADMINISTRATEUR,
-      ],
+      roles: [Role.VETERINAIRE],
     },
   },
 ];

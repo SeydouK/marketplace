@@ -1,5 +1,5 @@
 export type AnimalType = 'BOVIN' | 'OVIN' | 'CAPRIN' | 'PORCIN' | 'AUTRE';
-export type AnimalStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU';
+export type AnimalStatus = 'EN_ATTENTE' | 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU';
 export type HealthDocumentType =
   | 'CERTIFICAT_VETERINAIRE'
   | 'FICHE_VACCINATION'
