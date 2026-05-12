@@ -24,6 +24,8 @@ public interface AnimalRepository extends JpaRepository<Animal, UUID> {
 
     List<Animal> findByStatusOrderByCreatedAtDesc(AnimalStatus status);
 
+    List<Animal> findByStatusInOrderByCreatedAtDesc(List<AnimalStatus> statuses);
+
     Page<Animal> findByStatus(AnimalStatus status, Pageable pageable);
 
     long countByStatus(AnimalStatus status);

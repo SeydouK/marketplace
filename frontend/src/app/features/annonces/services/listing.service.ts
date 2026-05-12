@@ -99,6 +99,12 @@ export class ListingService {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 
+  toggleStatus(id: string, status: 'DISPONIBLE' | 'INDISPONIBLE'): Observable<Listing> {
+    return this.http.patch<any>(`${this.base}/${id}/status`, { status }).pipe(
+      map(a => this.toListingFrontend(a))
+    );
+  }
+
   // Ajouter cette méthode au service
   get(id: string): Observable<Listing> {
     return this.http.get<any>(`${this.base}/${id}`).pipe(

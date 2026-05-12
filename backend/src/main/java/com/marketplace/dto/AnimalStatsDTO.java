@@ -9,4 +9,5 @@ public class AnimalStatsDTO {
     private long total;
     private long available;
     private long unavailable;
+    private long pending;
 }

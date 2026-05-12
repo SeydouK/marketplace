@@ -228,6 +228,14 @@
                   </div>
 
                   <div class="animal-actions">
+                    <button
+                      *ngIf="isMineCatalog && (listing.status === 'DISPONIBLE' || listing.status === 'INDISPONIBLE')"
+                      type="button"
+                      class="animal-action animal-action--ghost"
+                      (click)="toggleStatus(listing, $event)"
+                    >
+                      {{ listing.status === 'DISPONIBLE' ? 'Désactiver' : 'Remettre en ligne' }}
+                    </button>
                     <button type="button" class="animal-action animal-action--ghost" (click)="openPreview(listing, $event)">
                       Aperçu
                     </button>
@@ -363,6 +371,15 @@
   <div class="preview-modal" (click)="$event.stopPropagation()">
     <button type="button" class="preview-close" (click)="closePreview()" aria-label="Fermer">
       <i class="pi pi-times"></i>
+    </button>
+
+    <button
+      *ngIf="canEditPreview && (previewListing.status === 'DISPONIBLE' || previewListing.status === 'INDISPONIBLE')"
+      type="button"
+      class="animal-action animal-action--ghost"
+      (click)="toggleStatus(previewListing)"
+    >
+      {{ previewListing.status === 'DISPONIBLE' ? 'Désactiver l\'annonce' : 'Remettre en ligne' }}
     </button>
 
     <div class="preview-modal__media">

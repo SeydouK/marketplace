@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PatchMapping;
+import com.marketplace.dto.UpdateListingStatusDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -111,4 +114,12 @@ public class AnimalController {
     public ResponseEntity<AnimalDTO> validate(@PathVariable UUID id, @Valid @RequestBody AnimalValidationRequest request) {
         return ResponseEntity.ok(animalService.validateAnimal(id, request));
     }
-}
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AnimalDTO> toggleStatus(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateListingStatusDTO dto) {
+        return ResponseEntity.ok(animalService.toggleSellerStatus(id, dto.status()));
+
+}}

@@ -83,23 +83,19 @@ public class UserService {
         userRepository.save(current);
         return toUserProfile(current);
     }
+    
 
     private UserProfileDTO toUserProfile(User current) {
         long animalsCount = animalSellerRepository.countBySeller(current);
         long pendingHealthValidationCount = isHealthAgent(current.getRole())
-                ? animalRepository.countByStatus(AnimalStatus.INDISPONIBLE)
+                ? animalRepository.countByStatus(AnimalStatus.EN_ATTENTE)
+                  + animalRepository.countByStatus(AnimalStatus.INDISPONIBLE)
                 : 0;
-
+    
         return new UserProfileDTO(
-                current.getId(),
-                current.getName(),
-                current.getEmail(),
-                current.getRole(),
-                current.isEmailVerified(),
-                current.getKycStatus(),
-                current.isDevenirVendeur(),
-                animalsCount,
-                pendingHealthValidationCount
+                current.getId(), current.getName(), current.getEmail(),
+                current.getRole(), current.isEmailVerified(), current.getKycStatus(),
+                current.isDevenirVendeur(), animalsCount, pendingHealthValidationCount
         );
     }
 
@@ -138,7 +134,7 @@ public class UserService {
                 userRepository.count(),
                 userRepository.countByKycStatusIn(pendingKycStatuses()),
                 animalRepository.countByStatus(AnimalStatus.DISPONIBLE),
-                0
+                0L
         );
     }
 

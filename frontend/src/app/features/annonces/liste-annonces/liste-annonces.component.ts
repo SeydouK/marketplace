@@ -787,4 +787,17 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.markers.clear();
     if (this.map) { this.map.remove(); this.map = undefined; }
   }
+
+  private toggleStatus(listing: Listing, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const newStatus = listing.status === 'DISPONIBLE' ? 'INDISPONIBLE' : 'DISPONIBLE';
+    this.listingService.toggleStatus(listing.id, newStatus).subscribe({
+      next: (updated) => {
+        const index = this.allListings.findIndex(l => l.id === updated.id);
+        if (index !== -1) this.allListings[index] = { ...this.allListings[index], ...updated };
+        if (this.previewListing?.id === updated.id) this.previewListing = updated;
+      }
+    });
+  }
 }

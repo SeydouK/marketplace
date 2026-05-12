@@ -1,4 +1,4 @@
-export type AnimalStatus = 'DISPONIBLE' | 'EN_ATTENTE' | 'EN_ATTENTE_VALIDATION' | 'VENDU' | 'INDISPONIBLE';
+export type AnimalStatus = 'DISPONIBLE' | 'EN_ATTENTE' | 'VENDU' | 'INDISPONIBLE';
 
 export interface Listing {
   id: string;

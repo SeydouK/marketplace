@@ -81,6 +81,8 @@ public class AnimalService {
         this.fileStorageService = fileStorageService;
     }
 
+    // ── Création ─────────────────────────────────────────────────────────────
+
     @Transactional
     public AnimalDTO createAnimal(AnimalCreateRequest request) {
         return createAnimal(request, List.of(), List.of(), List.of(), List.of());
@@ -98,17 +100,13 @@ public class AnimalService {
         ensureSellerRole(currentUser);
 
         PreparedAnimalFiles preparedFiles = prepareAnimalFiles(
-                request,
-                photoFiles,
-                videoFiles,
-                documentFiles,
-                uploadedDocumentTypes
-        );
+                request, photoFiles, videoFiles, documentFiles, uploadedDocumentTypes);
         registerFileLifecycle(preparedFiles.newlyStoredFiles(), List.of());
 
+        // Statut initial : EN_ATTENTE — en attente de validation vétérinaire
         Animal animal = Animal.builder()
                 .qrCode(generateQrCode())
-                .status(AnimalStatus.INDISPONIBLE)
+                .status(AnimalStatus.EN_ATTENTE)
                 .build();
 
         applyAnimalRequest(animal, request, preparedFiles.photos(), preparedFiles.videos());
@@ -123,16 +121,15 @@ public class AnimalService {
         replaceHealthDocuments(savedAnimal, preparedFiles.healthDocuments());
 
         saveHistoryEvent(
-                savedAnimal,
-                currentUser,
+                savedAnimal, currentUser,
                 HistoryEventType.ENREGISTREMENT,
                 buildRegistrationDescription(savedAnimal),
-                request.getLongitude(),
-                request.getLatitude()
-        );
+                request.getLongitude(), request.getLatitude());
 
         return toDto(savedAnimal);
     }
+
+    // ── Mise à jour ──────────────────────────────────────────────────────────
 
     @Transactional
     public AnimalDTO updateAnimal(UUID animalId, AnimalCreateRequest request) {
@@ -154,59 +151,47 @@ public class AnimalService {
         Animal animal = findAnimal(animalId);
         AnimalSeller animalSeller = animalSellerRepository.findByAnimalId(animal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Association vendeur introuvable pour cet animal."));
-
         ensureOwner(currentUser, animalSeller);
 
         List<String> previousPhotos = toList(animal.getPhotos());
         List<String> previousVideos = toList(animal.getVideos());
-        List<String> previousDocumentUrls = animalHealthRecordRepository.findByAnimalIdOrderByUploadedAtDesc(animal.getId())
+        List<String> previousDocumentUrls = animalHealthRecordRepository
+                .findByAnimalIdOrderByUploadedAtDesc(animal.getId())
                 .stream()
                 .map(AnimalHealthRecord::getDocumentUrl)
                 .toList();
 
         PreparedAnimalFiles preparedFiles = prepareAnimalFiles(
-                request,
-                photoFiles,
-                videoFiles,
-                documentFiles,
-                uploadedDocumentTypes
-        );
+                request, photoFiles, videoFiles, documentFiles, uploadedDocumentTypes);
         registerFileLifecycle(
                 preparedFiles.newlyStoredFiles(),
-                findObsoleteFiles(previousPhotos, previousVideos, previousDocumentUrls, preparedFiles)
-        );
+                findObsoleteFiles(previousPhotos, previousVideos, previousDocumentUrls, preparedFiles));
 
-        // AnimalStatus previousStatus = animal.getStatus();
+        // Toute modification remet l'animal en EN_ATTENTE pour revalidation
+        AnimalStatus previousStatus = animal.getStatus();
         applyAnimalRequest(animal, request, preparedFiles.photos(), preparedFiles.videos());
-        animal.setStatus(AnimalStatus.INDISPONIBLE);
+        animal.setStatus(AnimalStatus.EN_ATTENTE);
         Animal savedAnimal = animalRepository.save(animal);
         replaceHealthDocuments(savedAnimal, preparedFiles.healthDocuments());
 
         saveHistoryEvent(
-                savedAnimal,
-                currentUser,
+                savedAnimal, currentUser,
                 HistoryEventType.EDITION,
                 buildEditionDescription(savedAnimal),
-                request.getLongitude(),
-                request.getLatitude()
-        );
+                request.getLongitude(), request.getLatitude());
 
-        /**
-         * Le statut de l'animal ne passe pas à indisponible à l'édition
-         */
-        // if (previousStatus != AnimalStatus.INDISPONIBLE) {
-        //     saveHistoryEvent(
-        //             savedAnimal,
-        //             currentUser,
-        //             HistoryEventType.CHANGEMENT_STATUT,
-        //             "Statut passe de " + previousStatus + " a " + AnimalStatus.INDISPONIBLE + " apres mise a jour du dossier.",
-        //             request.getLongitude(),
-        //             request.getLatitude()
-        //     );
-        // }
+        if (previousStatus != AnimalStatus.EN_ATTENTE) {
+            saveHistoryEvent(
+                    savedAnimal, currentUser,
+                    HistoryEventType.CHANGEMENT_STATUT,
+                    "Dossier modifié — repassé en EN_ATTENTE pour revalidation vétérinaire.",
+                    request.getLongitude(), request.getLatitude());
+        }
 
         return toDto(savedAnimal, animalSeller);
     }
+
+    // ── Lecture publique ─────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<AnimalDTO> listPublic(AnimalSearchFilterDTO filter) {
@@ -215,9 +200,8 @@ public class AnimalService {
             return List.of();
         }
 
-        List<Animal> animals = animalRepository.findByStatusOrderByCreatedAtDesc(AnimalStatus.DISPONIBLE);
-
-        return animals.stream()
+        return animalRepository.findByStatusOrderByCreatedAtDesc(AnimalStatus.DISPONIBLE)
+                .stream()
                 .filter(animal -> matchesFilter(animal, effectiveFilter))
                 .map(this::toDto)
                 .toList();
@@ -231,13 +215,15 @@ public class AnimalService {
 
         if (animal.getStatus() != AnimalStatus.DISPONIBLE
                 && userService.getCurrentUserIfAuthenticated()
-                .filter(user -> canViewUnpublishedAnimal(user, animalSeller))
-                .isEmpty()) {
+                        .filter(user -> canViewUnpublishedAnimal(user, animalSeller))
+                        .isEmpty()) {
             throw new ResourceNotFoundException("Animal introuvable.");
         }
 
         return toDto(animal, animalSeller);
     }
+
+    // ── Mes animaux (vendeur) ────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<AnimalDTO> listMyAnimals() {
@@ -259,21 +245,59 @@ public class AnimalService {
                 .distinct()
                 .toList();
 
-        long available = animals.stream()
-                .filter(animal -> animal.getStatus() == AnimalStatus.DISPONIBLE)
-                .count();
-        long unavailable = animals.stream()
-                .filter(animal -> animal.getStatus() == AnimalStatus.INDISPONIBLE)
-                .count();
-        return new AnimalStatsDTO(animals.size(), available, unavailable);
+        long available   = animals.stream().filter(a -> a.getStatus() == AnimalStatus.DISPONIBLE).count();
+        long unavailable = animals.stream().filter(a -> a.getStatus() == AnimalStatus.INDISPONIBLE).count();
+        long pending     = animals.stream().filter(a -> a.getStatus() == AnimalStatus.EN_ATTENTE).count();
+
+        return new AnimalStatsDTO((long) animals.size(), available, unavailable, pending);
     }
+
+    // ── Toggle statut vendeur (DISPONIBLE ↔ INDISPONIBLE) ───────────────────
+
+    @Transactional
+    public AnimalDTO toggleSellerStatus(UUID animalId, AnimalStatus newStatus) {
+        User currentUser = userService.getCurrentUser();
+
+        Animal animal = findAnimal(animalId);
+        AnimalSeller animalSeller = animalSellerRepository.findByAnimalId(animal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Association vendeur introuvable."));
+        ensureOwner(currentUser, animalSeller);
+
+        // Seul un animal déjà validé (DISPONIBLE ou INDISPONIBLE) peut être togglé
+        if (animal.getStatus() != AnimalStatus.DISPONIBLE
+                && animal.getStatus() != AnimalStatus.INDISPONIBLE) {
+            throw new ForbiddenException("Seules les annonces validées peuvent être activées ou désactivées.");
+        }
+
+        // Le vendeur ne peut passer qu'entre DISPONIBLE et INDISPONIBLE
+        if (newStatus != AnimalStatus.DISPONIBLE && newStatus != AnimalStatus.INDISPONIBLE) {
+            throw new ForbiddenException("Statut non autorisé pour cette action.");
+        }
+
+        AnimalStatus previousStatus = animal.getStatus();
+        if (previousStatus != newStatus) {
+            animal.setStatus(newStatus);
+            animalRepository.save(animal);
+            saveHistoryEvent(
+                    animal, currentUser,
+                    HistoryEventType.CHANGEMENT_STATUT,
+                    "Statut modifié par le vendeur : " + previousStatus + " → " + newStatus + ".",
+                    null, null);
+        }
+
+        return toDto(animal, animalSeller);
+    }
+
+    // ── Validation vétérinaire ───────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<AnimalDTO> listPendingValidations() {
         User currentUser = userService.getCurrentUser();
         ensureHealthAgentRole(currentUser);
 
-        return animalRepository.findByStatusOrderByCreatedAtDesc(AnimalStatus.INDISPONIBLE)
+        // Retourne EN_ATTENTE + INDISPONIBLE (rejetés pouvant être revalidés)
+        return animalRepository.findByStatusInOrderByCreatedAtDesc(
+                        List.of(AnimalStatus.EN_ATTENTE, AnimalStatus.INDISPONIBLE))
                 .stream()
                 .map(this::toDto)
                 .toList();
@@ -300,37 +324,23 @@ public class AnimalService {
         animalRepository.save(animal);
 
         saveHistoryEvent(
-                animal,
-                currentUser,
+                animal, currentUser,
                 HistoryEventType.VISITE_VETERINAIRE,
                 request.getVisitResult().trim(),
-                request.getLongitude(),
-                request.getLatitude()
-        );
+                request.getLongitude(), request.getLatitude());
 
         if (previousStatus != targetStatus) {
             saveHistoryEvent(
-                    animal,
-                    currentUser,
+                    animal, currentUser,
                     HistoryEventType.CHANGEMENT_STATUT,
                     "Statut passe de " + previousStatus + " a " + targetStatus + ".",
-                    request.getLongitude(),
-                    request.getLatitude()
-            );
+                    request.getLongitude(), request.getLatitude());
         }
 
         return toDto(animal);
     }
 
-    @Transactional(readOnly = true)
-    public long countAnimalsForSeller(User seller) {
-        return animalSellerRepository.countBySeller(seller);
-    }
-
-    @Transactional(readOnly = true)
-    public long countPendingValidations() {
-        return animalRepository.countByStatus(AnimalStatus.INDISPONIBLE);
-    }
+    // ── Administration ───────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public AdminListingPageDTO listAdminListings(AnimalStatus status, int page, int size) {
@@ -338,11 +348,8 @@ public class AnimalService {
 
         int safePage = Math.max(page, 0);
         int safeSize = Math.min(Math.max(size, 1), 100);
-        Pageable pageable = PageRequest.of(
-                safePage,
-                safeSize,
-                Sort.by(Sort.Direction.DESC, "updatedAt")
-        );
+        Pageable pageable = PageRequest.of(safePage, safeSize,
+                Sort.by(Sort.Direction.DESC, "updatedAt"));
 
         Page<Animal> animals = status == null
                 ? animalRepository.findAll(pageable)
@@ -352,25 +359,37 @@ public class AnimalService {
                 animals.getContent().stream().map(this::toAdminListingDto).toList(),
                 animals.getTotalElements(),
                 animals.getTotalPages(),
-                animals.getNumber()
-        );
+                animals.getNumber());
     }
 
     @Transactional
     public AdminListingDTO publishAdminListing(UUID animalId) {
         User currentUser = userService.getCurrentUser();
         ensureAdminRole(currentUser);
-        Animal animal = findAnimal(animalId);
-        return updateAdminListingStatus(animal, AnimalStatus.DISPONIBLE, currentUser);
+        return updateAdminListingStatus(findAnimal(animalId), AnimalStatus.DISPONIBLE, currentUser);
     }
 
     @Transactional
     public AdminListingDTO suspendAdminListing(UUID animalId) {
         User currentUser = userService.getCurrentUser();
         ensureAdminRole(currentUser);
-        Animal animal = findAnimal(animalId);
-        return updateAdminListingStatus(animal, AnimalStatus.INDISPONIBLE, currentUser);
+        return updateAdminListingStatus(findAnimal(animalId), AnimalStatus.INDISPONIBLE, currentUser);
     }
+
+    // ── Comptages ────────────────────────────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public long countAnimalsForSeller(User seller) {
+        return animalSellerRepository.countBySeller(seller);
+    }
+
+    @Transactional(readOnly = true)
+    public long countPendingValidations() {
+        return animalRepository.countByStatus(AnimalStatus.EN_ATTENTE)
+             + animalRepository.countByStatus(AnimalStatus.INDISPONIBLE);
+    }
+
+    // ── Privé : statut admin ─────────────────────────────────────────────────
 
     private AdminListingDTO updateAdminListingStatus(Animal animal, AnimalStatus targetStatus, User actor) {
         AnimalStatus previousStatus = animal.getStatus();
@@ -378,20 +397,20 @@ public class AnimalService {
             animal.setStatus(targetStatus);
             animalRepository.save(animal);
             saveHistoryEvent(
-                    animal,
-                    actor,
+                    animal, actor,
                     HistoryEventType.CHANGEMENT_STATUT,
                     "Statut modere par administrateur : " + previousStatus + " -> " + targetStatus + ".",
-                    null,
-                    null
-            );
+                    null, null);
         }
         return toAdminListingDto(animal);
     }
 
+    // ── Privé : résolution fiche sanitaire ───────────────────────────────────
+
     private AnimalHealthRecord resolveHealthRecord(Animal animal, AnimalValidationRequest request) {
         if (request.getHealthRecordId() != null) {
-            return animalHealthRecordRepository.findByIdAndAnimalId(request.getHealthRecordId(), animal.getId())
+            return animalHealthRecordRepository
+                    .findByIdAndAnimalId(request.getHealthRecordId(), animal.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Fiche sanitaire introuvable pour cet animal."));
         }
 
@@ -408,10 +427,14 @@ public class AnimalService {
                 .build());
     }
 
+    // ── Privé : récupération ─────────────────────────────────────────────────
+
     private Animal findAnimal(UUID id) {
         return animalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Animal introuvable."));
     }
+
+    // ── Privé : application des champs ───────────────────────────────────────
 
     private void applyAnimalRequest(
             Animal animal,
@@ -430,22 +453,19 @@ public class AnimalService {
         animal.setLatitude(request.getLatitude());
     }
 
+    // ── Privé : filtrage ─────────────────────────────────────────────────────
+
     private boolean matchesFilter(Animal animal, AnimalSearchFilterDTO filter) {
-        if (filter.getType() != null && animal.getType() != filter.getType()) {
-            return false;
-        }
+        if (filter.getType() != null && animal.getType() != filter.getType()) return false;
         if (StringUtils.hasText(filter.getLocation())
-                && !normalizeText(animal.getBirthLocation()).contains(normalizeText(filter.getLocation()))) {
+                && !normalizeText(animal.getBirthLocation()).contains(normalizeText(filter.getLocation())))
             return false;
-        }
-        if (filter.getMinPrice() != null && isLowerThan(animal.getPrice(), filter.getMinPrice())) {
-            return false;
-        }
-        if (filter.getMaxPrice() != null && isGreaterThan(animal.getPrice(), filter.getMaxPrice())) {
-            return false;
-        }
+        if (filter.getMinPrice() != null && isLowerThan(animal.getPrice(), filter.getMinPrice())) return false;
+        if (filter.getMaxPrice() != null && isGreaterThan(animal.getPrice(), filter.getMaxPrice())) return false;
         return true;
     }
+
+    // ── Privé : mappage DTO ──────────────────────────────────────────────────
 
     private AnimalDTO toDto(Animal animal) {
         AnimalSeller animalSeller = animalSellerRepository.findByAnimalId(animal.getId())
@@ -474,11 +494,13 @@ public class AnimalService {
         dto.setSellerEmail(animalSeller.getSeller().getEmail());
         dto.setDisplayName(buildDisplayName(animal));
         dto.setGroupedLot(animal.getQuantity() != null && animal.getQuantity() > 10);
-        dto.setHealthRecords(animalHealthRecordRepository.findByAnimalIdOrderByUploadedAtDesc(animal.getId())
+        dto.setHealthRecords(animalHealthRecordRepository
+                .findByAnimalIdOrderByUploadedAtDesc(animal.getId())
                 .stream()
                 .map(this::toHealthRecordDto)
                 .toList());
-        dto.setHistory(animalHistoryEventRepository.findByAnimalIdOrderByEventDateDesc(animal.getId())
+        dto.setHistory(animalHistoryEventRepository
+                .findByAnimalIdOrderByEventDateDesc(animal.getId())
                 .stream()
                 .sorted(Comparator.comparing(AnimalHistoryEvent::getEventDate).reversed())
                 .map(this::toHistoryDto)
@@ -490,7 +512,6 @@ public class AnimalService {
         AnimalSeller animalSeller = animalSellerRepository.findByAnimalId(animal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Association vendeur introuvable pour cet animal."));
         User seller = animalSeller.getSeller();
-
         return new AdminListingDTO(
                 animal.getId(),
                 buildDisplayName(animal),
@@ -505,14 +526,7 @@ public class AnimalService {
                 seller.getName(),
                 seller.getEmail(),
                 animal.getCreatedAt(),
-                animal.getUpdatedAt()
-        );
-    }
-
-    private boolean canViewUnpublishedAnimal(User user, AnimalSeller animalSeller) {
-        return animalSeller.getSeller().getId().equals(user.getId())
-                || EnumSet.of(Role.AGENT_ANADER, Role.VETERINAIRE, Role.ADMIN, Role.ADMINISTRATEUR)
-                .contains(user.getRole());
+                animal.getUpdatedAt());
     }
 
     private AnimalHealthRecordDTO toHealthRecordDto(AnimalHealthRecord record) {
@@ -542,6 +556,40 @@ public class AnimalService {
         return dto;
     }
 
+    // ── Privé : autorisations ────────────────────────────────────────────────
+
+    private boolean canViewUnpublishedAnimal(User user, AnimalSeller animalSeller) {
+        return animalSeller.getSeller().getId().equals(user.getId())
+                || EnumSet.of(Role.AGENT_ANADER, Role.VETERINAIRE, Role.ADMIN, Role.ADMINISTRATEUR)
+                        .contains(user.getRole());
+    }
+
+    private void ensureSellerRole(User user) {
+        if (!EnumSet.of(Role.USER, Role.VENDEUR, Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
+            throw new ForbiddenException("Seuls les vendeurs vérifiés peuvent enregistrer des animaux.");
+        }
+    }
+
+    private void ensureOwner(User user, AnimalSeller animalSeller) {
+        if (!animalSeller.getSeller().getId().equals(user.getId())) {
+            throw new ForbiddenException("Seul le propriétaire de ce dossier peut le modifier.");
+        }
+    }
+
+    private void ensureHealthAgentRole(User user) {
+        if (!EnumSet.of(Role.VETERINAIRE).contains(user.getRole())) {
+            throw new ForbiddenException("Cette action est réservée à un vétérinaire.");
+        }
+    }
+
+    private void ensureAdminRole(User user) {
+        if (!EnumSet.of(Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
+            throw new ForbiddenException("Cette action est reservee aux administrateurs.");
+        }
+    }
+
+    // ── Privé : historique ───────────────────────────────────────────────────
+
     private void saveHistoryEvent(
             Animal animal,
             User actor,
@@ -561,40 +609,19 @@ public class AnimalService {
                 .build());
     }
 
-    private void ensureSellerRole(User user) {
-        if (!EnumSet.of(Role.USER, Role.VENDEUR, Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
-            throw new ForbiddenException("Seuls les vendeurs vérifiés peuvent enregistrer des animaux.");
-        }
-    }
-
-    private void ensureOwner(User user, AnimalSeller animalSeller) {
-        if (!animalSeller.getSeller().getId().equals(user.getId())) {
-            throw new ForbiddenException("Seul le propriétaire de ce dossier peut le modifier.");
-        }
-    }
-
-    private void ensureHealthAgentRole(User user) {
-        if (!EnumSet.of(/*Role.AGENT_ANADER,*/ Role.VETERINAIRE/*, Role.ADMIN, Role.ADMINISTRATEUR*/).contains(user.getRole())) {
-            throw new ForbiddenException("Cette action est réservée à un vétérinaire.");
-        }
-    }
-
-    private void ensureAdminRole(User user) {
-        if (!EnumSet.of(Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
-            throw new ForbiddenException("Cette action est reservee aux administrateurs.");
-        }
-    }
+    // ── Privé : utilitaires ──────────────────────────────────────────────────
 
     private String generateQrCode() {
-        return "BTL-" + QR_DATE_FORMAT.format(Instant.now()) + "-" + UUID.randomUUID().toString()
-                .substring(0, 8)
-                .toUpperCase(Locale.ROOT);
+        return "BTL-" + QR_DATE_FORMAT.format(Instant.now()) + "-"
+                + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
     }
 
     private String buildRegistrationDescription(Animal animal) {
         String lotHint = animal.getQuantity() != null && animal.getQuantity() > 10 ? " (lot regroupé)" : "";
-        String location = StringUtils.hasText(animal.getBirthLocation()) ? " à " + animal.getBirthLocation() : "";
-        return formatAnimalType(animal.getType()) + lotHint + " enregistré avec le QR " + animal.getQrCode() + location + ".";
+        String location = StringUtils.hasText(animal.getBirthLocation())
+                ? " à " + animal.getBirthLocation() : "";
+        return formatAnimalType(animal.getType()) + lotHint
+                + " enregistré avec le QR " + animal.getQrCode() + location + ".";
     }
 
     private String buildEditionDescription(Animal animal) {
@@ -609,16 +636,13 @@ public class AnimalService {
     }
 
     private String formatAnimalType(AnimalType animalType) {
-        if (animalType == null) {
-            return "Animal";
-        }
-
+        if (animalType == null) return "Animal";
         return switch (animalType) {
-            case BOVIN -> "Bovin";
-            case OVIN -> "Ovin";
+            case BOVIN  -> "Bovin";
+            case OVIN   -> "Ovin";
             case CAPRIN -> "Caprin";
             case PORCIN -> "Porcin";
-            case AUTRE -> "Animal";
+            case AUTRE  -> "Animal";
         };
     }
 
@@ -631,22 +655,17 @@ public class AnimalService {
     }
 
     private String trimToNull(String value) {
-        if (!StringUtils.hasText(value)) {
-            return null;
-        }
-        return value.trim();
+        return StringUtils.hasText(value) ? value.trim() : null;
     }
 
     private String normalizeText(String value) {
-        if (!StringUtils.hasText(value)) {
-            return "";
-        }
-        return value.trim().toLowerCase(Locale.ROOT);
+        return StringUtils.hasText(value) ? value.trim().toLowerCase(Locale.ROOT) : "";
     }
+
+    // ── Privé : documents sanitaires ────────────────────────────────────────
 
     private void replaceHealthDocuments(Animal animal, List<AnimalHealthDocumentInput> documents) {
         animalHealthRecordRepository.deleteByAnimalId(animal.getId());
-
         for (AnimalHealthDocumentInput document : documents) {
             animalHealthRecordRepository.save(AnimalHealthRecord.builder()
                     .animal(animal)
@@ -658,23 +677,7 @@ public class AnimalService {
         }
     }
 
-    private String[] toArray(List<String> values) {
-        if (values == null || values.isEmpty()) {
-            return new String[0];
-        }
-        return values.stream()
-                .filter(StringUtils::hasText)
-                .map(String::trim)
-                .distinct()
-                .toArray(String[]::new);
-    }
-
-    private List<String> toList(String[] values) {
-        if (values == null || values.length == 0) {
-            return List.of();
-        }
-        return List.of(values);
-    }
+    // ── Privé : gestion des fichiers ─────────────────────────────────────────
 
     private PreparedAnimalFiles prepareAnimalFiles(
             AnimalCreateRequest request,
@@ -684,22 +687,17 @@ public class AnimalService {
             List<HealthDocumentType> uploadedDocumentTypes
     ) {
         List<String> newlyStoredFiles = new ArrayList<>();
-
         try {
             List<String> storedPhotoUrls = storeFiles(photoFiles, "ANIMAL_PHOTO", newlyStoredFiles);
             List<String> storedVideoUrls = storeFiles(videoFiles, "ANIMAL_VIDEO", newlyStoredFiles);
-            List<AnimalHealthDocumentInput> storedHealthDocuments = storeHealthDocuments(
-                    documentFiles,
-                    uploadedDocumentTypes,
-                    newlyStoredFiles
-            );
+            List<AnimalHealthDocumentInput> storedHealthDocuments =
+                    storeHealthDocuments(documentFiles, uploadedDocumentTypes, newlyStoredFiles);
 
             return new PreparedAnimalFiles(
                     mergeFileReferences(request.getPhotos(), storedPhotoUrls),
                     mergeFileReferences(request.getVideos(), storedVideoUrls),
                     mergeHealthDocuments(request.getHealthDocuments(), storedHealthDocuments),
-                    List.copyOf(newlyStoredFiles)
-            );
+                    List.copyOf(newlyStoredFiles));
         } catch (RuntimeException exception) {
             deleteStoredFiles(newlyStoredFiles);
             throw exception;
@@ -712,13 +710,11 @@ public class AnimalService {
             List<String> newlyStoredFiles
     ) {
         List<String> storedUrls = new ArrayList<>();
-
         for (MultipartFile file : normalizeFiles(files)) {
             String storedUrl = fileStorageService.store(file, categoryKey).getUrl();
             storedUrls.add(storedUrl);
             newlyStoredFiles.add(storedUrl);
         }
-
         return storedUrls;
     }
 
@@ -728,14 +724,14 @@ public class AnimalService {
             List<String> newlyStoredFiles
     ) {
         List<MultipartFile> files = normalizeFiles(documentFiles);
-        List<HealthDocumentType> documentTypes = uploadedDocumentTypes == null ? List.of() : uploadedDocumentTypes;
+        List<HealthDocumentType> documentTypes =
+                uploadedDocumentTypes == null ? List.of() : uploadedDocumentTypes;
 
         if (files.size() != documentTypes.size()) {
             throw new BadRequestException("Chaque document sanitaire televerse doit avoir un type associe.");
         }
 
         List<AnimalHealthDocumentInput> storedDocuments = new ArrayList<>();
-
         for (int index = 0; index < files.size(); index++) {
             String storedUrl = fileStorageService.store(files.get(index), "SANITARY_DOCUMENT").getUrl();
             newlyStoredFiles.add(storedUrl);
@@ -745,64 +741,40 @@ public class AnimalService {
             document.setDocumentType(documentTypes.get(index));
             storedDocuments.add(document);
         }
-
         return storedDocuments;
     }
 
     private List<MultipartFile> normalizeFiles(List<MultipartFile> files) {
-        if (files == null || files.isEmpty()) {
-            return List.of();
-        }
-
-        return files.stream()
-                .filter(file -> file != null && !file.isEmpty())
-                .toList();
+        if (files == null || files.isEmpty()) return List.of();
+        return files.stream().filter(f -> f != null && !f.isEmpty()).toList();
     }
 
     private List<String> mergeFileReferences(List<String> existingFiles, List<String> newFiles) {
-        Set<String> mergedFiles = new LinkedHashSet<>();
-
-        if (existingFiles != null) {
-            existingFiles.stream()
-                    .filter(StringUtils::hasText)
-                    .map(String::trim)
-                    .forEach(mergedFiles::add);
-        }
-
-        if (newFiles != null) {
-            newFiles.stream()
-                    .filter(StringUtils::hasText)
-                    .map(String::trim)
-                    .forEach(mergedFiles::add);
-        }
-
-        return List.copyOf(mergedFiles);
+        Set<String> merged = new LinkedHashSet<>();
+        if (existingFiles != null)
+            existingFiles.stream().filter(StringUtils::hasText).map(String::trim).forEach(merged::add);
+        if (newFiles != null)
+            newFiles.stream().filter(StringUtils::hasText).map(String::trim).forEach(merged::add);
+        return List.copyOf(merged);
     }
 
     private List<AnimalHealthDocumentInput> mergeHealthDocuments(
             List<AnimalHealthDocumentInput> existingDocuments,
             List<AnimalHealthDocumentInput> newDocuments
     ) {
-        List<AnimalHealthDocumentInput> mergedDocuments = new ArrayList<>();
-
+        List<AnimalHealthDocumentInput> merged = new ArrayList<>();
         if (existingDocuments != null) {
-            for (AnimalHealthDocumentInput document : existingDocuments) {
-                if (document == null || !StringUtils.hasText(document.getDocumentUrl()) || document.getDocumentType() == null) {
-                    continue;
-                }
-
-                AnimalHealthDocumentInput retainedDocument = new AnimalHealthDocumentInput();
-                retainedDocument.setDocumentUrl(document.getDocumentUrl().trim());
-                retainedDocument.setDocumentType(document.getDocumentType());
-                mergedDocuments.add(retainedDocument);
+            for (AnimalHealthDocumentInput doc : existingDocuments) {
+                if (doc == null || !StringUtils.hasText(doc.getDocumentUrl())
+                        || doc.getDocumentType() == null) continue;
+                AnimalHealthDocumentInput retained = new AnimalHealthDocumentInput();
+                retained.setDocumentUrl(doc.getDocumentUrl().trim());
+                retained.setDocumentType(doc.getDocumentType());
+                merged.add(retained);
             }
         }
-
-        if (newDocuments != null) {
-            mergedDocuments.addAll(newDocuments);
-        }
-
-        return List.copyOf(mergedDocuments);
+        if (newDocuments != null) merged.addAll(newDocuments);
+        return List.copyOf(merged);
     }
 
     private List<String> findObsoleteFiles(
@@ -811,69 +783,80 @@ public class AnimalService {
             List<String> previousDocumentUrls,
             PreparedAnimalFiles preparedFiles
     ) {
-        Set<String> retainedFiles = new LinkedHashSet<>();
-        retainedFiles.addAll(preparedFiles.photos());
-        retainedFiles.addAll(preparedFiles.videos());
+        Set<String> retained = new LinkedHashSet<>();
+        retained.addAll(preparedFiles.photos());
+        retained.addAll(preparedFiles.videos());
         preparedFiles.healthDocuments().stream()
                 .map(AnimalHealthDocumentInput::getDocumentUrl)
                 .filter(StringUtils::hasText)
-                .forEach(retainedFiles::add);
+                .forEach(retained::add);
 
-        Set<String> obsoleteFiles = new LinkedHashSet<>();
-        previousPhotos.stream().filter(StringUtils::hasText).forEach(obsoleteFiles::add);
-        previousVideos.stream().filter(StringUtils::hasText).forEach(obsoleteFiles::add);
-        previousDocumentUrls.stream().filter(StringUtils::hasText).forEach(obsoleteFiles::add);
-        obsoleteFiles.removeAll(retainedFiles);
+        Set<String> obsolete = new LinkedHashSet<>();
+        previousPhotos.stream().filter(StringUtils::hasText).forEach(obsolete::add);
+        previousVideos.stream().filter(StringUtils::hasText).forEach(obsolete::add);
+        previousDocumentUrls.stream().filter(StringUtils::hasText).forEach(obsolete::add);
+        obsolete.removeAll(retained);
 
-        return List.copyOf(obsoleteFiles);
+        return List.copyOf(obsolete);
     }
 
     private void registerFileLifecycle(List<String> newlyStoredFiles, List<String> obsoleteFiles) {
-        List<String> createdFiles = newlyStoredFiles == null ? List.of() : List.copyOf(new LinkedHashSet<>(newlyStoredFiles));
-        List<String> filesToDeleteAfterCommit = obsoleteFiles == null ? List.of() : List.copyOf(new LinkedHashSet<>(obsoleteFiles));
+        List<String> created = newlyStoredFiles == null
+                ? List.of() : List.copyOf(new LinkedHashSet<>(newlyStoredFiles));
+        List<String> toDeleteAfterCommit = obsoleteFiles == null
+                ? List.of() : List.copyOf(new LinkedHashSet<>(obsoleteFiles));
 
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            deleteStoredFiles(filesToDeleteAfterCommit);
+            deleteStoredFiles(toDeleteAfterCommit);
             return;
         }
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                deleteStoredFiles(filesToDeleteAfterCommit);
+                deleteStoredFiles(toDeleteAfterCommit);
             }
 
             @Override
             public void afterCompletion(int status) {
                 if (status != STATUS_COMMITTED) {
-                    deleteStoredFiles(createdFiles);
+                    deleteStoredFiles(created);
                 }
             }
         });
     }
 
     private void deleteStoredFiles(List<String> fileUrls) {
-        if (fileUrls == null || fileUrls.isEmpty()) {
-            return;
-        }
-
-        for (String fileUrl : fileUrls) {
-            if (!StringUtils.hasText(fileUrl)) {
-                continue;
-            }
-
+        if (fileUrls == null || fileUrls.isEmpty()) return;
+        for (String url : fileUrls) {
+            if (!StringUtils.hasText(url)) continue;
             try {
-                fileStorageService.deleteByUrl(fileUrl);
+                fileStorageService.deleteByUrl(url);
             } catch (RuntimeException ignored) {
             }
         }
     }
+
+    private String[] toArray(List<String> values) {
+        if (values == null || values.isEmpty()) return new String[0];
+        return values.stream()
+                .filter(StringUtils::hasText)
+                .map(String::trim)
+                .distinct()
+                .toArray(String[]::new);
+    }
+
+    private List<String> toList(String[] values) {
+        if (values == null || values.length == 0) return List.of();
+        return List.of(values);
+    }
+
+    // ── Record interne ───────────────────────────────────────────────────────
 
     private record PreparedAnimalFiles(
             List<String> photos,
             List<String> videos,
             List<AnimalHealthDocumentInput> healthDocuments,
             List<String> newlyStoredFiles
-    ) {
-    }
+    ) {}
 }
