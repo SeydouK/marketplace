@@ -36,6 +36,7 @@ export class CertificatsSanitairesComponent implements OnInit {
 
   // Modal
   selectedDemande: ValidationDemande | null = null;
+  isModalOpen = false;
   processingId: string | null = null;
 
   newCert: Partial<Certificate> = {
@@ -92,29 +93,31 @@ export class CertificatsSanitairesComponent implements OnInit {
 
   openModal(demande: ValidationDemande): void {
     this.selectedDemande = { ...demande, documents: [...demande.documents] };
+    this.isModalOpen = true;
   }
   
   closeModal(): void {
+    this.isModalOpen = false;
     this.selectedDemande = null;
   }
 
   hasMissingDocuments(demande: ValidationDemande): boolean {
     return demande.documents.some(d => !d.fileUrl);
   }
-  
-  validerDemande(demande: ValidationDemande): void {
-    this.processingId = demande.animalId;
-    // this.vetService.validerFicheSanitaire(demande.animalId).subscribe({ ... })
-    demande.status = 'VALIDE';
-    this.processingId = null;
+
+  validerDemande(): void {
+    if (!this.selectedDemande) return;
+    const id = this.selectedDemande.animalId;
+    const index = this.demandes.findIndex(d => d.animalId === id);
+    if (index !== -1) this.demandes[index] = { ...this.demandes[index], status: 'VALIDE' };
     this.closeModal();
   }
-
-  refuserDemande(demande: ValidationDemande): void {
-    this.processingId = demande.animalId;
-    // this.vetService.refuserFicheSanitaire(demande.animalId).subscribe({ ... })
-    demande.status = 'REFUSE';
-    this.processingId = null;
+  
+  refuserDemande(): void {
+    if (!this.selectedDemande) return;
+    const id = this.selectedDemande.animalId;
+    const index = this.demandes.findIndex(d => d.animalId === id);
+    if (index !== -1) this.demandes[index] = { ...this.demandes[index], status: 'REFUSE' };
     this.closeModal();
   }
 

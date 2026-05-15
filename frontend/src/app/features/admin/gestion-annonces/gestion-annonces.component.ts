@@ -41,9 +41,7 @@ export class GestionAnnoncesComponent implements OnInit {
           this.totalElements = page.totalElements;
           this.loading = false;
         },
-        error: () => {
-          this.loading = false;
-        },
+        error: () => { this.loading = false; },
       });
   }
 
@@ -53,19 +51,24 @@ export class GestionAnnoncesComponent implements OnInit {
     this.load();
   }
 
-  approve(listing: AdminListing): void {
-    if (!listing.documentsValides) {
-      return;
-    }
-    this.runListingAction(listing, () => this.adminService.approveListing(listing.id));
+  canPublish(listing: AdminListing): boolean {
+    return listing.status === 'EN_ATTENTE'; 
   }
 
-  canPublish(listing: AdminListing): boolean {
-    return listing.status === 'INDISPONIBLE' && listing.documentsValides;
+  canMakeAvailable(listing: AdminListing): boolean {
+    return listing.status === 'INDISPONIBLE';
+  }
+  
+  approve(listing: AdminListing): void {
+    this.runListingAction(listing, () => this.adminService.approveListing(listing.id));
   }
 
   suspend(listing: AdminListing): void {
     this.runListingAction(listing, () => this.adminService.suspendListing(listing.id));
+  }
+
+  makeAvailable(listing: AdminListing): void {
+    this.runListingAction(listing, () => this.adminService.approveListing(listing.id));
   }
 
   prevPage(): void {
@@ -88,12 +91,23 @@ export class GestionAnnoncesComponent implements OnInit {
 
   getStatusBadge(status?: string): string {
     const map: Record<string, string> = {
-      DISPONIBLE:              'bg-green-100 text-green-800',
-      INDISPONIBLE:            'bg-amber-100 text-amber-800',
-      EN_ATTENTE_VALIDATION:   'bg-blue-100 text-blue-800',
-      VENDU:                   'bg-gray-100 text-gray-600',
+      DISPONIBLE:  'bg-green-100 text-green-800',
+      INDISPONIBLE: 'bg-amber-100 text-amber-800',
+      EN_ATTENTE:   'bg-blue-100 text-blue-800',
+      VENDU:        'bg-gray-100 text-gray-600',
     };
     return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
+  }
+  
+  
+  getStatusLabel(status?: string): string {
+    const map: Record<string, string> = {
+      DISPONIBLE:   'Disponible',
+      INDISPONIBLE: 'Indisponible',
+      EN_ATTENTE:   'Attente vétérinaire',
+      VENDU:        'Vendu',
+    };
+    return status ? (map[status] ?? status) : '';
   }
 
   trackByListingId(_: number, listing: AdminListing): string {

@@ -206,15 +206,13 @@
     <!-- Pied modal — boutons -->
     <div class="p-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3">
       <button type="button"
-        (click)="refuserDemande(selectedDemande)"
-        [disabled]="processingId === selectedDemande.animalId"
-        class="px-5 py-2.5 rounded-lg border border-red-300 text-red-600 text-sm font-medium hover:bg-red-50 transition disabled:opacity-50">
+        (click)="refuserDemande()"
+        class="px-5 py-2.5 rounded-lg border border-red-300 text-red-600 text-sm font-medium hover:bg-red-50 transition">
         ✗ Refuser la validation
       </button>
       <button type="button"
-        (click)="validerDemande(selectedDemande)"
-        [disabled]="processingId === selectedDemande.animalId"
-        class="px-5 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition disabled:opacity-50">
+        (click)="validerDemande()"
+        class="px-5 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition">
         ✓ Valider la fiche sanitaire
       </button>
     </div>

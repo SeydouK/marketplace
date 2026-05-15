@@ -71,7 +71,7 @@
             <span
               class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
               [ngClass]="getStatusBadge(listing.status)">
-              {{ listing.status }}
+              {{ getStatusLabel(listing.status) }}
             </span>
           </td>
 
@@ -81,26 +81,34 @@
 
           <td class="px-4 py-3">
             <div class="flex justify-end gap-2 items-center">
-          
-              <!-- Bouton Publier : uniquement si docs vétérinaire validés -->
+
+              <!-- EN_ATTENTE : validé par le véto, l'admin publie définitivement -->
               <button
                 type="button"
-                *ngIf="listing.status === 'INDISPONIBLE' && listing.documentsValides"
+                *ngIf="canPublish(listing)"
                 (click)="approve(listing)"
                 [disabled]="updatingListingId === listing.id"
                 class="text-xs px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50">
-                Publier
+                ✓ Publier
               </button>
-          
-              <!-- Message bloquant si docs non validés -->
+            
               <span
-                *ngIf="listing.status === 'INDISPONIBLE' && !listing.documentsValides"
-                class="text-xs text-amber-600 italic flex items-center gap-1"
-                title="Le vétérinaire doit valider les documents sanitaires avant toute publication">
+                *ngIf="listing.status === 'EN_ATTENTE'"
+                class="text-xs text-blue-600 italic">
                 ⏳ En attente vétérinaire
               </span>
-          
-              <!-- Suspendre : disponible indépendamment des docs -->
+            
+              <!-- INDISPONIBLE : passage manuel vers DISPONIBLE -->
+              <button
+                type="button"
+                *ngIf="canMakeAvailable(listing)"
+                (click)="makeAvailable(listing)"
+                [disabled]="updatingListingId === listing.id"
+                class="text-xs px-3 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition disabled:opacity-50">
+                Rendre disponible
+              </button>
+            
+              <!-- DISPONIBLE : suspendre -->
               <button
                 type="button"
                 *ngIf="listing.status === 'DISPONIBLE'"
@@ -109,6 +117,7 @@
                 class="text-xs px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50">
                 Suspendre
               </button>
+            
             </div>
           </td>
         </tr>
