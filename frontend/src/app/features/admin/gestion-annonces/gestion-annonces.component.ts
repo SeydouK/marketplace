@@ -17,10 +17,11 @@ export class GestionAnnoncesComponent implements OnInit {
   updatingListingId?: string;
 
   readonly filters: { label: string; value: AdminListingStatus | 'all' }[] = [
-    { label: 'Toutes', value: 'all' },
-    { label: 'Disponibles', value: 'DISPONIBLE' },
-    { label: 'Indisponibles', value: 'INDISPONIBLE' },
-    { label: 'Vendues', value: 'VENDU' },
+    { label: 'Toutes',              value: 'all' },
+    { label: 'Disponibles',         value: 'DISPONIBLE' },
+    { label: 'Indisponibles',       value: 'INDISPONIBLE' },
+    { label: 'Attente vétérinaire', value: 'EN_ATTENTE' },
+    { label: 'Vendues',             value: 'VENDU' },
   ];
 
   constructor(private readonly adminService: AdminService) {}
@@ -53,7 +54,14 @@ export class GestionAnnoncesComponent implements OnInit {
   }
 
   approve(listing: AdminListing): void {
+    if (!listing.documentsValides) {
+      return;
+    }
     this.runListingAction(listing, () => this.adminService.approveListing(listing.id));
+  }
+
+  canPublish(listing: AdminListing): boolean {
+    return listing.status === 'INDISPONIBLE' && listing.documentsValides;
   }
 
   suspend(listing: AdminListing): void {
@@ -80,9 +88,10 @@ export class GestionAnnoncesComponent implements OnInit {
 
   getStatusBadge(status?: string): string {
     const map: Record<string, string> = {
-      DISPONIBLE: 'bg-green-100 text-green-800',
-      INDISPONIBLE: 'bg-amber-100 text-amber-800',
-      VENDU: 'bg-gray-100 text-gray-600',
+      DISPONIBLE:              'bg-green-100 text-green-800',
+      INDISPONIBLE:            'bg-amber-100 text-amber-800',
+      EN_ATTENTE_VALIDATION:   'bg-blue-100 text-blue-800',
+      VENDU:                   'bg-gray-100 text-gray-600',
     };
     return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
   }

@@ -46,7 +46,7 @@ export interface SellerRequest {
   updatedAt: string;
 }
 
-export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU';
+export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU' | 'EN_ATTENTE';
 
 export interface AdminListing {
   id: string;
@@ -63,6 +63,7 @@ export interface AdminListing {
   sellerEmail: string;
   createdAt: string;
   updatedAt: string;
+  documentsValides: boolean;
 }
 
 export interface AdminListingPage {
