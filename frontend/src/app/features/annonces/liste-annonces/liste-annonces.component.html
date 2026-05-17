@@ -20,6 +20,7 @@
         </div>
 
         <button
+          *ngIf="isMineCatalog && auth.canAccessSellerArea"
           type="button"
           class="hero-primary-action"
           (click)="goToCreateAnimal()"
