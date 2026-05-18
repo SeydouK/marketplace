@@ -124,20 +124,60 @@
           </ng-container>
 
           <ng-template #publicActions>
+
+            <!-- ── Bouton Ajouter au panier (acheteur connecté) ── -->
+            <ng-container *ngIf="auth.isLoggedIn() && isAcheteur">
+
+              <!-- Message succès -->
+              <div *ngIf="panierSuccesMessage"
+                class="flex items-center justify-between gap-2 rounded-2xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+                <span>✅ {{ panierSuccesMessage }}</span>
+                <a routerLink="/panier"
+                  class="font-semibold text-red-600 hover:text-red-700 whitespace-nowrap text-xs">
+                  Voir →
+                </a>
+              </div>
+
+              <!-- Bouton principal panier -->
+              <button
+                type="button"
+                (click)="dejaAuPanier ? allerAuPanier() : ajouterAuPanier()"
+                [disabled]="ajoutEnCours"
+                class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                [ngClass]="dejaAuPanier
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-red-600 text-white hover:bg-red-700'"
+              >
+                <svg *ngIf="!ajoutEnCours" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <!-- Spinner -->
+                <svg *ngIf="ajoutEnCours" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                <span *ngIf="ajoutEnCours">Ajout en cours...</span>
+                <span *ngIf="!ajoutEnCours && !dejaAuPanier">Ajouter au panier</span>
+                <span *ngIf="!ajoutEnCours && dejaAuPanier">✓ Voir mon panier</span>
+              </button>
+            </ng-container>
+
+            <!-- Contacter le vendeur (toujours visible si connecté) -->
             <a
               *ngIf="auth.isLoggedIn(); else loginPrompt"
               [href]="listing.sellerEmail ? ('mailto:' + listing.sellerEmail) : null"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
             >
               Contacter le vendeur
             </a>
 
             <ng-template #loginPrompt>
               <a
-                routerLink="/login"
+                routerLink="/auth/login"
                 class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 transition-colors hover:border-red-500 hover:text-red-700"
               >
-                Se connecter
+                Se connecter pour acheter
               </a>
             </ng-template>
 
@@ -147,8 +187,25 @@
               class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
             >
               Déposer un animal
-            </a>          
+            </a>
+
           </ng-template>
+        </div>
+      </div>
+
+      <!-- ── Bloc escrow / paiement sécurisé (acheteur connecté) ── -->
+      <div *ngIf="auth.isLoggedIn() && isAcheteur"
+        class="rounded-[2rem] border border-amber-100 bg-amber-50/60 p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-2">Paiement sécurisé</p>
+        <p class="text-sm text-amber-900 leading-relaxed">
+          Les fonds sont bloqués sur un compte séquestre et libérés
+          <strong>uniquement après confirmation de réception</strong> de l'animal.
+        </p>
+        <div class="mt-3 flex items-center gap-2 text-xs text-amber-700">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          Orange Money · Wave CI · MTN Money
         </div>
       </div>
     </aside>

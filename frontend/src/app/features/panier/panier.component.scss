@@ -1,0 +1,325 @@
+/* frontend/src/app/features/panier/panier.component.scss */
+
+.panier-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ── Header ── */
+.panier-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+
+  .icon { font-size: 1.6rem; }
+
+  .badge {
+    background: #e65c00;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+}
+
+/* ── Panier vide ── */
+.panier-vide {
+  text-align: center;
+  padding: 80px 20px;
+
+  .vide-illustration { font-size: 5rem; margin-bottom: 16px; }
+  h2 { font-size: 1.4rem; color: #444; margin-bottom: 8px; }
+  p  { color: #888; margin-bottom: 24px; }
+}
+
+/* ── Layout principal ── */
+.panier-contenu {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Groupe vendeur ── */
+.vendeur-groupe {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.vendeur-header {
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+
+  .vendeur-icone { font-size: 1.1rem; }
+  .vendeur-localisation { margin-left: auto; color: #888; font-size: 0.85rem; }
+}
+
+/* ── Article ── */
+.panier-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+
+  &:last-of-type { border-bottom: none; }
+  &:hover { background: #fdfaf7; }
+}
+
+.item-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.item-infos {
+  flex: 1;
+  min-width: 0;
+
+  .item-nom {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-details {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .detail-tag {
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.78rem;
+    color: #555;
+  }
+
+  .item-prix-unitaire {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+  }
+}
+
+/* ── Contrôle quantité ── */
+.item-quantite {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 4px;
+
+  .qty-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+
+    &:hover:not(:disabled) { background: #e65c00; color: #fff; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  .qty-valeur {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+}
+
+/* ── Sous-total article ── */
+.item-sous-total {
+  min-width: 120px;
+  text-align: right;
+  font-weight: 700;
+  color: #e65c00;
+  font-size: 1rem;
+}
+
+/* ── Bouton supprimer ── */
+.btn-supprimer {
+  border: none;
+  background: none;
+  color: #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.15s;
+
+  &:hover { background: #fee; color: #e00; }
+}
+
+/* ── Sous-total vendeur ── */
+.vendeur-sous-total {
+  padding: 10px 20px;
+  background: #fafafa;
+  border-top: 1px solid #e8e8e8;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #666;
+
+  strong { color: #1a1a1a; }
+}
+
+/* ── Actions bas ── */
+.panier-actions-bas {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+
+  .btn-vider {
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #e00;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+    &:hover { background: #fee; }
+  }
+
+  .btn-continuer {
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+    &:hover { background: #f5f5f5; }
+  }
+}
+
+/* ── Récapitulatif ── */
+.panier-recapitulatif {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 24px;
+  position: sticky;
+  top: 80px;
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1a1a1a;
+  }
+}
+
+.recap-ligne {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.recap-separateur {
+  border-top: 2px solid #e8e8e8;
+  margin: 12px 0;
+}
+
+.recap-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+
+  strong {
+    color: #e65c00;
+    font-size: 1.3rem;
+  }
+}
+
+.recap-note {
+  font-size: 0.8rem;
+  color: #888;
+  background: #fffbf0;
+  border: 1px solid #ffe580;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* ── Boutons ── */
+.btn-primary, .btn-commander {
+  width: 100%;
+  padding: 14px;
+  background: #e65c00;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) { background: #cc5200; transform: translateY(-1px); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+/* ── Méthodes de paiement ── */
+.paiement-methodes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+
+  img {
+    height: 28px;
+    object-fit: contain;
+    filter: grayscale(0.3);
+    transition: filter 0.15s;
+    &:hover { filter: none; }
+  }
+}

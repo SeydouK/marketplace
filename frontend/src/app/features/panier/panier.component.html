@@ -1,0 +1,133 @@
+<!-- frontend/src/app/features/panier/panier.component.html -->
+
+<div class="panier-page">
+
+  <!-- ── En-tête ── -->
+  <div class="panier-header">
+    <h1>
+      <span class="icon">🛒</span>
+      Mon Panier
+      <span class="badge" *ngIf="panier?.nombreArticles">
+        {{ panier!.nombreArticles }} animal{{ panier!.nombreArticles > 1 ? 'x' : '' }}
+      </span>
+    </h1>
+  </div>
+
+  <!-- ── Loader ── -->
+  <div class="loader-wrapper" *ngIf="chargement">
+    <app-loader></app-loader>
+  </div>
+
+  <!-- ── Panier vide ── -->
+  <div class="panier-vide" *ngIf="!chargement && (!panier || panier.items.length === 0)">
+    <div class="vide-illustration">🐄</div>
+    <h2>Votre panier est vide</h2>
+    <p>Parcourez nos annonces pour trouver votre prochain animal.</p>
+    <button class="btn-primary" routerLink="/annonces">Voir les annonces</button>
+  </div>
+
+  <!-- ── Contenu du panier ── -->
+  <div class="panier-contenu" *ngIf="!chargement && panier && panier.items.length > 0">
+
+    <div class="panier-gauche">
+
+      <!-- Items groupés par vendeur -->
+      <div class="vendeur-groupe" *ngFor="let groupe of groupesParVendeur">
+
+        <div class="vendeur-header">
+          <span class="vendeur-icone">🏪</span>
+          <strong>{{ groupe.vendeurNom }}</strong>
+          <span class="vendeur-localisation" *ngIf="groupe.items[0]?.localisation">
+            📍 {{ groupe.items[0].localisation }}
+          </span>
+        </div>
+
+        <div class="panier-item" *ngFor="let item of groupe.items">
+
+          <!-- Photo -->
+          <div class="item-photo">
+            <img [src]="item.photoUrl || 'assets/images/animal-placeholder.png'"
+                 [alt]="item.animalNom"
+                 onerror="this.src='assets/images/animal-placeholder.png'">
+          </div>
+
+          <!-- Infos -->
+          <div class="item-infos">
+            <h3 class="item-nom">{{ item.animalNom }}</h3>
+            <div class="item-details">
+              <span class="detail-tag" *ngIf="item.animalRace">{{ item.animalRace }}</span>
+              <span class="detail-tag" *ngIf="item.animalPoids">{{ item.animalPoids }} kg</span>
+            </div>
+            <p class="item-prix-unitaire">{{ item.prixUnitaire | number:'1.0-0' }} FCFA / animal</p>
+          </div>
+
+          <!-- Quantité -->
+          <div class="item-quantite">
+            <button class="qty-btn" (click)="modifierQuantite(item, item.quantite - 1)"
+                    [disabled]="item.quantite <= 1">−</button>
+            <span class="qty-valeur">{{ item.quantite }}</span>
+            <button class="qty-btn" (click)="modifierQuantite(item, item.quantite + 1)">+</button>
+          </div>
+
+          <!-- Sous-total -->
+          <div class="item-sous-total">
+            <span>{{ item.sousTotal | number:'1.0-0' }} FCFA</span>
+          </div>
+
+          <!-- Supprimer -->
+          <button class="btn-supprimer" (click)="supprimerItem(item)" title="Retirer du panier">
+            ✕
+          </button>
+        </div>
+
+        <div class="vendeur-sous-total">
+          Sous-total vendeur : <strong>{{ groupe.sousTotal | number:'1.0-0' }} FCFA</strong>
+        </div>
+      </div>
+
+      <!-- Action vider -->
+      <div class="panier-actions-bas">
+        <button class="btn-vider" (click)="confirmerVider()">
+          🗑️ Vider le panier
+        </button>
+        <button class="btn-continuer" routerLink="/annonces">
+          ← Continuer mes achats
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Récapitulatif ── -->
+    <div class="panier-recapitulatif">
+      <h2>Récapitulatif</h2>
+
+      <div class="recap-ligne" *ngFor="let groupe of groupesParVendeur">
+        <span>{{ groupe.vendeurNom }}</span>
+        <span>{{ groupe.sousTotal | number:'1.0-0' }} FCFA</span>
+      </div>
+
+      <div class="recap-separateur"></div>
+
+      <div class="recap-total">
+        <span>Total</span>
+        <strong>{{ panier.total | number:'1.0-0' }} FCFA</strong>
+      </div>
+
+      <p class="recap-note">
+        💡 Le paiement sera sécurisé via escrow. Les fonds sont libérés uniquement après
+        confirmation de réception.
+      </p>
+
+      <button class="btn-commander" (click)="passerCommande()" [disabled]="commandeEnCours">
+        <span *ngIf="!commandeEnCours">✅ Passer la commande</span>
+        <span *ngIf="commandeEnCours">⏳ Traitement...</span>
+      </button>
+
+      <div class="paiement-methodes">
+        <img src="assets/images/orange-money.png" alt="Orange Money" title="Orange Money">
+        <img src="assets/images/wave.png" alt="Wave" title="Wave CI">
+        <img src="assets/images/mtn-money.png" alt="MTN Money" title="MTN Money">
+      </div>
+    </div>
+  </div>
+
+</div>
