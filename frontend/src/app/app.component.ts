@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { AuthService } from './core/services/auth.service';
+import { PanierService } from './features/panier/services/panier.service';
 import { Role } from './core/models/role.enum';
 
 @Component({
@@ -12,23 +14,27 @@ import { Role } from './core/models/role.enum';
 })
 export class AppComponent implements OnInit {
   title = 'marketplace-frontend';
-
   showHeader = true;
+  currentUrl = '/';
 
-  // Routes où le header est caché sur TOUS les écrans (ex: auth)
+  // Panier count pour le badge dans la bottom nav
+  panierCount$!: Observable<number>;
+
   private readonly noHeaderRoutes: string[] = [];
 
-  // Routes où le header ET la navbar sont cachés sur MOBILE uniquement
-  // (le header reste visible sur desktop)
   mobileNoNavRoutes = [
     '/profil/parametres',
   ];
 
-  currentUrl = '/';
-
-  constructor(private router: Router, public auth: AuthService) {}
+  constructor(
+    private router: Router,
+    public auth: AuthService,
+    private panierService: PanierService,
+  ) {}
 
   ngOnInit(): void {
+    this.panierCount$ = this.panierService.count$;
+
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
@@ -43,11 +49,14 @@ export class AppComponent implements OnInit {
     return !!this.auth.currentUser;
   }
 
+  get isAcheteur(): boolean {
+    return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]);
+  }
+
   get isAnaderOrVet(): boolean {
     return this.auth.hasAnyRole([Role.AGENT_ANADER, Role.VETERINAIRE]);
   }
 
-  // True si on est sur une route où mobile cache header + navbar
   get isMobileNoNav(): boolean {
     return this.mobileNoNavRoutes.some(route => this.currentUrl.startsWith(route));
   }

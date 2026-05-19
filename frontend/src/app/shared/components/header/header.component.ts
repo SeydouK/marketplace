@@ -1,11 +1,12 @@
 import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.enum';
 import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
+import { PanierService } from '../../../features/panier/services/panier.service';
 
 type TabKey = 'logements' | 'experiences' | 'services';
 type AnimalFilterItem = { value: string; label: string; icon: string };
@@ -24,6 +25,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   searchTerm = '';
   activeTab: TabKey = 'logements';
   private readonly subscriptions = new Subscription();
+
+  // ── Panier ───────────────────────────────────────────────────────────────
+  panierCount$!: Observable<number>;
 
   // ── Recherche desktop ────────────────────────────────────────────────────
   activeSearchPanel: 'region' | 'date' | 'budget' | null = null;
@@ -92,6 +96,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly elementRef: ElementRef<HTMLElement>,
     private readonly uiState: MarketplaceUiService,
+    private readonly panierService: PanierService,
     @Inject(DOCUMENT) private readonly document: Document,
   ) {}
 
@@ -100,8 +105,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.currentUrl = this.router.url;
     this.syncTabFromUrl(this.currentUrl);
 
+    // Panier count réactif
+    this.panierCount$ = this.panierService.count$;
+
     this.subscriptions.add(
-      this.auth.currentUser$.subscribe((user) => (this.currentUser = user))
+      this.auth.currentUser$.subscribe((user) => {
+        this.currentUser = user;
+        // Charger le count dès que l'acheteur se connecte
+        if (user && this.isAcheteur) {
+          this.panierService.rafraichirCount().subscribe();
+        }
+      })
     );
     this.subscriptions.add(
       this.router.events.subscribe((event) => {
@@ -157,7 +171,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectRegion(value: string): void {
     const r = this.regionSuggestions.find((x) => x.value === value);
     this.searchRegion = r?.label ?? value;
-    this.activeSearchPanel = 'date'; // avance au panneau suivant, sans naviguer
+    this.activeSearchPanel = 'date';
   }
 
   selectCalDay(d: number): void {
@@ -291,11 +305,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.animalFilters.find((f) => f.value === this.animalFilter)?.label ?? '';
   }
 
-  get isAcheteur(): boolean  { return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]); }
-  get isVendeur(): boolean   { return this.auth.hasRole(Role.VENDEUR); }
+  get isAcheteur(): boolean   { return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]); }
+  get isVendeur(): boolean    { return this.auth.hasRole(Role.VENDEUR); }
   get isVeterinaire(): boolean { return this.auth.hasRole(Role.VETERINAIRE); }
-  get isAnader(): boolean    { return this.auth.hasRole(Role.AGENT_ANADER); }
-  get isAdmin(): boolean     { return this.auth.hasAnyRole([Role.ADMIN, Role.ADMINISTRATEUR]); }
+  get isAnader(): boolean     { return this.auth.hasRole(Role.AGENT_ANADER); }
+  get isAdmin(): boolean      { return this.auth.hasAnyRole([Role.ADMIN, Role.ADMINISTRATEUR]); }
 
   get currentUserInitial(): string {
     return (this.currentUser?.name ?? '?').charAt(0).toUpperCase();
@@ -322,7 +336,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // ── Privé ────────────────────────────────────────────────────────────────
   private syncTabFromUrl(url: string): void {
-    if (url.startsWith('/annonces'))  this.activeTab = 'experiences';
+    if (url.startsWith('/annonces'))   this.activeTab = 'experiences';
     else if (url.startsWith('/services')) this.activeTab = 'services';
     else this.activeTab = 'logements';
   }

@@ -5,12 +5,11 @@ import { environment } from '../../../../environments/environment';
 import { Panier, PanierItem,
   PanierParVendeur,
   AjouterAuPanierRequest,
-  ModifierQuantiteRequest } from '../models/panier.model';
-
+  ModifierQuantiteRequest  } from '../models/panier.model';
 @Injectable({ providedIn: 'root' })
 export class PanierService {
 
-  private readonly apiUrl = `${environment.apiUrl}/api/panier`;
+  private readonly apiUrl = `${environment.apiUrl}/panier`;
 
   private panierSubject = new BehaviorSubject<Panier | null>(null);
   public panier$ = this.panierSubject.asObservable();
