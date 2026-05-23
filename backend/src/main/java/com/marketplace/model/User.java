@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
+import java.time.LocalDateTime;
 import java.time.Instant;
 
 @Data
@@ -44,6 +44,9 @@ public class User {
     @Column(name = "email_verification_token")
     private String emailVerificationToken;
 
+    @Column(name = "email_token_expires_at")
+    private LocalDateTime emailTokenExpiresAt;
+
     @Builder.Default
     @Column(name = "email_verified")
     private boolean emailVerified = false;
@@ -55,7 +58,7 @@ public class User {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;
+    private Role role = Role.ACHETEUR;
 
     @Builder.Default
     @Column(name = "devenir_vendeur", nullable = false)
@@ -70,4 +73,6 @@ public class User {
     private String cniUrl;
 
     private String selfieUrl;
+
+    
 }

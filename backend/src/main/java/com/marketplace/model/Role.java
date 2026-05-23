@@ -1,11 +1,9 @@
 package com.marketplace.model;
 
 public enum Role {
-    VENDEUR,
-    ACHETEUR,
-    VETERINAIRE,
-    AGENT_ANADER,
-    ADMINISTRATEUR,
-    USER,
-    ADMIN
+    VENDEUR,       // éleveur/propriétaire qui vend
+    ACHETEUR,      // acheteur (peut aussi être VENDEUR)
+    VETERINAIRE,   // agent de santé animale
+    ANADER,        // agent de contrôle ANADER
+    ADMIN          // administrateur plateforme
 }

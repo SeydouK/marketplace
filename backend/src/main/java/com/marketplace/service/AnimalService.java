@@ -560,12 +560,12 @@ public class AnimalService {
 
     private boolean canViewUnpublishedAnimal(User user, AnimalSeller animalSeller) {
         return animalSeller.getSeller().getId().equals(user.getId())
-                || EnumSet.of(Role.AGENT_ANADER, Role.VETERINAIRE, Role.ADMIN, Role.ADMINISTRATEUR)
+                || EnumSet.of(Role.ANADER, Role.VETERINAIRE, Role.ADMIN)
                         .contains(user.getRole());
     }
 
     private void ensureSellerRole(User user) {
-        if (!EnumSet.of(Role.USER, Role.VENDEUR, Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
+        if (!EnumSet.of(Role.ACHETEUR, Role.VENDEUR, Role.ADMIN).contains(user.getRole())) {
             throw new ForbiddenException("Seuls les vendeurs vérifiés peuvent enregistrer des animaux.");
         }
     }
@@ -583,7 +583,7 @@ public class AnimalService {
     }
 
     private void ensureAdminRole(User user) {
-        if (!EnumSet.of(Role.ADMIN, Role.ADMINISTRATEUR).contains(user.getRole())) {
+        if (!EnumSet.of(Role.ADMIN).contains(user.getRole())) {
             throw new ForbiddenException("Cette action est reservee aux administrateurs.");
         }
     }

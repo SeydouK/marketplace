@@ -1,6 +1,5 @@
 package com.marketplace.service;
 
-import com.marketplace.service.EmailService;
 import com.marketplace.dto.JwtResponse;
 import com.marketplace.dto.LoginRequest;
 import com.marketplace.dto.RegisterRequest;
@@ -19,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
+import java.time.LocalDateTime;
+
 
 @Service
 public class AuthService {
@@ -28,6 +29,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private static final int EMAIL_TOKEN_EXPIRY_HOURS = 24;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -51,15 +53,16 @@ public class AuthService {
         String verificationToken = UUID.randomUUID().toString();
 
         User user = User.builder()
-                .name(request.getName())
-                .surname(request.getSurname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .emailVerificationToken(verificationToken)
-                .emailVerified(false)
-                .badgeVerifie(false)
-                .role(Role.USER)
-                .build();
+            .name(request.getName())
+            .surname(request.getSurname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .emailVerificationToken(verificationToken)
+            .emailTokenExpiresAt(LocalDateTime.now().plusHours(EMAIL_TOKEN_EXPIRY_HOURS)) // ← NOUVEAU
+            .emailVerified(false)
+            .badgeVerifie(false)
+            .role(Role.ACHETEUR)
+            .build();
 
         userRepository.save(user);
 
@@ -105,14 +108,21 @@ public class AuthService {
     public void verifyEmail(String token) {
         User user = userRepository
             .findByEmailVerificationToken(token)
-            .orElseThrow(() -> new RuntimeException("Token invalide ou expiré"));
-        
+            .orElseThrow(() -> new BadRequestException("Token invalide ou expiré."));
+    
         if (user.isEmailVerified()) {
-            throw new RuntimeException("Email déjà vérifié");
+            throw new BadRequestException("Email déjà vérifié.");
         }
-
+    
+        // ← NOUVEAU : vérifier l'expiration
+        if (user.getEmailTokenExpiresAt() == null
+                || LocalDateTime.now().isAfter(user.getEmailTokenExpiresAt())) {
+            throw new BadRequestException("Token expiré. Veuillez demander un nouvel email de vérification.");
+        }
+    
         user.setEmailVerified(true);
         user.setEmailVerificationToken(null);
+        user.setEmailTokenExpiresAt(null); // ← NOUVEAU
         userRepository.save(user);
     }
 }

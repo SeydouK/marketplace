@@ -71,7 +71,7 @@ public class UserService {
     public UserProfileDTO requestSellerAccess() {
         User current = getCurrentUser();
 
-        if (current.getRole() != Role.USER && current.getRole() != Role.ACHETEUR) {
+        if (current.getRole() != Role.ACHETEUR && current.getRole() != Role.ACHETEUR) {
             throw new BadRequestException("Seuls les comptes acheteur peuvent demander l'acces vendeur.");
         }
 
@@ -246,19 +246,16 @@ public class UserService {
     }
 
     private boolean isSellerRole(Role role) {
-        return role == Role.VENDEUR || role == Role.ADMIN || role == Role.ADMINISTRATEUR;
+        return role == Role.VENDEUR || role == Role.ADMIN;
     }
 
     private void ensureAdminRole(User user) {
-        if (user.getRole() != Role.ADMIN && user.getRole() != Role.ADMINISTRATEUR) {
+        if (user.getRole() != Role.ADMIN) {
             throw new ForbiddenException("Cette action est reservee aux administrateurs.");
         }
     }
 
     private boolean isHealthAgent(Role role) {
-        return role == Role.AGENT_ANADER
-                || role == Role.VETERINAIRE
-                || role == Role.ADMIN
-                || role == Role.ADMINISTRATEUR;
+        return role == Role.ANADER || role == Role.VETERINAIRE || role == Role.ADMIN;
     }
 }

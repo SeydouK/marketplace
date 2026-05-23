@@ -42,7 +42,7 @@ public class AnaderService {
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
-        if (agent.getRole() != Role.AGENT_ANADER) {
+        if (agent.getRole() != Role.ANADER) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN, "Accès réservé aux agents ANADER");
         }

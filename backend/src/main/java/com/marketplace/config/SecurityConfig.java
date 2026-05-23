@@ -3,6 +3,7 @@ package com.marketplace.config;
 import com.marketplace.security.JwtAuthenticationFilter;
 import com.marketplace.security.UserDetailsServiceImpl;
 
+import com.marketplace.security.RateLimitFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,12 +34,15 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsServiceImpl userDetailsService;
+    private final RateLimitFilter rateLimitFilter;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          UserDetailsServiceImpl userDetailsService) {
+                        UserDetailsServiceImpl userDetailsService,
+                        RateLimitFilter rateLimitFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetailsService = userDetailsService;
-    }
+        this.rateLimitFilter = rateLimitFilter;
+        }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,11 +56,10 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/**",
                     "/api-docs/**",
-                    "/api/kyc/**",
                     "/swagger-ui.html",
                     "/swagger-ui/**"
                 ).permitAll()
-
+                .requestMatchers("/api/kyc/**").authenticated() 
                 .requestMatchers(HttpMethod.GET,  "/api/files/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/animals", "/api/animals/*").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/annonces", "/api/annonces/**").permitAll()
@@ -78,10 +81,13 @@ public class SecurityConfig {
                 // ── ANADER (authentifié — rôle vérifié dans le service) ───
                 .requestMatchers("/api/anader/**").authenticated()
 
+                // ADMIN 
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // ── Tout le reste nécessite authentification ──────────────
                 .anyRequest().authenticated()
             )
             .authenticationProvider(daoAuthenticationProvider())
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.util.Set;
 import java.io.IOException;
 import java.net.URI;
 import java.net.MalformedURLException;
@@ -33,6 +35,18 @@ public class FileStorageService {
             "SANITARY_DOCUMENT", "sanitary-document"
     );
 
+    private static final Map<String, Set<String>> ALLOWED_MIME_TYPES = Map.of(
+        "ANIMAL_PHOTO",      Set.of("image/jpeg", "image/png", "image/webp"),
+        "ANIMAL_VIDEO",      Set.of("video/mp4", "video/quicktime"),
+        "SANITARY_DOCUMENT", Set.of("application/pdf", "image/jpeg", "image/png")
+    );
+    
+    private static final Map<String, Long> MAX_FILE_SIZES = Map.of(
+        "ANIMAL_PHOTO",      5  * 1024 * 1024L,  
+        "ANIMAL_VIDEO",      50 * 1024 * 1024L,  
+        "SANITARY_DOCUMENT", 10 * 1024 * 1024L   
+    );
+
     private final Path storageRoot;
 
     public FileStorageService(FileStorageProperties properties) {
@@ -52,10 +66,27 @@ public class FileStorageService {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("Aucun fichier n'a ete fourni.");
         }
-
+    
+        String normalizedKey = categoryKey != null ? categoryKey.trim().toUpperCase(Locale.ROOT) : "";
+    
+        // --- NOUVEAU : validation taille ---
+        Long maxSize = MAX_FILE_SIZES.get(normalizedKey);
+        if (maxSize != null && file.getSize() > maxSize) {
+            throw new BadRequestException("Fichier trop volumineux (max " + (maxSize / 1024 / 1024) + " MB).");
+        }
+    
+        // --- NOUVEAU : validation MIME via magic bytes ---
+        Set<String> allowedTypes = ALLOWED_MIME_TYPES.get(normalizedKey);
+        if (allowedTypes != null) {
+            String detectedMime = detectMimeFromMagicBytes(file);
+            if (!allowedTypes.contains(detectedMime)) {
+                throw new BadRequestException("Type de fichier non autorise : " + detectedMime);
+            }
+        }
+    
         String directoryName = resolveUploadDirectory(categoryKey);
         Path targetDirectory = storageRoot.resolve(directoryName).normalize();
-
+    
         try {
             Files.createDirectories(targetDirectory);
             String storedName = buildStoredName(file.getOriginalFilename());
@@ -63,9 +94,11 @@ public class FileStorageService {
             if (!targetFile.startsWith(targetDirectory)) {
                 throw new BadRequestException("Le chemin du fichier est invalide.");
             }
-
-            Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-
+    
+            try (InputStream fileStream = file.getInputStream()) {
+                Files.copy(fileStream, targetFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+    
             return new StoredFileDTO(
                     file.getOriginalFilename(),
                     storedName,
@@ -75,6 +108,37 @@ public class FileStorageService {
             );
         } catch (IOException exception) {
             throw new IllegalStateException("Impossible de stocker le fichier sur le disque local.", exception);
+        }
+    }
+
+    private String detectMimeFromMagicBytes(MultipartFile file) {
+        try {
+            byte[] header = new byte[Math.min(12, (int) file.getSize())];
+            System.arraycopy(file.getBytes(), 0, header, 0, header.length);
+            int read = header.length;
+
+            if (read < 4) return "application/octet-stream";
+    
+            // JPEG : FF D8 FF
+            if ((header[0] & 0xFF) == 0xFF && (header[1] & 0xFF) == 0xD8 && (header[2] & 0xFF) == 0xFF)
+                return "image/jpeg";
+            // PNG : 89 50 4E 47
+            if ((header[0] & 0xFF) == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47)
+                return "image/png";
+            // WebP : RIFF????WEBP
+            if (read >= 12 && header[0]=='R' && header[1]=='I' && header[2]=='F' && header[3]=='F'
+                    && header[8]=='W' && header[9]=='E' && header[10]=='B' && header[11]=='P')
+                return "image/webp";
+            // MP4 / MOV : vérification simplifiée sur ftyp box
+            if (read >= 8 && header[4]=='f' && header[5]=='t' && header[6]=='y' && header[7]=='p')
+                return "video/mp4";
+            // PDF : %PDF
+            if (header[0]==0x25 && header[1]==0x50 && header[2]==0x44 && header[3]==0x46)
+                return "application/pdf";
+    
+            return "application/octet-stream";
+        } catch (IOException e) {
+            throw new BadRequestException("Impossible de lire le fichier pour validation.");
         }
     }
 
