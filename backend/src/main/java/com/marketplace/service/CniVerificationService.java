@@ -1,9 +1,10 @@
 package com.marketplace.service;
 
-import com.marketplace.service.CniVerificationService;
 import com.marketplace.dto.CniVerificationResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,8 @@ import java.util.Map;
 // Spring va créer une seule instance et l'injecter partout où on en a besoin
 @Service
 public class CniVerificationService {
+
+    private static final Logger log = LoggerFactory.getLogger(CniVerificationService.class);
 
     // @Value injecte la valeur depuis application.properties
     // Si la propriété n'existe pas, Spring lance une erreur au démarrage
@@ -125,7 +128,7 @@ public class CniVerificationService {
             .path("text")
             .asText();
 
-        System.out.println("Réponse Gemini brute : " + geminiText);
+        log.debug("Réponse Gemini CNI reçue (longueur: {} chars)", geminiText.length());
 
         // --- ÉTAPE 5 : Parser le JSON retourné par Gemini ---
         // Gemini retourne parfois du texte avec des backticks markdown, on nettoie
