@@ -26,7 +26,7 @@
           [ngClass]="activeSection === section.key
             ? 'bg-gray-100 font-semibold text-gray-900'
             : 'text-gray-600 hover:bg-gray-50 font-medium'">
-          <span class="text-lg">{{ section.icon }}</span>
+          <i class="pi text-lg" [ngClass]="section.icon"></i>
           {{ section.label }}
         </button>
       </aside>
@@ -81,13 +81,13 @@
           class="relative bg-white border border-gray-100 rounded-2xl shadow-sm p-4 text-left hover:shadow-md transition-shadow overflow-hidden">
           <span *ngIf="section.isNew"
             class="absolute top-2 left-2 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
-          <div class="mt-4 mb-2 text-2xl">{{ section.icon }}</div>
+          <div class="mt-4 mb-2 text-2xl"><i class="pi" [ngClass]="section.icon"></i></div>
           <p class="text-sm font-semibold text-gray-800 leading-tight">{{ section.label }}</p>
         </button>
         <button *ngIf="section.key === 'dashboard'" type="button"
           (click)="navigateToDashboard()"
           class="relative bg-white border border-gray-100 rounded-2xl shadow-sm p-4 text-left hover:shadow-md transition-shadow overflow-hidden">
-          <div class="mt-4 mb-2 text-2xl">{{ section.icon }}</div>
+          <div class="mt-4 mb-2 text-2xl"><i class="pi" [ngClass]="section.icon"></i></div>
           <p class="text-sm font-semibold text-gray-800 leading-tight">{{ section.label }}</p>
         </button>
       </ng-container>
@@ -273,22 +273,22 @@
         <!-- Infos rapides -->
         <div class="flex flex-col gap-3 mb-6">
           <div class="flex items-center gap-3 text-sm text-gray-700">
-            <span class="text-lg">📧</span>
+            <i class="pi pi-envelope text-lg"></i>
             <span>{{ maskedEmail }}</span>
           </div>
           <div class="flex items-center gap-3 text-sm text-gray-700">
-            <span class="text-lg">🪪</span>
+            <i class="pi pi-id-card text-lg"></i>
             <span>Identité :&nbsp;
-              <span *ngIf="kycApproved" class="text-green-600 font-semibold">✓ Vérifiée</span>
-              <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium">⏳ En cours</span>
-              <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'" class="text-blue-500 font-medium">📷 Selfie requis</span>
-              <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-red-500 font-medium">✗ Rejetée</span>
+              <span *ngIf="kycApproved" class="text-green-600 font-semibold"><i class="pi pi-check-circle mr-1"></i>Vérifiée</span>
+              <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium"><i class="pi pi-clock mr-1"></i>En cours</span>
+              <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'" class="text-blue-500 font-medium"><i class="pi pi-camera mr-1"></i>Selfie requis</span>
+              <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-red-500 font-medium"><i class="pi pi-times-circle mr-1"></i>Rejetée</span>
               <span *ngIf="!kycApproved && !kycStatus" class="text-gray-400">Non commencée</span>
             </span>
           </div>
           <ng-container *ngFor="let info of roleSpecificInfos">
             <div class="flex items-center gap-3 text-sm text-gray-700">
-              <span class="text-lg">📌</span>
+              <i class="pi pi-info-circle text-lg"></i>
               <span>{{ info.label }} :&nbsp;<span class="font-medium">{{ info.value }}</span></span>
             </div>
           </ng-container>
@@ -341,7 +341,7 @@
         <div *ngIf="hasCommentaires" class="mt-6">
           <button type="button" (click)="mobilePanelSection = 'commentaires'"
             class="flex items-center gap-3 w-full py-4 border-t border-gray-100 text-sm text-gray-700 hover:text-gray-900 transition-colors">
-            <span class="text-lg">💬</span>
+            <i class="pi pi-comments text-lg"></i>
             <span>Commentaires que j'ai rédigés</span>
             <svg class="w-4 h-4 ml-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -402,22 +402,22 @@
 
       <div class="flex-1 flex flex-col gap-3 pt-2">
         <div class="flex items-center gap-2 text-sm text-gray-700">
-          <span class="text-base leading-none">📧</span>
+          <i class="pi pi-envelope text-base leading-none"></i>
           <span>{{ maskedEmail }}</span>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-700">
-          <span class="text-base leading-none">🪪</span>
+          <i class="pi pi-id-card text-base leading-none"></i>
           <span>Identité :&nbsp;
-            <span *ngIf="kycApproved" class="text-green-600 font-semibold">✓ Vérifiée</span>
-            <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium">⏳ En cours</span>
-            <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'" class="text-blue-500 font-medium">📷 Selfie requis</span>
-            <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-red-500 font-medium">✗ Rejetée</span>
+            <span *ngIf="kycApproved" class="text-green-600 font-semibold"><i class="pi pi-check-circle mr-1"></i>Vérifiée</span>
+            <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium"><i class="pi pi-clock mr-1"></i>En cours</span>
+            <span *ngIf="!kycApproved && kycStatus === 'CNI_VERIFIED'" class="text-blue-500 font-medium"><i class="pi pi-camera mr-1"></i>Selfie requis</span>
+            <span *ngIf="!kycApproved && kycStatus === 'REJECTED'" class="text-red-500 font-medium"><i class="pi pi-times-circle mr-1"></i>Rejetée</span>
             <span *ngIf="!kycApproved && !kycStatus" class="text-gray-400">Non commencée</span>
           </span>
         </div>
         <ng-container *ngFor="let info of roleSpecificInfos">
           <div class="flex items-center gap-2 text-sm text-gray-700">
-            <span class="text-base leading-none">📌</span>
+            <i class="pi pi-info-circle text-base leading-none"></i>
             <span>{{ info.label }} :&nbsp;<span class="font-medium">{{ info.value }}</span></span>
           </div>
         </ng-container>
@@ -494,7 +494,7 @@
   <!-- ─── COMMENTAIRES ─── -->
   <ng-container *ngIf="activeSection === 'commentaires' && hasCommentaires">
     <div class="flex items-center gap-3 mb-6">
-      <span class="text-xl">💬</span>
+      <i class="pi pi-comments text-xl"></i>
       <h2 class="text-xl font-semibold text-gray-900">Commentaires que j'ai rédigés</h2>
     </div>
     <div class="rounded-2xl border border-gray-100 p-8 text-center">

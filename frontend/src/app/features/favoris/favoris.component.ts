@@ -7,7 +7,7 @@ import { FavorisService } from '../../core/services/favoris.service';
 @Component({
   selector: 'app-favoris',
   templateUrl: './favoris.component.html',
-  styleUrls: ['./favoris.component.css'],
+ /* styleUrls: ['./favoris.component.css'],*/
   standalone: false,
 })
 export class FavorisComponent implements OnInit, OnDestroy {
