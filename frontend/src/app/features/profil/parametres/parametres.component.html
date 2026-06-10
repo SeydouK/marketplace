@@ -27,7 +27,7 @@
             [ngClass]="activeSection === section.key
               ? 'bg-gray-100 font-semibold text-gray-900'
               : 'text-gray-600 hover:bg-gray-50 font-normal'">
-            <span class="text-xl flex-shrink-0">{{ section.icon }}</span>
+            <i class="pi text-xl flex-shrink-0" [ngClass]="section.icon"></i>
             <span class="leading-tight">{{ section.label }}</span>
           </button>
 
@@ -40,7 +40,7 @@
             [ngClass]="activeSection === 'pro'
               ? 'bg-gray-100 font-semibold text-gray-900'
               : 'text-gray-600 hover:bg-gray-50'">
-            <span class="text-xl">🏪</span>
+            <i class="pi pi-shop text-xl"></i>
             <span>Espace vendeur</span>
           </button>
         </nav>
@@ -54,7 +54,7 @@
             (click)="openMobileSection(section.key)"
             class="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors">
             <div class="flex items-center gap-3">
-              <span class="text-xl">{{ section.icon }}</span>
+              <i class="pi text-xl" [ngClass]="section.icon"></i>
               <span class="text-sm font-medium text-gray-800">{{ section.label }}</span>
             </div>
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@
           <button type="button" (click)="openMobileSection('pro')"
             class="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors">
             <div class="flex items-center gap-3">
-              <span class="text-xl">🏪</span>
+              <i class="pi pi-shop text-xl"></i>
               <span class="text-sm font-medium text-gray-800">Espace vendeur</span>
             </div>
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -30,12 +30,12 @@ export class ParametresComponent implements OnInit {
   mobileActiveSection: SectionKey | null = null;
 
   sections: Section[] = [
-    { key: 'infos',           label: 'Informations personnelles', icon: '👤' },
-    { key: 'securite',        label: 'Connexion et sécurité',     icon: '🔒' },
-    { key: 'confidentialite', label: 'Confidentialité',           icon: '🤝' },
-    { key: 'notifications',   label: 'Notifications',             icon: '🔔' },
-    { key: 'paiements',       label: 'Paiements',                 icon: '💳' },
-    { key: 'langues',         label: 'Langues et devise',         icon: '🌐' },
+    { key: 'infos',           label: 'Informations personnelles', icon: 'pi-user' },
+    { key: 'securite',        label: 'Connexion et sécurité',     icon: 'pi-lock' },
+    { key: 'confidentialite', label: 'Confidentialité',           icon: 'pi-shield' },
+    { key: 'notifications',   label: 'Notifications',             icon: 'pi-bell' },
+    { key: 'paiements',       label: 'Paiements',                 icon: 'pi-credit-card' },
+    { key: 'langues',         label: 'Langues et devise',         icon: 'pi-globe' },
   ];
 
   constructor(
@@ -67,7 +67,7 @@ export class ParametresComponent implements OnInit {
   }
 
   get activeSectionLabel(): string {
-    const all = [...this.sections, { key: 'pro' as SectionKey, label: 'Espace vendeur', icon: '🏪' }];
+    const all = [...this.sections, { key: 'pro' as SectionKey, label: 'Espace vendeur', icon: 'pi-shop' }];
     return all.find(s => s.key === this.activeSection)?.label ?? '';
   }
 

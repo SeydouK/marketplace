@@ -52,13 +52,13 @@ export class MonProfilComponent implements OnInit, OnDestroy {
   //  Sections communes à tous les rôles
   // ──────────────────────────────────────────────
   private readonly commonSections: Section[] = [
-    { key: 'infos',     label: 'À propos de moi', icon: '👤' },
-    { key: 'dashboard', label: 'Mon espace',       icon: '🏠' },
+    { key: 'infos',     label: 'À propos de moi', icon: 'pi-user' },
+    { key: 'dashboard', label: 'Mon espace',       icon: 'pi-home' },
   ];
 
   readonly mobileQuickSections = [
-    { key: 'historique', label: 'Achats précédents', icon: '🛍️', isNew: false },
-    { key: 'dashboard', label: 'Mon espace', icon: '🏠', isNew: false }, 
+    { key: 'historique', label: 'Achats précédents', icon: 'pi-shopping-bag', isNew: false },
+    { key: 'dashboard', label: 'Mon espace', icon: 'pi-home', isNew: false }, 
   ];
 
   // ──────────────────────────────────────────────
@@ -66,35 +66,35 @@ export class MonProfilComponent implements OnInit, OnDestroy {
   // ──────────────────────────────────────────────
   private readonly roleSections: Partial<Record<Role, Section[]>> = {
     [Role.ACHETEUR]: [
-      { key: 'historique-paiement', label: 'Historique de paiement', icon: '💳' },
-      { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
-      { key: 'favoris',             label: 'Mes favoris',             icon: '❤️' }
+      { key: 'historique-paiement', label: 'Historique de paiement', icon: 'pi-credit-card' },
+      { key: 'commentaires',        label: 'Mes commentaires',        icon: 'pi-comments' },
+      { key: 'favoris',             label: 'Mes favoris',             icon: 'pi-heart' }
     ],
     [Role.USER]: [
-      { key: 'historique-paiement', label: 'Historique de paiement', icon: '💳' },
-      { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
-      { key: 'favoris',             label: 'Mes favoris',             icon: '❤️' },
+      { key: 'historique-paiement', label: 'Historique de paiement', icon: 'pi-credit-card' },
+      { key: 'commentaires',        label: 'Mes commentaires',        icon: 'pi-comments' },
+      { key: 'favoris',             label: 'Mes favoris',             icon: 'pi-heart' },
     ],
     [Role.VENDEUR]: [
-      { key: 'mes-animaux',         label: 'Mes animaux',             icon: '🐄' },
-      { key: 'mes-annonces',        label: 'Mes annonces',            icon: '📋' },
-      { key: 'historique-paiement', label: 'Historique de paiement',  icon: '💳' },
-      { key: 'commentaires',        label: 'Mes commentaires',        icon: '💬' },
+      { key: 'mes-animaux',         label: 'Mes animaux',             icon: 'pi-box' },
+      { key: 'mes-annonces',        label: 'Mes annonces',            icon: 'pi-list' },
+      { key: 'historique-paiement', label: 'Historique de paiement',  icon: 'pi-credit-card' },
+      { key: 'commentaires',        label: 'Mes commentaires',        icon: 'pi-comments' },
     ],
     [Role.VETERINAIRE]: [
-      { key: 'documents-sanitaires', label: 'Documents sanitaires', icon: '📄' },
-      { key: 'fiches-validees',      label: 'Fiches validées',       icon: '✅' },
-      { key: 'zone-intervention',    label: "Zone d'intervention",   icon: '📍' },
+      { key: 'documents-sanitaires', label: 'Documents sanitaires', icon: 'pi-file' },
+      { key: 'fiches-validees',      label: 'Fiches validées',       icon: 'pi-check-circle' },
+      { key: 'zone-intervention',    label: "Zone d'intervention",   icon: 'pi-map-marker' },
     ],
     [Role.AGENT_ANADER]: [
-      { key: 'animaux-enregistres', label: 'Animaux enregistrés', icon: '🏷️' },
-      { key: 'zone-intervention',   label: "Zone d'affectation",  icon: '📍' },
+      { key: 'animaux-enregistres', label: 'Animaux enregistrés', icon: 'pi-tags' },
+      { key: 'zone-intervention',   label: "Zone d'affectation",  icon: 'pi-map-marker' },
     ],
     [Role.ADMIN]: [
-      { key: 'supervision', label: 'Supervision', icon: '🛡️' },
+      { key: 'supervision', label: 'Supervision', icon: 'pi-shield' },
     ],
     [Role.ADMINISTRATEUR]: [
-      { key: 'supervision', label: 'Supervision', icon: '🛡️' },
+      { key: 'supervision', label: 'Supervision', icon: 'pi-shield' },
     ],
   };
 
