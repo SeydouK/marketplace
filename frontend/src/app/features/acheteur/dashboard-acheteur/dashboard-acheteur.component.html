@@ -31,7 +31,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
 
     <!-- Achats en cours -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+    <article class="bg-white border border-[#F0EAD9] rounded-2xl p-4 shadow-sm">
       <p class="text-xs text-gray-500 mb-1">Achats en cours</p>
       <p class="text-2xl font-bold text-gray-900">{{ activeOrdersCount }}</p>
       <a routerLink="/acheteur/mes-achats" class="text-xs text-[#2D6A4F] underline mt-1 inline-block">Voir tout</a>
@@ -45,14 +45,14 @@
     </article>
 
     <!-- Achats terminés -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+    <article class="bg-white border border-[#F0EAD9] rounded-2xl p-4 shadow-sm">
       <p class="text-xs text-gray-500 mb-1">Achats terminés</p>
       <p class="text-2xl font-bold text-green-600">{{ completedOrdersCount }}</p>
       <p class="text-xs text-gray-400 mt-1">Transactions conclues</p>
     </article>
 
     <!-- Favoris -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+    <article class="bg-white border border-[#F0EAD9] rounded-2xl p-4 shadow-sm">
       <p class="text-xs text-gray-500 mb-1">Favoris</p>
       <p class="text-2xl font-bold text-gray-900">{{ favoritesCount }}</p>
       <a routerLink="/favoris" class="text-xs text-[#2D6A4F] underline mt-1 inline-block">Voir tout</a>
@@ -119,7 +119,7 @@
         </a>
 
         <a routerLink="/acheteur/mes-achats"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
@@ -132,7 +132,7 @@
         </a>
 
         <a routerLink="/favoris"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
@@ -141,7 +141,7 @@
         </a>
 
         <a routerLink="/messages"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -155,7 +155,7 @@
     <!-- Répartition statuts achats -->
     <div>
       <h2 class="text-base font-semibold text-gray-900 mb-3">État de mes achats</h2>
-      <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div class="bg-white border border-[#F0EAD9] rounded-2xl shadow-sm overflow-hidden">
 
         <!-- Barre de progression visuelle -->
         <div class="flex h-2 w-full overflow-hidden">
@@ -210,7 +210,7 @@
   <!-- ═══════════════════════════════════════════
        BANNIÈRE DEVENIR VENDEUR
   ═══════════════════════════════════════════ -->
-  <div class="rounded-2xl border border-gray-200 bg-gray-50 p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+  <div class="rounded-2xl border border-[#E7E0D2] bg-[#FBF9F4] p-6 flex flex-col sm:flex-row sm:items-center gap-4">
     <div class="flex-1">
       <h3 class="font-semibold text-gray-900">Vous souhaitez vendre du bétail ?</h3>
       <p class="text-sm text-gray-500 mt-1">
@@ -221,7 +221,7 @@
       *ngIf="!auth.isSellerRequestPending; else sellerRequestPending"
       type="button"
       (click)="openSellerRequestModal()"
-      class="shrink-0 bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors"
+      class="shrink-0 bg-[#2D6A4F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#245540] transition-colors"
     >
       Devenir vendeur →
     </button>
@@ -250,7 +250,7 @@
     <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
       <button
         type="button"
-        class="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+        class="rounded-xl border border-[#E7E0D2] px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#FBF9F4]"
         (click)="closeSellerRequestModal()"
       >
         Annuler

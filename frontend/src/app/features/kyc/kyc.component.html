@@ -1,12 +1,12 @@
-<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 max-w-lg w-full p-10">
+<div class="min-h-screen bg-[#FBF9F4] flex items-center justify-center px-4 py-12">
+    <div class="bg-white rounded-2xl shadow-sm border border-[#F0EAD9] max-w-lg w-full p-10">
   
       <!-- Stepper -->
       <div class="flex items-center justify-center gap-3 mb-10" *ngIf="step !== 'result'">
         <div class="flex items-center gap-2">
           <div
             class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors"
-            [ngClass]="step === 'cni' ? 'bg-rose-500 text-white' : 'bg-green-100 text-green-600'"
+            [ngClass]="step === 'cni' ? 'bg-[#2D6A4F] text-white' : 'bg-green-100 text-green-600'"
           >
             <i *ngIf="step !== 'cni'" class="pi pi-check text-xs"></i>
             <span *ngIf="step === 'cni'">1</span>
@@ -21,7 +21,7 @@
         <div class="flex items-center gap-2">
           <div
             class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors"
-            [ngClass]="step === 'selfie' ? 'bg-rose-500 text-white' : 'bg-gray-100 text-gray-400'"
+            [ngClass]="step === 'selfie' ? 'bg-[#2D6A4F] text-white' : 'bg-[#F6F1E7] text-gray-400'"
           >2</div>
           <span class="text-sm font-medium"
             [ngClass]="step === 'selfie' ? 'text-gray-900' : 'text-gray-400'"
@@ -41,11 +41,11 @@
         <!-- Zone upload -->
         <label
           for="cni-upload"
-          class="block border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-rose-300 hover:bg-rose-50 transition-colors mb-6"
-          [ngClass]="{ 'border-rose-300 bg-rose-50': cniPreview }"
+          class="block border-2 border-dashed border-[#E7E0D2] rounded-xl p-8 text-center cursor-pointer hover:border-[#2D6A4F] hover:bg-[#F2F7F3] transition-colors mb-6"
+          [ngClass]="{ 'border-[#2D6A4F] bg-[#F2F7F3]': cniPreview }"
         >
           <ng-container *ngIf="!cniPreview">
-            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div class="w-12 h-12 bg-[#F6F1E7] rounded-full flex items-center justify-center mx-auto mb-3">
               <i class="pi pi-id-card text-gray-400 text-xl"></i>
             </div>
             <p class="text-sm font-medium text-gray-700">Cliquez pour choisir une photo</p>
@@ -54,7 +54,7 @@
   
           <ng-container *ngIf="cniPreview">
             <img [src]="cniPreview" alt="CNI" class="max-h-48 mx-auto rounded-lg object-contain" />
-            <p class="text-xs text-rose-500 mt-3">Cliquez pour changer</p>
+            <p class="text-xs text-[#2D6A4F] mt-3">Cliquez pour changer</p>
           </ng-container>
   
           <input
@@ -79,7 +79,7 @@
         <button
           (click)="submitCni()"
           [disabled]="!cniFile || loading"
-          class="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+          class="w-full bg-[#2D6A4F] hover:bg-[#245540] disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
         >
           <i *ngIf="loading" class="pi pi-spin pi-spinner"></i>
           <span>{{ loading ? 'Vérification en cours...' : 'Vérifier ma CNI' }}</span>
@@ -99,7 +99,7 @@
         <!-- Aperçu selfie capturé ou uploadé -->
         <div
           *ngIf="selfiePreview"
-          class="rounded-xl overflow-hidden bg-gray-100 mb-4 aspect-video flex items-center justify-center"
+          class="rounded-xl overflow-hidden bg-[#F6F1E7] mb-4 aspect-video flex items-center justify-center"
         >
           <img [src]="selfiePreview" alt="Selfie" class="w-full h-full object-cover" />
         </div>
@@ -107,7 +107,7 @@
         <!-- Flux vidéo caméra -->
         <div
           *ngIf="cameraActive && !selfiePreview"
-          class="rounded-xl overflow-hidden bg-gray-900 mb-4 aspect-video"
+          class="rounded-xl overflow-hidden bg-[#2D6A4F] mb-4 aspect-video"
         >
           <video #videoEl autoplay playsinline class="w-full h-full object-cover"></video>
           <canvas #canvasEl class="hidden"></canvas>
@@ -119,7 +119,7 @@
           <!-- Option 1 : Caméra -->
           <button
             (click)="startCamera()"
-            class="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+            class="w-full border border-[#E7E0D2] hover:bg-[#FBF9F4] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <i class="pi pi-camera text-gray-500"></i>
             Utiliser la caméra
@@ -128,7 +128,7 @@
           <!-- Option 2 : Upload fichier -->
           <label
             for="selfie-upload"
-            class="w-full border-2 border-dashed border-gray-200 hover:border-rose-300 hover:bg-rose-50 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full border-2 border-dashed border-[#E7E0D2] hover:border-[#2D6A4F] hover:bg-[#F2F7F3] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <i class="pi pi-upload text-gray-500"></i>
             Choisir une photo depuis mon appareil
@@ -150,13 +150,13 @@
         <div *ngIf="cameraActive && !selfiePreview" class="flex gap-3 mb-6">
           <button
             (click)="captureSelfie()"
-            class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+            class="flex-1 bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <i class="pi pi-camera"></i> Prendre la photo
           </button>
           <button
             (click)="cameraActive = false"
-            class="border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors"
+            class="border border-[#E7E0D2] hover:bg-[#FBF9F4] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors"
           >
             Annuler
           </button>
@@ -166,7 +166,7 @@
         <div *ngIf="selfiePreview" class="flex gap-3 mb-6">
           <button
             (click)="resetSelfie()"
-            class="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+            class="flex-1 border border-[#E7E0D2] hover:bg-[#FBF9F4] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <i class="pi pi-refresh"></i> Changer la photo
           </button>
@@ -176,7 +176,7 @@
           *ngIf="selfiePreview"
           (click)="submitSelfie()"
           [disabled]="loading"
-          class="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+          class="w-full bg-[#2D6A4F] hover:bg-[#245540] disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
         >
           <i *ngIf="loading" class="pi pi-spin pi-spinner"></i>
           <span>{{ loading ? 'Vérification en cours...' : 'Valider mon identité' }}</span>
@@ -198,7 +198,7 @@
           </p>
           <button
             (click)="goToProfile()"
-            class="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 px-6 rounded-xl transition-colors"
+            class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors"
           >
             Compléter mon profil
           </button>
@@ -216,7 +216,7 @@
           </p>
           <button
             (click)="retry()"
-            class="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-xl transition-colors"
+            class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors"
           >
             Réessayer
           </button>

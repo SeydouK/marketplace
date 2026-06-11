@@ -7,7 +7,7 @@ import { CreerAnimalComponent } from './creer-animal/creer-animal.component';
 import { ValidationSanitaireComponent } from './validation-sanitaire/validation-sanitaire.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/annonces/mes-annonces', pathMatch: 'full' },
+  { path: '', redirectTo: '/vendeur/mes-annonces', pathMatch: 'full' },
   { path: 'creer', component: CreerAnimalComponent, canActivate: [AuthGuard] },
   { path: ':id/editer', component: CreerAnimalComponent, canActivate: [AuthGuard] },
   {

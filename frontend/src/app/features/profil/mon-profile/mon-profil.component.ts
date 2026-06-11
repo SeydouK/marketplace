@@ -155,7 +155,7 @@ export class MonProfilComponent implements OnInit, OnDestroy {
       [Role.ADMIN]:          'bg-red-100 text-red-700',
       [Role.ADMINISTRATEUR]: 'bg-red-100 text-red-700',
     };
-    return this.profile?.role ? (colors[this.profile.role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
+    return this.profile?.role ? (colors[this.profile.role] ?? 'bg-[#F6F1E7] text-gray-700') : 'bg-[#F6F1E7] text-gray-700';
   }
 
   // ──────────────────────────────────────────────

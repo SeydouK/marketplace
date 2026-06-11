@@ -43,7 +43,7 @@ export class MesAchatsComponent implements OnInit {
 
   getBadgeClass(status: EscrowStatus): string {
     const map: Record<EscrowStatus, string> = {
-      PENDING: 'bg-gray-100 text-gray-600',
+      PENDING: 'bg-[#F6F1E7] text-gray-600',
       FUNDS_LOCKED: 'bg-amber-100 text-amber-800',
       RELEASED: 'bg-green-100 text-green-800',
       DISPUTED: 'bg-red-100 text-red-800',

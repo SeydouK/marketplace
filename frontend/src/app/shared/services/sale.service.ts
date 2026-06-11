@@ -1,7 +1,7 @@
 // shared/services/sale.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export type EscrowStatus = 'PENDING' | 'FUNDS_LOCKED' | 'RELEASED' | 'DISPUTED' | 'REFUNDED';
@@ -18,6 +18,11 @@ export interface Sale {
   updatedAt: string;
 }
 
+/**
+ * ⚠️ TODO backend : le contrôleur /api/transactions n'existe pas encore.
+ * Les appels HTTP sont commentés pour éviter des 404 ; les méthodes
+ * renvoient des valeurs neutres en attendant l'implémentation serveur.
+ */
 @Injectable({ providedIn: 'root' })
 export class SaleService {
   private base = `${environment.apiUrl}/transactions`;
@@ -26,21 +31,25 @@ export class SaleService {
 
   // Ventes (côté vendeur)
   getMySales(): Observable<Sale[]> {
-    return this.http.get<Sale[]>(`${this.base}/mes-ventes`);
+    // TODO backend : return this.http.get<Sale[]>(`${this.base}/mes-ventes`);
+    return of([]);
   }
 
   // Achats (côté acheteur)
   getMyPurchases(): Observable<Sale[]> {
-    return this.http.get<Sale[]>(`${this.base}/mes-achats`);
+    // TODO backend : return this.http.get<Sale[]>(`${this.base}/mes-achats`);
+    return of([]);
   }
 
   // L'acheteur confirme la réception → libère les fonds
   confirmReception(transactionId: number): Observable<Sale> {
-    return this.http.post<Sale>(`${this.base}/${transactionId}/confirmer`, {});
+    // TODO backend : return this.http.post<Sale>(`${this.base}/${transactionId}/confirmer`, {});
+    return throwError(() => new Error('API transactions non disponible : endpoint à développer.'));
   }
 
   // L'acheteur ouvre un litige
   openDispute(transactionId: number, reason: string): Observable<Sale> {
-    return this.http.post<Sale>(`${this.base}/${transactionId}/litige`, { reason });
+    // TODO backend : return this.http.post<Sale>(`${this.base}/${transactionId}/litige`, { reason });
+    return throwError(() => new Error('API transactions non disponible : endpoint à développer.'));
   }
 }

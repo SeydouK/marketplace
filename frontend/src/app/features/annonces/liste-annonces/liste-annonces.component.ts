@@ -610,6 +610,12 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
       this.document.body.appendChild(script);
     });
 
+    // Ne pas mettre en cache un échec : permettre une nouvelle tentative au prochain passage
+    ListeAnnoncesComponent.leafletLoadPromise = ListeAnnoncesComponent.leafletLoadPromise.catch((error) => {
+      ListeAnnoncesComponent.leafletLoadPromise = undefined;
+      throw error;
+    });
+
     return ListeAnnoncesComponent.leafletLoadPromise;
   }
 

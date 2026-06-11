@@ -5,7 +5,7 @@
   <!-- ── En-tête ── -->
   <div class="panier-header">
     <h1>
-      <span class="icon">🛒</span>
+      <span class="icon"><i class="pi pi-shopping-cart"></i></span>
       Mon Panier
       <span class="badge" *ngIf="panier?.nombreArticles">
         {{ panier!.nombreArticles }} animal{{ panier!.nombreArticles > 1 ? 'x' : '' }}
@@ -20,7 +20,7 @@
 
   <!-- ── Panier vide ── -->
   <div class="panier-vide" *ngIf="!chargement && (!panier || panier.items.length === 0)">
-    <div class="vide-illustration">🐄</div>
+    <div class="vide-illustration"><i class="pi pi-shopping-cart"></i></div>
     <h2>Votre panier est vide</h2>
     <p>Parcourez nos annonces pour trouver votre prochain animal.</p>
     <button class="btn-primary" routerLink="/annonces">Voir les annonces</button>
@@ -35,10 +35,10 @@
       <div class="vendeur-groupe" *ngFor="let groupe of groupesParVendeur">
 
         <div class="vendeur-header">
-          <span class="vendeur-icone">🏪</span>
+          <span class="vendeur-icone"><i class="pi pi-shop"></i></span>
           <strong>{{ groupe.vendeurNom }}</strong>
           <span class="vendeur-localisation" *ngIf="groupe.items[0]?.localisation">
-            📍 {{ groupe.items[0].localisation }}
+            <i class="pi pi-map-marker"></i> {{ groupe.items[0].localisation }}
           </span>
         </div>
 
@@ -76,7 +76,7 @@
 
           <!-- Supprimer -->
           <button class="btn-supprimer" (click)="supprimerItem(item)" title="Retirer du panier">
-            ✕
+            <i class="pi pi-times"></i>
           </button>
         </div>
 
@@ -88,10 +88,10 @@
       <!-- Action vider -->
       <div class="panier-actions-bas">
         <button class="btn-vider" (click)="confirmerVider()">
-          🗑️ Vider le panier
+          <i class="pi pi-trash"></i> Vider le panier
         </button>
         <button class="btn-continuer" routerLink="/annonces">
-          ← Continuer mes achats
+          <i class="pi pi-arrow-left"></i> Continuer mes achats
         </button>
       </div>
     </div>
@@ -113,13 +113,13 @@
       </div>
 
       <p class="recap-note">
-        💡 Le paiement sera sécurisé via escrow. Les fonds sont libérés uniquement après
+        <i class="pi pi-lock"></i> Le paiement sera sécurisé via escrow. Les fonds sont libérés uniquement après
         confirmation de réception.
       </p>
 
       <button class="btn-commander" (click)="passerCommande()" [disabled]="commandeEnCours">
-        <span *ngIf="!commandeEnCours">✅ Passer la commande</span>
-        <span *ngIf="commandeEnCours">⏳ Traitement...</span>
+        <span *ngIf="!commandeEnCours"><i class="pi pi-check-circle"></i> Passer la commande</span>
+        <span *ngIf="commandeEnCours"><i class="pi pi-spin pi-spinner"></i> Traitement...</span>
       </button>
 
       <div class="paiement-methodes">

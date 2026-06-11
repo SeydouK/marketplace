@@ -94,9 +94,9 @@ export class GestionAnnoncesComponent implements OnInit {
       DISPONIBLE:  'bg-green-100 text-green-800',
       INDISPONIBLE: 'bg-amber-100 text-amber-800',
       EN_ATTENTE:   'bg-blue-100 text-blue-800',
-      VENDU:        'bg-gray-100 text-gray-600',
+      VENDU:        'bg-[#F6F1E7] text-gray-600',
     };
-    return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
+    return status ? (map[status] ?? 'bg-[#F6F1E7] text-gray-600') : 'bg-[#F6F1E7] text-gray-600';
   }
   
   

@@ -20,9 +20,12 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "node_modules/primeicons/primeicons.css",
+              "src/assets/vendor/leaflet/leaflet.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/vendor/leaflet/leaflet.js"
+            ]
           },
           "configurations": {
             "production": {

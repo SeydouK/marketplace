@@ -31,14 +31,14 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
     <!-- Total animaux -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+    <article class="bg-white border border-[#F0EAD9] rounded-2xl p-4 shadow-sm">
       <p class="text-xs text-gray-500 mb-1">Total cheptel</p>
       <p class="text-2xl font-bold text-gray-900">{{ animalsCount }}</p>
       <a routerLink="/animaux/mes-animaux" class="text-xs text-[#2D6A4F] underline mt-1 inline-block">Voir tout</a>
     </article>
 
     <!-- Disponibles -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+    <article class="bg-white border border-[#F0EAD9] rounded-2xl p-4 shadow-sm">
       <p class="text-xs text-gray-500 mb-1">Disponibles</p>
       <p class="text-2xl font-bold text-green-600">{{ availableCount }}</p>
       <p class="text-xs text-gray-400 mt-1">Fiche validée</p>
@@ -95,7 +95,7 @@
         </a>
 
         <a routerLink="/vendeur/mes-annonces"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -104,7 +104,7 @@
         </a>
 
         <a routerLink="/animaux/mes-animaux"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
@@ -118,7 +118,7 @@
     <!-- Répartition des statuts du cheptel -->
     <div>
       <h2 class="text-base font-semibold text-gray-900 mb-3">État du cheptel</h2>
-      <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div class="bg-white border border-[#F0EAD9] rounded-2xl shadow-sm overflow-hidden">
 
         <!-- Barre de progression visuelle -->
         <div class="flex h-2 w-full overflow-hidden">

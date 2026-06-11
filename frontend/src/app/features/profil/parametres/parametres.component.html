@@ -2,9 +2,9 @@
 <div class="min-h-screen bg-white">
 
   <!-- ════ MOBILE : Flèche retour + titre ════ -->
-  <div class="md:hidden flex items-center gap-3 px-4 py-4 border-b border-gray-100">
+  <div class="md:hidden flex items-center gap-3 px-4 py-4 border-b border-[#F0EAD9]">
     <button type="button" onclick="history.back()"
-      class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+      class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
       <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -18,28 +18,28 @@
     <div class="flex gap-0">
 
       <!-- ═══ SIDEBAR DESKTOP ═══ -->
-      <aside class="hidden md:block w-72 flex-shrink-0 border-r border-gray-200 pr-4">
+      <aside class="hidden md:block w-72 flex-shrink-0 border-r border-[#E7E0D2] pr-4">
         <nav class="flex flex-col gap-1">
           <button *ngFor="let section of sections"
             type="button"
             (click)="setSection(section.key)"
             class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-colors text-left w-full"
             [ngClass]="activeSection === section.key
-              ? 'bg-gray-100 font-semibold text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 font-normal'">
+              ? 'bg-[#F6F1E7] font-semibold text-gray-900'
+              : 'text-gray-600 hover:bg-[#FBF9F4] font-normal'">
             <i class="pi text-xl flex-shrink-0" [ngClass]="section.icon"></i>
             <span class="leading-tight">{{ section.label }}</span>
           </button>
 
-          <div class="my-3 border-t border-gray-200"></div>
+          <div class="my-3 border-t border-[#E7E0D2]"></div>
 
           <button *ngIf="isVendeur"
             type="button"
             (click)="setSection('pro')"
             class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-colors text-left w-full"
             [ngClass]="activeSection === 'pro'
-              ? 'bg-gray-100 font-semibold text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50'">
+              ? 'bg-[#F6F1E7] font-semibold text-gray-900'
+              : 'text-gray-600 hover:bg-[#FBF9F4]'">
             <i class="pi pi-shop text-xl"></i>
             <span>Espace vendeur</span>
           </button>
@@ -48,11 +48,11 @@
 
       <!-- ═══ MOBILE : Liste des sections (quand aucune active) ═══ -->
       <div class="md:hidden w-full" *ngIf="!mobileActiveSection">
-        <div class="bg-white rounded-2xl divide-y divide-gray-100 border border-gray-100 shadow-sm overflow-hidden mb-4">
+        <div class="bg-white rounded-2xl divide-y divide-[#F0EAD9] border border-[#F0EAD9] shadow-sm overflow-hidden mb-4">
           <button *ngFor="let section of sections"
             type="button"
             (click)="openMobileSection(section.key)"
-            class="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors">
+            class="w-full flex items-center justify-between px-4 py-4 hover:bg-[#FBF9F4] transition-colors">
             <div class="flex items-center gap-3">
               <i class="pi text-xl" [ngClass]="section.icon"></i>
               <span class="text-sm font-medium text-gray-800">{{ section.label }}</span>
@@ -64,9 +64,9 @@
         </div>
 
         <!-- Espace vendeur séparé -->
-        <div *ngIf="isVendeur" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div *ngIf="isVendeur" class="bg-white rounded-2xl border border-[#F0EAD9] shadow-sm overflow-hidden">
           <button type="button" (click)="openMobileSection('pro')"
-            class="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors">
+            class="w-full flex items-center justify-between px-4 py-4 hover:bg-[#FBF9F4] transition-colors">
             <div class="flex items-center gap-3">
               <i class="pi pi-shop text-xl"></i>
               <span class="text-sm font-medium text-gray-800">Espace vendeur</span>
@@ -83,7 +83,7 @@
         <!-- Header section mobile -->
         <div class="flex items-center gap-3 mb-6">
           <button type="button" (click)="closeMobileSection()"
-            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
             <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
@@ -111,7 +111,7 @@
   <!-- INFORMATIONS PERSONNELLES -->
   <ng-container *ngIf="activeSection === 'infos'">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Informations personnelles</h2>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
 
       <div class="flex items-start justify-between py-5">
         <div>
@@ -193,18 +193,18 @@
 
     <!-- Formulaire inline -->
     <div *ngIf="editingField === 'name'"
-      class="mt-6 p-5 bg-gray-50 rounded-2xl border border-gray-200">
+      class="mt-6 p-5 bg-[#FBF9F4] rounded-2xl border border-[#E7E0D2]">
       <h3 class="text-sm font-semibold text-gray-900 mb-1">Quel est votre nom officiel ?</h3>
       <p class="text-xs text-gray-500 mb-4">Ce nom doit correspondre au nom figurant sur votre pièce d'identité.</p>
       <input type="text" [(ngModel)]="editValue"
-        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition mb-4"/>
+        class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition mb-4"/>
       <div class="flex gap-2 justify-end">
         <button type="button" (click)="cancelEdit()"
-          class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+          class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#F6F1E7] rounded-xl transition-colors">
           Annuler
         </button>
         <button type="button" (click)="saveField()" [disabled]="saving"
-          class="px-5 py-2.5 text-sm font-semibold bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:opacity-50 transition-colors">
+          class="px-5 py-2.5 text-sm font-semibold bg-[#2D6A4F] text-white rounded-xl hover:bg-[#245540] disabled:opacity-50 transition-colors">
           {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
         </button>
       </div>
@@ -215,7 +215,7 @@
   <!-- CONNEXION ET SÉCURITÉ -->
   <ng-container *ngIf="activeSection === 'securite'">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Connexion et sécurité</h2>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
       <div class="flex items-start justify-between py-5">
         <div>
           <p class="text-sm font-semibold text-gray-900">Mot de passe</p>
@@ -250,7 +250,7 @@
   <ng-container *ngIf="activeSection === 'confidentialite'">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Confidentialité</h2>
     <p class="text-sm text-gray-500 mb-6">Contrôlez vos données et votre visibilité sur la plateforme.</p>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
       <div class="flex items-start justify-between py-5">
         <div>
           <p class="text-sm font-semibold text-gray-900">Profil public</p>
@@ -278,7 +278,7 @@
   <ng-container *ngIf="activeSection === 'notifications'">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Notifications</h2>
     <p class="text-sm text-gray-500 mb-6">Choisissez les notifications que vous recevez.</p>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
       <div class="flex items-center justify-between py-5">
         <div>
           <p class="text-sm font-semibold text-gray-900">Nouvelles annonces</p>
@@ -325,7 +325,7 @@
   <ng-container *ngIf="activeSection === 'paiements'">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Paiements</h2>
     <p class="text-sm text-gray-500 mb-6">Gérez vos moyens de paiement et votre historique.</p>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
       <div class="flex items-start justify-between py-5">
         <div>
           <p class="text-sm font-semibold text-gray-900">Mobile Money</p>
@@ -349,7 +349,7 @@
   <!-- LANGUES ET DEVISE -->
   <ng-container *ngIf="activeSection === 'langues'">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Langues et devise</h2>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
       <div class="flex items-start justify-between py-5">
         <div>
           <p class="text-sm font-semibold text-gray-900">Langue préférée</p>
@@ -377,7 +377,7 @@
   <ng-container *ngIf="activeSection === 'pro' && isVendeur">
     <h2 class="hidden md:block text-xl font-semibold text-gray-900 mb-6">Espace vendeur</h2>
     <p class="text-sm text-gray-500 mb-6">Gérez votre activité de vente sur la plateforme.</p>
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-[#E7E0D2]">
       <div class="flex items-start justify-between py-5">
         <div>
           <p class="text-sm font-semibold text-gray-900">Mes annonces</p>

@@ -5,5 +5,6 @@ public enum AnimalType {
     OVIN,
     CAPRIN,
     PORCIN,
+    AVICOLE,
     AUTRE
 }

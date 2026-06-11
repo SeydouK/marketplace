@@ -136,7 +136,7 @@ export class CertificatsSanitairesComponent implements OnInit {
       VALIDE: 'bg-green-100 text-green-800',
       REFUSE: 'bg-red-100 text-red-800',
     };
-    return map[status] ?? 'bg-gray-100 text-gray-600';
+    return map[status] ?? 'bg-[#F6F1E7] text-gray-600';
   }
 
   getStatusDemandeLabel(status: string): string {
@@ -165,7 +165,7 @@ export class CertificatsSanitairesComponent implements OnInit {
       EXPIRED: 'bg-red-100 text-red-800',
       PENDING: 'bg-amber-100 text-amber-800',
     };
-    return map[status] ?? 'bg-gray-100 text-gray-600';
+    return map[status] ?? 'bg-[#F6F1E7] text-gray-600';
   }
 
   getDocBadge(status: string): string {
@@ -174,7 +174,7 @@ export class CertificatsSanitairesComponent implements OnInit {
       REFUSED: 'bg-red-100 text-red-800',
       PENDING: 'bg-amber-100 text-amber-800',
     };
-    return map[status] ?? 'bg-gray-100 text-gray-600';
+    return map[status] ?? 'bg-[#F6F1E7] text-gray-600';
   }
 
   trackByAnimalId(_: number, d: ValidationDemande): string {

@@ -4,6 +4,7 @@ import com.marketplace.dto.SellerRequestDTO;
 import com.marketplace.dto.AdminStatsDTO;
 import com.marketplace.dto.AdminUserDTO;
 import com.marketplace.dto.AdminUserPageDTO;
+import com.marketplace.dto.StoredFileDTO;
 import com.marketplace.dto.UserProfileDTO;
 import com.marketplace.exception.BadRequestException;
 import com.marketplace.exception.ForbiddenException;
@@ -23,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,15 +36,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final AnimalSellerRepository animalSellerRepository;
     private final AnimalRepository animalRepository;
+    private final FileStorageService fileStorageService;
 
     public UserService(
             UserRepository userRepository,
             AnimalSellerRepository animalSellerRepository,
-            AnimalRepository animalRepository
+            AnimalRepository animalRepository,
+            FileStorageService fileStorageService
     ) {
         this.userRepository = userRepository;
         this.animalSellerRepository = animalSellerRepository;
         this.animalRepository = animalRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     public User getCurrentUser() {
@@ -65,6 +71,29 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserProfileDTO getCurrentProfile() {
         return toUserProfile(getCurrentUser());
+    }
+
+    @Transactional
+    public UserProfileDTO updateCurrentProfile(String name) {
+        User current = getCurrentUser();
+        if (!StringUtils.hasText(name)) {
+            throw new BadRequestException("Le nom ne peut pas être vide.");
+        }
+        current.setName(name.trim());
+        userRepository.save(current);
+        return toUserProfile(current);
+    }
+
+    @Transactional
+    public String updateCurrentAvatar(MultipartFile avatar) {
+        if (avatar == null || avatar.isEmpty()) {
+            throw new BadRequestException("Aucun fichier reçu.");
+        }
+        User current = getCurrentUser();
+        StoredFileDTO stored = fileStorageService.store(avatar, "avatars");
+        current.setAvatarUrl(stored.getUrl());
+        userRepository.save(current);
+        return stored.getUrl();
     }
 
     @Transactional
@@ -95,7 +124,8 @@ public class UserService {
         return new UserProfileDTO(
                 current.getId(), current.getName(), current.getEmail(),
                 current.getRole(), current.isEmailVerified(), current.getKycStatus(),
-                current.isDevenirVendeur(), animalsCount, pendingHealthValidationCount
+                current.isDevenirVendeur(), animalsCount, pendingHealthValidationCount,
+                current.getAvatarUrl()
         );
     }
 

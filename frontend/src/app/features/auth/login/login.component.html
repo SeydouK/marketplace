@@ -33,7 +33,7 @@
             [type]="showPassword ? 'text' : 'password'"
             formControlName="password"
             placeholder="Mot de passe"
-            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm pr-12
+            class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3.5 text-sm pr-12
               focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition"/>
           <button type="button" (click)="togglePassword()"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -68,7 +68,7 @@
         <div class="mb-4">
           <input type="email" formControlName="email"
             placeholder="Adresse e-mail"
-            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm
+            class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3.5 text-sm
               focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition"/>
           <p *ngIf="controlInvalid('email', 'required')" class="text-xs text-red-500 mt-1">Email requis.</p>
           <p *ngIf="controlInvalid('email', 'email')" class="text-xs text-red-500 mt-1">Email invalide.</p>
@@ -77,7 +77,7 @@
         <div class="relative mb-4">
           <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
             placeholder="Mot de passe"
-            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm pr-12
+            class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3.5 text-sm pr-12
               focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition"/>
           <button type="button" (click)="togglePassword()"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">

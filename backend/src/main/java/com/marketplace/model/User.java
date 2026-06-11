@@ -74,5 +74,9 @@ public class User {
 
     private String selfieUrl;
 
+    /** Photo de profil (URL servie par /api/files) */
+    @Column(name = "avatar_url", length = 500)
+    private String avatarUrl;
+
     
 }

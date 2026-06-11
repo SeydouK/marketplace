@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardAnaderComponent } from './dashboard-anader/dashboard-anader.component';
 import { AuthGuard } from '../../core/guards/auth.guard';
+import { Role } from '../../core/models/role.enum';
 
 // Les routes ici sont relatives au préfixe déclaré dans app-routing.module.ts
 // Ex: { path: 'anader', loadChildren: () => import('./features/anader/anader.module') }
@@ -19,7 +20,7 @@ const routes: Routes = [
     path: 'dashboard',
     component: DashboardAnaderComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['AGENT_ANADER'] }
+    data: { roles: [Role.AGENT_ANADER] }
   },
   {
     path: 'statistiques',

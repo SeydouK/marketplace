@@ -23,7 +23,7 @@
   </div>
 
   <!-- Répartition par espèce -->
-  <div class="rounded-xl border border-gray-200 bg-white p-6 mb-6">
+  <div class="rounded-xl border border-[#E7E0D2] bg-white p-6 mb-6">
     <h2 class="text-lg font-semibold mb-4">Répartition par espèce</h2>
     <div class="space-y-3">
       <div *ngFor="let species of stats?.speciesBreakdown">
@@ -31,7 +31,7 @@
           <span class="text-gray-700">{{ species.name }}</span>
           <span class="font-medium">{{ species.count }} ({{ species.percent }}%)</span>
         </div>
-        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-2 bg-[#F6F1E7] rounded-full overflow-hidden">
           <div class="h-full bg-[#611a24] rounded-full transition-all duration-500"
             [style.width.%]="species.percent">
           </div>
@@ -41,11 +41,11 @@
   </div>
 
   <!-- Éleveurs récents -->
-  <div class="rounded-xl border border-gray-200 bg-white p-6">
+  <div class="rounded-xl border border-[#E7E0D2] bg-white p-6">
     <h2 class="text-lg font-semibold mb-4">Éleveurs accompagnés récemment</h2>
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
-        <thead class="text-gray-500 uppercase text-xs border-b border-gray-100">
+        <thead class="text-gray-500 uppercase text-xs border-b border-[#F0EAD9]">
           <tr>
             <th class="pb-2 text-left">Nom</th>
             <th class="pb-2 text-left">Village</th>
@@ -55,7 +55,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-50">
-          <tr *ngFor="let farmer of recentFarmers" class="hover:bg-gray-50">
+          <tr *ngFor="let farmer of recentFarmers" class="hover:bg-[#FBF9F4]">
             <td class="py-3 font-medium text-gray-900">{{ farmer.name }}</td>
             <td class="py-3 text-gray-500">{{ farmer.village }}</td>
             <td class="py-3 text-gray-600">{{ farmer.animalsCount }}</td>
