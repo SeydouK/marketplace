@@ -80,7 +80,7 @@
           (click)="openSectionPanel(section.key)"
           class="relative bg-white border border-gray-100 rounded-2xl shadow-sm p-4 text-left hover:shadow-md transition-shadow overflow-hidden">
           <span *ngIf="section.isNew"
-            class="absolute top-2 left-2 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
+            class="absolute top-2 left-2 bg-[#2D6A4F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
           <div class="mt-4 mb-2 text-2xl"><i class="pi" [ngClass]="section.icon"></i></div>
           <p class="text-sm font-semibold text-gray-800 leading-tight">{{ section.label }}</p>
         </button>
@@ -331,7 +331,7 @@
                 }">{{ kycLabel }}</p>
             </div>
             <a routerLink="/kyc" (click)="closeMobilePanel()"
-              class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
+              class="text-sm font-medium text-gray-900 underline hover:text-[#2D6A4F] transition-colors">
               {{ kycStatus === 'REJECTED' ? 'Réessayer' : kycStatus === 'CNI_VERIFIED' ? 'Selfie' : 'Commencer' }}
             </a>
           </div>
@@ -470,7 +470,7 @@
             }">{{ kycLabel }}</p>
         </div>
         <a routerLink="/kyc"
-          class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C] transition-colors">
+          class="text-sm font-medium text-gray-900 underline hover:text-[#2D6A4F] transition-colors">
           {{ kycStatus === 'REJECTED' ? 'Réessayer' : kycStatus === 'CNI_VERIFIED' ? 'Prendre un selfie' : 'Commencer' }}
         </a>
       </div>
@@ -486,7 +486,7 @@
           <p class="text-sm font-medium text-gray-900">Mot de passe</p>
           <p class="text-sm text-gray-400 mt-0.5">Modifié il y a plus de 3 mois</p>
         </div>
-        <button type="button" class="text-sm font-medium text-gray-900 underline hover:text-[#FF385C]">Modifier</button>
+        <button type="button" class="text-sm font-medium text-gray-900 underline hover:text-[#2D6A4F]">Modifier</button>
       </div>
     </div>
   </ng-container>
@@ -507,7 +507,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mon espace</h2>
     <p class="text-sm text-gray-500 mb-6">Accédez à votre tableau de bord.</p>
     <a routerLink="/dashboard"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
       Aller au tableau de bord →
     </a>
   </ng-container>
@@ -517,7 +517,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes favoris</h2>
     <p class="text-sm text-gray-500 mb-6">Les annonces que vous avez sauvegardées.</p>
     <a routerLink="/favoris"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
       Voir mes favoris →
     </a>
   </ng-container>
@@ -529,7 +529,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes animaux</h2>
     <p class="text-sm text-gray-500 mb-6">Gérez vos fiches animaux, photos, prix et localisation.</p>
     <a routerLink="/animaux/mes-animaux"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
       Voir mes animaux →
     </a>
   </ng-container>
@@ -539,7 +539,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Mes annonces</h2>
     <p class="text-sm text-gray-500 mb-6">Consultez et modifiez vos annonces publiées.</p>
     <a routerLink="/vendeur/mes-annonces"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
       Voir mes annonces →
     </a>
   </ng-container>
@@ -549,7 +549,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Documents sanitaires</h2>
     <p class="text-sm text-gray-500 mb-6">Créez et gérez les certificats vétérinaires.</p>
     <a routerLink="/animaux/validation-sanitaire"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
       Accéder aux documents →
     </a>
   </ng-container>
@@ -575,7 +575,7 @@
     <div class="divide-y divide-gray-100">
       <div class="py-4">
         <p class="text-sm font-medium text-gray-900">Total animaux enregistrés</p>
-        <p class="text-2xl font-bold text-[#FF385C] mt-1">{{ profile?.animauxEnregistres ?? 0 }}</p>
+        <p class="text-2xl font-bold text-[#2D6A4F] mt-1">{{ profile?.animauxEnregistres ?? 0 }}</p>
       </div>
       <div class="py-4">
         <p class="text-sm font-medium text-gray-900">Rémunération estimée</p>
@@ -589,7 +589,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-2">Supervision</h2>
     <p class="text-sm text-gray-500 mb-6">Gestion des litiges et supervision globale.</p>
     <a routerLink="/admin"
-      class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+      class="inline-flex items-center gap-2 px-6 py-3 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
       Accéder au panneau admin →
     </a>
   </ng-container>

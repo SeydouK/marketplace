@@ -24,8 +24,8 @@
   width: fit-content;
   padding: 0.45rem 0.9rem;
   border-radius: 999px;
-  background: rgba(220, 38, 38, 0.08);
-  color: #dc2626;
+  background: #E0EEE4;
+  color: #2D6A4F;
   font-size: 0.85rem;
   font-weight: 700;
 }
@@ -34,7 +34,7 @@
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1.2;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #2D6A4F, #1B4332);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -46,6 +46,28 @@
   line-height: 1.7;
   font-size: 1.125rem;
 }
+
+.trust-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+.trust-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
+  background: #fff;
+  border: 1px solid #E7E0D2;
+  border-radius: 999px;
+  color: #6B6358;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.trust-list li i { color: #2D6A4F; }
 
 .auth-card {
   width: min(100%, 500px);
@@ -99,8 +121,8 @@
 
 .text-field:focus,
 .password-group:focus-within {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
 }
 
 .password-group {
@@ -148,7 +170,7 @@
 }
 
 .eye-btn:hover {
-  color: #dc2626;
+  color: #2D6A4F;
 }
 
 .primary-submit {
@@ -156,7 +178,7 @@
   border: 0;
   border-radius: 1rem;
   padding: 0.95rem 1rem;
-  background: #dc2626;
+  background: #2D6A4F;
   color: #ffffff;
   font-weight: 700;
   cursor: pointer;
@@ -164,7 +186,7 @@
 }
 
 .primary-submit:hover:not(:disabled) {
-  background: #b91c1c;
+  background: #245540;
 }
 
 .primary-submit:disabled {
@@ -180,13 +202,13 @@
 }
 
 .hint a {
-  color: #dc2626;
+  color: #2D6A4F;
   font-weight: 600;
 }
 
 .error-text {
   margin: 0;
-  color: #dc2626;
+  color: #D9342B;
   font-size: 0.875rem;
 }
 

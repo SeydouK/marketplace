@@ -9,21 +9,21 @@
 }
 
 /* Active state bottom nav — colore icône ET label */
-a.text-\[\#FF385C\] svg {
-  stroke: #FF385C;
+a.text-\[\#2D6A4F\] svg {
+  stroke: #2D6A4F;
 }
 
 /* Active state bottom nav mobile */
 nav a.active-link {
-  color: #FF385C;
+  color: #2D6A4F;
 }
 
 nav a.active-link svg {
-  stroke: #FF385C;
+  stroke: #2D6A4F;
 }
 
 nav a.active-link span {
-  color: #FF385C;
+  color: #2D6A4F;
   font-weight: 700;
 }
 

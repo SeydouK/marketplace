@@ -2,12 +2,17 @@
   <div class="hero-copy">
     <span class="badge">
       <i class="pi pi-user-plus"></i>
-      Nouveau sur la plateforme
+      Nouveau sur BétailMarket
     </span>
-    <h1>Creez votre compte Marketplace</h1>
+    <h1>Créez votre compte et vendez en toute confiance</h1>
     <p class="subtitle">
-      Publiez vos annonces de betail, suivez vos ventes et retrouvez facilement les offres par ville.
+      Publiez vos annonces de bétail, suivez vos ventes et retrouvez facilement les offres par ville.
     </p>
+    <ul class="trust-list">
+      <li><i class="pi pi-verified"></i> Vendeurs vérifiés</li>
+      <li><i class="pi pi-shield"></i> Annonces contrôlées</li>
+      <li><i class="pi pi-lock"></i> Paiement sécurisé</li>
+    </ul>
   </div>
 
   <div class="auth-card">
@@ -101,12 +106,12 @@
       </div>      
 
       <button type="submit" class="primary-submit" [disabled]="form.invalid">
-        Creer mon compte
+        Créer mon compte
       </button>
 
       <p class="hint">
-        Vous avez deja un compte ?
-        <a routerLink="/login">Se connecter</a>
+        Vous avez déjà un compte ?
+        <a routerLink="/auth/login">Se connecter</a>
       </p>
     </form>
   </div>

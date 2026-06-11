@@ -2,7 +2,7 @@
 
 .creer-animal-shell {
   min-height: 100%;
-  background: #fff;
+  background: #FBF9F4;
   padding: 2rem 1.5rem 4rem;
 }
 
@@ -12,8 +12,8 @@
   margin: 0 auto 2.5rem;
   padding: 2rem;
   border-radius: 20px;
-  background: #f7f7f7;
-  border: 1px solid #ebebeb;
+  background: #F6F1E7;
+  border: 1px solid #EFE9DC;
 }
 .form-hero__eyebrow {
   display: inline-block;
@@ -21,20 +21,20 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #FF385C;
+  color: #2D6A4F;
   margin-bottom: 0.625rem;
 }
 .form-hero h1 {
   margin: 0 0 0.625rem;
   font-size: clamp(1.375rem, 2.5vw, 2rem);
   font-weight: 800;
-  color: #222222;
+  color: #2A2620;
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
 .form-hero p {
   margin: 0;
-  color: #717171;
+  color: #6B6358;
   line-height: 1.65;
   font-size: 0.9375rem;
 }
@@ -64,46 +64,46 @@
   left: calc(-50% + 14px);
   right: calc(50% + 14px);
   height: 2px;
-  background: #ebebeb;
+  background: #EFE9DC;
   z-index: 0;
 }
 .step:first-child::before { display: none; }
-.step--done::before, .step--active::before { background: #222222; }
+.step--done::before, .step--active::before { background: #2D6A4F; }
 
 .step__dot {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #ebebeb;
-  border: 2px solid #ebebeb;
+  background: #EFE9DC;
+  border: 2px solid #EFE9DC;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #b0b0b0;
+  color: #A99F8F;
   position: relative;
   z-index: 1;
   transition: background 200ms, border-color 200ms, color 200ms;
 }
-.step--done .step__dot { background: #222222; border-color: #222222; color: #fff; }
-.step--active .step__dot { background: #fff; border-color: #222222; color: #222222; box-shadow: 0 0 0 4px rgba(34,34,34,0.08); }
+.step--done .step__dot { background: #2D6A4F; border-color: #2D6A4F; color: #fff; }
+.step--active .step__dot { background: #fff; border-color: #2D6A4F; color: #2A2620; box-shadow: 0 0 0 4px rgba(45,106,79,0.12); }
 
 .step__label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #b0b0b0;
+  color: #A99F8F;
   white-space: nowrap;
 }
-.step--active .step__label { color: #222222; }
-.step--done .step__label { color: #717171; }
+.step--active .step__label { color: #2A2620; }
+.step--done .step__label { color: #6B6358; }
 
 /* ── Form panel ── */
 .form-panel {
   max-width: 760px;
   margin: 0 auto;
   background: #fff;
-  border: 1px solid #dddddd;
+  border: 1px solid #E7E0D2;
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 1px 2px rgba(0,0,0,0.06);
@@ -114,17 +114,17 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #FF385C;
+  color: #2D6A4F;
   margin-bottom: 0.375rem;
 }
 .form-panel h2 {
   margin: 0 0 0.375rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #222222;
+  color: #2A2620;
   letter-spacing: -0.02em;
 }
-.form-panel__desc { margin: 0; color: #717171; font-size: 0.9rem; line-height: 1.55; }
+.form-panel__desc { margin: 0; color: #6B6358; font-size: 0.9rem; line-height: 1.55; }
 
 /* ── Field ── */
 .form-field { margin-bottom: 1.25rem; }
@@ -132,18 +132,18 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #222222;
+  color: #2A2620;
   margin-bottom: 0.4rem;
 }
 .form-field input,
 .form-field select,
 .form-field textarea {
   width: 100%;
-  border: 1.5px solid #dddddd;
+  border: 1.5px solid #E7E0D2;
   border-radius: 10px;
   padding: 0.875rem 1rem;
   font-size: 0.9375rem;
-  color: #222222;
+  color: #2A2620;
   outline: none;
   background: #fff;
   transition: border-color 120ms, box-shadow 120ms;
@@ -151,15 +151,15 @@
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
-  border-color: #222222;
-  box-shadow: 0 0 0 3px rgba(34,34,34,0.08);
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
 }
 .form-field input::placeholder,
-.form-field textarea::placeholder { color: #b0b0b0; }
+.form-field textarea::placeholder { color: #A99F8F; }
 .form-field--error input,
-.form-field--error select { border-color: #FF385C; }
-.form-field__error { font-size: 0.8rem; color: #FF385C; font-weight: 500; margin-top: 0.3rem; }
-.form-field__hint { font-size: 0.8rem; color: #717171; margin-top: 0.3rem; }
+.form-field--error select { border-color: #D9342B; }
+.form-field__error { font-size: 0.8rem; color: #D9342B; font-weight: 500; margin-top: 0.3rem; }
+.form-field__hint { font-size: 0.8rem; color: #6B6358; margin-top: 0.3rem; }
 
 /* ── Actions ── */
 .form-actions {
@@ -169,21 +169,21 @@
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid #EFE9DC;
 }
 .btn-back {
   background: none;
   border: none;
-  color: #222222;
+  color: #2A2620;
   font-weight: 600;
   font-size: 0.9375rem;
   cursor: pointer;
   text-decoration: underline;
   padding: 0.5rem 0;
 }
-.btn-back:hover { color: #FF385C; }
+.btn-back:hover { color: #2D6A4F; }
 .btn-next {
-  background: #222222;
+  background: #2D6A4F;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -193,9 +193,9 @@
   cursor: pointer;
   transition: background 120ms, transform 80ms;
 }
-.btn-next:hover { background: #000; }
+.btn-next:hover { background: #245540; }
 .btn-submit {
-  background: #FF385C;
+  background: #2D6A4F;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -204,9 +204,9 @@
   font-size: 0.9375rem;
   cursor: pointer;
   transition: background 120ms, transform 80ms;
-  box-shadow: 0 8px 24px rgba(255,56,92,0.24);
+  box-shadow: 0 8px 24px rgba(45, 106, 79,0.24);
 }
-.btn-submit:hover:not(:disabled) { background: #E31C5F; }
+.btn-submit:hover:not(:disabled) { background: #245540; }
 .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Map ── */
@@ -215,8 +215,8 @@
   height: 360px;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid #dddddd;
-  background: #f7f7f7;
+  border: 1px solid #E7E0D2;
+  background: #F6F1E7;
 }
 .map-unavailable {
   display: flex;
@@ -225,13 +225,13 @@
   justify-content: center;
   gap: 0.5rem;
   height: 200px;
-  background: #f7f7f7;
+  background: #F6F1E7;
   border-radius: 16px;
-  color: #717171;
+  color: #6B6358;
   font-size: 0.9rem;
   text-align: center;
   padding: 1rem;
-  border: 1px solid #ebebeb;
+  border: 1px solid #EFE9DC;
 }
 
 @media (max-width: 640px) {

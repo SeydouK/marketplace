@@ -8,9 +8,14 @@
     <div class="flex items-center justify-between px-8 py-4 gap-6">
 
       <!-- Logo -->
-      <div class="flex-shrink-0 w-44">
-        <a routerLink="/">
-          <img src="assets/images/airbnb-desktop.png" class="h-9 w-auto" alt="BétailMarket"/>
+      <div class="flex-shrink-0 w-52">
+        <a routerLink="/" class="flex items-center gap-2.5">
+          <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] flex items-center justify-center shadow-sm flex-shrink-0">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12.5c-2.9 0-5.5 2.1-5.5 4.6 0 1.7 1.3 2.9 3 2.9.9 0 1.6-.4 2.5-.4s1.6.4 2.5.4c1.7 0 3-1.2 3-2.9 0-2.5-2.6-4.6-5.5-4.6zM7.4 8.1c-.4-1.6-1.6-2.7-2.8-2.4-1.2.3-1.8 1.8-1.4 3.4.4 1.6 1.6 2.7 2.8 2.4 1.2-.3 1.8-1.8 1.4-3.4zM11.2 6.6c.3-1.7-.4-3.2-1.6-3.4C8.4 3 7.3 4.2 7 5.9c-.3 1.7.4 3.2 1.6 3.4 1.2.2 2.3-1 2.6-2.7zM16.6 8.1c.4-1.6 1.6-2.7 2.8-2.4 1.2.3 1.8 1.8 1.4 3.4-.4 1.6-1.6 2.7-2.8 2.4-1.2-.3-1.8-1.8-1.4-3.4zM12.8 6.6c-.3-1.7.4-3.2 1.6-3.4 1.2-.2 2.3 1 2.6 2.7.3 1.7-.4 3.2-1.6 3.4-1.2.2-2.3-1-2.6-2.7z"/>
+            </svg>
+          </span>
+          <span class="text-xl font-extrabold tracking-tight text-[#1B4332] leading-none">Bétail<span class="text-[#D97E1F]">Market</span></span>
         </a>
       </div>
 
@@ -19,8 +24,8 @@
         <a routerLink="/" (click)="setActiveTab('logements')"
           class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
           [ngClass]="activeTab === 'logements' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
-          <img src="assets/images/home.png" class="h-8 w-8" alt="Annonces"/>
-          <span class="text-sm font-semibold">Annonces</span>
+          <i class="pi pi-home text-[1.6rem] leading-none"></i>
+          <span class="text-sm font-semibold">Accueil</span>
           <span *ngIf="activeTab === 'logements'"
             class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gray-900 rounded-full"></span>
         </a>
@@ -28,11 +33,8 @@
         <a routerLink="/annonces" (click)="setActiveTab('experiences')"
           class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
           [ngClass]="activeTab === 'experiences' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
-          <div class="relative">
-            <img src="assets/images/light-bulb.png" class="h-8 w-8" alt="Expériences"/>
-            <span class="absolute -top-2 -right-6 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
-          </div>
-          <span class="text-sm font-semibold">Expériences</span>
+          <i class="pi pi-th-large text-[1.6rem] leading-none"></i>
+          <span class="text-sm font-semibold">Annonces</span>
           <span *ngIf="activeTab === 'experiences'"
             class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gray-900 rounded-full"></span>
         </a>
@@ -41,8 +43,8 @@
           class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
           [ngClass]="activeTab === 'services' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
           <div class="relative">
-            <img src="assets/images/bell.png" class="h-8 w-8" alt="Services"/>
-            <span class="absolute -top-2 -right-6 bg-[#FF385C] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
+            <i class="pi pi-wrench text-[1.6rem] leading-none"></i>
+            <span class="absolute -top-2 -right-7 bg-[#D97E1F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
           </div>
           <span class="text-sm font-semibold">Services</span>
           <span *ngIf="activeTab === 'services'"
@@ -55,7 +57,7 @@
       <!-- Droite -->
       <div class="flex items-center gap-3 flex-shrink-0 justify-end">
         <a *ngIf="isAcheteur || !currentUser" [routerLink]="currentUser ? '/devenir-vendeur' : '/auth/login'"
-          class="text-sm font-semibold text-gray-700 hover:bg-gray-100 px-4 py-2.5 rounded-full transition-colors whitespace-nowrap">
+          class="text-sm font-semibold text-[#2D6A4F] hover:bg-[#F2F7F3] px-4 py-2.5 rounded-full transition-colors whitespace-nowrap">
           Devenir vendeur
         </a>
 
@@ -69,7 +71,7 @@
             class="relative flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-all bg-white">
             <img src="assets/images/menu.png" class="h-5 w-5 flex-shrink-0" alt="menu"/>
             <div *ngIf="currentUser"
-              class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 overflow-hidden bg-[#FF385C]">
+              class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 overflow-hidden bg-[#2D6A4F]">
               {{ currentUserInitial }}
             </div>
             <div *ngIf="!currentUser"
@@ -80,7 +82,7 @@
               </svg>
             </div>
             <span *ngIf="currentUser"
-              class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#FF385C] rounded-full border-2 border-white"></span>
+              class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#2D6A4F] rounded-full border-2 border-white"></span>
           </button>
 
           <div *ngIf="menuOpen"
@@ -131,8 +133,8 @@
 
         <div class="pr-2 pl-1">
           <button type="button" (click)="submitSearch()"
-            class="w-12 h-12 bg-[#FF385C] rounded-full flex items-center justify-center hover:bg-[#e0314f] transition-colors">
-            <img src="assets/images/find.png" alt="search" class="w-5 h-5"/>
+            class="w-12 h-12 bg-[#2D6A4F] rounded-full flex items-center justify-center hover:bg-[#245540] transition-colors">
+            <i class="pi pi-search text-white text-lg"></i>
           </button>
         </div>
 
@@ -148,7 +150,7 @@
               <p class="text-sm font-medium text-gray-900">{{ r.label }}</p>
               <p class="text-xs text-gray-500">{{ r.sub }}</p>
             </div>
-            <svg *ngIf="searchRegion === r.label" class="w-4 h-4 text-[#FF385C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="searchRegion === r.label" class="w-4 h-4 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
             </svg>
           </div>
@@ -179,7 +181,7 @@
               <span *ngFor="let e of calEmptyDays"></span>
               <button *ngFor="let d of calDaysInMonth" type="button" (click)="selectCalDay(d)"
                 class="text-sm py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                [class.bg-[#FF385C]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
+                [class.bg-[#2D6A4F]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
                 [class.text-gray-300]="isPastDay(d)" [class.cursor-default]="isPastDay(d)">{{ d }}</button>
             </div>
           </div>
@@ -187,7 +189,7 @@
           <div *ngIf="dateMode === 'flexible'" class="flex flex-wrap gap-2">
             <button *ngFor="let opt of flexDateOptions" type="button" (click)="selectFlexDate(opt)"
               class="px-4 py-2 rounded-full border text-sm transition-all hover:border-gray-400"
-              [class.border-[#FF385C]]="searchDate === opt" [class.bg-red-50]="searchDate === opt">
+              [class.border-[#2D6A4F]]="searchDate === opt" [class.bg-brand-50]="searchDate === opt">
               {{ opt }}
             </button>
           </div>
@@ -203,12 +205,12 @@
           <div class="flex flex-wrap gap-2 mb-4">
             <button *ngFor="let p of budgetPresets" type="button" (click)="selectBudgetPreset(p)"
               class="px-3 py-1.5 rounded-full border text-sm hover:border-gray-400 transition-all"
-              [class.border-[#FF385C]]="searchBudget === p.value" [class.bg-red-50]="searchBudget === p.value">
+              [class.border-[#2D6A4F]]="searchBudget === p.value" [class.bg-brand-50]="searchBudget === p.value">
               {{ p.label }}
             </button>
           </div>
           <input type="range" min="0" max="2000000" step="50000" [value]="searchBudget || 0"
-            (input)="searchBudget = +$any($event.target).value" class="w-full accent-[#FF385C]"/>
+            (input)="searchBudget = +$any($event.target).value" class="w-full accent-[#2D6A4F]"/>
         </div>
       </div>
     </div>
@@ -251,7 +253,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
         </svg>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF385C] rounded-full border border-white"></span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#2D6A4F] rounded-full border border-white"></span>
       </button>
     </div>
 
@@ -260,24 +262,23 @@
       <a routerLink="/" (click)="setActiveTab('logements')"
         class="flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'logements' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
-        <img src="assets/images/home.png" class="h-7 w-7" alt="Annonces"/>
-        <span class="text-xs font-semibold">Annonces</span>
+        <i class="pi pi-home text-2xl leading-none"></i>
+        <span class="text-xs font-semibold">Accueil</span>
       </a>
 
       <a routerLink="/annonces" (click)="setActiveTab('experiences')"
         class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'experiences' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
-        <img src="assets/images/light-bulb.png" class="h-7 w-7" alt="Expériences"/>
-        <span class="text-xs font-semibold">Expériences</span>
-        <span class="absolute -top-1 right-0 bg-[#FF385C] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+        <i class="pi pi-th-large text-2xl leading-none"></i>
+        <span class="text-xs font-semibold">Annonces</span>
       </a>
 
       <a routerLink="/services" (click)="setActiveTab('services')"
         class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'services' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
-        <img src="assets/images/bell.png" class="h-7 w-7" alt="Services"/>
+        <i class="pi pi-wrench text-2xl leading-none"></i>
         <span class="text-xs font-semibold">Services</span>
-        <span class="absolute -top-1 right-0 bg-[#FF385C] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+        <span class="absolute -top-1 right-0 bg-[#D97E1F] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
       </a>
     </div>
 
@@ -299,22 +300,21 @@
       <a routerLink="/" (click)="setActiveTab('logements'); closeMobileSearch()"
         class="flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'logements' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
-        <img src="assets/images/home.png" class="h-7 w-7" alt="Annonces"/>
-        <span class="text-xs font-semibold">Annonces</span>
+        <i class="pi pi-home text-2xl leading-none"></i>
+        <span class="text-xs font-semibold">Accueil</span>
       </a>
       <a routerLink="/annonces" (click)="setActiveTab('experiences'); closeMobileSearch()"
         class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'experiences' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
-        <img src="assets/images/light-bulb.png" class="h-7 w-7" alt="Expériences"/>
-        <span class="text-xs font-semibold">Expériences</span>
-        <span class="absolute -top-1 right-0 bg-[#FF385C] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+        <i class="pi pi-th-large text-2xl leading-none"></i>
+        <span class="text-xs font-semibold">Annonces</span>
       </a>
       <a routerLink="/services" (click)="setActiveTab('services'); closeMobileSearch()"
         class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'services' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500'">
-        <img src="assets/images/bell.png" class="h-7 w-7" alt="Services"/>
+        <i class="pi pi-wrench text-2xl leading-none"></i>
         <span class="text-xs font-semibold">Services</span>
-        <span class="absolute -top-1 right-0 bg-[#FF385C] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+        <span class="absolute -top-1 right-0 bg-[#D97E1F] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
       </a>
     </div>
     <button type="button" (click)="closeMobileSearch()"
@@ -469,7 +469,7 @@
         <input type="range" min="0" max="2000000" step="50000"
           [value]="searchBudget || 0"
           (input)="searchBudget = +$any($event.target).value || null"
-          class="w-full accent-[#FF385C]"/>
+          class="w-full accent-[#2D6A4F]"/>
         <div class="flex justify-between text-xs text-gray-400 mt-2">
           <span>0 FCFA</span>
           <span>2 000 000 FCFA</span>
@@ -485,7 +485,7 @@
       Effacer tout
     </button>
     <button type="button" (click)="submitMobileSearch()"
-      class="flex items-center gap-2 bg-[#FF385C] text-white px-6 py-3.5 rounded-xl font-semibold text-sm hover:bg-[#e0314f] transition-colors">
+      class="flex items-center gap-2 bg-[#2D6A4F] text-white px-6 py-3.5 rounded-xl font-semibold text-sm hover:bg-[#245540] transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
       </svg>
@@ -502,10 +502,10 @@
   <div class="flex items-center justify-around px-2 py-2">
 
     <!-- Accueil -->
-    <a routerLink="/home" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/home" routerLinkActive="text-[#2D6A4F]"
       [routerLinkActiveOptions]="{ exact: true }"
       class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors"
-      [ngClass]="isHomePage ? 'text-[#FF385C]' : 'text-gray-500'">
+      [ngClass]="isHomePage ? 'text-[#2D6A4F]' : 'text-gray-500'">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -514,7 +514,7 @@
     </a>
 
     <!-- Annonces -->
-    <a routerLink="/annonces" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/annonces" routerLinkActive="text-[#2D6A4F]"
       class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -525,7 +525,7 @@
 
     <!-- Panier (acheteur uniquement) -->
     <a *ngIf="isAcheteur"
-      routerLink="/panier" routerLinkActive="text-[#FF385C]"
+      routerLink="/panier" routerLinkActive="text-[#2D6A4F]"
       class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors relative">
       <div class="relative">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -533,7 +533,7 @@
             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
         <span *ngIf="(panierCount$ | async)! > 0"
-          class="absolute -top-2 -right-2 min-w-[16px] h-4 bg-[#FF385C] text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 border border-white leading-none">
+          class="absolute -top-2 -right-2 min-w-[16px] h-4 bg-[#2D6A4F] text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 border border-white leading-none">
           {{ panierCount$ | async }}
         </span>
       </div>
@@ -541,9 +541,9 @@
     </a>
 
     <!-- Profil -->
-    <a routerLink="/profil" routerLinkActive="text-[#FF385C]"
+    <a routerLink="/profil" routerLinkActive="text-[#2D6A4F]"
       class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
-      <div class="w-6 h-6 rounded-full bg-[#FF385C] flex items-center justify-center text-white text-xs font-bold">
+      <div class="w-6 h-6 rounded-full bg-[#2D6A4F] flex items-center justify-center text-white text-xs font-bold">
         {{ currentUserInitial }}
       </div>
       <span class="text-[10px] font-medium">Profil</span>
@@ -573,7 +573,7 @@
     <div class="border-t border-gray-100 p-4">
       <div class="flex flex-col gap-2">
         <a routerLink="/auth/login" (click)="closeMenu()"
-          class="w-full text-center px-4 py-2.5 bg-[#FF385C] text-white text-sm font-semibold rounded-xl hover:bg-[#e0314f] transition-colors">
+          class="w-full text-center px-4 py-2.5 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
           Connexion
         </a>
         <a routerLink="/auth/register" (click)="closeMenu()"
@@ -596,12 +596,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
             <span *ngIf="(panierCount$ | async)! > 0"
-              class="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] bg-[#FF385C] text-white text-[8px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
+              class="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] bg-[#2D6A4F] text-white text-[8px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
               {{ panierCount$ | async }}
             </span>
           </div>
           Mon panier
-          <span *ngIf="(panierCount$ | async)! > 0" class="ml-auto text-xs font-semibold text-[#FF385C]">
+          <span *ngIf="(panierCount$ | async)! > 0" class="ml-auto text-xs font-semibold text-[#2D6A4F]">
             {{ panierCount$ | async }} animal{{ (panierCount$ | async)! > 1 ? 'x' : '' }}
           </span>
         </a>

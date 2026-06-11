@@ -8,9 +8,9 @@
 html, body {
   margin: 0;
   min-height: 100%;
-  background: #ffffff;
-  color: #222222;
-  font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+  background: #FBF9F4;
+  color: #2A2620;
+  font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -20,26 +20,44 @@ img { display: block; max-width: 100%; }
 
 /* ── Variables ────────────────────────────────────────────── */
 :root {
-  --airbnb-red: #FF385C;
-  --airbnb-red-dark: #E31C5F;
-  --airbnb-dark: #222222;
-  --airbnb-gray: #717171;
-  --airbnb-light-gray: #f7f7f7;
-  --airbnb-border: #dddddd;
+  /* Palette naturelle : vert / beige / marron / doré */
+  --brand-green: #2D6A4F;
+  --brand-green-dark: #1B4332;
+  --brand-green-light: #41855D;
+  --brand-green-50: #F2F7F3;
+  --brand-green-100: #E0EEE4;
+  --accent-gold: #D97E1F;
+  --accent-gold-dark: #B96416;
+  --accent-gold-50: #FDF6EC;
+  --sand-bg: #FBF9F4;
+  --sand-100: #F6F1E7;
+  --sand-200: #EDE4D3;
+  --earth-brown: #7A5C43;
+  --ink: #2A2620;
+  --ink-soft: #6B6358;
+  --line: #E7E0D2;
+
+  /* Alias hérités (anciens noms Airbnb) — recolorés vers la nouvelle palette */
+  --airbnb-red: var(--brand-green);
+  --airbnb-red-dark: var(--brand-green-dark);
+  --airbnb-dark: var(--ink);
+  --airbnb-gray: var(--ink-soft);
+  --airbnb-light-gray: var(--sand-100);
+  --airbnb-border: var(--line);
   --airbnb-radius-sm: 8px;
   --airbnb-radius-md: 12px;
   --airbnb-radius-lg: 16px;
   --airbnb-radius-xl: 24px;
   --airbnb-radius-2xl: 32px;
-  --airbnb-shadow-sm: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
-  --airbnb-shadow-md: 0 6px 20px rgba(0,0,0,0.12);
-  --airbnb-shadow-lg: 0 16px 56px rgba(0,0,0,0.12);
+  --airbnb-shadow-sm: 0 1px 2px rgba(27,67,50,0.06), 0 4px 14px rgba(27,67,50,0.06);
+  --airbnb-shadow-md: 0 6px 20px rgba(27,67,50,0.12);
+  --airbnb-shadow-lg: 0 16px 56px rgba(27,67,50,0.14);
 }
 
 /* ── App Shell ────────────────────────────────────────────── */
 .app-main {
   min-height: calc(100vh - 80px);
-  background: #ffffff;
+  background: var(--sand-bg);
 }
 
 /* ── Scrollbar ────────────────────────────────────────────── */
@@ -59,13 +77,13 @@ img { display: block; max-width: 100%; }
 }
 .animate-slideUp { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 
-/* ── Boutons Airbnb ───────────────────────────────────────── */
+/* ── Boutons ──────────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, var(--airbnb-red) 0%, #E31C5F 100%);
+  background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
   color: #fff;
   font-weight: 600;
   font-size: 0.9375rem;
@@ -74,13 +92,36 @@ img { display: block; max-width: 100%; }
   border: none;
   cursor: pointer;
   transition: transform 80ms ease, box-shadow 120ms ease;
-  box-shadow: 0 8px 24px rgba(255, 56, 92, 0.28);
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.28);
 }
 .btn-primary:hover {
   transform: scale(1.01);
-  box-shadow: 0 12px 32px rgba(255, 56, 92, 0.36);
+  box-shadow: 0 12px 32px rgba(45, 106, 79, 0.36);
 }
 .btn-primary:active { transform: scale(0.99); }
+
+/* Bouton accent doré — action de publication / mise en avant */
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #E59C3C 0%, var(--accent-gold) 100%);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--airbnb-radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: transform 80ms ease, box-shadow 120ms ease;
+  box-shadow: 0 8px 24px rgba(217, 126, 31, 0.30);
+}
+.btn-accent:hover {
+  transform: scale(1.01);
+  box-shadow: 0 12px 32px rgba(217, 126, 31, 0.38);
+}
+.btn-accent:active { transform: scale(0.99); }
 
 .btn-secondary {
   display: inline-flex;
@@ -88,22 +129,22 @@ img { display: block; max-width: 100%; }
   justify-content: center;
   gap: 0.5rem;
   background: #fff;
-  color: var(--airbnb-dark);
+  color: var(--ink);
   font-weight: 600;
   font-size: 0.9375rem;
   padding: 0.875rem 1.5rem;
   border-radius: var(--airbnb-radius-lg);
-  border: 1px solid var(--airbnb-border);
+  border: 1px solid var(--line);
   cursor: pointer;
   transition: background 120ms ease, border-color 120ms ease;
 }
-.btn-secondary:hover { background: #f7f7f7; border-color: #b0b0b0; }
+.btn-secondary:hover { background: var(--sand-100); border-color: var(--brand-green); }
 
 /* ── Cards ────────────────────────────────────────────────── */
 .airbnb-card {
   background: #fff;
   border-radius: var(--airbnb-radius-xl);
-  border: 1px solid var(--airbnb-border);
+  border: 1px solid var(--line);
   box-shadow: var(--airbnb-shadow-sm);
   overflow: hidden;
   transition: box-shadow 200ms ease, transform 200ms ease;
@@ -116,48 +157,62 @@ img { display: block; max-width: 100%; }
 /* ── Inputs ────────────────────────────────────────────────── */
 .airbnb-input {
   width: 100%;
-  border: 1px solid var(--airbnb-border);
+  border: 1px solid var(--line);
   border-radius: var(--airbnb-radius-md);
   padding: 0.875rem 1rem;
   font-size: 1rem;
-  color: var(--airbnb-dark);
+  color: var(--ink);
   outline: none;
   transition: border-color 120ms ease, box-shadow 120ms ease;
   background: #fff;
 }
 .airbnb-input:focus {
-  border-color: var(--airbnb-dark);
-  box-shadow: 0 0 0 2px rgba(34,34,34,0.12);
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.14);
 }
-.airbnb-input::placeholder { color: #b0b0b0; }
+.airbnb-input::placeholder { color: #A99F8F; }
 
 /* ── Badges / Pills ───────────────────────────────────────── */
 .badge-red {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: #fff1f2;
-  color: #b91c1c;
+  background: var(--accent-gold-50);
+  color: var(--accent-gold-dark);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
 }
 .badge-green {
-  background: #f0fdf4;
-  color: #166534;
+  background: var(--brand-green-50);
+  color: var(--brand-green-dark);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
 }
 .badge-gray {
-  background: #f7f7f7;
-  color: #717171;
+  background: var(--sand-100);
+  color: var(--ink-soft);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
+}
+
+/* Badge vendeur vérifié — réassurance */
+.badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--brand-green);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
 }
 
 /* ── Page Section ─────────────────────────────────────────── */
@@ -171,7 +226,7 @@ img { display: block; max-width: 100%; }
 .section-title {
   font-size: clamp(1.25rem, 2vw, 1.75rem);
   font-weight: 700;
-  color: var(--airbnb-dark);
+  color: var(--ink);
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem;
 }
@@ -184,20 +239,20 @@ img { display: block; max-width: 100%; }
   margin-bottom: 1rem;
 }
 .sig-action {
-  border: 1.5px solid var(--airbnb-border);
+  border: 1.5px solid var(--line);
   border-radius: 999px;
   padding: 0.75rem 1rem;
   background: #fff;
-  color: var(--airbnb-dark);
+  color: var(--ink);
   font-weight: 600;
   cursor: pointer;
   transition: border-color 120ms;
 }
 .sig-action--solid {
-  background: var(--airbnb-red);
+  background: var(--brand-green);
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 8px 24px rgba(255,56,92,0.24);
+  box-shadow: 0 8px 24px rgba(45,106,79,0.24);
 }
 .sig-action:disabled { opacity: 0.5; cursor: not-allowed; }
 .sig-layout {
@@ -208,7 +263,7 @@ img { display: block; max-width: 100%; }
 .sig-panel {
   border-radius: var(--airbnb-radius-xl);
   background: #fff;
-  border: 1px solid var(--airbnb-border);
+  border: 1px solid var(--line);
   padding: 1rem;
   box-shadow: var(--airbnb-shadow-sm);
 }
@@ -217,7 +272,7 @@ img { display: block; max-width: 100%; }
   min-height: 360px;
   border-radius: var(--airbnb-radius-lg);
   overflow: hidden;
-  background: #f7f7f7;
+  background: var(--sand-100);
 }
 .sig-map-empty {
   display: flex;
@@ -226,22 +281,22 @@ img { display: block; max-width: 100%; }
   align-items: center;
   gap: 0.5rem;
   text-align: center;
-  color: var(--airbnb-gray);
+  color: var(--ink-soft);
 }
-.sig-caption { margin: 0.85rem 0 0; color: var(--airbnb-gray); line-height: 1.55; }
+.sig-caption { margin: 0.85rem 0 0; color: var(--ink-soft); line-height: 1.55; }
 .sig-tip {
   border-radius: var(--airbnb-radius-md);
   padding: 0.95rem 1rem;
-  background: #fff8f8;
-  color: #7f1d1d;
+  background: var(--accent-gold-50);
+  color: #7A4A10;
   line-height: 1.6;
-  border: 1px solid #fecdd3;
+  border: 1px solid #F4D4A3;
 }
 @media (max-width: 767px) { .sig-layout { grid-template-columns: 1fr; } }
 
 /* ── Divider ─────────────────────────────────────────────── */
 .airbnb-divider {
   border: none;
-  border-top: 1px solid var(--airbnb-border);
+  border-top: 1px solid var(--line);
   margin: 2rem 0;
 }

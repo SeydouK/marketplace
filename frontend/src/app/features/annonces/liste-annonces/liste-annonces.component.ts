@@ -63,6 +63,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   statusFilter = '';
   dateFrom = '';
   dateTo = '';
+  sortBy: 'recent' | 'prix-asc' | 'prix-desc' = 'recent';
 
   loading = true;
   mapUnavailable = false;
@@ -72,7 +73,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   pageSize = 4;
   catalogMode: ListingCatalogMode = 'public';
 
-  readonly placeholderImage = 'https://placehold.co/960x720/fde2e2/7f1d1d?text=Animal';
+  readonly placeholderImage = 'https://placehold.co/960x720/F6F1E7/2D6A4F?text=Animal';
   readonly defaultMapCenter = {
     latitude: 7.539989,
     longitude: -5.54708,
@@ -281,6 +282,16 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         !this.dateTo || (createdAt !== null && createdAt <= new Date(this.dateTo + 'T23:59:59').getTime());
 
       return matchesLocation && matchesAnimal && matchesRegion && matchesPrice && matchesStatus && matchesDateFrom && matchesDateTo;
+    }).sort((a, b) => {
+      switch (this.sortBy) {
+        case 'prix-asc':  return (a.price ?? 0) - (b.price ?? 0);
+        case 'prix-desc': return (b.price ?? 0) - (a.price ?? 0);
+        default: {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+        }
+      }
     });
   }
 
@@ -406,6 +417,11 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.onFilterChange();
   }
 
+  updateSortBy(value: 'recent' | 'prix-asc' | 'prix-desc'): void {
+    this.sortBy = value;
+    this.onFilterChange();
+  }
+
   resetFilters(): void {
     this.location     = '';
     this.animalType   = '';
@@ -414,6 +430,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.statusFilter = '';
     this.dateFrom     = '';
     this.dateTo       = '';
+    this.sortBy       = 'recent';
     if (!this.isMineCatalog) {
       this.uiState.setSearchTerm('');
       this.uiState.setAnimalFilter('');
@@ -688,9 +705,9 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   private buildMarkerIcon(listing: Listing, active: boolean): any {
-    const bg = active ? 'linear-gradient(135deg,#7f1d1d 0%,#dc2626 100%)' : 'rgba(255,255,255,0.96)';
-    const color = active ? '#ffffff' : '#7f1d1d';
-    const shadow = active ? '0 18px 34px rgba(127,29,29,0.32)' : '0 16px 30px rgba(127,29,29,0.14)';
+    const bg = active ? 'linear-gradient(135deg,#1B4332 0%,#2D6A4F 100%)' : 'rgba(255,255,255,0.96)';
+    const color = active ? '#ffffff' : '#1B4332';
+    const shadow = active ? '0 18px 34px rgba(27,67,50,0.32)' : '0 16px 30px rgba(27,67,50,0.14)';
     const typeLabel = this.formatAnimalType(listing.animalType ?? '');
     const priceLabel = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(listing.price);
 
@@ -700,7 +717,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         <div style="min-width:110px;padding:10px 12px;border-radius:18px;background:${bg};color:${color};border:1px solid rgba(255,255,255,0.18);box-shadow:${shadow};text-align:left;position:relative;font-family:inherit;">
           <div style="font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;opacity:${active ? 0.78 : 0.66};">${typeLabel}</div>
           <div style="font-size:15px;font-weight:800;line-height:1.1;margin-top:3px;">${priceLabel} FCFA</div>
-          <div style="position:absolute;left:16px;bottom:-8px;width:16px;height:16px;background:${active ? '#991b1b' : '#ffffff'};transform:rotate(45deg);border-right:1px solid rgba(220,38,38,0.14);border-bottom:1px solid rgba(220,38,38,0.14);"></div>
+          <div style="position:absolute;left:16px;bottom:-8px;width:16px;height:16px;background:${active ? '#245540' : '#ffffff'};transform:rotate(45deg);border-right:1px solid rgba(45,106,79,0.14);border-bottom:1px solid rgba(45,106,79,0.14);"></div>
         </div>
       `,
       iconSize: [110, 54],

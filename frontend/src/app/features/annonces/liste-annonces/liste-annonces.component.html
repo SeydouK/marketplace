@@ -133,6 +133,16 @@
         />
       </div>
 
+      <!-- Tri -->
+      <div class="toolbar-field">
+        <label for="sortBy">Trier par</label>
+        <select id="sortBy" [ngModel]="sortBy" (ngModelChange)="updateSortBy($event)">
+          <option value="recent">Plus récentes</option>
+          <option value="prix-asc">Prix croissant</option>
+          <option value="prix-desc">Prix décroissant</option>
+        </select>
+      </div>
+
       <button type="button" class="toolbar-reset" (click)="resetFilters()">
         Réinitialiser
       </button>
@@ -244,7 +254,7 @@
                       class="animal-action animal-action--solid"
                       (click)="openListingDetails(listing, $event)"
                     >
-                      Voir le dossier
+                      Voir détails
                     </button>
                     <button
                       *ngIf="isMineCatalog"

@@ -22,6 +22,9 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
   dejaAuPanier = false;
   panierSuccesMessage = '';
 
+  activeImage = '';
+  similarListings: Listing[] = [];
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -33,18 +36,72 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.listingService.get(id).subscribe({
-        next: (listing) => {
-          this.listing = listing;
+    // Recharger la fiche à chaque changement d'id (navigation entre annonces similaires)
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        const id = params.get('id');
+        if (!id) {
           this.loading = false;
-        },
-        error: () => { this.loading = false; },
+          return;
+        }
+        this.loading = true;
+        this.listingService.get(id).subscribe({
+          next: (listing) => {
+            this.listing = listing;
+            this.activeImage = listing.image || listing.gallery?.[0] || '';
+            this.loading = false;
+            this.loadSimilar(listing);
+            if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
+          },
+          error: () => { this.loading = false; },
+        });
       });
-      return;
-    }
-    this.loading = false;
+  }
+
+  private loadSimilar(current: Listing): void {
+    this.listingService.search({})
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((listings) => {
+        const sameType = listings.filter(
+          (l) => l.id !== current.id && l.animalType === current.animalType
+        );
+        const others = listings.filter(
+          (l) => l.id !== current.id && l.animalType !== current.animalType
+        );
+        this.similarListings = [...sameType, ...others].slice(0, 4);
+      });
+  }
+
+  get galleryImages(): string[] {
+    if (!this.listing) return [];
+    const images = this.listing.gallery?.length
+      ? this.listing.gallery
+      : (this.listing.image ? [this.listing.image] : []);
+    return images;
+  }
+
+  setActiveImage(image: string): void {
+    this.activeImage = image;
+  }
+
+  get whatsappLink(): string | null {
+    const phone = this.listing?.sellerPhone?.replace(/[^0-9+]/g, '');
+    if (!phone) return null;
+    const message = encodeURIComponent(
+      `Bonjour, je suis intéressé(e) par votre annonce « ${this.listing?.title} » sur BétailMarket.`
+    );
+    return `https://wa.me/${phone.replace('+', '')}?text=${message}`;
+  }
+
+  get phoneLink(): string | null {
+    const phone = this.listing?.sellerPhone?.replace(/[^0-9+]/g, '');
+    return phone ? `tel:${phone}` : null;
+  }
+
+  get reportLink(): string {
+    const subject = encodeURIComponent(`Signalement d'annonce — ${this.listing?.title ?? ''} (${this.listing?.id ?? ''})`);
+    return `mailto:support@betailmarket.ci?subject=${subject}`;
   }
 
   get canEdit(): boolean {
@@ -54,6 +111,10 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
   get isAcheteur(): boolean {
     const role = this.auth.currentUser?.role;
     return role === 'USER' || role === 'ACHETEUR';
+  }
+
+  trackByListing(_: number, listing: Listing): string {
+    return listing.id;
   }
 
   ajouterAuPanier(): void {
