@@ -3,36 +3,64 @@
 <!-- ════════════════════════════════════
      VERSION DESKTOP
 ════════════════════════════════════ -->
-<div class="hidden md:block min-h-screen bg-white">
-  <div class="max-w-6xl mx-auto px-6 py-10">
+<div class="hidden md:block min-h-screen bg-[#FBF9F4]">
 
-    <!-- Titre page + badge rôle -->
-    <div class="flex items-center gap-3 mb-8">
-      <h1 class="text-2xl font-semibold text-gray-900">Profil</h1>
-      <span *ngIf="roleLabel"
-        class="px-3 py-1 text-xs font-semibold rounded-full {{ roleBadgeColor }}">
-        {{ roleLabel }}
-      </span>
+  <!-- ═══ BANDEAU HERO ═══ -->
+  <div class="relative overflow-hidden bg-gradient-to-br from-[#1B4332] to-[#2D6A4F]">
+    <div class="absolute -top-20 -right-16 w-72 h-72 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 left-1/3 w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none"></div>
+    <div class="relative max-w-6xl mx-auto px-6 pt-10 pb-24">
+      <div class="flex items-center gap-5">
+        <!-- Avatar -->
+        <div class="relative group cursor-pointer flex-shrink-0" (click)="triggerAvatarUpload()">
+          <div class="w-20 h-20 rounded-full bg-white/10 ring-4 ring-white/20 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+            <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Photo de profil" class="w-full h-full object-cover"/>
+            <span *ngIf="!avatarUrl">{{ avatarInitial }}</span>
+          </div>
+          <div class="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <span class="text-white text-[11px] font-medium">Changer</span>
+          </div>
+        </div>
+        <input #avatarInput type="file" accept="image/*" class="hidden" (change)="onAvatarSelected($event)"/>
+        <div class="min-w-0">
+          <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-1">Mon profil</p>
+          <h1 class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight truncate">{{ profile?.name || 'Utilisateur' }}</h1>
+          <div class="flex items-center gap-3 mt-2">
+            <span *ngIf="roleLabel"
+              class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-white/10 border border-white/20 text-white">
+              <i class="pi pi-user text-[11px]"></i> {{ roleLabel }}
+            </span>
+            <span *ngIf="kycApproved"
+              class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-white/10 border border-white/20 text-white">
+              <i class="pi pi-verified text-[#ECB867] text-[11px]"></i> Identité vérifiée
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="flex gap-10">
+  <!-- ═══ CONTENU (cartes en chevauchement du bandeau) ═══ -->
+  <div class="max-w-6xl mx-auto px-6 -mt-14 pb-16 relative">
+    <div class="flex gap-6 items-start">
 
       <!-- ═══ SIDEBAR ═══ -->
-      <aside class="flex flex-col gap-1 w-60 flex-shrink-0">
+      <aside class="w-64 flex-shrink-0 bg-white border border-[#E7E0D2] rounded-2xl shadow-card p-3 flex flex-col gap-1 sticky top-6">
         <button *ngFor="let section of sections"
           type="button"
           (click)="activeSection = section.key"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors text-left w-full"
           [ngClass]="activeSection === section.key
-            ? 'bg-[#F6F1E7] font-semibold text-gray-900'
+            ? 'bg-[#E0EEE4] font-semibold text-[#1B4332]'
             : 'text-gray-600 hover:bg-[#FBF9F4] font-medium'">
-          <i class="pi text-lg" [ngClass]="section.icon"></i>
+          <i class="pi text-lg" [ngClass]="section.icon"
+            [class.text-[#2D6A4F]]="activeSection === section.key"></i>
           {{ section.label }}
         </button>
       </aside>
 
       <!-- ═══ CONTENU ═══ -->
-      <main class="flex-1 min-w-0">
+      <main class="flex-1 min-w-0 bg-white border border-[#E7E0D2] rounded-2xl shadow-card p-8">
         <ng-container *ngTemplateOutlet="profilContent"></ng-container>
       </main>
     </div>
@@ -43,22 +71,23 @@
 <!-- ════════════════════════════════════
      VERSION MOBILE
 ════════════════════════════════════ -->
-<div class="md:hidden min-h-screen bg-white">
+<div class="md:hidden min-h-screen bg-[#FBF9F4]">
+
+  <!-- ── Bandeau hero mobile + carte profil ── -->
+  <div class="relative overflow-hidden bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] px-4 pt-6 pb-16">
+    <div class="absolute -top-16 -right-12 w-48 h-48 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <h1 class="relative text-xl font-extrabold text-white mb-1">Mon profil</h1>
+    <p class="relative text-xs text-white/70">Gérez vos informations et votre compte</p>
+  </div>
 
   <!-- Page principale profil -->
-  <div class="px-4 pt-6 pb-24">
-
-    <!-- Titre -->
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Profil</h1>
-      <!-- Clochette gérée par le header, ici optionnel -->
-    </div>
+  <div class="px-4 -mt-10 pb-24 relative">
 
     <!-- ── Carte profil (bouton qui ouvre le slider) ── -->
     <button type="button" (click)="openMobilePanel()"
-      class="w-full bg-white border border-[#F0EAD9] rounded-2xl shadow-sm p-5 flex items-center gap-4 mb-4 hover:shadow-md transition-shadow text-left">
+      class="w-full bg-white border border-[#E7E0D2] rounded-2xl shadow-card p-5 flex items-center gap-4 mb-4 hover:shadow-card-hover transition-shadow text-left">
       <!-- Avatar -->
-      <div class="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white text-xl font-bold flex-shrink-0 overflow-hidden">
+      <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] flex items-center justify-center text-white text-xl font-bold flex-shrink-0 overflow-hidden">
         <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Photo de profil" class="w-full h-full object-cover"/>
         <span *ngIf="!avatarUrl">{{ avatarInitial }}</span>
       </div>
@@ -68,9 +97,7 @@
         <p class="text-sm text-gray-500">{{ roleLabel }}</p>
       </div>
       <!-- Chevron -->
-      <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-      </svg>
+      <i class="pi pi-chevron-right text-gray-400 flex-shrink-0"></i>
     </button>
 
     <!-- ── Grille actions rapides (style Airbnb) ── -->
@@ -256,7 +283,7 @@
         <!-- Avatar centré -->
         <div class="flex flex-col items-center mb-8">
           <div class="relative group cursor-pointer mb-3" (click)="triggerAvatarUpload()">
-            <div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
               <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Photo" class="w-full h-full object-cover"/>
               <span *ngIf="!avatarUrl">{{ avatarInitial }}</span>
             </div>
@@ -383,30 +410,16 @@
       </a>
     </div>
 
-    <div class="flex items-start gap-8 mb-8">
-      <div class="flex-shrink-0 bg-white border border-[#E7E0D2] rounded-2xl shadow-sm p-6 flex flex-col items-center gap-2 w-44">
-        <div class="relative group cursor-pointer" (click)="triggerAvatarUpload()">
-          <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-white text-2xl font-semibold select-none overflow-hidden">
-            <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Photo de profil" class="w-full h-full object-cover"/>
-            <span *ngIf="!avatarUrl">{{ avatarInitial }}</span>
-          </div>
-          <div class="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <span class="text-white text-xs font-medium text-center leading-tight px-1">Changer</span>
-          </div>
-        </div>
-        <input #avatarInput type="file" accept="image/*" class="hidden" (change)="onAvatarSelected($event)"/>
-        <p class="text-base font-bold text-gray-900 text-center">{{ profile?.name || 'Utilisateur' }}</p>
-        <p class="text-sm text-gray-500">{{ roleLabel }}</p>
-        <p *ngIf="uploadingAvatar" class="text-xs text-gray-400 animate-pulse">Envoi...</p>
-      </div>
+    <div class="mb-8">
+      <p *ngIf="uploadingAvatar" class="text-xs text-[#2D6A4F] animate-pulse mb-3">Envoi de la photo...</p>
 
-      <div class="flex-1 flex flex-col gap-3 pt-2">
-        <div class="flex items-center gap-2 text-sm text-gray-700">
-          <i class="pi pi-envelope text-base leading-none"></i>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div class="flex items-center gap-2 text-sm text-gray-700 rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-4 py-3">
+          <i class="pi pi-envelope text-base leading-none text-[#8B6F55]"></i>
           <span>{{ maskedEmail }}</span>
         </div>
-        <div class="flex items-center gap-2 text-sm text-gray-700">
-          <i class="pi pi-id-card text-base leading-none"></i>
+        <div class="flex items-center gap-2 text-sm text-gray-700 rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-4 py-3">
+          <i class="pi pi-id-card text-base leading-none text-[#8B6F55]"></i>
           <span>Identité :&nbsp;
             <span *ngIf="kycApproved" class="text-green-600 font-semibold"><i class="pi pi-check-circle mr-1"></i>Vérifiée</span>
             <span *ngIf="!kycApproved && (kycStatus === 'PENDING' || kycStatus === 'CNI_UPLOADED')" class="text-amber-500 font-medium"><i class="pi pi-clock mr-1"></i>En cours</span>
@@ -416,8 +429,8 @@
           </span>
         </div>
         <ng-container *ngFor="let info of roleSpecificInfos">
-          <div class="flex items-center gap-2 text-sm text-gray-700">
-            <i class="pi pi-info-circle text-base leading-none"></i>
+          <div class="flex items-center gap-2 text-sm text-gray-700 rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-4 py-3">
+            <i class="pi pi-info-circle text-base leading-none text-[#8B6F55]"></i>
             <span>{{ info.label }} :&nbsp;<span class="font-medium">{{ info.value }}</span></span>
           </div>
         </ng-container>

@@ -1,49 +1,70 @@
 <!-- features/anader/dashboard-anader/dashboard-anader.component.html -->
 <section class="max-w-7xl mx-auto py-8 px-4 space-y-8">
 
-  <!-- ═══════════════════════════════════════════
-       EN-TÊTE
-  ═══════════════════════════════════════════ -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-    <div>
-      <p class="text-sm text-gray-500 mb-1">Espace agent ANADER</p>
-      <h1 class="text-2xl font-bold text-gray-900">
-        Bonjour, {{ profile?.name?.split(' ')[0] || 'Agent' }} 👋
-      </h1>
+  <!-- ═══ HERO ═══ -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/20">
+    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-2">Espace agent ANADER</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          Bonjour, {{ profile?.name?.split(' ')[0] || 'Agent' }}
+        </h1>
+        <p class="mt-2 text-sm text-white/75 max-w-xl leading-relaxed">
+          Identifiez les animaux validés, posez les puces RFID et suivez votre activité de terrain.
+        </p>
+      </div>
+      <span class="hidden sm:flex w-16 h-16 rounded-2xl bg-white/10 border border-white/15 items-center justify-center flex-shrink-0">
+        <i class="pi pi-qrcode text-2xl text-[#ECB867]"></i>
+      </span>
     </div>
-    <!--<div class="flex items-center gap-2 px-4 py-2 bg-yellow-50 border border-yellow-200 rounded-xl text-sm text-yellow-800">
-      <span>🏷️</span>
-      <span class="font-medium">Agent ANADER</span>
-      <span class="text-yellow-500">·</span>
-      <span>{{ profile?.zoneAffectation || 'Zone non renseignée' }}</span>
-    </div>-->
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       KPI : 3 cartes
-  ═══════════════════════════════════════════ -->
+  <!-- ═══ KPI : 3 cartes ═══ -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-    <article class="bg-white border border-[#F0EAD9] rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">Puces insérées ce mois</p>
-      <p class="text-2xl font-bold text-gray-900">{{ stats?.rfidInseresMois ?? '–' }}</p>
-      <p class="text-xs text-gray-400 mt-1">
-        {{ stats?.rfidInseresTotal ?? 0 }} au total
-      </p>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Puces insérées ce mois</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.rfidInseresMois ?? '–' }}</p>
+          <p class="mt-2 text-xs text-gray-400">{{ stats?.rfidInseresTotal ?? 0 }} au total</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-qrcode text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
 
-    <article class="bg-white border border-amber-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">Animaux sans puce</p>
-      <p class="text-2xl font-bold text-amber-500">{{ stats?.animauxSansRfid ?? '–' }}</p>
-      <p class="text-xs text-gray-400 mt-1">À équiper en priorité</p>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Animaux sans puce</p>
+          <p class="mt-2 text-3xl font-extrabold leading-none"
+            [ngClass]="(stats?.animauxSansRfid ?? 0) > 0 ? 'text-[#B96416]' : 'text-[#1B4332]'">
+            {{ stats?.animauxSansRfid ?? '–' }}
+          </p>
+          <p class="mt-2 text-xs text-gray-400">À équiper en priorité</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-exclamation-circle text-lg text-[#B96416]"></i>
+        </span>
+      </div>
     </article>
 
-    <article class="bg-white border border-green-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">Rémunération estimée</p>
-      <p class="text-2xl font-bold text-green-600">
-        {{ (stats?.remunerationEstimee ?? 0) | number }} FCFA
-      </p>
-      <p class="text-xs text-gray-400 mt-1">500 FCFA × {{ stats?.rfidInseresTotal ?? 0 }} puces</p>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Rémunération estimée</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#2D6A4F] leading-none">
+            {{ (stats?.remunerationEstimee ?? 0) | number }} <span class="text-base font-bold text-[#8B6F55]">FCFA</span>
+          </p>
+          <p class="mt-2 text-xs text-gray-400">500 FCFA × {{ stats?.rfidInseresTotal ?? 0 }} puces</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-wallet text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
 
   </div>
@@ -74,9 +95,11 @@
 
     <!-- État vide -->
     <div *ngIf="!loading && animaux.length === 0"
-      class="bg-white border border-[#F0EAD9] rounded-2xl p-12 text-center">
-      <p class="text-3xl mb-3">✅</p>
-      <p class="text-sm font-medium text-gray-700">Tous les animaux sont équipés</p>
+      class="bg-white border border-dashed border-[#DFD2B8] rounded-2xl p-12 text-center">
+      <span class="inline-flex w-14 h-14 rounded-full bg-[#E0EEE4] items-center justify-center mb-3">
+        <i class="pi pi-check-circle text-xl text-[#2D6A4F]"></i>
+      </span>
+      <p class="text-sm font-semibold text-gray-700">Tous les animaux sont équipés</p>
       <p class="text-xs text-gray-400 mt-1">Aucun animal en attente de puce RFID
         <span *ngIf="selectedRegion">dans la région {{ selectedRegion }}</span>
       </p>
@@ -102,8 +125,8 @@
             [alt]="animal.type"
             class="w-full h-full object-cover"/>
           <div *ngIf="!animal.photos?.[0]"
-            class="w-full h-full flex items-center justify-center text-2xl">
-            🐄
+            class="w-full h-full flex items-center justify-center text-[#C9B690]">
+            <i class="pi pi-image text-xl"></i>
           </div>
         </div>
 

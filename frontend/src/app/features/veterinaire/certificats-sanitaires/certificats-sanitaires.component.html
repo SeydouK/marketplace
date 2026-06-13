@@ -7,7 +7,7 @@
       <p class="text-sm text-gray-500 mt-1">Demandes en attente de validation vétérinaire</p>
     </div>
     <button (click)="showForm = !showForm"
-      class="bg-[#611a24] text-white px-5 py-3 rounded-lg hover:bg-[#7a2030] transition inline-flex items-center gap-3">
+      class="bg-[#2D6A4F] text-white px-5 py-3 rounded-lg hover:bg-[#245540] transition inline-flex items-center gap-3">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
       </svg>
@@ -23,12 +23,12 @@
         <label class="text-sm font-medium text-gray-700">ID Animal</label>
         <input type="text" name="animalId" [(ngModel)]="newCert.animalId" required
           placeholder="ex : 00124"
-          class="border border-[#DFD2B8] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#611a24]"/>
+          class="border border-[#DFD2B8] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#2D6A4F]"/>
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-sm font-medium text-gray-700">Type de certificat</label>
         <select name="type" [(ngModel)]="newCert.type" required
-          class="border border-[#DFD2B8] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#611a24]">
+          class="border border-[#DFD2B8] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#2D6A4F]">
           <option value="">Choisir...</option>
           <option value="CERTIFICAT_VETERINAIRE">Certificat vétérinaire</option>
           <option value="CARNET_VACCINATION">Carnet de vaccination</option>
@@ -39,7 +39,7 @@
       <div class="flex flex-col gap-1">
         <label class="text-sm font-medium text-gray-700">Date d'expiration</label>
         <input type="date" name="expiresAt" [(ngModel)]="newCert.expiresAt" required
-          class="border border-[#DFD2B8] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#611a24]"/>
+          class="border border-[#DFD2B8] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#2D6A4F]"/>
       </div>
       <div class="flex items-end">
         <button type="submit" [disabled]="!certForm.valid"
@@ -109,7 +109,7 @@
                 *ngIf="demande.status === 'EN_ATTENTE_VALIDATION'"
                 type="button"
                 (click)="openModal(demande)"
-                class="text-xs px-3 py-2 bg-[#611a24] text-white rounded-lg hover:bg-[#7a2030] transition">
+                class="text-xs px-3 py-2 bg-[#2D6A4F] text-white rounded-lg hover:bg-[#245540] transition">
                 Examiner
               </button>
               <span *ngIf="demande.status === 'VALIDE'"
@@ -165,8 +165,8 @@
 
           <div class="flex items-center gap-3">
             <!-- Icône document -->
-            <div class="w-9 h-9 rounded-lg bg-[#611a24]/10 flex items-center justify-center flex-shrink-0">
-              <svg class="w-4 h-4 text-[#611a24]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-9 h-9 rounded-lg bg-[#2D6A4F]/10 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
               </svg>
@@ -188,7 +188,7 @@
             <a *ngIf="doc.fileUrl"
               [href]="doc.fileUrl"
               target="_blank"
-              class="text-xs text-[#611a24] underline hover:no-underline">
+              class="text-xs text-[#2D6A4F] underline hover:no-underline">
               Voir
             </a>
             <span *ngIf="!doc.fileUrl" class="text-xs text-gray-400 italic">Non fourni</span>
