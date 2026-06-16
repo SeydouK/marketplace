@@ -215,18 +215,7 @@
       </div>
     </div>
 
-    <!-- Ligne 3 : Filtres animaux -->
-    <div *ngIf="isHomePage" class="flex items-center justify-center gap-10 pb-4">
-      <button *ngFor="let filter of animalFilters" type="button"
-        (click)="setAnimalFilter(filter.value)"
-        class="flex-shrink-0 flex flex-col items-center gap-2 pb-2 border-b-2 transition-all"
-        [ngClass]="animalFilter === filter.value
-          ? 'border-[#2D6A4F] opacity-100'
-          : 'border-transparent opacity-50 hover:opacity-90 hover:border-[#E7E0D2]'">
-        <img [src]="filter.icon" class="h-7 w-7" [alt]="filter.label"/>
-        <span class="text-xs font-medium text-gray-700 whitespace-nowrap">{{ filter.label }}</span>
-      </button>
-    </div>
+    <!-- Filtres animaux : déplacés sur la page d'accueil (catégories vertes) pour éviter le doublon -->
   </div>
 
   <!-- ════ MOBILE ════ -->

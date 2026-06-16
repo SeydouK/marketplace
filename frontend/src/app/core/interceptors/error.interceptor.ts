@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
+  HttpContextToken,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
@@ -11,6 +12,13 @@ import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
+
+/**
+ * Quand ce token vaut `true` sur une requête, l'ErrorInterceptor ne fait
+ * AUCUN traitement (ni toast global, ni logout/redirect 401) : le composant
+ * appelant prend en charge l'erreur lui-même. Évite les toasts en double.
+ */
+export const SKIP_GLOBAL_ERROR = new HttpContextToken<boolean>(() => false);
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -26,6 +34,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        // Le composant gère lui-même cette erreur → on relaie sans rien afficher
+        if (req.context.get(SKIP_GLOBAL_ERROR)) {
+          return throwError(() => error);
+        }
+
         const backendMessage = this.resolveBackendMessage(error);
 
         if (error.status === 401) {
