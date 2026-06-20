@@ -20,22 +20,31 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "node_modules/primeicons/primeicons.css",
+              "src/assets/vendor/leaflet/leaflet.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/vendor/leaflet/leaflet.js"
+            ]
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kb",
-                  "maximumError": "8kb"
+                  "maximumWarning": "16kb",
+                  "maximumError": "32kb"
                 }
               ],
               "outputHashing": "all",

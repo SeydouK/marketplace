@@ -1,0 +1,13 @@
+[build]
+  base = "frontend"
+  command = "npm run build -- --configuration production"
+  publish = "dist/marketplace-frontend"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# SPA Angular : toutes les routes renvoient index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

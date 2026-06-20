@@ -108,10 +108,10 @@ export class GestionUtilisateursComponent implements OnInit {
       [Role.VENDEUR]: 'bg-blue-100 text-blue-800',
       [Role.VETERINAIRE]: 'bg-amber-100 text-amber-800',
       [Role.AGENT_ANADER]: 'bg-green-100 text-green-800',
-      [Role.ACHETEUR]: 'bg-gray-100 text-gray-700',
-      [Role.USER]: 'bg-gray-100 text-gray-700',
+      [Role.ACHETEUR]: 'bg-[#F6F1E7] text-gray-700',
+      [Role.USER]: 'bg-[#F6F1E7] text-gray-700',
     };
-    return role ? (map[role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
+    return role ? (map[role] ?? 'bg-[#F6F1E7] text-gray-700') : 'bg-[#F6F1E7] text-gray-700';
   }
 
   getKycBadgeClass(status?: string | null): string {
@@ -122,7 +122,7 @@ export class GestionUtilisateursComponent implements OnInit {
       PENDING: 'bg-yellow-100 text-yellow-800',
       REJECTED: 'bg-red-100 text-red-800',
     };
-    return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
+    return status ? (map[status] ?? 'bg-[#F6F1E7] text-gray-600') : 'bg-[#F6F1E7] text-gray-600';
   }
 
   canModerateKyc(status?: string | null): boolean {

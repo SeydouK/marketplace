@@ -1,67 +1,122 @@
 <!-- veterinaire/dashboard-veterinaire/dashboard-veterinaire.component.html -->
-<section class="dashboard-shell max-w-7xl mx-auto py-8 px-4">
-  <div class="dashboard-hero">
-    <div>
-      <p class="dashboard-eyebrow">Espace vétérinaire</p>
-      <h1>Bonjour Dr {{ profile?.name }}</h1>
-      <p class="dashboard-copy">
-        Gérez les <strong>certificats sanitaires</strong>, validez les inspections
-        et assurez la traçabilité de santé des animaux sur la plateforme.
-      </p>
+<section class="max-w-7xl mx-auto py-8 px-4 space-y-8">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/20">
+    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-2">Espace vétérinaire</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Bonjour Dr {{ profile?.name }}</h1>
+        <p class="mt-2 text-sm text-white/75 max-w-xl leading-relaxed">
+          Gérez les certificats sanitaires, validez les inspections et assurez
+          la traçabilité de santé des animaux sur la plateforme.
+        </p>
+      </div>
+      <span class="hidden sm:flex w-16 h-16 rounded-2xl bg-white/10 border border-white/15 items-center justify-center flex-shrink-0">
+        <i class="pi pi-heart text-2xl text-[#ECB867]"></i>
+      </span>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-    <article class="dashboard-card">
-      <span class="dashboard-label">Inspections en attente</span>
-      <strong class="dashboard-value">{{ stats?.pendingInspections ?? '—' }}</strong>
+  <!-- ═══ KPI ═══ -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Inspections en attente</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.pendingInspections ?? '—' }}</p>
+          <p class="mt-2 text-xs text-gray-400">À planifier ou réaliser</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-calendar text-lg text-[#B96416]"></i>
+        </span>
+      </div>
     </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">Certificats émis</span>
-      <strong class="dashboard-value">{{ stats?.certificatesIssued ?? '—' }}</strong>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Certificats émis</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.certificatesIssued ?? '—' }}</p>
+          <p class="mt-2 text-xs text-gray-400">Documents sanitaires validés</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-verified text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">Alertes sanitaires</span>
-      <strong class="dashboard-value">{{ stats?.healthAlerts ?? '—' }}</strong>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Alertes sanitaires</p>
+          <p class="mt-2 text-3xl font-extrabold leading-none"
+            [ngClass]="(stats?.healthAlerts ?? 0) > 0 ? 'text-red-600' : 'text-[#1B4332]'">
+            {{ stats?.healthAlerts ?? '—' }}
+          </p>
+          <p class="mt-2 text-xs text-gray-400">Situations à surveiller</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-exclamation-triangle text-lg text-red-500"></i>
+        </span>
+      </div>
     </article>
   </div>
 
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold text-[#611a24] mb-4">Actions</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <!-- ═══ ACTIONS ═══ -->
+  <div>
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Actions rapides</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-      <a routerLink="/veterinaire/certificats" class="dashboard-action dashboard-action--solid">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="font-medium">Certificats sanitaires</span>
+      <a routerLink="/veterinaire/certificats"
+        class="group flex items-center gap-4 rounded-2xl bg-[#2D6A4F] hover:bg-[#245540] text-white p-5 shadow-cta transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-verified text-lg"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm">Certificats sanitaires</p>
+          <p class="text-xs text-white/70 mt-0.5">Émettre et consulter les certificats</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm opacity-60 group-hover:translate-x-1 transition-transform"></i>
       </a>
 
-      <a routerLink="/veterinaire/inspections" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-        <span class="font-medium">Inspections planifiées</span>
+      <a routerLink="/veterinaire/inspections"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-calendar text-lg text-[#7A5C43]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Inspections planifiées</p>
+          <p class="text-xs text-gray-400 mt-0.5">Suivre les visites terrain</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
       </a>
 
-      <a routerLink="/animaux/validation" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="font-medium">Validation sanitaire ANADER</span>
+      <a routerLink="/animaux/validation"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-check-circle text-lg text-[#2D6A4F]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Validation sanitaire</p>
+          <p class="text-xs text-gray-400 mt-0.5">Dossiers animaux en attente</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
       </a>
 
-      <a routerLink="/animaux" class="dashboard-action dashboard-action--wide">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span class="font-medium">Rechercher un animal</span>
+      <a routerLink="/annonces"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-search text-lg text-[#B96416]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Rechercher un animal</p>
+          <p class="text-xs text-gray-400 mt-0.5">Catalogue et carte des dossiers</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
       </a>
-
     </div>
   </div>
 </section>

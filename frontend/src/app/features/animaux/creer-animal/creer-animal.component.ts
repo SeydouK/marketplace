@@ -14,6 +14,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { Role } from '../../../core/models/role.enum';
 import { ToastService } from '../../../core/services/toast.service';
 import {
   Animal,
@@ -438,7 +439,9 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
             : "Le dossier animal a été enregistré. Il reste en attente de validation sanitaire."
         );
         void this.router.navigate(
-          this.editMode ? ['/annonces', animal.id] : ['/annonces/mes-annonces']
+          this.editMode
+            ? ['/annonces', animal.id]
+            : (this.auth.hasRole(Role.VENDEUR) ? ['/vendeur/mes-annonces'] : ['/annonces'])
         );
       },
       error: () => {
@@ -749,6 +752,12 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       script.onerror = () => reject(new Error('Leaflet script could not be loaded'));
       this.document.body.appendChild(script);
+    });
+
+    // Ne pas mettre en cache un échec : permettre une nouvelle tentative au prochain passage
+    CreerAnimalComponent.leafletLoadPromise = CreerAnimalComponent.leafletLoadPromise.catch((error) => {
+      CreerAnimalComponent.leafletLoadPromise = undefined;
+      throw error;
     });
 
     return CreerAnimalComponent.leafletLoadPromise;

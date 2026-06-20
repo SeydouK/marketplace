@@ -17,6 +17,7 @@ public class UserProfileDTO {
     private boolean devenirVendeur;
     private long animalsCount;
     private long pendingHealthValidationCount;
+    private String avatarUrl;
 
     public UserProfileDTO(
             Long id,
@@ -27,7 +28,8 @@ public class UserProfileDTO {
             KycStatus kycStatus,
             boolean devenirVendeur,
             long animalsCount,
-            long pendingHealthValidationCount
+            long pendingHealthValidationCount,
+            String avatarUrl
     ) {
         this.id = id;
         this.name = name;
@@ -38,5 +40,6 @@ public class UserProfileDTO {
         this.devenirVendeur = devenirVendeur;
         this.animalsCount = animalsCount;
         this.pendingHealthValidationCount = pendingHealthValidationCount;
+        this.avatarUrl = avatarUrl;
     }
 }

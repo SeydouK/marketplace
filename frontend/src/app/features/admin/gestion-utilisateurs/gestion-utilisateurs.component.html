@@ -12,17 +12,17 @@
         *ngFor="let f of filters"
         type="button"
         (click)="setFilter(f.value)"
-        [class.bg-[#611a24]]="activeFilter === f.value"
+        [class.bg-[#2D6A4F]]="activeFilter === f.value"
         [class.text-white]="activeFilter === f.value"
-        class="px-4 py-2 rounded-lg text-sm border border-[#611a24]/30 hover:bg-[#611a24]/10 transition">
+        class="px-4 py-2 rounded-lg text-sm border border-[#2D6A4F]/30 hover:bg-[#2D6A4F]/10 transition">
         {{ f.label }}
       </button>
     </div>
   </div>
 
-  <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+  <div class="overflow-x-auto rounded-xl border border-[#E7E0D2] bg-white">
     <table class="w-full text-sm">
-      <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+      <thead class="bg-[#FBF9F4] text-gray-600 uppercase text-xs">
         <tr>
           <th class="px-4 py-3 text-left">Utilisateur</th>
           <th class="px-4 py-3 text-left">Email</th>
@@ -33,7 +33,7 @@
         </tr>
       </thead>
 
-      <tbody class="divide-y divide-gray-100">
+      <tbody class="divide-y divide-[#F0EAD9]">
         <tr *ngIf="loading">
           <td colspan="6" class="px-4 py-8 text-center text-gray-500">
             Chargement des utilisateurs...
@@ -48,7 +48,7 @@
 
         <tr
           *ngFor="let user of users; trackBy: trackByUserId"
-          class="hover:bg-gray-50 transition">
+          class="hover:bg-[#FBF9F4] transition">
           <td class="px-4 py-3">
             <div class="font-medium text-gray-900">
               {{ user.surname }} {{ user.name }}
@@ -77,7 +77,7 @@
                 [ngModel]="user.role"
                 (ngModelChange)="changeRole(user, $event)"
                 [disabled]="updatingUserId === user.id"
-                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-700 disabled:opacity-50">
+                class="w-full rounded-lg border border-[#DFD2B8] bg-white px-3 py-2 text-xs text-gray-700 disabled:opacity-50">
                 <option *ngFor="let role of roles" [ngValue]="role">
                   {{ role }}
                 </option>
@@ -98,7 +98,7 @@
               class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
               [class.bg-amber-100]="user.devenirVendeur"
               [class.text-amber-800]="user.devenirVendeur"
-              [class.bg-gray-100]="!user.devenirVendeur"
+              [class.bg-[#F6F1E7]]="!user.devenirVendeur"
               [class.text-gray-600]="!user.devenirVendeur">
               {{ user.devenirVendeur ? 'En attente' : 'Aucune' }}
             </span>
@@ -137,7 +137,7 @@
         type="button"
         (click)="prevPage()"
         [disabled]="currentPage === 0 || loading"
-        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
         Precedent
       </button>
 
@@ -145,7 +145,7 @@
         type="button"
         (click)="nextPage()"
         [disabled]="currentPage >= totalPages - 1 || loading"
-        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
         Suivant
       </button>
     </div>

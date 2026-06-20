@@ -1,222 +1,309 @@
 <section class="max-w-7xl mx-auto py-6 px-4 sm:py-8" *ngIf="listing; else detailState">
+
+  <!-- Fil d'ariane / retour -->
   <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
     <a
       routerLink="/annonces"
-      class="inline-flex items-center gap-2 self-start rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-red-500 hover:text-red-700"
+      class="inline-flex items-center gap-2 self-start rounded-full border border-[#E7E0D2] bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-[#2D6A4F] hover:text-[#2D6A4F]"
     >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
+      <i class="pi pi-arrow-left text-xs"></i>
       Retour aux annonces
     </a>
 
     <div class="flex flex-wrap items-center gap-2 text-sm">
-      <span class="rounded-full bg-red-50 px-3 py-1 font-medium text-red-700">
+      <span class="rounded-full bg-[#E0EEE4] px-3 py-1 font-semibold text-[#1B4332]">
         {{ listing.animalType | titlecase }}
       </span>
-      <span class="text-gray-500">{{ listing.location }}</span>
+      <span *ngIf="listing.status === 'DISPONIBLE'" class="rounded-full bg-[#F2F7F3] border border-[#C2DCCB] px-3 py-1 font-semibold text-[#2D6A4F]">
+        Disponible
+      </span>
+      <span class="inline-flex items-center gap-1 text-gray-500">
+        <i class="pi pi-map-marker text-xs"></i>
+        {{ listing.location }}
+      </span>
     </div>
   </div>
 
-  <div class="relative overflow-hidden rounded-[2rem] bg-gray-100 aspect-[16/10] sm:aspect-[16/8]">
-    <img
-      [src]="listing.image || 'https://placehold.co/1200x800/fde2e2/7f1d1d?text=Animal'"
-      [alt]="listing.title"
-      class="w-full h-full object-cover"
-    />
-    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent p-5 sm:p-8">
-      <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p class="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-red-100">Dossier animal</p>
-          <h1 class="text-2xl font-semibold text-white sm:text-4xl">{{ listing.title }}</h1>
-          <p class="mt-2 max-w-2xl text-sm text-red-50 sm:text-base">
-            {{ listing.location }} • {{ listing.quantity }} tête<span *ngIf="listing.quantity > 1">s</span>
-          </p>
-        </div>
-
-        <div class="rounded-3xl bg-white/12 px-4 py-3 backdrop-blur-sm">
-          <p class="text-xs uppercase tracking-[0.2em] text-red-100">Prix indicatif</p>
-          <p class="mt-1 text-2xl font-semibold text-white sm:text-3xl">
-            {{ listing.price | number:'1.0-0' }} FCFA
-          </p>
-        </div>
+  <!-- ════ GALERIE ════ -->
+  <div class="grid grid-cols-1 gap-3">
+    <div class="relative overflow-hidden rounded-3xl bg-[#F6F1E7] aspect-[16/10] sm:aspect-[16/8]">
+      <img
+        [src]="activeImage || 'https://placehold.co/1200x800/F6F1E7/2D6A4F?text=Animal'"
+        [alt]="listing.title"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-[#2D6A4F]/95 backdrop-blur-sm px-3.5 py-1.5 text-xs font-bold text-white shadow">
+        <i class="pi pi-verified"></i>
+        Vendeur vérifié · Annonce contrôlée
       </div>
+    </div>
+
+    <!-- Miniatures -->
+    <div *ngIf="galleryImages.length > 1" class="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+      <button
+        *ngFor="let image of galleryImages"
+        type="button"
+        (click)="setActiveImage(image)"
+        class="flex-shrink-0 w-24 h-20 rounded-2xl overflow-hidden border-2 transition-all"
+        [ngClass]="activeImage === image ? 'border-[#2D6A4F] shadow-md' : 'border-transparent opacity-70 hover:opacity-100'"
+      >
+        <img [src]="image" [alt]="listing.title" class="w-full h-full object-cover"/>
+      </button>
     </div>
   </div>
 
   <div class="grid grid-cols-1 gap-6 mt-6 xl:grid-cols-[1.6fr_0.95fr]">
+
+    <!-- ════ COLONNE PRINCIPALE ════ -->
     <div class="space-y-6">
-      <div class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div class="rounded-2xl bg-red-50/70 p-4">
-            <p class="text-sm text-gray-500 mb-1">Race</p>
-            <p class="font-semibold text-gray-900">{{ listing.breed || 'Non renseignée' }}</p>
+
+      <!-- Titre + prix -->
+      <div class="rounded-3xl border border-[#E7E0D2] bg-white p-5 shadow-card sm:p-7">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">{{ listing.title }}</h1>
+            <p class="mt-2 flex items-center gap-2 text-gray-500">
+              <i class="pi pi-map-marker text-sm text-[#8B6F55]"></i>
+              {{ listing.location }}
+              <span *ngIf="listing.quantity" class="text-gray-400">· {{ listing.quantity }} tête<span *ngIf="(listing.quantity ?? 0) > 1">s</span></span>
+            </p>
           </div>
-          <div class="rounded-2xl bg-red-50/70 p-4">
-            <p class="text-sm text-gray-500 mb-1">Statut de publication</p>
-            <p class="font-semibold text-gray-900">{{ listing.status | titlecase }}</p>
+          <div class="rounded-2xl bg-[#F2F7F3] border border-[#C2DCCB] px-5 py-3 text-right flex-shrink-0">
+            <p class="text-[11px] uppercase tracking-widest font-bold text-[#41855D]">Prix</p>
+            <p class="text-2xl sm:text-3xl font-extrabold text-[#1B4332] whitespace-nowrap">
+              {{ listing.price | number:'1.0-0' }} <span class="text-sm font-bold text-[#8B6F55]">FCFA</span>
+            </p>
           </div>
-          <div class="rounded-2xl bg-red-50/70 p-4">
-            <p class="text-sm text-gray-500 mb-1">Propriétaire</p>
-            <p class="font-semibold text-gray-900">{{ listing.sellerName }}</p>
+        </div>
+
+        <!-- Caractéristiques -->
+        <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div class="rounded-2xl bg-[#FBF9F4] border border-[#F0EAD9] p-4">
+            <p class="text-xs text-gray-500 mb-1">Espèce</p>
+            <p class="font-bold text-gray-900">{{ listing.animalType | titlecase }}</p>
           </div>
-          <div class="rounded-2xl bg-red-50/70 p-4">
-            <p class="text-sm text-gray-500 mb-1">Contact</p>
-            <p class="font-semibold text-gray-900">{{ listing.sellerEmail || 'Non renseigné' }}</p>
+          <div class="rounded-2xl bg-[#FBF9F4] border border-[#F0EAD9] p-4">
+            <p class="text-xs text-gray-500 mb-1">Race</p>
+            <p class="font-bold text-gray-900">{{ listing.breed || 'Non renseignée' }}</p>
           </div>
-          <div class="rounded-2xl bg-red-50/70 p-4 sm:col-span-2">
-            <p class="text-sm text-gray-500 mb-1">Référence de traçabilité</p>
-            <p class="font-semibold text-gray-900 break-all">{{ listing.qrCode || 'Non renseignée' }}</p>
+          <div class="rounded-2xl bg-[#FBF9F4] border border-[#F0EAD9] p-4">
+            <p class="text-xs text-gray-500 mb-1">Quantité</p>
+            <p class="font-bold text-gray-900">{{ listing.quantity || 1 }} tête<span *ngIf="(listing.quantity ?? 0) > 1">s</span></p>
           </div>
+          <div class="rounded-2xl bg-[#FBF9F4] border border-[#F0EAD9] p-4">
+            <p class="text-xs text-gray-500 mb-1">Statut</p>
+            <p class="font-bold text-gray-900">{{ listing.status | titlecase }}</p>
+          </div>
+        </div>
+
+        <div *ngIf="listing.qrCode" class="mt-3 rounded-2xl bg-[#FBF9F4] border border-[#F0EAD9] p-4">
+          <p class="text-xs text-gray-500 mb-1">Référence de traçabilité</p>
+          <p class="font-semibold text-gray-900 break-all">{{ listing.qrCode }}</p>
         </div>
       </div>
 
-      <div class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Présentation</h2>
+      <!-- Description -->
+      <div class="rounded-3xl border border-[#E7E0D2] bg-white p-5 shadow-card sm:p-7">
+        <h2 class="text-xl font-bold text-gray-900 mb-3">Description</h2>
         <p class="text-gray-600 leading-7">
           {{ listing.description || fallbackDescription }}
         </p>
       </div>
 
-      <div *ngIf="listing.gallery?.length" class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
-        <div class="flex items-center justify-between gap-3 mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">Galerie</h2>
-          <span class="text-sm text-gray-500">{{ listing.gallery?.length }} média(s)</span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div
-            *ngFor="let image of listing.gallery"
-            class="overflow-hidden rounded-2xl bg-red-50 aspect-square"
-          >
-            <img [src]="image" [alt]="listing.title" class="h-full w-full object-cover" />
-          </div>
-        </div>
+      <!-- Conseils avant achat -->
+      <div class="rounded-3xl border border-[#F4D4A3] bg-[#FDF6EC] p-5 sm:p-6">
+        <h3 class="flex items-center gap-2 font-bold text-[#7A4A10]">
+          <i class="pi pi-lightbulb"></i>
+          Conseils avant achat
+        </h3>
+        <ul class="mt-3 space-y-2 text-sm text-[#7A4A10]/90">
+          <li class="flex items-start gap-2"><i class="pi pi-check text-[#B96416] mt-0.5 text-xs"></i> Demandez le certificat sanitaire et l'historique de vaccination de l'animal.</li>
+          <li class="flex items-start gap-2"><i class="pi pi-check text-[#B96416] mt-0.5 text-xs"></i> Privilégiez le paiement sécurisé de la plateforme (fonds libérés après réception).</li>
+          <li class="flex items-start gap-2"><i class="pi pi-check text-[#B96416] mt-0.5 text-xs"></i> Si possible, inspectez l'animal sur place avant de finaliser l'achat.</li>
+        </ul>
       </div>
     </div>
 
+    <!-- ════ COLONNE LATÉRALE ════ -->
     <aside class="space-y-4 xl:sticky xl:top-6 h-fit">
-      <div class="rounded-[2rem] border border-red-100 bg-white p-5 shadow-sm sm:p-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-red-600">Actions</p>
-        <p class="mt-3 text-sm leading-6 text-gray-600">
-          Accédez au dossier complet, contactez le vendeur ou mettez à jour votre propre animal depuis cette fiche.
-        </p>
+
+      <!-- Carte vendeur -->
+      <div class="rounded-3xl border border-[#E7E0D2] bg-white p-5 shadow-card sm:p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+            {{ (listing.sellerName || 'V').charAt(0) | uppercase }}
+          </div>
+          <div class="min-w-0">
+            <p class="font-bold text-gray-900 truncate">{{ listing.sellerName || 'Vendeur' }}</p>
+            <p class="inline-flex items-center gap-1.5 text-xs font-bold text-[#2D6A4F]">
+              <i class="pi pi-verified"></i>
+              Vendeur vérifié
+            </p>
+          </div>
+        </div>
 
         <div class="mt-5 flex flex-col gap-3">
-          <ng-container *ngIf="canEdit; else publicActions">
-            <div class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-800">
-              Vous êtes le propriétaire de ce dossier. Toute modification repasse ensuite au contrôle sanitaire.
-            </div>
 
-            <a
-              [routerLink]="['/animaux', listing.id, 'editer']"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-medium text-white transition-colors hover:bg-red-700"
-            >
-              Modifier cet animal
-            </a>
-
-            <a
-              routerLink="/annonces/mes-annonces"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
-            >
-              Ouvrir mon espace éleveur
-            </a>
-          </ng-container>
-
-          <ng-template #publicActions>
-
-            <!-- ── Bouton Ajouter au panier (acheteur connecté) ── -->
+          <!-- ── Acheteur connecté : panier ── -->
+          <ng-container *ngIf="!canEdit">
             <ng-container *ngIf="auth.isLoggedIn() && isAcheteur">
-
-              <!-- Message succès -->
               <div *ngIf="panierSuccesMessage"
-                class="flex items-center justify-between gap-2 rounded-2xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
-                <span>✅ {{ panierSuccesMessage }}</span>
-                <a routerLink="/panier"
-                  class="font-semibold text-red-600 hover:text-red-700 whitespace-nowrap text-xs">
+                class="flex items-center justify-between gap-2 rounded-2xl bg-[#F2F7F3] border border-[#C2DCCB] px-4 py-3 text-sm text-[#1B4332]">
+                <span class="inline-flex items-center gap-2"><i class="pi pi-check-circle text-[#2D6A4F]"></i> {{ panierSuccesMessage }}</span>
+                <a routerLink="/panier" class="font-bold text-[#2D6A4F] hover:text-[#1B4332] whitespace-nowrap text-xs">
                   Voir →
                 </a>
               </div>
 
-              <!-- Bouton principal panier -->
               <button
                 type="button"
                 (click)="dejaAuPanier ? allerAuPanier() : ajouterAuPanier()"
                 [disabled]="ajoutEnCours"
-                class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3.5 font-bold text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 [ngClass]="dejaAuPanier
-                  ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-red-600 text-white hover:bg-red-700'"
+                  ? 'bg-[#1B4332] hover:bg-[#142F24]'
+                  : 'bg-[#2D6A4F] hover:bg-[#245540]'"
               >
-                <svg *ngIf="!ajoutEnCours" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                <!-- Spinner -->
+                <i *ngIf="!ajoutEnCours" class="pi pi-shopping-cart"></i>
                 <svg *ngIf="ajoutEnCours" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                 </svg>
                 <span *ngIf="ajoutEnCours">Ajout en cours...</span>
                 <span *ngIf="!ajoutEnCours && !dejaAuPanier">Ajouter au panier</span>
-                <span *ngIf="!ajoutEnCours && dejaAuPanier">✓ Voir mon panier</span>
+                <span *ngIf="!ajoutEnCours && dejaAuPanier">Voir mon panier</span>
               </button>
             </ng-container>
 
-            <!-- Contacter le vendeur (toujours visible si connecté) -->
+            <!-- ── WhatsApp ── -->
+            <a
+              *ngIf="whatsappLink"
+              [href]="whatsappLink"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-3.5 font-bold text-white transition-colors hover:bg-[#1EBE5A]"
+            >
+              <i class="pi pi-whatsapp text-lg"></i>
+              Contacter sur WhatsApp
+            </a>
+
+            <!-- ── Appel direct ── -->
+            <a
+              *ngIf="phoneLink"
+              [href]="phoneLink"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#2D6A4F] bg-white px-4 py-3 font-bold text-[#2D6A4F] transition-colors hover:bg-[#F2F7F3]"
+            >
+              <i class="pi pi-phone"></i>
+              Appeler le vendeur
+            </a>
+
+            <!-- ── Contact email ── -->
             <a
               *ngIf="auth.isLoggedIn(); else loginPrompt"
               [href]="listing.sellerEmail ? ('mailto:' + listing.sellerEmail) : null"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E7E0D2] bg-white px-4 py-3 font-semibold text-gray-700 transition-colors hover:border-[#2D6A4F] hover:text-[#2D6A4F]"
             >
+              <i class="pi pi-envelope"></i>
               Contacter le vendeur
             </a>
 
             <ng-template #loginPrompt>
               <a
                 routerLink="/auth/login"
-                class="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-3 font-medium text-gray-900 transition-colors hover:border-red-500 hover:text-red-700"
+                class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#2D6A4F] px-4 py-3.5 font-bold text-white transition-colors hover:bg-[#245540]"
               >
-                Se connecter pour acheter
+                <i class="pi pi-sign-in"></i>
+                Se connecter pour contacter
               </a>
             </ng-template>
+          </ng-container>
+
+          <!-- ── Propriétaire ── -->
+          <ng-container *ngIf="canEdit">
+            <div class="rounded-2xl bg-[#FDF6EC] border border-[#F4D4A3] px-4 py-3 text-sm text-[#7A4A10]">
+              Vous êtes le propriétaire de ce dossier. Toute modification repasse ensuite au contrôle sanitaire.
+            </div>
 
             <a
-              *ngIf="auth.canAccessSellerArea"
-              routerLink="/animaux/creer"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-white px-4 py-3 font-medium text-red-700 transition-colors hover:border-red-400 hover:bg-red-50"
+              [routerLink]="['/animaux', listing.id, 'editer']"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#2D6A4F] px-4 py-3.5 font-bold text-white transition-colors hover:bg-[#245540]"
             >
-              Déposer un animal
+              <i class="pi pi-pencil"></i>
+              Modifier cet animal
             </a>
 
-          </ng-template>
+            <a
+              routerLink="/vendeur/mes-annonces"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E7E0D2] bg-white px-4 py-3 font-semibold text-gray-700 transition-colors hover:border-[#2D6A4F] hover:text-[#2D6A4F]"
+            >
+              Ouvrir mon espace éleveur
+            </a>
+          </ng-container>
         </div>
       </div>
 
-      <!-- ── Bloc escrow / paiement sécurisé (acheteur connecté) ── -->
-      <div *ngIf="auth.isLoggedIn() && isAcheteur"
-        class="rounded-[2rem] border border-amber-100 bg-amber-50/60 p-5 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-2">Paiement sécurisé</p>
-        <p class="text-sm text-amber-900 leading-relaxed">
+      <!-- Paiement sécurisé -->
+      <div class="rounded-3xl border border-[#C2DCCB] bg-[#F2F7F3] p-5 shadow-sm">
+        <p class="flex items-center gap-2 text-sm font-bold text-[#1B4332] mb-2">
+          <i class="pi pi-lock text-[#2D6A4F]"></i>
+          Paiement 100% sécurisé
+        </p>
+        <p class="text-sm text-[#1B4332]/80 leading-relaxed">
           Les fonds sont bloqués sur un compte séquestre et libérés
           <strong>uniquement après confirmation de réception</strong> de l'animal.
         </p>
-        <div class="mt-3 flex items-center gap-2 text-xs text-amber-700">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-          </svg>
+        <div class="mt-3 flex items-center gap-2 text-xs font-semibold text-[#2D6A4F]">
+          <i class="pi pi-shield"></i>
           Orange Money · Wave CI · MTN Money
         </div>
       </div>
+
+      <!-- Signalement -->
+      <a [href]="reportLink"
+        class="flex items-center justify-center gap-2 rounded-2xl border border-[#E7E0D2] bg-white px-4 py-3 text-sm font-semibold text-gray-500 transition-colors hover:border-red-300 hover:text-red-600">
+        <i class="pi pi-flag"></i>
+        Signaler cette annonce
+      </a>
     </aside>
   </div>
+
+  <!-- ════ ANNONCES SIMILAIRES ════ -->
+  <section *ngIf="similarListings.length" class="mt-12">
+    <div class="flex items-center justify-between gap-4 mb-6">
+      <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Annonces similaires</h2>
+      <a routerLink="/annonces"
+        class="inline-flex items-center gap-2 text-sm font-bold text-[#2D6A4F] hover:text-[#1B4332] transition-colors whitespace-nowrap">
+        Tout voir
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <app-listing-card
+        *ngFor="let similar of similarListings; trackBy: trackByListing"
+        [listing]="similar"
+      ></app-listing-card>
+    </div>
+  </section>
 </section>
 
 <ng-template #detailState>
   <section class="max-w-7xl mx-auto py-8 px-4">
-    <div class="rounded-[2rem] border border-dashed border-red-200 bg-white p-10 text-center text-gray-500">
-      <span *ngIf="loading">Chargement du dossier animal...</span>
-      <span *ngIf="!loading">Animal introuvable.</span>
+    <div class="rounded-3xl border border-dashed border-[#DFD2B8] bg-white p-12 text-center text-gray-500">
+      <ng-container *ngIf="loading">
+        <span class="inline-flex w-14 h-14 rounded-full bg-[#F6F1E7] items-center justify-center mb-4">
+          <i class="pi pi-spin pi-spinner text-xl text-[#2D6A4F]"></i>
+        </span>
+        <p class="font-semibold text-gray-700">Chargement du dossier animal...</p>
+      </ng-container>
+      <ng-container *ngIf="!loading">
+        <span class="inline-flex w-14 h-14 rounded-full bg-[#F6F1E7] items-center justify-center mb-4">
+          <i class="pi pi-exclamation-circle text-xl text-[#8B6F55]"></i>
+        </span>
+        <p class="font-semibold text-gray-700 mb-2">Animal introuvable</p>
+        <a routerLink="/annonces" class="inline-flex items-center gap-2 mt-2 rounded-full bg-[#2D6A4F] px-6 py-3 text-sm font-bold text-white hover:bg-[#245540] transition-colors">
+          Retour aux annonces
+        </a>
+      </ng-container>
     </div>
   </section>
 </ng-template>

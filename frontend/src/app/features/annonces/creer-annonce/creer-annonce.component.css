@@ -26,7 +26,7 @@
   letter-spacing: 0.18em;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #dc2626;
+  color: #2D6A4F;
 }
 
 .bridge-hero h1 {
@@ -65,19 +65,19 @@
 }
 
 .bridge-cta:hover {
-  border-color: #dc2626;
-  color: #dc2626;
+  border-color: #2D6A4F;
+  color: #2D6A4F;
 }
 
 .bridge-cta--solid {
   border-color: transparent;
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, #2D6A4F 0%, #245540 100%);
   color: #ffffff;
 }
 
 .bridge-cta--solid:hover {
   color: #ffffff;
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  background: linear-gradient(135deg, #245540 0%, #1B4332 100%);
 }
 
 .bridge-grid {
@@ -103,7 +103,7 @@
   height: 42px;
   border-radius: 0.9rem;
   background: rgba(220, 38, 38, 0.1);
-  color: #b91c1c;
+  color: #2D6A4F;
   font-weight: 800;
 }
 

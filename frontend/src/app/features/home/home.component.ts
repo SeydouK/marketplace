@@ -1,8 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MarketplaceUiService } from '../../core/services/marketplace-ui.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Listing } from '../annonces/models/listing.model';
 import { ListingService } from '../annonces/services/listing.service';
+
+interface HomeCategory {
+  value: string;
+  label: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -12,13 +19,24 @@ import { ListingService } from '../annonces/services/listing.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   searchTerm = '';
+  heroSearchInput = '';
   animalFilter = '';
   allListings: Listing[] = [];
   private readonly subscriptions = new Subscription();
 
+  readonly categories: HomeCategory[] = [
+    { value: '',        label: 'Tout voir',  icon: 'assets/images/infinity.png' },
+    { value: 'BOVIN',   label: 'Bovins',     icon: 'assets/images/cow.png' },
+    { value: 'OVIN',    label: 'Ovins',      icon: 'assets/images/sheep.png' },
+    { value: 'CAPRIN',  label: 'Caprins',    icon: 'assets/images/sheep.png' },
+    { value: 'PORCIN',  label: 'Porcins',    icon: 'assets/images/pig.png' },
+    { value: 'AVICOLE', label: 'Volailles',  icon: 'assets/images/chicken.png' },
+  ];
+
   constructor(
     private readonly listingService: ListingService,
-    private readonly uiState: MarketplaceUiService
+    private readonly uiState: MarketplaceUiService,
+    public readonly auth: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.uiState.searchTerm$.subscribe((searchTerm) => {
         this.searchTerm = searchTerm;
+        this.heroSearchInput = searchTerm;
       })
     );
   }
@@ -58,6 +77,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.normalizeText(listing.location ?? '').includes(normalizedSearch);
       return matchesAnimal && matchesSearch;
     });
+  }
+
+  submitHeroSearch(): void {
+    this.uiState.setSearchTerm(this.heroSearchInput.trim());
+  }
+
+  setCategory(value: string): void {
+    this.uiState.setAnimalFilter(value);
   }
 
   trackByListing(_: number, listing: Listing): string {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -8,6 +8,7 @@ import { User } from '../models/user.model';
 import { Role } from '../models/role.enum';
 import { StorageService } from './storage.service';
 import { UserStatusService } from './user-status.service';
+import { SKIP_GLOBAL_ERROR } from '../interceptors/error.interceptor';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -38,7 +39,8 @@ export class AuthService {
 
   login(email: string, password: string) {
     return this.http
-      .post<JwtResponse>(`${environment.apiUrl}/auth/login`, { email, password })
+      .post<JwtResponse>(`${environment.apiUrl}/auth/login`, { email, password },
+        { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) })
       .pipe(
         tap((res) => {
           this.storage.setToken(res.token);
@@ -62,7 +64,8 @@ export class AuthService {
     password: string;
   }) {
     return this.http
-      .post<JwtResponse>(`${environment.apiUrl}/auth/register`, data)
+      .post<JwtResponse>(`${environment.apiUrl}/auth/register`, data,
+        { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) })
       .pipe(
         tap((res) => {
           this.storage.setToken(res.token);

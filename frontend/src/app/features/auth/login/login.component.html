@@ -33,8 +33,8 @@
             [type]="showPassword ? 'text' : 'password'"
             formControlName="password"
             placeholder="Mot de passe"
-            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm pr-12
-              focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition"/>
+            class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3.5 text-sm pr-12
+              focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition"/>
           <button type="button" (click)="togglePassword()"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,8 +46,8 @@
         <p *ngIf="controlInvalid('password', 'required')" class="text-xs text-red-500 -mt-2 mb-3">Mot de passe requis.</p>
 
         <button type="submit" [disabled]="form.invalid"
-          class="w-full py-4 bg-[#FF385C] text-white text-sm font-semibold rounded-xl
-            hover:bg-[#e0314f] disabled:opacity-50 transition-colors mb-4">
+          class="w-full py-4 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl
+            hover:bg-[#245540] disabled:opacity-50 transition-colors mb-4">
           Se connecter
         </button>
       </form>
@@ -68,8 +68,8 @@
         <div class="mb-4">
           <input type="email" formControlName="email"
             placeholder="Adresse e-mail"
-            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm
-              focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition"/>
+            class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3.5 text-sm
+              focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition"/>
           <p *ngIf="controlInvalid('email', 'required')" class="text-xs text-red-500 mt-1">Email requis.</p>
           <p *ngIf="controlInvalid('email', 'email')" class="text-xs text-red-500 mt-1">Email invalide.</p>
         </div>
@@ -77,8 +77,8 @@
         <div class="relative mb-4">
           <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
             placeholder="Mot de passe"
-            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm pr-12
-              focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition"/>
+            class="w-full border border-[#DFD2B8] rounded-xl px-4 py-3.5 text-sm pr-12
+              focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F] transition"/>
           <button type="button" (click)="togglePassword()"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,14 +90,14 @@
         <p *ngIf="controlInvalid('password', 'required')" class="text-xs text-red-500 -mt-2 mb-3">Mot de passe requis.</p>
 
         <button type="submit" [disabled]="form.invalid"
-          class="w-full py-4 bg-[#FF385C] text-white text-sm font-semibold rounded-xl
-            hover:bg-[#e0314f] disabled:opacity-50 transition-colors mb-5">
+          class="w-full py-4 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl
+            hover:bg-[#245540] disabled:opacity-50 transition-colors mb-5">
           Se connecter
         </button>
 
         <p class="text-center text-sm text-gray-500">
           Pas de compte ?
-          <a routerLink="/auth/register" class="font-semibold text-gray-900 underline hover:text-[#FF385C]">
+          <a routerLink="/auth/register" class="font-semibold text-gray-900 underline hover:text-[#2D6A4F]">
             Créer un compte
           </a>
         </p>

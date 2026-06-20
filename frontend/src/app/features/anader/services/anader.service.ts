@@ -1,7 +1,7 @@
 // features/anader/services/anader.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
@@ -67,16 +67,22 @@ export class AnaderService {
   }
 
   // ── Validation éleveurs ────────────────────────────────────────────────────
+  // ⚠️ TODO backend : /api/anader/eleveurs/* n'existe pas encore (équivalent
+  // partiel : /api/admin/seller-requests, réservé à l'admin). Appels commentés
+  // pour éviter des 404.
   getPendingFarmers(): Observable<FarmerValidation[]> {
-    return this.http.get<FarmerValidation[]>(`${this.base}/eleveurs/en-attente`);
+    // TODO backend : return this.http.get<FarmerValidation[]>(`${this.base}/eleveurs/en-attente`);
+    return of([]);
   }
 
   validateFarmer(id: number): Observable<FarmerValidation> {
-    return this.http.post<FarmerValidation>(`${this.base}/eleveurs/${id}/valider`, {});
+    // TODO backend : return this.http.post<FarmerValidation>(`${this.base}/eleveurs/${id}/valider`, {});
+    return throwError(() => new Error('API validation éleveurs non disponible : endpoint à développer.'));
   }
 
   rejectFarmer(id: number, reason: string): Observable<FarmerValidation> {
-    return this.http.post<FarmerValidation>(`${this.base}/eleveurs/${id}/rejeter`, { reason });
+    // TODO backend : return this.http.post<FarmerValidation>(`${this.base}/eleveurs/${id}/rejeter`, { reason });
+    return throwError(() => new Error('API validation éleveurs non disponible : endpoint à développer.'));
   }
 
   // ── Animaux sans RFID ──────────────────────────────────────────────────────

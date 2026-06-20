@@ -1,54 +1,82 @@
 <!-- vendeur/dashboard-vendeur/dashboard-vendeur.component.html -->
 <section class="max-w-7xl mx-auto py-8 px-4 space-y-8">
 
-  <!-- ═══════════════════════════════════════════
-       EN-TÊTE avec salutation + badge KYC
-  ═══════════════════════════════════════════ -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-    <div>
-      <p class="text-sm text-gray-500 mb-1">Espace vendeur</p>
-      <h1 class="text-2xl font-bold text-gray-900">
-        Bonjour, {{ profile?.name?.split(' ')[0] || 'Éleveur' }} 👋
-      </h1>
-    </div>
-    <!-- Badge KYC -->
-    <div *ngIf="!kycApproved"
-      class="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
-      <span>⚠️</span>
-      <span class="font-medium">Identité non vérifiée</span>
-      <a routerLink="/auth/kyc" class="underline font-semibold hover:text-amber-900">Compléter →</a>
-    </div>
-    <div *ngIf="kycApproved"
-      class="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
-      <span>✅</span>
-      <span class="font-medium">Vendeur vérifié</span>
+  <!-- ═══ HERO ═══ -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/20">
+    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-2">Espace vendeur</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          Bonjour, {{ profile?.name?.split(' ')[0] || 'Éleveur' }}
+        </h1>
+        <p class="mt-2 text-sm text-white/75 max-w-xl leading-relaxed">
+          Gérez votre cheptel, suivez vos annonces et publiez de nouveaux animaux.
+        </p>
+      </div>
+      <!-- Badge KYC -->
+      <div *ngIf="!kycApproved"
+        class="flex items-center gap-2 px-4 py-2 bg-white/10 border border-[#ECB867]/40 rounded-xl text-sm text-[#ECB867] flex-shrink-0">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span class="font-semibold">Identité non vérifiée</span>
+        <a routerLink="/kyc" class="underline font-bold hover:text-white">Compléter</a>
+      </div>
+      <div *ngIf="kycApproved"
+        class="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-sm text-white flex-shrink-0">
+        <i class="pi pi-verified text-[#ECB867]"></i>
+        <span class="font-semibold">Vendeur vérifié</span>
+      </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       STATISTIQUES CHEPTEL
-  ═══════════════════════════════════════════ -->
+  <!-- ═══ STATISTIQUES CHEPTEL ═══ -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
     <!-- Total animaux -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">Total cheptel</p>
-      <p class="text-2xl font-bold text-gray-900">{{ animalsCount }}</p>
-      <a routerLink="/animaux/mes-animaux" class="text-xs text-[#FF385C] underline mt-1 inline-block">Voir tout</a>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Total cheptel</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ animalsCount }}</p>
+          <a routerLink="/animaux/mes-animaux" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#2D6A4F] hover:text-[#1B4332]">
+            Voir tout <i class="pi pi-arrow-right text-[10px]"></i>
+          </a>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-box text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
 
     <!-- Disponibles -->
-    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">Disponibles</p>
-      <p class="text-2xl font-bold text-green-600">{{ availableCount }}</p>
-      <p class="text-xs text-gray-400 mt-1">Fiche validée</p>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Disponibles</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#2D6A4F] leading-none">{{ availableCount }}</p>
+          <p class="mt-2 text-xs text-gray-400">Fiche validée — vendable</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-check-circle text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
 
     <!-- En attente validation -->
-    <article class="bg-white border border-amber-100 rounded-2xl p-4 shadow-sm">
-      <p class="text-xs text-gray-500 mb-1">En attente</p>
-      <p class="text-2xl font-bold text-amber-500">{{ pendingHealthValidationCount }}</p>
-      <p class="text-xs text-gray-400 mt-1">Validation sanitaire</p>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">En attente</p>
+          <p class="mt-2 text-3xl font-extrabold leading-none"
+            [ngClass]="pendingHealthValidationCount > 0 ? 'text-[#B96416]' : 'text-[#1B4332]'">
+            {{ pendingHealthValidationCount }}
+          </p>
+          <p class="mt-2 text-xs text-gray-400">Validation sanitaire</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-clock text-lg text-[#B96416]"></i>
+        </span>
+      </div>
     </article>
 
   </div>
@@ -60,8 +88,8 @@
 
     <!-- Animaux bloqués en attente de documents -->
     <div *ngIf="pendingHealthValidationCount > 0"
-      class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
-      <span class="text-xl flex-shrink-0">🐄</span>
+      class="flex items-start gap-3 p-4 bg-[#FDF6EC] border border-[#F4D4A3] rounded-2xl">
+      <i class="pi pi-clock text-lg text-[#B96416] flex-shrink-0 mt-0.5"></i>
       <div class="flex-1">
         <p class="text-sm font-semibold text-amber-800">
           {{ pendingHealthValidationCount }} animal(s) en attente de validation sanitaire
@@ -87,7 +115,7 @@
       <div class="space-y-2">
 
         <a routerLink="/animaux/creer"
-          class="flex items-center gap-3 px-4 py-3.5 bg-[#FF385C] text-white rounded-xl hover:bg-[#e0314f] transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-[#2D6A4F] text-white rounded-xl hover:bg-[#245540] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
           </svg>
@@ -95,7 +123,7 @@
         </a>
 
         <a routerLink="/vendeur/mes-annonces"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -104,7 +132,7 @@
         </a>
 
         <a routerLink="/animaux/mes-animaux"
-          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-gray-200 text-gray-800 rounded-xl hover:border-gray-300 transition-colors">
+          class="flex items-center gap-3 px-4 py-3.5 bg-white border border-[#E7E0D2] text-gray-800 rounded-xl hover:border-[#DFD2B8] transition-colors">
           <svg class="w-5 h-5 flex-shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
@@ -118,7 +146,7 @@
     <!-- Répartition des statuts du cheptel -->
     <div>
       <h2 class="text-base font-semibold text-gray-900 mb-3">État du cheptel</h2>
-      <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div class="bg-white border border-[#F0EAD9] rounded-2xl shadow-sm overflow-hidden">
 
         <!-- Barre de progression visuelle -->
         <div class="flex h-2 w-full overflow-hidden">

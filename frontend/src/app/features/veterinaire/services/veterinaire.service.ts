@@ -1,7 +1,7 @@
 // veterinaire/services/veterinaire.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 export interface VetStats {
@@ -20,6 +20,11 @@ export interface Certificate {
   status: 'VALID' | 'EXPIRED' | 'PENDING';
 }
 
+/**
+ * ⚠️ TODO backend : le contrôleur /api/veterinaire n'existe pas encore.
+ * Les appels HTTP sont commentés pour éviter des 404 ; les méthodes
+ * renvoient des valeurs neutres en attendant l'implémentation serveur.
+ */
 @Injectable({ providedIn: 'root' })
 export class VeterinaireService {
   private base = `${environment.apiUrl}/veterinaire`;
@@ -27,18 +32,22 @@ export class VeterinaireService {
   constructor(private http: HttpClient) {}
 
   getStats(): Observable<VetStats> {
-    return this.http.get<VetStats>(`${this.base}/stats`);
+    // TODO backend : return this.http.get<VetStats>(`${this.base}/stats`);
+    return of({ pendingInspections: 0, certificatesIssued: 0, healthAlerts: 0 });
   }
 
   getCertificates(): Observable<Certificate[]> {
-    return this.http.get<Certificate[]>(`${this.base}/certificats`);
+    // TODO backend : return this.http.get<Certificate[]>(`${this.base}/certificats`);
+    return of([]);
   }
 
   issueCertificate(data: Partial<Certificate>): Observable<Certificate> {
-    return this.http.post<Certificate>(`${this.base}/certificats`, data);
+    // TODO backend : return this.http.post<Certificate>(`${this.base}/certificats`, data);
+    return throwError(() => new Error('API vétérinaire non disponible : endpoint à développer.'));
   }
 
   getInspections(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/inspections`);
+    // TODO backend : return this.http.get<any[]>(`${this.base}/inspections`);
+    return of([]);
   }
 }

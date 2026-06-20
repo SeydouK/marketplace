@@ -638,11 +638,12 @@ public class AnimalService {
     private String formatAnimalType(AnimalType animalType) {
         if (animalType == null) return "Animal";
         return switch (animalType) {
-            case BOVIN  -> "Bovin";
-            case OVIN   -> "Ovin";
-            case CAPRIN -> "Caprin";
-            case PORCIN -> "Porcin";
-            case AUTRE  -> "Animal";
+            case BOVIN   -> "Bovin";
+            case OVIN    -> "Ovin";
+            case CAPRIN  -> "Caprin";
+            case PORCIN  -> "Porcin";
+            case AVICOLE -> "Volaille";
+            case AUTRE   -> "Animal";
         };
     }
 

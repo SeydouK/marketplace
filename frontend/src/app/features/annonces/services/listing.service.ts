@@ -25,8 +25,16 @@ export interface ListingSearchParams {
 @Injectable({ providedIn: 'root' })
 export class ListingService {
   private base = `${environment.apiUrl}/animals`;
+  private readonly apiOrigin = environment.apiUrl.replace(/\/api$/, '');
 
   constructor(private http: HttpClient) {}
+
+  /** Préfixe l'origine du backend aux URLs relatives /api/files/... (cross-origin en prod). */
+  private resolveAssetUrl(url?: string | null): string {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${this.apiOrigin}${url}`;
+  }
 
   // Annonces du vendeur connecté
   myListings(): Observable<Listing[]> {
@@ -79,6 +87,7 @@ export class ListingService {
   }
 
   private toListingFrontend(a: any): Listing {
+    const photos = (a.photos || []).map((url: string) => this.resolveAssetUrl(url));
     return {
       ...a,
       id: String(a.id),
@@ -86,8 +95,8 @@ export class ListingService {
       animalType: a.type,
       location: a.lieuNaissance || '',
       breed: a.race,
-      image: a.photos?.[0] || '',
-      gallery: a.photos || [],
+      image: photos[0] || '',
+      gallery: photos,
     };
   }
 

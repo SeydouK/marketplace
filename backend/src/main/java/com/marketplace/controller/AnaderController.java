@@ -30,7 +30,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/anader")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('AGENT_ANADER')")
+@PreAuthorize("hasRole('ANADER')")
 public class AnaderController {
 
     private final AnaderService anaderService;

@@ -3,15 +3,15 @@
   <h1 class="text-2xl font-bold mb-6">Mes ventes &amp; escrow</h1>
 
   <!-- Onglets statut -->
-  <div class="flex gap-2 mb-6 border-b border-gray-200">
+  <div class="flex gap-2 mb-6 border-b border-[#E7E0D2]">
     <button *ngFor="let tab of tabs"
       (click)="setTab(tab.value)"
       [class.border-b-2]="activeTab === tab.value"
-      [class.border-[#611a24]]="activeTab === tab.value"
-      [class.text-[#611a24]]="activeTab === tab.value"
-      class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#611a24] transition -mb-px">
+      [class.border-[#2D6A4F]]="activeTab === tab.value"
+      [class.text-[#2D6A4F]]="activeTab === tab.value"
+      class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#2D6A4F] transition -mb-px">
       {{ tab.label }}
-      <span *ngIf="tab.count" class="ml-1.5 px-1.5 py-0.5 rounded-full bg-[#611a24]/10 text-[#611a24] text-xs">
+      <span *ngIf="tab.count" class="ml-1.5 px-1.5 py-0.5 rounded-full bg-[#2D6A4F]/10 text-[#2D6A4F] text-xs">
         {{ tab.count }}
       </span>
     </button>
@@ -23,7 +23,7 @@
 
   <div class="space-y-4">
     <div *ngFor="let sale of filteredSales"
-      class="rounded-xl border border-gray-200 bg-white p-5">
+      class="rounded-xl border border-[#E7E0D2] bg-white p-5">
 
       <div class="flex flex-col sm:flex-row sm:items-start gap-4">
         <!-- Info animal -->
@@ -38,7 +38,7 @@
           <p class="text-sm text-gray-500">
             Acheteur : {{ sale.buyerName }} · {{ sale.createdAt | date:'dd/MM/yyyy' }}
           </p>
-          <p class="text-sm font-semibold text-[#611a24] mt-1">
+          <p class="text-sm font-semibold text-[#2D6A4F] mt-1">
             {{ sale.amount | number }} FCFA
           </p>
         </div>
@@ -70,16 +70,16 @@
         <ng-container *ngFor="let step of getEscrowSteps(sale.escrowStatus); let last = last">
           <div class="flex items-center gap-1 shrink-0">
             <div class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px]"
-              [class.bg-[#611a24]]="step.done"
+              [class.bg-[#2D6A4F]]="step.done"
               [class.bg-gray-200]="!step.done">
               {{ step.done ? '✓' : '' }}
             </div>
-            <span [class.text-[#611a24]]="step.done" [class.font-medium]="step.done">
+            <span [class.text-[#2D6A4F]]="step.done" [class.font-medium]="step.done">
               {{ step.label }}
             </span>
           </div>
           <div *ngIf="!last" class="w-8 h-px mx-1 shrink-0"
-            [class.bg-[#611a24]]="step.done"
+            [class.bg-[#2D6A4F]]="step.done"
             [class.bg-gray-200]="!step.done">
           </div>
         </ng-container>

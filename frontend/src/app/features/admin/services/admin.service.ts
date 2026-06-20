@@ -1,7 +1,7 @@
 // admin/services/admin.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.enum';
@@ -127,7 +127,9 @@ export class AdminService {
     return this.http.post<AdminUser>(`${this.base}/users/${userId}/kyc/reject`, { reason });
   }
 
+  // ⚠️ TODO backend : POST /api/admin/users/{id}/suspend n'existe pas encore.
   suspendUser(userId: number): Observable<User> {
-    return this.http.post<User>(`${this.base}/users/${userId}/suspend`, {});
+    // TODO backend : return this.http.post<User>(`${this.base}/users/${userId}/suspend`, {});
+    return throwError(() => new Error('API suspension utilisateur non disponible : endpoint à développer.'));
   }
 }

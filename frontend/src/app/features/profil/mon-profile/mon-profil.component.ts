@@ -155,7 +155,7 @@ export class MonProfilComponent implements OnInit, OnDestroy {
       [Role.ADMIN]:          'bg-red-100 text-red-700',
       [Role.ADMINISTRATEUR]: 'bg-red-100 text-red-700',
     };
-    return this.profile?.role ? (colors[this.profile.role] ?? 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
+    return this.profile?.role ? (colors[this.profile.role] ?? 'bg-[#F6F1E7] text-gray-700') : 'bg-[#F6F1E7] text-gray-700';
   }
 
   // ──────────────────────────────────────────────
@@ -226,10 +226,19 @@ export class MonProfilComponent implements OnInit, OnDestroy {
     private userStatusService: UserStatusService
   ) {}
 
+  private readonly apiOrigin = environment.apiUrl.replace(/\/api$/, '');
+
+  /** Préfixe l'origine du backend aux URLs relatives /api/files/... (cross-origin en prod). */
+  private resolveAssetUrl(url?: string | null): string | null {
+    if (!url) return null;
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${this.apiOrigin}${url}`;
+  }
+
   ngOnInit(): void {
     this.http.get<any>(`${environment.apiUrl}/users/me`).subscribe((data) => {
       this.profile = data;
-      this.avatarUrl = data?.avatarUrl ?? null;
+      this.avatarUrl = this.resolveAssetUrl(data?.avatarUrl);
     });
   }
 
@@ -263,7 +272,7 @@ export class MonProfilComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.uploadingAvatar = false;
-          this.avatarUrl = res.avatarUrl;
+          this.avatarUrl = this.resolveAssetUrl(res.avatarUrl);
           if (this.profile) (this.profile as any).avatarUrl = res.avatarUrl;
         },
         error: () => {

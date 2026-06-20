@@ -10,7 +10,7 @@
 
         <div
           *ngIf="editMode"
-          class="mt-5 rounded-[1.5rem] border border-red-200 bg-red-50/85 px-4 py-4 text-sm leading-6 text-red-900"
+          class="mt-5 rounded-[1.5rem] border border-[#F4D4A3] bg-[#FDF6EC] px-4 py-4 text-sm leading-6 text-[#7A4A10]"
         >
           Les informations mises à jour sont conservées dans le dossier, puis soumises à nouveau à la validation sanitaire avant republication.
         </div>
@@ -44,7 +44,7 @@
       <form class="space-y-6" [formGroup]="form" (ngSubmit)="submit()">
         <div
           *ngIf="loadingAnimal"
-          class="rounded-[1.5rem] border border-red-200 bg-white/90 px-4 py-4 text-sm text-red-800 shadow-sm"
+          class="rounded-[1.5rem] border border-[#E7E0D2] bg-white/90 px-4 py-4 text-sm text-[#2D6A4F] shadow-sm"
         >
           Chargement du dossier en cours...
         </div>

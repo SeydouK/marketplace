@@ -1,8 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
 import { UserStatusService } from '../../core/services/user-status.service';
+import { SKIP_GLOBAL_ERROR } from '../../core/interceptors/error.interceptor';
 
 @Component({
   selector: 'app-kyc',
@@ -54,7 +55,8 @@ export class KycComponent {
     const formData = new FormData();
     formData.append('file', this.cniFile);
 
-    this.http.post<any>('/api/kyc/upload-cni', formData).subscribe({
+    this.http.post<any>('/api/kyc/upload-cni', formData,
+      { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) }).subscribe({
       next: (res) => {
         this.loading = false;
         if (res.kycStatus === 'CNI_VERIFIED') {
@@ -129,7 +131,8 @@ export class KycComponent {
     const formData = new FormData();
     formData.append('file', this.selfieFile);
 
-    this.http.post<any>('/api/kyc/upload-selfie', formData).subscribe({
+    this.http.post<any>('/api/kyc/upload-selfie', formData,
+      { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) }).subscribe({
       next: (res) => {
         this.loading = false;
         this.kycStatus = res.kycStatus === 'VALIDATED' ? 'success' : 'rejected';

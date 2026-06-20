@@ -78,7 +78,7 @@ const routes: Routes = [
     path: 'anader',
     loadChildren: () => import('./features/anader/anader.module').then(m => m.AnaderModule),
     canActivate: [AuthGuard],
-    data: { roles: ['AGENT_ANADER'] },
+    data: { roles: [Role.AGENT_ANADER] },
   },
   {
     path: 'admin',

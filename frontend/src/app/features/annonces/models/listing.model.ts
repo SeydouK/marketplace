@@ -16,6 +16,8 @@ export interface Listing {
   sellerId?: number;
   sellerName?: string;
   sellerEmail?: string;
+  sellerPhone?: string;
+  description?: string;
   qrCode?: string;
   groupedLot?: boolean;
   createdAt?: string;
