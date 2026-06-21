@@ -68,7 +68,7 @@ export class RegisterComponent {
     const { surname, name, email, password } = this.form.getRawValue();
     this.auth.register({ surname: surname!, name: name!, email: email!, password: password! }).subscribe({
       next: (res: any) => {
-        localStorage.setItem("token", res.token);
+        // Le token est déjà persisté par AuthService.register() (clé marketplace_token).
         this.userStatusService.update({
           emailVerified: res.emailVerified,
           kycStatus: res.kycStatus,
