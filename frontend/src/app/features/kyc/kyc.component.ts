@@ -4,6 +4,7 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
 import { UserStatusService } from '../../core/services/user-status.service';
 import { SKIP_GLOBAL_ERROR } from '../../core/interceptors/error.interceptor';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-kyc',
@@ -55,7 +56,7 @@ export class KycComponent {
     const formData = new FormData();
     formData.append('file', this.cniFile);
 
-    this.http.post<any>('/api/kyc/upload-cni', formData,
+    this.http.post<any>(`${environment.apiUrl}/kyc/upload-cni`, formData,
       { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) }).subscribe({
       next: (res) => {
         this.loading = false;
@@ -131,7 +132,7 @@ export class KycComponent {
     const formData = new FormData();
     formData.append('file', this.selfieFile);
 
-    this.http.post<any>('/api/kyc/upload-selfie', formData,
+    this.http.post<any>(`${environment.apiUrl}/kyc/upload-selfie`, formData,
       { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) }).subscribe({
       next: (res) => {
         this.loading = false;

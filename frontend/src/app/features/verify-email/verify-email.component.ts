@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { UserStatusService } from '../../core/services/user-status.service';
+import { StorageService } from '../../core/services/storage.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-verify-email',
@@ -15,7 +17,8 @@ export class VerifyEmailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private userStatusService: UserStatusService
+    private userStatusService: UserStatusService,
+    private storage: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -36,15 +39,13 @@ export class VerifyEmailComponent implements OnInit {
   }
 
   private checkRealStatus(): void {
-    const token = localStorage.getItem('marketplace_token');
-    if (!token) {
+    if (!this.storage.getToken()) {
       this.router.navigate(['/login']);
       return;
     }
 
-    this.http.get<any>('/api/kyc/status', {
-      headers: new HttpHeaders({ Authorization: `Bearer ${token}` })
-    }).subscribe({
+    // L'AuthInterceptor ajoute automatiquement l'en-tete Authorization.
+    this.http.get<any>(`${environment.apiUrl}/kyc/status`).subscribe({
       next: (res) => {
         if (res.emailVerified) {
           // Email déjà vérifié — rediriger directement vers KYC
