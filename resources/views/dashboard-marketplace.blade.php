@@ -1,0 +1,44 @@
+{{-- Intégré dans votre design --}}
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <h1 class="text-2xl font-bold mb-6">Mon Dashboard</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {{-- Statistiques --}}
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">Mes Annonces</h3>
+            <p class="text-3xl font-bold text-gray-900 mt-2">
+                {{ Auth::user()->listings()->count() }}
+            </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">Vues Totales</h3>
+            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">Messages</h3>
+            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+        </div>
+    </div>
+
+    {{-- Actions rapides --}}
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold mb-4">Actions rapides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="/creer-annonce" class="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span class="font-medium">Créer une annonce</span>
+            </a>
+
+            <a href="/mes-annonces" class="bg-white border-2 border-gray-300 p-4 rounded-lg hover:border-red-600 transition flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="font-medium">Voir mes annonces</span>
+            </a>
+        </div>
+    </div>
+</div>
