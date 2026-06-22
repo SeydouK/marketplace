@@ -1,1 +1,0 @@
-<h2 class="text-2xl font-bold">Services Content</h2>

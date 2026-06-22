@@ -1,0 +1,228 @@
+<div class="min-h-screen bg-[#FBF9F4] flex items-center justify-center px-4 py-12">
+    <div class="bg-white rounded-2xl shadow-sm border border-[#F0EAD9] max-w-lg w-full p-10">
+  
+      <!-- Stepper -->
+      <div class="flex items-center justify-center gap-3 mb-10" *ngIf="step !== 'result'">
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors"
+            [ngClass]="step === 'cni' ? 'bg-[#2D6A4F] text-white' : 'bg-green-100 text-green-600'"
+          >
+            <i *ngIf="step !== 'cni'" class="pi pi-check text-xs"></i>
+            <span *ngIf="step === 'cni'">1</span>
+          </div>
+          <span class="text-sm font-medium"
+            [ngClass]="step === 'cni' ? 'text-gray-900' : 'text-gray-400'"
+          >Pièce d'identité</span>
+        </div>
+  
+        <div class="w-10 h-px bg-gray-200"></div>
+  
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors"
+            [ngClass]="step === 'selfie' ? 'bg-[#2D6A4F] text-white' : 'bg-[#F6F1E7] text-gray-400'"
+          >2</div>
+          <span class="text-sm font-medium"
+            [ngClass]="step === 'selfie' ? 'text-gray-900' : 'text-gray-400'"
+          >Selfie</span>
+        </div>
+      </div>
+  
+      <!-- ÉTAPE 1 : Upload CNI -->
+      <div *ngIf="step === 'cni'">
+        <div class="mb-6">
+          <h1 class="text-2xl font-semibold text-gray-900 mb-2">Votre pièce d'identité</h1>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Prenez une photo claire de votre Carte Nationale d'Identité ivoirienne, recto visible.
+          </p>
+        </div>
+  
+        <!-- Zone upload -->
+        <label
+          for="cni-upload"
+          class="block border-2 border-dashed border-[#E7E0D2] rounded-xl p-8 text-center cursor-pointer hover:border-[#2D6A4F] hover:bg-[#F2F7F3] transition-colors mb-6"
+          [ngClass]="{ 'border-[#2D6A4F] bg-[#F2F7F3]': cniPreview }"
+        >
+          <ng-container *ngIf="!cniPreview">
+            <div class="w-12 h-12 bg-[#F6F1E7] rounded-full flex items-center justify-center mx-auto mb-3">
+              <i class="pi pi-id-card text-gray-400 text-xl"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-700">Cliquez pour choisir une photo</p>
+            <p class="text-xs text-gray-400 mt-1">JPG, PNG — max 10 MB</p>
+          </ng-container>
+  
+          <ng-container *ngIf="cniPreview">
+            <img [src]="cniPreview" alt="CNI" class="max-h-48 mx-auto rounded-lg object-contain" />
+            <p class="text-xs text-[#2D6A4F] mt-3">Cliquez pour changer</p>
+          </ng-container>
+  
+          <input
+            id="cni-upload"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            (change)="onCniSelected($event)"
+          />
+        </label>
+  
+        <!-- Conseils -->
+        <div class="bg-amber-50 rounded-xl p-4 mb-6">
+          <p class="text-xs font-medium text-amber-700 mb-2 uppercase tracking-wide">Conseils</p>
+          <ul class="text-xs text-amber-600 space-y-1">
+            <li class="flex items-center gap-2"><i class="pi pi-check text-amber-500"></i> Bonne luminosité, pas de reflet</li>
+            <li class="flex items-center gap-2"><i class="pi pi-check text-amber-500"></i> Document entier visible</li>
+            <li class="flex items-center gap-2"><i class="pi pi-check text-amber-500"></i> Texte lisible et net</li>
+          </ul>
+        </div>
+  
+        <button
+          (click)="submitCni()"
+          [disabled]="!cniFile || loading"
+          class="w-full bg-[#2D6A4F] hover:bg-[#245540] disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+        >
+          <i *ngIf="loading" class="pi pi-spin pi-spinner"></i>
+          <span>{{ loading ? 'Vérification en cours...' : 'Vérifier ma CNI' }}</span>
+        </button>
+      </div>
+  
+      <!-- ÉTAPE 2 : Selfie -->
+      <div *ngIf="step === 'selfie'">
+        <div class="mb-6">
+          <h1 class="text-2xl font-semibold text-gray-900 mb-2">Votre selfie</h1>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Prenez une photo de votre visage pour confirmer que vous êtes
+            bien le titulaire de la CNI.
+          </p>
+        </div>
+
+        <!-- Aperçu selfie capturé ou uploadé -->
+        <div
+          *ngIf="selfiePreview"
+          class="rounded-xl overflow-hidden bg-[#F6F1E7] mb-4 aspect-video flex items-center justify-center"
+        >
+          <img [src]="selfiePreview" alt="Selfie" class="w-full h-full object-cover" />
+        </div>
+
+        <!-- Flux vidéo caméra -->
+        <div
+          *ngIf="cameraActive && !selfiePreview"
+          class="rounded-xl overflow-hidden bg-[#2D6A4F] mb-4 aspect-video"
+        >
+          <video #videoEl autoplay playsinline class="w-full h-full object-cover"></video>
+          <canvas #canvasEl class="hidden"></canvas>
+        </div>
+
+        <!-- Options si pas encore de photo -->
+        <div *ngIf="!selfiePreview && !cameraActive" class="space-y-3 mb-6">
+
+          <!-- Option 1 : Caméra -->
+          <button
+            (click)="startCamera()"
+            class="w-full border border-[#E7E0D2] hover:bg-[#FBF9F4] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+          >
+            <i class="pi pi-camera text-gray-500"></i>
+            Utiliser la caméra
+          </button>
+
+          <!-- Option 2 : Upload fichier -->
+          <label
+            for="selfie-upload"
+            class="w-full border-2 border-dashed border-[#E7E0D2] hover:border-[#2D6A4F] hover:bg-[#F2F7F3] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <i class="pi pi-upload text-gray-500"></i>
+            Choisir une photo depuis mon appareil
+            <input
+              id="selfie-upload"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              (change)="onSelfieSelected($event)"
+            />
+          </label>
+
+          <p class="text-xs text-gray-400 text-center">
+            La photo doit clairement montrer votre visage
+          </p>
+        </div>
+
+        <!-- Boutons si caméra active -->
+        <div *ngIf="cameraActive && !selfiePreview" class="flex gap-3 mb-6">
+          <button
+            (click)="captureSelfie()"
+            class="flex-1 bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+          >
+            <i class="pi pi-camera"></i> Prendre la photo
+          </button>
+          <button
+            (click)="cameraActive = false"
+            class="border border-[#E7E0D2] hover:bg-[#FBF9F4] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors"
+          >
+            Annuler
+          </button>
+        </div>
+
+        <!-- Boutons si photo prise -->
+        <div *ngIf="selfiePreview" class="flex gap-3 mb-6">
+          <button
+            (click)="resetSelfie()"
+            class="flex-1 border border-[#E7E0D2] hover:bg-[#FBF9F4] text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+          >
+            <i class="pi pi-refresh"></i> Changer la photo
+          </button>
+        </div>
+
+        <button
+          *ngIf="selfiePreview"
+          (click)="submitSelfie()"
+          [disabled]="loading"
+          class="w-full bg-[#2D6A4F] hover:bg-[#245540] disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+        >
+          <i *ngIf="loading" class="pi pi-spin pi-spinner"></i>
+          <span>{{ loading ? 'Vérification en cours...' : 'Valider mon identité' }}</span>
+        </button>
+      </div>
+  
+      <!-- ÉTAPE 3 : Résultat -->
+      <div *ngIf="step === 'result'" class="text-center">
+  
+        <!-- Succès -->
+        <ng-container *ngIf="kycStatus === 'success'">
+          <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="pi pi-check-circle text-green-500 text-2xl"></i>
+          </div>
+          <h1 class="text-2xl font-semibold text-gray-900 mb-3">Identité vérifiée !</h1>
+          <p class="text-gray-500 text-sm leading-relaxed mb-8">
+            Votre badge de vérification a été attribué. Vous pouvez maintenant
+            accéder à toutes les fonctionnalités de la plateforme.
+          </p>
+          <button
+            (click)="goToProfile()"
+            class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors"
+          >
+            Compléter mon profil
+          </button>
+        </ng-container>
+  
+        <!-- Rejeté -->
+        <ng-container *ngIf="kycStatus === 'rejected'">
+          <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="pi pi-times-circle text-red-400 text-2xl"></i>
+          </div>
+          <h1 class="text-2xl font-semibold text-gray-900 mb-3">Vérification échouée</h1>
+          <p class="text-gray-500 text-sm leading-relaxed mb-2">{{ message }}</p>
+          <p class="text-xs text-gray-400 mb-8">
+            Assurez-vous que votre CNI est lisible et que votre selfie est bien éclairé.
+          </p>
+          <button
+            (click)="retry()"
+            class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors"
+          >
+            Réessayer
+          </button>
+        </ng-container>
+  
+      </div>
+  
+    </div>
+  </div>

@@ -1,0 +1,20 @@
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 47, 36, 0.28);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+}
+
+:host ::ng-deep .loader-spinner .p-progress-spinner-circle,
+:host ::ng-deep .loader-spinner .p-progressspinner-circle {
+  stroke: #2D6A4F !important;
+}

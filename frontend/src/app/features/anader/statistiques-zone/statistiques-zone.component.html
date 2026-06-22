@@ -1,0 +1,80 @@
+<!-- anader/statistiques-zone/statistiques-zone.component.html -->
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <h1 class="text-2xl font-bold mb-6">Statistiques de ma zone</h1>
+
+  <!-- Résumé KPIs -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <article class="dashboard-card">
+      <span class="dashboard-label">Éleveurs actifs</span>
+      <strong class="dashboard-value">{{ stats?.activeFarmers ?? '—' }}</strong>
+    </article>
+    <article class="dashboard-card">
+      <span class="dashboard-label">Animaux enregistrés</span>
+      <strong class="dashboard-value">{{ stats?.totalAnimals ?? '—' }}</strong>
+    </article>
+    <article class="dashboard-card">
+      <span class="dashboard-label">Taux conformité</span>
+      <strong class="dashboard-value">{{ stats?.complianceRate ?? '—' }}%</strong>
+    </article>
+    <article class="dashboard-card">
+      <span class="dashboard-label">RFID posées ce mois</span>
+      <strong class="dashboard-value">{{ stats?.rfidThisMonth ?? '—' }}</strong>
+    </article>
+  </div>
+
+  <!-- Répartition par espèce -->
+  <div class="rounded-xl border border-[#E7E0D2] bg-white p-6 mb-6">
+    <h2 class="text-lg font-semibold mb-4">Répartition par espèce</h2>
+    <div class="space-y-3">
+      <div *ngFor="let species of stats?.speciesBreakdown">
+        <div class="flex items-center justify-between text-sm mb-1">
+          <span class="text-gray-700">{{ species.name }}</span>
+          <span class="font-medium">{{ species.count }} ({{ species.percent }}%)</span>
+        </div>
+        <div class="h-2 bg-[#F6F1E7] rounded-full overflow-hidden">
+          <div class="h-full bg-[#611a24] rounded-full transition-all duration-500"
+            [style.width.%]="species.percent">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Éleveurs récents -->
+  <div class="rounded-xl border border-[#E7E0D2] bg-white p-6">
+    <h2 class="text-lg font-semibold mb-4">Éleveurs accompagnés récemment</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-gray-500 uppercase text-xs border-b border-[#F0EAD9]">
+          <tr>
+            <th class="pb-2 text-left">Nom</th>
+            <th class="pb-2 text-left">Village</th>
+            <th class="pb-2 text-left">Animaux</th>
+            <th class="pb-2 text-left">Conformité</th>
+            <th class="pb-2 text-left">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <tr *ngFor="let farmer of recentFarmers" class="hover:bg-[#FBF9F4]">
+            <td class="py-3 font-medium text-gray-900">{{ farmer.name }}</td>
+            <td class="py-3 text-gray-500">{{ farmer.village }}</td>
+            <td class="py-3 text-gray-600">{{ farmer.animalsCount }}</td>
+            <td class="py-3">
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium"
+                [class.bg-green-100]="farmer.isCompliant"
+                [class.text-green-800]="farmer.isCompliant"
+                [class.bg-amber-100]="!farmer.isCompliant"
+                [class.text-amber-800]="!farmer.isCompliant">
+                {{ farmer.isCompliant ? 'Conforme' : 'En cours' }}
+              </span>
+            </td>
+            <td class="py-3 text-gray-400 text-xs">{{ farmer.registeredAt | date:'dd/MM/yyyy' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="recentFarmers.length === 0" class="text-center text-gray-400 py-8 text-sm">
+        Aucun éleveur enregistré pour l'instant.
+      </p>
+    </div>
+  </div>
+</div>

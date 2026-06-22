@@ -1,24 +1,31 @@
-*.log
-.DS_Store
+# Spring Boot
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-local*.properties
+
+# Variables d'environnement
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
-Homestead.json
-Homestead.yaml
+*.env
+.env.local
+.env.*.local
+
+# Gradle
+backend/.gradle/
+backend/build/
+
+# IntelliJ / VS Code
+.idea/
+*.iml
+.vscode/
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Logs
+*.log
+storage/logs/
+
+# OS
+.DS_Store
 Thumbs.db

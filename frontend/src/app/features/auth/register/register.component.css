@@ -1,0 +1,224 @@
+:host {
+  display: block;
+}
+
+.auth-hero {
+  min-height: calc(100vh - 120px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 3rem;
+  align-items: center;
+  padding: 3rem 1.5rem;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: #E0EEE4;
+  color: #2D6A4F;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.2;
+  background: linear-gradient(135deg, #2D6A4F, #1B4332);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.7;
+  font-size: 1.125rem;
+}
+
+.trust-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+.trust-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
+  background: #fff;
+  border: 1px solid #E7E0D2;
+  border-radius: 999px;
+  color: #6B6358;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.trust-list li i { color: #2D6A4F; }
+
+.auth-card {
+  width: min(100%, 500px);
+  margin: 0 auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 56px rgba(17, 24, 39, 0.12);
+  backdrop-filter: blur(20px);
+}
+
+.auth-card h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.875rem;
+  color: #111827;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label {
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.text-field,
+.password-group {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 1rem;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.text-field {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  color: #111827;
+  outline: none;
+}
+
+.text-field:focus,
+.password-group:focus-within {
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+}
+
+.password-group {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+}
+
+.password-group input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0.9rem 0;
+  color: #111827;
+  outline: none;
+}
+
+.password-group input::-ms-reveal,
+.password-group input::-ms-clear,
+.text-field[type='password']::-ms-reveal,
+.text-field[type='password']::-ms-clear {
+  display: none;
+}
+
+.password-group input::-webkit-credentials-auto-fill-button,
+.password-group input::-webkit-contacts-auto-fill-button,
+.text-field[type='password']::-webkit-credentials-auto-fill-button,
+.text-field[type='password']::-webkit-contacts-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+.eye-btn {
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+}
+
+.eye-btn:hover {
+  color: #2D6A4F;
+}
+
+.primary-submit {
+  width: 100%;
+  border: 0;
+  border-radius: 1rem;
+  padding: 0.95rem 1rem;
+  background: #2D6A4F;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.primary-submit:hover:not(:disabled) {
+  background: #245540;
+}
+
+.primary-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint {
+  margin: 0;
+  text-align: center;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.hint a {
+  color: #2D6A4F;
+  font-weight: 600;
+}
+
+.error-text {
+  margin: 0;
+  color: #D9342B;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .auth-hero {
+    grid-template-columns: 1fr;
+    padding: 2rem 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+}
