@@ -45,107 +45,133 @@
       </div>
     </div>
 
-    <!-- ── Barre de filtres fusionnée ── -->
-    <div class="catalog-toolbar mb-6">
-      <div class="toolbar-field toolbar-field--wide">
-        <label for="location">Trouver un éleveur</label>
-        <input
-          id="location"
-          [ngModel]="location"
-          (ngModelChange)="updateLocation($event)"
-          type="text"
-          placeholder="Entrez le nom de l'éleveur..."
-        />
-      </div>
+    <!-- ── Barre de filtres collapsible ── -->
+    <div class="filters-panel mb-6" [class.filters-panel--open]="filtersOpen">
 
-      <!-- Espèce (ex-annonces, valeurs complétées avec AVICOLE) -->
-      <div class="toolbar-field">
-        <label for="animalType">Espèce</label>
-        <select
-          id="animalType"
-          [ngModel]="animalType"
-          (ngModelChange)="updateAnimalType($event)"
-        >
-          <option *ngFor="let animal of animalTypes" [value]="animal.value">
-            {{ animal.label }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Région (ex-marketplace) -->
-      <div class="toolbar-field">
-        <label for="region">Région</label>
-        <select id="region" [ngModel]="region" (ngModelChange)="updateRegion($event)">
-          <option value="">Toutes</option>
-          <option value="Abidjan">Abidjan</option>
-          <option value="Bouaké">Bouaké</option>
-          <option value="Korhogo">Korhogo</option>
-          <option value="Yamoussoukro">Yamoussoukro</option>
-          <option value="San-Pédro">San-Pédro</option>
-        </select>
-      </div>
-
-      <!-- Prix max (ex-marketplace) -->
-      <div class="toolbar-field">
-        <label for="maxPrice">Prix max (FCFA)</label>
-        <input
-          id="maxPrice"
-          type="number"
-          [ngModel]="maxPrice"
-          (ngModelChange)="updateMaxPrice($event)"
-          placeholder="ex : 500 000"
-        />
-      </div>
-
-      <!-- Statut (disponible / indisponible) -->
-      <div class="toolbar-field">
-        <label for="statusFilter">Statut</label>
-        <select
-          id="statusFilter"
-          [ngModel]="statusFilter"
-          (ngModelChange)="updateStatusFilter($event)"
-        >
-          <option value="">Tous</option>
-          <option value="DISPONIBLE">Disponible</option>
-          <option value="INDISPONIBLE">Indisponible</option>
-        </select>
-      </div>
-
-      <!-- Date de publication : du -->
-      <div class="toolbar-field">
-        <label for="dateFrom">Publié depuis</label>
-        <input
-          id="dateFrom"
-          type="date"
-          [ngModel]="dateFrom"
-          (ngModelChange)="updateDateFrom($event)"
-        />
-      </div>
-
-      <!-- Date de publication : au -->
-      <div class="toolbar-field">
-        <label for="dateTo">Publié jusqu'au</label>
-        <input
-          id="dateTo"
-          type="date"
-          [ngModel]="dateTo"
-          (ngModelChange)="updateDateTo($event)"
-        />
-      </div>
-
-      <!-- Tri -->
-      <div class="toolbar-field">
-        <label for="sortBy">Trier par</label>
-        <select id="sortBy" [ngModel]="sortBy" (ngModelChange)="updateSortBy($event)">
-          <option value="recent">Plus récentes</option>
-          <option value="prix-asc">Prix croissant</option>
-          <option value="prix-desc">Prix décroissant</option>
-        </select>
-      </div>
-
-      <button type="button" class="toolbar-reset" (click)="resetFilters()">
-        Réinitialiser
+      <!-- En-tête cliquable -->
+      <button
+        type="button"
+        class="filters-toggle"
+        (click)="filtersOpen = !filtersOpen"
+        [attr.aria-expanded]="filtersOpen"
+      >
+        <span class="filters-toggle__left">
+          <i class="pi pi-filter"></i>
+          <span>Filtres de recherche</span>
+          <span *ngIf="!filtersOpen && (location || animalType || region || maxPrice || statusFilter || dateFrom || dateTo)" class="filters-active-badge">
+            Actifs
+          </span>
+        </span>
+        <span class="filters-toggle__right">
+          <span class="filters-toggle__hint">{{ filtersOpen ? 'Masquer' : 'Afficher' }}</span>
+          <i class="pi" [class.pi-chevron-down]="!filtersOpen" [class.pi-chevron-up]="filtersOpen"></i>
+        </span>
       </button>
+
+      <!-- Contenu des filtres -->
+      <div class="filters-body" [class.filters-body--visible]="filtersOpen">
+        <div class="catalog-toolbar">
+          <div class="toolbar-field toolbar-field--wide">
+            <label for="location">Trouver un éleveur</label>
+            <input
+              id="location"
+              [ngModel]="location"
+              (ngModelChange)="updateLocation($event)"
+              type="text"
+              placeholder="Entrez le nom de l'éleveur..."
+            />
+          </div>
+
+          <!-- Espèce -->
+          <div class="toolbar-field">
+            <label for="animalType">Espèce</label>
+            <select
+              id="animalType"
+              [ngModel]="animalType"
+              (ngModelChange)="updateAnimalType($event)"
+            >
+              <option *ngFor="let animal of animalTypes" [value]="animal.value">
+                {{ animal.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Région -->
+          <div class="toolbar-field">
+            <label for="region">Région</label>
+            <select id="region" [ngModel]="region" (ngModelChange)="updateRegion($event)">
+              <option value="">Toutes</option>
+              <option value="Abidjan">Abidjan</option>
+              <option value="Bouaké">Bouaké</option>
+              <option value="Korhogo">Korhogo</option>
+              <option value="Yamoussoukro">Yamoussoukro</option>
+              <option value="San-Pédro">San-Pédro</option>
+            </select>
+          </div>
+
+          <!-- Prix max -->
+          <div class="toolbar-field">
+            <label for="maxPrice">Prix max (FCFA)</label>
+            <input
+              id="maxPrice"
+              type="number"
+              [ngModel]="maxPrice"
+              (ngModelChange)="updateMaxPrice($event)"
+              placeholder="ex : 500 000"
+            />
+          </div>
+
+          <!-- Statut -->
+          <div class="toolbar-field">
+            <label for="statusFilter">Statut</label>
+            <select
+              id="statusFilter"
+              [ngModel]="statusFilter"
+              (ngModelChange)="updateStatusFilter($event)"
+            >
+              <option value="">Tous</option>
+              <option value="DISPONIBLE">Disponible</option>
+              <option value="INDISPONIBLE">Indisponible</option>
+            </select>
+          </div>
+
+          <!-- Date de publication : du -->
+          <div class="toolbar-field">
+            <label for="dateFrom">Publié depuis</label>
+            <input
+              id="dateFrom"
+              type="date"
+              [ngModel]="dateFrom"
+              (ngModelChange)="updateDateFrom($event)"
+            />
+          </div>
+
+          <!-- Date de publication : au -->
+          <div class="toolbar-field">
+            <label for="dateTo">Publié jusqu'au</label>
+            <input
+              id="dateTo"
+              type="date"
+              [ngModel]="dateTo"
+              (ngModelChange)="updateDateTo($event)"
+            />
+          </div>
+
+          <!-- Tri -->
+          <div class="toolbar-field">
+            <label for="sortBy">Trier par</label>
+            <select id="sortBy" [ngModel]="sortBy" (ngModelChange)="updateSortBy($event)">
+              <option value="recent">Plus récentes</option>
+              <option value="prix-asc">Prix croissant</option>
+              <option value="prix-desc">Prix décroissant</option>
+            </select>
+          </div>
+
+          <button type="button" class="toolbar-reset" (click)="resetFilters()">
+            Réinitialiser
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="catalog-layout">
