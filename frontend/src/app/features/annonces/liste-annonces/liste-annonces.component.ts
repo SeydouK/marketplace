@@ -53,6 +53,9 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   allListings: Listing[] = [];
 
+  // ── Panel filtres collapsible ──
+  filtersOpen = false;
+
   // ── Filtres texte/espèce ──
   location = '';
   animalType = '';
