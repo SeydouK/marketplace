@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Listing } from '../models/listing.model';
 import { ListingService } from '../services/listing.service';
 import { PanierService } from '../../../features/panier/services/panier.service';
+import { Role } from '../../../core/models/role.enum';
 
 @Component({
   selector: 'app-detail-annonce',
@@ -109,8 +110,7 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
   }
 
   get isAcheteur(): boolean {
-    const role = this.auth.currentUser?.role;
-    return role === 'USER' || role === 'ACHETEUR';
+    return this.auth.hasRole(Role.ACHETEUR) || this.auth.hasRole(Role.VENDEUR);
   }
 
   trackByListing(_: number, listing: Listing): string {
