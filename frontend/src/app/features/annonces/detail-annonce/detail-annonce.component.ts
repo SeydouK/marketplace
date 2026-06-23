@@ -6,6 +6,7 @@ import { Listing } from '../models/listing.model';
 import { ListingService } from '../services/listing.service';
 import { PanierService } from '../../../features/panier/services/panier.service';
 import { Role } from '../../../core/models/role.enum';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-detail-annonce',
@@ -33,7 +34,8 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
     private router: Router,
     private listingService: ListingService,
     private panierService: PanierService,
-    public auth: AuthService
+    public auth: AuthService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -111,6 +113,30 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
 
   get isAcheteur(): boolean {
     return this.auth.hasRole(Role.ACHETEUR) || this.auth.hasRole(Role.VENDEUR);
+  }
+
+  togglingStatut = false;
+
+  toggleStatut(): void {
+    if (!this.listing || this.togglingStatut) return;
+    const newStatus = this.listing.status === 'DISPONIBLE' ? 'INDISPONIBLE' : 'DISPONIBLE';
+    this.togglingStatut = true;
+    this.listingService.toggleStatus(this.listing.id, newStatus)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updated) => {
+          this.listing = updated;
+          this.togglingStatut = false;
+          const msg = newStatus === 'INDISPONIBLE'
+            ? 'Annonce désactivée avec succès.'
+            : 'Annonce réactivée avec succès.';
+          this.toast.success(msg);
+        },
+        error: () => {
+          this.togglingStatut = false;
+          this.toast.error('Une erreur est survenue, veuillez réessayer.');
+        },
+      });
   }
 
   trackByListing(_: number, listing: Listing): string {
