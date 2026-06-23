@@ -7,6 +7,7 @@ import { Role } from '../../../core/models/role.enum';
 import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
 import { PanierService } from '../../../features/panier/services/panier.service';
+import { SellerRequestService } from '../../../core/services/seller-request.service';
 
 type TabKey = 'logements' | 'experiences' | 'services';
 type AnimalFilterItem = { value: string; label: string; icon: string };
@@ -97,6 +98,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private readonly elementRef: ElementRef<HTMLElement>,
     private readonly uiState: MarketplaceUiService,
     private readonly panierService: PanierService,
+    public readonly sellerRequestSvc: SellerRequestService,
     @Inject(DOCUMENT) private readonly document: Document,
   ) {}
 
@@ -153,6 +155,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // ── Menu ─────────────────────────────────────────────────────────────────
   toggleMenu(): void { this.menuOpen = !this.menuOpen; }
   closeMenu(): void  { this.menuOpen = false; }
+
+  handleSellerClick(closeMenuAfter = false): void {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/auth/login']);
+    } else if (this.isAcheteur) {
+      this.sellerRequestSvc.open();
+    } else {
+      this.router.navigate(['/annonces/creer']);
+    }
+    if (closeMenuAfter) this.closeMenu();
+  }
 
   logout(): void {
     this.auth.logout();
