@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MarketplaceUiService } from '../../core/services/marketplace-ui.service';
 import { AuthService } from '../../core/services/auth.service';
+import { SellerRequestService } from '../../core/services/seller-request.service';
+import { Role } from '../../core/models/role.enum';
 import { Listing } from '../annonces/models/listing.model';
 import { ListingService } from '../annonces/services/listing.service';
 
@@ -36,8 +39,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private readonly listingService: ListingService,
     private readonly uiState: MarketplaceUiService,
-    public readonly auth: AuthService
+    public readonly auth: AuthService,
+    public readonly sellerRequestSvc: SellerRequestService,
+    private readonly router: Router
   ) {}
+
+  get isAcheteur(): boolean {
+    return this.auth.hasRole(Role.ACHETEUR) || this.auth.hasRole(Role.USER);
+  }
+
+  handlePublishClick(): void {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/auth/login']);
+    } else if (this.isAcheteur) {
+      this.sellerRequestSvc.open();
+    } else {
+      this.router.navigate(['/annonces/creer']);
+    }
+  }
 
   ngOnInit(): void {
     this.subscriptions.add(

@@ -10,9 +10,10 @@ import { Menubar } from 'primeng/menubar';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { StatusBannerComponent } from './components/status-banner/status-banner.component';
+import { SellerRequestModalComponent } from './components/seller-request-modal/seller-request-modal.component';
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent, StatusBannerComponent],
+  declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent, StatusBannerComponent, SellerRequestModalComponent],
   imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner],
   exports: [
     HeaderComponent,
@@ -24,7 +25,8 @@ import { StatusBannerComponent } from './components/status-banner/status-banner.
     Button,
     ProgressSpinner,
     CommonModule,
-    StatusBannerComponent
+    StatusBannerComponent,
+    SellerRequestModalComponent,
   ],
 })
 export class SharedModule {}
