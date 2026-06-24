@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
@@ -35,7 +35,8 @@ export class KycComponent {
     private http: HttpClient,
     private router: Router,
     private toast: ToastService,
-    private userStatusService: UserStatusService
+    private userStatusService: UserStatusService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   // ─── ÉTAPE 1 : CNI ───────────────────────────────────────────
@@ -45,7 +46,10 @@ export class KycComponent {
     if (!input.files?.length) return;
     this.cniFile = input.files[0];
     const reader = new FileReader();
-    reader.onload = (e) => (this.cniPreview = e.target?.result as string);
+    reader.onload = (e) => {
+      this.cniPreview = e.target?.result as string;
+      this.cdr.markForCheck();
+    };
     reader.readAsDataURL(this.cniFile);
   }
 
@@ -120,7 +124,10 @@ export class KycComponent {
     if (!input.files?.length) return;
     this.selfieFile = input.files[0];
     const reader = new FileReader();
-    reader.onload = (e) => (this.selfiePreview = e.target?.result as string);
+    reader.onload = (e) => {
+      this.selfiePreview = e.target?.result as string;
+      this.cdr.markForCheck();
+    };
     reader.readAsDataURL(this.selfieFile);
     this.cameraActive = false;
   }
