@@ -300,3 +300,9 @@ img { display: block; max-width: 100%; }
   border-top: 1px solid var(--line);
   margin: 2rem 0;
 }
+
+/* ── PrimeNG Toast — texte lisible sur fond blanc ─────────── */
+.p-toast .p-toast-message .p-toast-message-text .p-toast-summary,
+.p-toast .p-toast-message .p-toast-message-text .p-toast-detail {
+  color: #1a1a1a !important;
+}
