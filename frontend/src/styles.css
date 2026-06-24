@@ -301,8 +301,15 @@ img { display: block; max-width: 100%; }
   margin: 2rem 0;
 }
 
-/* ── PrimeNG Toast — texte lisible sur fond blanc ─────────── */
-.p-toast .p-toast-message .p-toast-message-text .p-toast-summary,
-.p-toast .p-toast-message .p-toast-message-text .p-toast-detail {
+/* ── PrimeNG Toast v21 — texte lisible sur fond blanc ─────── */
+:root {
+  --p-toast-summary-color: #1a1a1a;
+  --p-toast-detail-color: #1a1a1a;
+}
+
+/* Sélecteurs larges couvrant PrimeNG v17–v21 */
+.p-toast-message-text *,
+.p-toast-message-content .p-toast-detail,
+.p-toast-message-content .p-toast-summary {
   color: #1a1a1a !important;
 }
