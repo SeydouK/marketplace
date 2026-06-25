@@ -20,7 +20,7 @@
       </div>
 
       <!-- Tabs centraux -->
-      <div *ngIf="isHomePage" class="flex items-center gap-2 flex-1 justify-center">
+      <div *ngIf="showTabs" class="flex items-center gap-2 flex-1 justify-center">
         <a routerLink="/" (click)="setActiveTab('logements')"
           class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
           [ngClass]="activeTab === 'logements' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
@@ -30,12 +30,18 @@
             class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
         </a>
 
-        <a routerLink="/annonces" (click)="setActiveTab('experiences')"
+        <a routerLink="/actualites" (click)="setActiveTab('actualites')"
           class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
-          [ngClass]="activeTab === 'experiences' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
-          <i class="pi pi-th-large text-[1.6rem] leading-none"></i>
-          <span class="text-sm font-semibold">Annonces</span>
-          <span *ngIf="activeTab === 'experiences'"
+          [ngClass]="activeTab === 'actualites' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+          <div class="relative">
+            <i class="pi pi-th-large text-[1.6rem] leading-none"></i>
+            <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+              class="absolute -top-2 -right-7 bg-[#D97E1F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+              NOUVEAU
+            </span>
+          </div>
+          <span class="text-sm font-semibold">Actualités</span>
+          <span *ngIf="activeTab === 'actualites'"
             class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
         </a>
 
@@ -52,7 +58,7 @@
         </a>
       </div>
 
-      <div *ngIf="!isHomePage" class="flex-1"></div>
+      <div *ngIf="!showTabs" class="flex-1"></div>
 
       <!-- Droite -->
       <div class="flex items-center gap-3 flex-shrink-0 justify-end">
@@ -235,7 +241,7 @@
     </div>
 
     <!-- Header minimaliste hors home -->
-    <div *ngIf="!isHomePage && currentUser" class="flex items-center justify-end px-4 py-3 gap-2">
+    <div *ngIf="!showTabs && currentUser" class="flex items-center justify-end px-4 py-3 gap-2">
 
       <button type="button" routerLink="/notifications"
         class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
@@ -243,12 +249,12 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
         </svg>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#2D6A4F] rounded-full border border-white"></span>
+        <span *ngIf="actualiteSvc.hasNewActualites$ | async" class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#D97E1F] rounded-full border border-white"></span>
       </button>
     </div>
 
     <!-- Tabs mobiles -->
-    <div *ngIf="isHomePage" class="flex justify-center gap-4 px-4 py-3 pb-1 border-b border-[#F0EAD9]">
+    <div *ngIf="showTabs" class="flex justify-center gap-4 px-4 py-3 pb-1 border-b border-[#F0EAD9]">
       <a routerLink="/" (click)="setActiveTab('logements')"
         class="flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
         [ngClass]="activeTab === 'logements' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
@@ -256,11 +262,15 @@
         <span class="text-xs font-semibold">Accueil</span>
       </a>
 
-      <a routerLink="/annonces" (click)="setActiveTab('experiences')"
+      <a routerLink="/actualites" (click)="setActiveTab('actualites')"
         class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'experiences' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-th-large text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Annonces</span>
+        [ngClass]="activeTab === 'actualites' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+        <div class="relative">
+          <i class="pi pi-th-large text-2xl leading-none"></i>
+          <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+            class="absolute -top-1.5 -right-3 w-2 h-2 bg-[#D97E1F] rounded-full border border-white"></span>
+        </div>
+        <span class="text-xs font-semibold">Actualités</span>
       </a>
 
       <a routerLink="/services" (click)="setActiveTab('services')"
@@ -293,11 +303,15 @@
         <i class="pi pi-home text-2xl leading-none"></i>
         <span class="text-xs font-semibold">Accueil</span>
       </a>
-      <a routerLink="/annonces" (click)="setActiveTab('experiences'); closeMobileSearch()"
+      <a routerLink="/actualites" (click)="setActiveTab('actualites'); closeMobileSearch()"
         class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'experiences' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-th-large text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Annonces</span>
+        [ngClass]="activeTab === 'actualites' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+        <div class="relative">
+          <i class="pi pi-th-large text-2xl leading-none"></i>
+          <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+            class="absolute -top-1.5 -right-3 w-2 h-2 bg-[#D97E1F] rounded-full border border-white"></span>
+        </div>
+        <span class="text-xs font-semibold">Actualités</span>
       </a>
       <a routerLink="/services" (click)="setActiveTab('services'); closeMobileSearch()"
         class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
@@ -503,14 +517,18 @@
       <span class="text-[10px] font-medium">Accueil</span>
     </a>
 
-    <!-- Annonces -->
-    <a routerLink="/annonces" routerLinkActive="text-[#2D6A4F]"
-      class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-      </svg>
-      <span class="text-[10px] font-medium">Annonces</span>
+    <!-- Actualités -->
+    <a routerLink="/actualites" routerLinkActive="text-[#2D6A4F]"
+      class="relative flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
+      <div class="relative">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6"/>
+        </svg>
+        <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+          class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#D97E1F] rounded-full border border-white"></span>
+      </div>
+      <span class="text-[10px] font-medium">Actualités</span>
     </a>
 
     <!-- Panier (acheteur uniquement) -->

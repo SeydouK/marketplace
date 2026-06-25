@@ -41,6 +41,10 @@ const routes: Routes = [
     path: 'annonces',
     loadChildren: () => import('./features/annonces/annonces.module').then(m => m.AnnoncesModule),
   },
+  {
+    path: 'actualites',
+    loadChildren: () => import('./features/actualites/actualites.module').then(m => m.ActualitesModule),
+  },
 
   // ── PANIER — composant standalone, route protégée ────────────────────────
   {

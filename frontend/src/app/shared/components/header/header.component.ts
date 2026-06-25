@@ -8,8 +8,9 @@ import { AuthService } from '../../../core/services/auth.service';
 import { MarketplaceUiService } from '../../../core/services/marketplace-ui.service';
 import { PanierService } from '../../../features/panier/services/panier.service';
 import { SellerRequestService } from '../../../core/services/seller-request.service';
+import { ActualiteService } from '../../../features/actualites/actualite.service';
 
-type TabKey = 'logements' | 'experiences' | 'services';
+type TabKey = 'logements' | 'actualites' | 'services';
 type AnimalFilterItem = { value: string; label: string; icon: string };
 
 @Component({
@@ -100,6 +101,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private readonly panierService: PanierService,
     public readonly sellerRequestSvc: SellerRequestService,
     @Inject(DOCUMENT) private readonly document: Document,
+    public readonly actualiteSvc: ActualiteService,
   ) {}
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
@@ -174,7 +176,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // ── Filtres animal / tab ─────────────────────────────────────────────────
   setAnimalFilter(filter: string): void { this.uiState.setAnimalFilter(filter); }
-  setActiveTab(tab: TabKey): void       { this.activeTab = tab; }
+  setActiveTab(tab: TabKey): void {
+    this.activeTab = tab;
+    if (tab === 'actualites') this.actualiteSvc.markAllAsSeen();
+    if (tab === 'services')   this.actualiteSvc.markServicesAsSeen();
+  }
 
   // ── Recherche desktop ────────────────────────────────────────────────────
   openSearchPanel(panel: 'region' | 'date' | 'budget'): void {
@@ -332,6 +338,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return ['/', '', '/home'].includes(this.currentUrl) || this.currentUrl.startsWith('/home?');
   }
 
+  get showTabs(): boolean {
+    return this.isHomePage
+      || this.currentUrl.startsWith('/actualites')
+      || this.currentUrl.startsWith('/services');
+  }
+
   get roleLabel(): string {
     const labels: Partial<Record<Role, string>> = {
       [Role.USER]:           'Acheteur',
@@ -349,7 +361,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // ── Privé ────────────────────────────────────────────────────────────────
   private syncTabFromUrl(url: string): void {
-    if (url.startsWith('/annonces'))   this.activeTab = 'experiences';
+    if (url.startsWith('/actualites')) this.activeTab = 'actualites';
     else if (url.startsWith('/services')) this.activeTab = 'services';
     else this.activeTab = 'logements';
   }
