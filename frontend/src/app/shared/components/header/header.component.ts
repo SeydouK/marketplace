@@ -297,7 +297,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   submitMobileSearch(): void {
-    if (this.searchRegion) this.uiState.setSearchTerm(this.searchRegion);
+    this.uiState.setRegion(this.searchRegion ?? '');
+    this.uiState.setMaxPrice(this.searchBudget);
+    this.uiState.setDateFrom(this.searchDate ?? '');
     this.closeMobileSearch();
     this.router.navigate(['/annonces']);
   }
