@@ -51,7 +51,7 @@ const routes: Routes = [
     path: 'panier',
     component: PanierComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: [Role.USER, Role.ACHETEUR] },
+    data: { roles: [Role.USER, Role.ACHETEUR, Role.VENDEUR] },
     title: 'Mon Panier — BétailMarket',
   },
 
