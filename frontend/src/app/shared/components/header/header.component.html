@@ -531,8 +531,8 @@
       <span class="text-[10px] font-medium">Actualités</span>
     </a>
 
-    <!-- Panier (acheteur uniquement) -->
-    <a *ngIf="isAcheteur"
+    <!-- Panier (acheteur + vendeur) -->
+    <a *ngIf="isAcheteur || isVendeur"
       routerLink="/panier" routerLinkActive="text-[#2D6A4F]"
       class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors relative">
       <div class="relative">
