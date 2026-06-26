@@ -325,7 +325,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   get isAcheteur(): boolean   { return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]); }
-  get isVendeur(): boolean    { return this.auth.hasRole(Role.VENDEUR); }
+  get isVendeur(): boolean    { return this.auth.hasRole(Role.VENDEUR) || this.auth.canAccessSellerArea; }
   get isVeterinaire(): boolean { return this.auth.hasRole(Role.VETERINAIRE); }
   get isAnader(): boolean     { return this.auth.hasRole(Role.AGENT_ANADER); }
   get isAdmin(): boolean      { return this.auth.hasAnyRole([Role.ADMIN, Role.ADMINISTRATEUR]); }
