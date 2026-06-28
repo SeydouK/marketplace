@@ -115,9 +115,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.auth.currentUser$.subscribe((user) => {
         this.currentUser = user;
-        // Charger le count dès que l'acheteur se connecte
-        if (user && this.isAcheteur) {
-          this.panierService.rafraichirCount().subscribe();
+        // Charger le count dès qu'un acheteur OU un vendeur se connecte
+        // (les deux disposent d'un panier dans le menu). Erreur ignorée :
+        // l'appel est silencieux côté service, le badge reste simplement vide.
+        if (user && (this.isAcheteur || this.isVendeur)) {
+          this.panierService.rafraichirCount().subscribe({ error: () => {} });
         }
       })
     );

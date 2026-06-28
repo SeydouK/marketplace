@@ -53,6 +53,10 @@ export class AppComponent implements OnInit {
     return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]);
   }
 
+  get isVendeur(): boolean {
+    return this.auth.hasRole(Role.VENDEUR);
+  }
+
   get isAnaderOrVet(): boolean {
     return this.auth.hasAnyRole([Role.AGENT_ANADER, Role.VETERINAIRE]);
   }

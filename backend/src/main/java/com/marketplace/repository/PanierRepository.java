@@ -4,6 +4,7 @@ import com.marketplace.model.Panier;
 import com.marketplace.model.PanierItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -16,5 +17,5 @@ public interface PanierRepository extends JpaRepository<Panier, Long> {
     boolean existsByUserId(Long userId);
 
     @Query("SELECT COUNT(pi) FROM PanierItem pi WHERE pi.panier.userId = :userId")
-    int countItemsByUserId(Long userId);
+    int countItemsByUserId(@Param("userId") Long userId);
 }
