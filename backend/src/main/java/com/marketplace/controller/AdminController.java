@@ -1,5 +1,6 @@
 package com.marketplace.controller;
 
+import com.marketplace.dto.AdminCommandePageDTO;
 import com.marketplace.dto.AdminRejectKycRequest;
 import com.marketplace.dto.AdminListingDTO;
 import com.marketplace.dto.AdminListingPageDTO;
@@ -7,10 +8,16 @@ import com.marketplace.dto.AdminStatsDTO;
 import com.marketplace.dto.AdminUpdateRoleRequest;
 import com.marketplace.dto.AdminUserDTO;
 import com.marketplace.dto.AdminUserPageDTO;
+import com.marketplace.dto.AdminVersementDTO;
+import com.marketplace.dto.AdminVersementPageDTO;
 import com.marketplace.dto.SellerRequestDTO;
 import com.marketplace.model.AnimalStatus;
+import com.marketplace.model.StatutCommande;
+import com.marketplace.model.StatutVersement;
 import com.marketplace.service.AnimalService;
+import com.marketplace.service.PaiementService;
 import com.marketplace.service.UserService;
+import com.marketplace.service.VersementService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +38,15 @@ public class AdminController {
 
     private final UserService userService;
     private final AnimalService animalService;
+    private final PaiementService paiementService;
+    private final VersementService versementService;
 
-    public AdminController(UserService userService, AnimalService animalService) {
+    public AdminController(UserService userService, AnimalService animalService,
+                            PaiementService paiementService, VersementService versementService) {
         this.userService = userService;
         this.animalService = animalService;
+        this.paiementService = paiementService;
+        this.versementService = versementService;
     }
 
     @GetMapping("/stats")
@@ -89,6 +101,29 @@ public class AdminController {
     @PostMapping("/annonces/{animalId}/suspendre")
     public ResponseEntity<AdminListingDTO> suspendListing(@PathVariable UUID animalId) {
         return ResponseEntity.ok(animalService.suspendAdminListing(animalId));
+    }
+
+    @GetMapping("/commandes")
+    public ResponseEntity<AdminCommandePageDTO> listCommandes(
+            @RequestParam(required = false) StatutCommande statut,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ResponseEntity.ok(paiementService.listAdminCommandes(statut, page, size));
+    }
+
+    @GetMapping("/versements")
+    public ResponseEntity<AdminVersementPageDTO> listVersements(
+            @RequestParam(required = false) StatutVersement statut,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ResponseEntity.ok(versementService.listAdminVersements(statut, page, size));
+    }
+
+    @PostMapping("/versements/{versementId}/envoyer")
+    public ResponseEntity<AdminVersementDTO> envoyerVersement(@PathVariable Long versementId) {
+        return ResponseEntity.ok(versementService.envoyerVersement(versementId));
     }
 
     @GetMapping("/seller-requests")

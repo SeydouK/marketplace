@@ -10,6 +10,7 @@ import { KycComponent } from './features/kyc/kyc.component';
 import { KycGuard } from './features/kyc/kyc.guard';
 
 import { PanierComponent } from './features/panier/panier.component';
+import { PaiementRetourComponent } from './features/paiement/paiement-retour.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },

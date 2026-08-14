@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/files/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/animals", "/api/animals/*").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/annonces", "/api/annonces/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/paiements/webhook/**").permitAll()
 
                 // ── Animaux (authentifié) ─────────────────────────────────
                 .requestMatchers(HttpMethod.GET,
