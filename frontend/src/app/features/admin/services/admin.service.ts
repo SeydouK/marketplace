@@ -46,7 +46,7 @@ export interface SellerRequest {
   updatedAt: string;
 }
 
-export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU' | 'EN_ATTENTE';
+export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'RESERVE' | 'VENDU' | 'EN_ATTENTE';
 
 export interface AdminListing {
   id: string;

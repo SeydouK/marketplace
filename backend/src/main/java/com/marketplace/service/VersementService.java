@@ -108,12 +108,25 @@ public class VersementService {
             versement.setFraisGeniusPayAlloue(fraisAlloue);
             versement.setCommissionPlateformeAlloue(commissionAlloue);
             versement.setMontantNet(montantNet);
-            versement.setStatut(StatutVersement.EN_ATTENTE);
+            // Sequestre : l'argent est encaisse mais pas encore du. LivraisonService
+            // le fera passer EN_ATTENTE quand l'acheteur aura confirme la reception.
+            versement.setStatut(StatutVersement.BLOQUE);
             versementRepository.save(versement);
         }
     }
 
     public AdminVersementDTO envoyerVersement(Long versementId) {
+        return envoyerVersement(versementId, false);
+    }
+
+    /**
+     * Envoie un versement au vendeur.
+     *
+     * @param forcer passe outre le sequestre. Reserve a l'arbitrage : un admin peut
+     *               devoir payer un vendeur dont l'acheteur ne confirmera jamais et
+     *               dont le delai n'est pas encore echu. Trace dans les logs.
+     */
+    public AdminVersementDTO envoyerVersement(Long versementId, boolean forcer) {
         ensureAdminRole(userService.getCurrentUser());
 
         Versement versement = versementRepository.findById(versementId)
@@ -121,6 +134,19 @@ public class VersementService {
 
         if (versement.getStatut() == StatutVersement.CONFIRME || versement.getStatut() == StatutVersement.EN_COURS) {
             throw new BadRequestException("Ce versement a déjà été envoyé.");
+        }
+
+        // Sans ce controle, l'argent partirait avant que l'acheteur ait l'animal —
+        // exactement ce que le sequestre existe pour empecher.
+        if (versement.getStatut() == StatutVersement.BLOQUE) {
+            if (!forcer) {
+                throw new BadRequestException(
+                        "Ce versement est sous séquestre : l'acheteur n'a pas encore confirmé "
+                        + "la réception de l'animal.");
+            }
+            log.warn("Versement {} envoyé en forçant le séquestre (commande {}, vendeur {}).",
+                    versement.getId(), versement.getCommandeId(), versement.getVendeurId());
+            versement.setLibereAt(LocalDateTime.now());
         }
 
         GeniusPayService.PayoutResult result = geniusPayService.initiatePayout(

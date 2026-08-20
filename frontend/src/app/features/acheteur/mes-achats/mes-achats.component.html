@@ -1,61 +1,214 @@
 <!-- acheteur/mes-achats/mes-achats.component.html -->
-<div class="max-w-7xl mx-auto py-6 px-4">
-  <h1 class="text-2xl font-bold mb-6">Mes achats &amp; escrow</h1>
+<section class="max-w-5xl mx-auto py-8 px-4 space-y-6">
 
-  <div *ngIf="purchases.length === 0" class="text-center py-16 text-gray-400">
-    <p>Vous n'avez encore aucun achat en cours.</p>
+  <!-- ═══ EN-TÊTE ═══ -->
+  <div>
+    <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">Mes achats</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      Suivez la livraison de vos animaux et confirmez leur réception.
+    </p>
+  </div>
+
+  <!-- ═══ RAPPEL SÉQUESTRE ═══ -->
+  <div class="flex items-start gap-3 p-4 bg-[#E0EEE4] border border-[#B7D8C3] rounded-2xl">
+    <i class="pi pi-shield text-lg text-[#2D6A4F] flex-shrink-0 mt-0.5"></i>
+    <p class="text-sm text-[#1B4332] leading-relaxed">
+      <span class="font-semibold">Votre paiement est protégé.</span>
+      BétailMarket conserve les fonds jusqu'à ce que vous confirmiez avoir l'animal en main.
+      Le vendeur n'est payé qu'à ce moment-là.
+    </p>
+  </div>
+
+  <!-- ═══ ONGLETS ═══ -->
+  <div class="flex gap-2 border-b border-[#E7E0D2]">
+    <button *ngFor="let tab of tabs"
+      type="button"
+      (click)="setTab(tab.value)"
+      class="px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors"
+      [ngClass]="activeTab === tab.value
+        ? 'border-[#2D6A4F] text-[#2D6A4F]'
+        : 'border-transparent text-gray-500 hover:text-gray-700'">
+      {{ tab.label }}
+      <span class="ml-1 text-xs text-gray-400">({{ compteOnglet(tab.value) }})</span>
+    </button>
+  </div>
+
+  <!-- ═══ CHARGEMENT / ERREUR ═══ -->
+  <div *ngIf="chargement" class="py-16 text-center text-gray-400">
+    <i class="pi pi-spin pi-spinner text-2xl"></i>
+    <p class="mt-3 text-sm">Chargement de vos achats…</p>
+  </div>
+
+  <div *ngIf="erreur && !chargement"
+    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    Impossible de charger vos achats pour le moment. Réessayez dans quelques instants.
+  </div>
+
+  <!-- ═══ VIDE ═══ -->
+  <div *ngIf="!chargement && !erreur && achatsFiltres.length === 0"
+    class="text-center py-16 border border-dashed border-[#E7E0D2] rounded-2xl">
+    <i class="pi pi-shopping-bag text-3xl text-[#C9BCA3]"></i>
+    <p class="mt-3 text-gray-500">Aucun achat dans cette catégorie.</p>
     <a routerLink="/annonces"
-      class="mt-4 inline-block text-sm text-[#2D6A4F] underline">
+      class="mt-4 inline-block text-sm font-semibold text-[#2D6A4F] underline">
       Parcourir les annonces
     </a>
   </div>
 
-  <div class="space-y-4">
-    <div *ngFor="let purchase of purchases"
-      class="rounded-xl border border-[#E7E0D2] bg-white p-5">
+  <!-- ═══ LISTE DES COMMANDES ═══ -->
+  <article *ngFor="let achat of achatsFiltres"
+    class="bg-white border border-[#E7E0D2] rounded-2xl overflow-hidden shadow-card">
 
-      <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="font-semibold text-gray-900">{{ purchase.animalName }}</span>
-            <span class="text-xs px-2 py-0.5 rounded-full font-medium"
-              [ngClass]="getBadgeClass(purchase.escrowStatus)">
-              {{ getLabel(purchase.escrowStatus) }}
+    <!-- En-tête de commande -->
+    <header class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-[#FBF8F1] border-b border-[#E7E0D2]">
+      <div class="min-w-0">
+        <p class="text-sm font-bold text-[#1B4332]">
+          Commande {{ achat.reference || '#' + achat.id }}
+        </p>
+        <p class="text-xs text-gray-500 mt-0.5">
+          {{ (achat.paidAt || achat.createdAt) | date:'dd/MM/yyyy à HH:mm' }}
+          · {{ achat.items.length }} animal(aux)
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-extrabold text-[#2D6A4F]">
+          {{ achat.montant | number }} FCFA
+        </span>
+        <span class="text-xs px-2.5 py-1 rounded-full font-semibold"
+          [ngClass]="badgeClass(achat.etatGlobal)">
+          {{ achat.etatLibelle }}
+        </span>
+      </div>
+    </header>
+
+    <!-- Reprise de paiement -->
+    <div *ngIf="achat.etatGlobal === 'EN_ATTENTE_PAIEMENT' && achat.checkoutUrl"
+      class="px-5 py-3 bg-[#FDF6EC] border-b border-[#F4D4A3] flex items-center justify-between gap-3">
+      <p class="text-sm text-[#B96416]">Cette commande n'est pas encore réglée.</p>
+      <a [href]="achat.checkoutUrl"
+        class="px-4 py-2 bg-[#D97E1F] text-white text-xs font-bold rounded-lg hover:bg-[#B96416] transition-colors">
+        Reprendre le paiement
+      </a>
+    </div>
+
+    <!-- Articles -->
+    <div class="divide-y divide-[#F0EAD9]">
+      <div *ngFor="let item of achat.items" class="p-5">
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <img *ngIf="item.photoUrl" [src]="item.photoUrl" [alt]="item.animalNom"
+            class="w-full sm:w-28 h-28 object-cover rounded-xl flex-shrink-0 bg-[#F6F1E7]" />
+
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-900">{{ item.animalNom }}</p>
+            <p class="text-sm text-gray-500 mt-0.5">
+              <span *ngIf="item.animalRace">{{ item.animalRace }} · </span>
+              Vendeur : {{ item.vendeurNom || 'non renseigné' }}
+              <span *ngIf="item.localisation"> · {{ item.localisation }}</span>
+            </p>
+            <p class="text-sm font-bold text-[#2D6A4F] mt-1">{{ item.sousTotal | number }} FCFA</p>
+
+            <!-- Fil d'avancement -->
+            <div *ngIf="achat.statut === 'PAYEE' && item.statutLivraison !== 'LITIGE'"
+              class="flex items-center gap-1 mt-3">
+              <ng-container *ngFor="let etape of etapes(item); let last = last">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    [ngClass]="etape.done ? 'bg-[#2D6A4F]' : 'bg-[#E7E0D2]'"></span>
+                  <span class="text-[11px] whitespace-nowrap"
+                    [ngClass]="etape.done ? 'text-[#1B4332] font-semibold' : 'text-gray-400'">
+                    {{ etape.label }}
+                  </span>
+                </div>
+                <span *ngIf="!last" class="flex-1 h-px min-w-[8px]"
+                  [ngClass]="etape.done ? 'bg-[#2D6A4F]/30' : 'bg-[#E7E0D2]'"></span>
+              </ng-container>
+            </div>
+
+            <!-- Suivi transporteur (Yango à venir) -->
+            <p *ngIf="item.trackingReference" class="text-xs text-gray-500 mt-2">
+              <i class="pi pi-truck mr-1"></i>
+              {{ item.transporteur }} · suivi {{ item.trackingReference }}
+            </p>
+
+            <!-- Échéance de libération automatique -->
+            <p *ngIf="item.liberationAutomatiqueLe && item.statutLivraison === 'LIVRE'"
+              class="text-xs text-[#B96416] mt-2">
+              <i class="pi pi-clock mr-1"></i>
+              Sans confirmation de votre part, les fonds seront versés au vendeur le
+              {{ item.liberationAutomatiqueLe | date:'dd/MM/yyyy' }}.
+            </p>
+
+            <!-- Litige en cours -->
+            <div *ngIf="item.statutLivraison === 'LITIGE'"
+              class="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+              <p class="text-xs font-semibold text-red-800">Litige en cours — fonds gelés</p>
+              <p class="text-xs text-red-600 mt-1">{{ item.litigeMotif }}</p>
+            </div>
+
+            <!-- Réception confirmée -->
+            <p *ngIf="item.statutLivraison === 'RECEPTIONNE'"
+              class="mt-3 text-xs text-[#2D6A4F] font-semibold">
+              <i class="pi pi-check-circle mr-1"></i>
+              Réception confirmée le {{ item.receptionneAt | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div *ngIf="achat.statut === 'PAYEE'" class="shrink-0 flex flex-col gap-2 sm:w-48">
+            <button *ngIf="item.confirmable"
+              type="button"
+              [disabled]="enCours.has(item.id)"
+              (click)="confirmerReception(item)"
+              class="px-4 py-2.5 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-50">
+              <i class="pi pi-check mr-1"></i>
+              J'ai reçu l'animal
+            </button>
+
+            <button *ngIf="item.litigeOuvrable"
+              type="button"
+              (click)="ouvrirFormulaireLitige(item)"
+              class="px-4 py-2.5 border border-red-300 text-red-600 text-sm font-medium rounded-xl hover:bg-red-50 transition-colors">
+              Signaler un problème
+            </button>
+
+            <span *ngIf="fondsSequestres(item) && item.statutLivraison !== 'LITIGE'"
+              class="text-[11px] text-center text-[#8B6F55] leading-snug">
+              <i class="pi pi-lock"></i> Fonds retenus par BétailMarket
             </span>
           </div>
-          <p class="text-sm text-gray-500">
-            Vendeur : {{ purchase.sellerName }} · {{ purchase.createdAt | date:'dd/MM/yyyy' }}
-          </p>
-          <p class="text-sm font-semibold text-[#2D6A4F] mt-1">
-            {{ purchase.amount | number }} FCFA
-          </p>
         </div>
 
-        <!-- CTA acheteur -->
-        <div class="shrink-0 flex flex-col gap-2">
-          <button
-            *ngIf="purchase.escrowStatus === 'FUNDS_LOCKED'"
-            (click)="confirmReception(purchase)"
-            class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition font-medium">
-            Confirmer la réception
-          </button>
-          <button
-            *ngIf="purchase.escrowStatus === 'FUNDS_LOCKED'"
-            (click)="openDispute(purchase)"
-            class="px-4 py-2 border border-red-300 text-red-600 text-sm rounded-lg hover:bg-red-50 transition">
-            Ouvrir un litige
-          </button>
-          <span *ngIf="purchase.escrowStatus === 'RELEASED'"
-            class="text-xs text-green-700 bg-green-50 border border-green-200 px-3 py-2 rounded-lg">
-            Transaction terminée ✓
-          </span>
-          <span *ngIf="purchase.escrowStatus === 'DISPUTED'"
-            class="text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
-            Litige en cours — arbitrage
-          </span>
+        <!-- Formulaire de litige -->
+        <div *ngIf="litigeItem?.id === item.id"
+          class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <label class="block text-sm font-semibold text-red-800 mb-2">
+            Décrivez le problème rencontré avec « {{ item.animalNom }} »
+          </label>
+          <textarea
+            [(ngModel)]="litigeMotif"
+            rows="3"
+            placeholder="Ex. : l'animal livré ne correspond pas à l'annonce, il est blessé…"
+            class="w-full px-3 py-2 text-sm border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white"></textarea>
+          <p class="text-xs text-red-600 mt-2">
+            L'ouverture d'un litige gèle les fonds jusqu'à l'arbitrage d'un administrateur.
+          </p>
+          <div class="flex gap-2 mt-3">
+            <button type="button"
+              [disabled]="!litigeMotif.trim() || litigeEnvoi"
+              (click)="envoyerLitige()"
+              class="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50">
+              Ouvrir le litige
+            </button>
+            <button type="button" (click)="annulerLitige()"
+              class="px-4 py-2 border border-[#E7E0D2] text-gray-600 text-sm rounded-lg hover:bg-[#F6F1E7] transition-colors">
+              Annuler
+            </button>
+          </div>
         </div>
+
       </div>
-
     </div>
-  </div>
-</div>
+  </article>
+
+</section>

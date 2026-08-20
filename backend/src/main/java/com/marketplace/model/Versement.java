@@ -56,7 +56,7 @@ public class Versement {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "statut", nullable = false)
-    private StatutVersement statut = StatutVersement.EN_ATTENTE;
+    private StatutVersement statut = StatutVersement.BLOQUE;
 
     /** Référence du payout GeniusPay, renseignée une fois l'envoi initié. */
     @Column(name = "reference")
@@ -67,6 +67,10 @@ public class Versement {
 
     @Column(name = "envoye_at")
     private LocalDateTime envoyeAt;
+
+    /** Sortie du sequestre : reception confirmee par l'acheteur, ou delai ecoule. */
+    @Column(name = "libere_at")
+    private LocalDateTime libereAt;
 
     @PrePersist
     protected void onCreate() {

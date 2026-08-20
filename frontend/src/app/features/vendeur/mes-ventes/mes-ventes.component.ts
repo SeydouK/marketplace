@@ -1,6 +1,13 @@
 // vendeur/mes-ventes/mes-ventes.component.ts
 import { Component, OnInit } from '@angular/core';
-import { SaleService, Sale, EscrowStatus } from '../../../shared/services/sale.service';
+import {
+  LivraisonService,
+  MaVente,
+  EtatVente,
+} from '../../../shared/services/livraison.service';
+import { ToastService } from '../../../core/services/toast.service';
+
+type Onglet = 'ALL' | 'A_REMETTRE' | 'EN_ATTENTE' | 'REGLE' | 'LITIGE';
 
 @Component({
   selector: 'app-mes-ventes',
@@ -8,74 +15,166 @@ import { SaleService, Sale, EscrowStatus } from '../../../shared/services/sale.s
   standalone: false,
 })
 export class MesVentesComponent implements OnInit {
-  sales: Sale[] = [];
-  activeTab: EscrowStatus | 'ALL' = 'ALL';
+  ventes: MaVente[] = [];
+  chargement = true;
+  erreur = false;
 
-  tabs: { label: string; value: EscrowStatus | 'ALL'; count?: number }[] = [
+  activeTab: Onglet = 'ALL';
+  tabs: { label: string; value: Onglet }[] = [
     { label: 'Toutes', value: 'ALL' },
-    { label: 'Fonds bloqués', value: 'FUNDS_LOCKED' },
-    { label: 'Terminées', value: 'RELEASED' },
-    { label: 'Litiges', value: 'DISPUTED' },
+    { label: 'À remettre', value: 'A_REMETTRE' },
+    { label: 'En attente de règlement', value: 'EN_ATTENTE' },
+    { label: 'Réglées', value: 'REGLE' },
+    { label: 'Litiges', value: 'LITIGE' },
   ];
 
-  constructor(private saleService: SaleService) {}
+  enCours = new Set<number>();
+
+  constructor(
+    private livraisonService: LivraisonService,
+    private toast: ToastService,
+  ) {}
 
   ngOnInit(): void {
-    /*this.saleService.getMySales().subscribe((sales) => {
-      this.sales = sales;
-      this.updateTabCounts();
-    });*/
+    this.charger();
   }
 
-  updateTabCounts(): void {
-    this.tabs = this.tabs.map((tab) => ({
-      ...tab,
-      count: tab.value === 'ALL'
-        ? undefined
-        : this.sales.filter((s) => s.escrowStatus === tab.value).length || undefined,
-    }));
+  private charger(): void {
+    this.chargement = true;
+    this.erreur = false;
+    this.livraisonService.getMesVentes().subscribe({
+      next: (ventes) => {
+        this.ventes = ventes;
+        this.chargement = false;
+      },
+      error: () => {
+        this.erreur = true;
+        this.chargement = false;
+      },
+    });
   }
 
-  setTab(tab: EscrowStatus | 'ALL'): void {
+  // ── Filtres ────────────────────────────────────────────────────────────────
+
+  setTab(tab: Onglet): void {
     this.activeTab = tab;
   }
 
-  get filteredSales(): Sale[] {
-    if (this.activeTab === 'ALL') return this.sales;
-    return this.sales.filter((s) => s.escrowStatus === this.activeTab);
+  private filtrer(tab: Onglet): MaVente[] {
+    switch (tab) {
+      case 'ALL':
+        return this.ventes;
+      case 'A_REMETTRE':
+        return this.ventes.filter((v) => v.statutLivraison === 'A_REMETTRE');
+      case 'EN_ATTENTE':
+        return this.ventes.filter(
+          (v) => v.etatGlobal === 'EN_LIVRAISON' || v.etatGlobal === 'EN_ATTENTE_CONFIRMATION',
+        );
+      case 'REGLE':
+        return this.ventes.filter((v) => v.etatGlobal === 'VERSE');
+      case 'LITIGE':
+        return this.ventes.filter((v) => v.etatGlobal === 'LITIGE');
+    }
   }
 
-  getEscrowLabel(status: EscrowStatus): string {
-    const labels: Record<EscrowStatus, string> = {
-      PENDING: 'En attente',
-      FUNDS_LOCKED: 'Fonds bloqués',
-      RELEASED: 'Libéré',
-      DISPUTED: 'Litige',
-      REFUNDED: 'Remboursé',
+  get ventesFiltrees(): MaVente[] {
+    return this.filtrer(this.activeTab);
+  }
+
+  compteOnglet(tab: Onglet): number {
+    return this.filtrer(tab).length;
+  }
+
+  // ── Totaux ─────────────────────────────────────────────────────────────────
+
+  /** Argent encaissé par la plateforme mais pas encore dû au vendeur. */
+  get totalSousSequestre(): number {
+    return this.ventes
+      .filter((v) => v.statutVersement === 'BLOQUE')
+      .reduce((somme, v) => somme + (v.montantNet ?? 0), 0);
+  }
+
+  /** Dû au vendeur, en attente d'envoi par la plateforme. */
+  get totalALiberer(): number {
+    return this.ventes
+      .filter((v) => v.statutVersement === 'EN_ATTENTE' || v.statutVersement === 'EN_COURS')
+      .reduce((somme, v) => somme + (v.montantNet ?? 0), 0);
+  }
+
+  /** Effectivement reçu. */
+  get totalVerse(): number {
+    return this.ventes
+      .filter((v) => v.statutVersement === 'CONFIRME')
+      .reduce((somme, v) => somme + (v.montantNet ?? 0), 0);
+  }
+
+  // ── Actions vendeur ────────────────────────────────────────────────────────
+
+  declarerPriseEnCharge(vente: MaVente): void {
+    if (this.enCours.has(vente.itemId)) return;
+    this.enCours.add(vente.itemId);
+
+    this.livraisonService.declarerPriseEnCharge(vente.itemId).subscribe({
+      next: (maj) => {
+        this.remplacer(maj);
+        this.enCours.delete(vente.itemId);
+        this.toast.success(`« ${vente.animalNom} » est marqué en cours de livraison.`);
+      },
+      error: (e) => {
+        this.enCours.delete(vente.itemId);
+        this.toast.error(e?.error?.message ?? "La mise à jour a échoué.");
+      },
+    });
+  }
+
+  declarerDepot(vente: MaVente): void {
+    if (this.enCours.has(vente.itemId)) return;
+    this.enCours.add(vente.itemId);
+
+    this.livraisonService.declarerDepot(vente.itemId).subscribe({
+      next: (maj) => {
+        this.remplacer(maj);
+        this.enCours.delete(vente.itemId);
+        this.toast.success(
+          `« ${vente.animalNom} » est marqué livré. En attente de confirmation de l'acheteur.`,
+        );
+      },
+      error: (e) => {
+        this.enCours.delete(vente.itemId);
+        this.toast.error(e?.error?.message ?? "La mise à jour a échoué.");
+      },
+    });
+  }
+
+  private remplacer(vente: MaVente): void {
+    this.ventes = this.ventes.map((v) => (v.itemId === vente.itemId ? vente : v));
+  }
+
+  // ── Affichage ──────────────────────────────────────────────────────────────
+
+  badgeClass(etat: EtatVente): string {
+    const map: Record<EtatVente, string> = {
+      A_REMETTRE: 'bg-[#FDF6EC] text-[#B96416]',
+      EN_LIVRAISON: 'bg-[#FDF6EC] text-[#B96416]',
+      EN_ATTENTE_CONFIRMATION: 'bg-[#F6F1E7] text-[#8B6F55]',
+      FONDS_LIBERES: 'bg-[#E0EEE4] text-[#1B4332]',
+      VERSEMENT_EN_COURS: 'bg-[#E0EEE4] text-[#1B4332]',
+      VERSE: 'bg-[#E0EEE4] text-[#2D6A4F]',
+      VERSEMENT_ECHOUE: 'bg-red-100 text-red-800',
+      LITIGE: 'bg-red-100 text-red-800',
     };
-    return labels[status] ?? status;
+    return map[etat] ?? 'bg-[#F6F1E7] text-gray-600';
   }
 
-  getEscrowBadgeClass(status: EscrowStatus): string {
-    const map: Record<EscrowStatus, string> = {
-      PENDING: 'bg-[#F6F1E7] text-gray-600',
-      FUNDS_LOCKED: 'bg-amber-100 text-amber-800',
-      RELEASED: 'bg-green-100 text-green-800',
-      DISPUTED: 'bg-red-100 text-red-800',
-      REFUNDED: 'bg-blue-100 text-blue-800',
-    };
-    return map[status] ?? 'bg-[#F6F1E7] text-gray-600';
-  }
-
-  getEscrowSteps(status: EscrowStatus): { label: string; done: boolean }[] {
-    const order: EscrowStatus[] = ['PENDING', 'FUNDS_LOCKED', 'RELEASED'];
-    const currentIndex = order.indexOf(status);
+  etapes(vente: MaVente): { label: string; done: boolean }[] {
+    const ordre = ['A_REMETTRE', 'EN_LIVRAISON', 'LIVRE', 'RECEPTIONNE'];
+    const rang = ordre.indexOf(vente.statutLivraison);
     return [
-      { label: 'Commande', done: currentIndex >= 0 },
-      { label: 'Paiement bloqué', done: currentIndex >= 1 },
-      { label: 'Livraison', done: currentIndex >= 1 },
-      { label: 'Confirmation', done: currentIndex >= 2 },
-      { label: 'Fonds libérés', done: currentIndex >= 2 },
+      { label: 'Payé', done: true },
+      { label: 'Pris en charge', done: rang >= 1 },
+      { label: 'Livré', done: rang >= 2 },
+      { label: 'Confirmé', done: rang >= 3 },
+      { label: 'Versé', done: vente.statutVersement === 'CONFIRME' },
     ];
   }
 }
