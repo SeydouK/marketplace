@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { PanierService } from './services/panier.service';
 import { Panier, PanierItem, PanierParVendeur } from './models/panier.model';
+import { PaiementService } from '../paiement/services/paiement.service';
 
 @Component({
   selector: 'app-panier',
@@ -22,7 +23,10 @@ export class PanierComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private panierService: PanierService) {}
+  constructor(
+    private panierService: PanierService,
+    private paiementService: PaiementService
+  ) {}
 
   ngOnInit(): void {
     this.panierService.panier$
@@ -65,7 +69,12 @@ export class PanierComponent implements OnInit, OnDestroy {
 
   passerCommande(): void {
     this.commandeEnCours = true;
-    setTimeout(() => (this.commandeEnCours = false), 2000);
+    this.paiementService.creerCommande()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: commande => (window.location.href = commande.checkoutUrl),
+        error: () => (this.commandeEnCours = false)
+      });
   }
 
   ngOnDestroy(): void {

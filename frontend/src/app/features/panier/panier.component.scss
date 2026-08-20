@@ -309,21 +309,25 @@
 }
 
 /* ── Méthodes de paiement ── */
+/* Les moyens de paiement sont presentes par GeniusPay sur sa propre page de checkout :
+   on ne les liste pas ici, l'operateur disponible depend de la passerelle qu'il retient. */
 .paiement-methodes {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   margin-top: 16px;
+  font-size: 0.8rem;
+  color: #6B6358;
+  text-align: center;
+  line-height: 1.5;
 
-  img {
-    height: 28px;
-    object-fit: contain;
-    filter: grayscale(0.3);
-    transition: filter 0.15s;
-    &:hover { filter: none; }
+  i {
+    color: #2D6A4F;
+    flex-shrink: 0;
   }
 }
+
 /* ── Mobile ── */
 @media (max-width: 640px) {
   .panier-page { padding: 16px 12px; }
@@ -385,5 +389,5 @@
 
   .btn-commander { padding: 13px; font-size: 0.95rem; }
 
-  .paiement-methodes img { height: 22px; }
+  .paiement-methodes { font-size: 0.75rem; }
 }

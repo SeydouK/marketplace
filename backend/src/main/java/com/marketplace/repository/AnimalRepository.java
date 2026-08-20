@@ -6,14 +6,47 @@ import com.marketplace.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 public interface AnimalRepository extends JpaRepository<Animal, UUID> {
+
+    // ── Verrou de reservation ─────────────────────────────────────────────────
+
+    /**
+     * Change le statut d'un animal uniquement s'il est encore dans l'etat attendu.
+     *
+     * C'est le verrou anti-concurrence du parcours d'achat : la base arbitre elle-meme.
+     * Lire puis ecrire en deux temps ne protegerait pas — deux sessions pourraient lire
+     * DISPONIBLE avant que l'une n'ecrive. Ici le UPDATE conditionnel est atomique :
+     * sur deux commandes simultanees du meme animal, une seule voit 1 ligne modifiee.
+     *
+     * Pas de clearAutomatically : cela detacherait les entites du contexte de persistance.
+     *
+     * @return 1 si la transition a eu lieu, 0 si l'animal n'etait plus dans l'etat attendu.
+     */
+    @Modifying(flushAutomatically = true)
+    @Query("UPDATE Animal a SET a.status = :nouveau WHERE a.id = :id AND a.status = :attendu")
+    int changerStatutSi(@Param("id") UUID id,
+                        @Param("attendu") AnimalStatus attendu,
+                        @Param("nouveau") AnimalStatus nouveau);
+
+    /**
+     * Variante de masse, pour liberer ou solder les animaux d'une commande en un appel.
+     *
+     * @return le nombre d'animaux effectivement modifies.
+     */
+    @Modifying(flushAutomatically = true)
+    @Query("UPDATE Animal a SET a.status = :nouveau WHERE a.id IN :ids AND a.status = :attendu")
+    int changerStatutSiEnMasse(@Param("ids") Collection<UUID> ids,
+                               @Param("attendu") AnimalStatus attendu,
+                               @Param("nouveau") AnimalStatus nouveau);
 
     // ── Dashboard vendeur ─────────────────────────────────────────────────────
 

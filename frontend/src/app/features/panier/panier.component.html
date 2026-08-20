@@ -113,8 +113,8 @@
       </div>
 
       <p class="recap-note">
-        <i class="pi pi-lock"></i> Le paiement sera sécurisé via escrow. Les fonds sont libérés uniquement après
-        confirmation de réception.
+        <i class="pi pi-lock"></i> Paiement sécurisé. BétailMarket conserve les fonds et ne les verse au
+        vendeur qu'après validation de la vente par notre équipe.
       </p>
 
       <button class="btn-commander" (click)="passerCommande()" [disabled]="commandeEnCours">
@@ -122,11 +122,10 @@
         <span *ngIf="commandeEnCours"><i class="pi pi-spin pi-spinner"></i> Traitement...</span>
       </button>
 
-      <div class="paiement-methodes">
-        <img src="assets/images/orange-money.png" alt="Orange Money" title="Orange Money">
-        <img src="assets/images/wave.png" alt="Wave" title="Wave CI">
-        <img src="assets/images/mtn-money.png" alt="MTN Money" title="MTN Money">
-      </div>
+      <p class="paiement-methodes">
+        <i class="pi pi-mobile"></i> Paiement Mobile Money sécurisé.
+        Vous choisirez votre opérateur à l'étape suivante.
+      </p>
     </div>
   </div>
 
