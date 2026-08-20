@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -49,6 +50,39 @@ public class CommandeItem {
 
     @Column(name = "localisation")
     private String localisation;
+
+    // ── Sequestre : suivi de la remise de l'animal ──────────────────────────
+    // Un item = un animal = une livraison. Le versement du vendeur ne se debloque
+    // que lorsque tous ses items d'une meme commande sont sortis du sequestre.
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "statut_livraison", nullable = false)
+    private StatutLivraison statutLivraison = StatutLivraison.A_REMETTRE;
+
+    /** Null tant qu'aucune prise en charge n'a ete declaree. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transporteur")
+    private Transporteur transporteur;
+
+    /** Identifiant de suivi cote transporteur — reserve a l'integration Yango. */
+    @Column(name = "tracking_reference")
+    private String trackingReference;
+
+    @Column(name = "remis_at")
+    private LocalDateTime remisAt;
+
+    /** Depot constate. Point de depart du delai de liberation automatique. */
+    @Column(name = "livre_at")
+    private LocalDateTime livreAt;
+
+    @Column(name = "receptionne_at")
+    private LocalDateTime receptionneAt;
+
+    @Column(name = "litige_motif", columnDefinition = "text")
+    private String litigeMotif;
+
+    @Column(name = "litige_ouvert_at")
+    private LocalDateTime litigeOuvertAt;
 
     public BigDecimal getSousTotal() {
         if (prixUnitaire == null) return BigDecimal.ZERO;

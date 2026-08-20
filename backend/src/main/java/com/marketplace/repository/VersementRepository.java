@@ -18,4 +18,8 @@ public interface VersementRepository extends JpaRepository<Versement, Long> {
     Page<Versement> findByStatut(StatutVersement statut, Pageable pageable);
 
     List<Versement> findByCommandeId(Long commandeId);
+
+    Optional<Versement> findByCommandeIdAndVendeurId(Long commandeId, Long vendeurId);
+
+    List<Versement> findByVendeurId(Long vendeurId);
 }

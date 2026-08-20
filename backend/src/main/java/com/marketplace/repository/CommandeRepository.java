@@ -23,6 +23,15 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
 
     Page<Commande> findByStatut(StatutCommande statut, Pageable pageable);
 
+    /**
+     * Historique complet d'un acheteur pour « Mes achats ».
+     * Les items sont charges dans la meme requete : ils sont LAZY et
+     * spring.jpa.open-in-view=false ferme la session avant la serialisation.
+     */
+    @Query("SELECT DISTINCT c FROM Commande c LEFT JOIN FETCH c.items "
+            + "WHERE c.userId = :userId ORDER BY c.createdAt DESC")
+    List<Commande> findMesCommandesAvecItems(@Param("userId") Long userId);
+
     /** Commandes non encore payees d'un acheteur — sert a ne pas en creer une seconde pour le meme panier. */
     List<Commande> findByUserIdAndStatut(Long userId, StatutCommande statut);
 

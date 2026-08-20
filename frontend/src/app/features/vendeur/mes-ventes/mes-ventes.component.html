@@ -1,89 +1,222 @@
 <!-- vendeur/mes-ventes/mes-ventes.component.html -->
-<div class="max-w-7xl mx-auto py-6 px-4">
-  <h1 class="text-2xl font-bold mb-6">Mes ventes &amp; escrow</h1>
+<section class="max-w-6xl mx-auto py-8 px-4 space-y-6">
 
-  <!-- Onglets statut -->
-  <div class="flex gap-2 mb-6 border-b border-[#E7E0D2]">
+  <!-- ═══ EN-TÊTE ═══ -->
+  <div>
+    <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">Mes ventes</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      Suivez vos animaux vendus et le règlement de vos fonds.
+    </p>
+  </div>
+
+  <!-- ═══ SYNTHÈSE ARGENT ═══ -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Sous séquestre</p>
+          <p class="mt-2 text-2xl font-extrabold text-[#B96416] leading-none">
+            {{ totalSousSequestre | number }} <span class="text-sm">FCFA</span>
+          </p>
+          <p class="mt-2 text-xs text-gray-400">En attente de livraison</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-lock text-lg text-[#B96416]"></i>
+        </span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">À recevoir</p>
+          <p class="mt-2 text-2xl font-extrabold text-[#1B4332] leading-none">
+            {{ totalALiberer | number }} <span class="text-sm">FCFA</span>
+          </p>
+          <p class="mt-2 text-xs text-gray-400">Débloqué, versement en préparation</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-clock text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Déjà versé</p>
+          <p class="mt-2 text-2xl font-extrabold text-[#2D6A4F] leading-none">
+            {{ totalVerse | number }} <span class="text-sm">FCFA</span>
+          </p>
+          <p class="mt-2 text-xs text-gray-400">Reçu sur votre Mobile Money</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-check-circle text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- ═══ RAPPEL SÉQUESTRE ═══ -->
+  <div class="flex items-start gap-3 p-4 bg-[#FDF6EC] border border-[#F4D4A3] rounded-2xl">
+    <i class="pi pi-info-circle text-lg text-[#B96416] flex-shrink-0 mt-0.5"></i>
+    <p class="text-sm text-[#8B6F55] leading-relaxed">
+      <span class="font-semibold text-amber-800">Comment vous êtes payé.</span>
+      L'argent de l'acheteur est encaissé par BétailMarket dès le paiement, puis conservé
+      jusqu'à ce qu'il confirme avoir reçu l'animal. Marquez vos remises pour accélérer
+      le déblocage.
+    </p>
+  </div>
+
+  <!-- ═══ ONGLETS ═══ -->
+  <div class="flex gap-2 border-b border-[#E7E0D2] overflow-x-auto">
     <button *ngFor="let tab of tabs"
+      type="button"
       (click)="setTab(tab.value)"
-      [class.border-b-2]="activeTab === tab.value"
-      [class.border-[#2D6A4F]]="activeTab === tab.value"
-      [class.text-[#2D6A4F]]="activeTab === tab.value"
-      class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#2D6A4F] transition -mb-px">
+      class="px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors"
+      [ngClass]="activeTab === tab.value
+        ? 'border-[#2D6A4F] text-[#2D6A4F]'
+        : 'border-transparent text-gray-500 hover:text-gray-700'">
       {{ tab.label }}
-      <span *ngIf="tab.count" class="ml-1.5 px-1.5 py-0.5 rounded-full bg-[#2D6A4F]/10 text-[#2D6A4F] text-xs">
-        {{ tab.count }}
-      </span>
+      <span class="ml-1 text-xs text-gray-400">({{ compteOnglet(tab.value) }})</span>
     </button>
   </div>
 
-  <div *ngIf="filteredSales.length === 0" class="text-center py-16 text-gray-400">
-    <p>Aucune vente dans cette catégorie.</p>
+  <!-- ═══ CHARGEMENT / ERREUR ═══ -->
+  <div *ngIf="chargement" class="py-16 text-center text-gray-400">
+    <i class="pi pi-spin pi-spinner text-2xl"></i>
+    <p class="mt-3 text-sm">Chargement de vos ventes…</p>
   </div>
 
-  <div class="space-y-4">
-    <div *ngFor="let sale of filteredSales"
-      class="rounded-xl border border-[#E7E0D2] bg-white p-5">
+  <div *ngIf="erreur && !chargement"
+    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    Impossible de charger vos ventes pour le moment. Réessayez dans quelques instants.
+  </div>
 
-      <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-        <!-- Info animal -->
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="font-semibold text-gray-900">{{ sale.animalName }}</span>
-            <span class="text-xs px-2 py-0.5 rounded-full font-medium"
-              [ngClass]="getEscrowBadgeClass(sale.escrowStatus)">
-              {{ getEscrowLabel(sale.escrowStatus) }}
-            </span>
-          </div>
-          <p class="text-sm text-gray-500">
-            Acheteur : {{ sale.buyerName }} · {{ sale.createdAt | date:'dd/MM/yyyy' }}
+  <!-- ═══ VIDE ═══ -->
+  <div *ngIf="!chargement && !erreur && ventesFiltrees.length === 0"
+    class="text-center py-16 border border-dashed border-[#E7E0D2] rounded-2xl">
+    <i class="pi pi-inbox text-3xl text-[#C9BCA3]"></i>
+    <p class="mt-3 text-gray-500">Aucune vente dans cette catégorie.</p>
+    <a routerLink="/vendeur/mes-annonces"
+      class="mt-4 inline-block text-sm font-semibold text-[#2D6A4F] underline">
+      Voir mes annonces
+    </a>
+  </div>
+
+  <!-- ═══ LISTE DES VENTES ═══ -->
+  <article *ngFor="let vente of ventesFiltrees"
+    class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card">
+
+    <div class="flex flex-col sm:flex-row gap-4">
+      <img *ngIf="vente.photoUrl" [src]="vente.photoUrl" [alt]="vente.animalNom"
+        class="w-full sm:w-28 h-28 object-cover rounded-xl flex-shrink-0 bg-[#F6F1E7]" />
+
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-semibold text-gray-900">{{ vente.animalNom }}</span>
+          <span class="text-xs px-2.5 py-1 rounded-full font-semibold"
+            [ngClass]="badgeClass(vente.etatGlobal)">
+            {{ vente.etatLibelle }}
+          </span>
+        </div>
+
+        <p class="text-sm text-gray-500 mt-1">
+          <span *ngIf="vente.animalRace">{{ vente.animalRace }} · </span>
+          Acheteur : {{ vente.acheteurNom || 'non renseigné' }}
+          · Payé le {{ vente.paidAt | date:'dd/MM/yyyy' }}
+        </p>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Commande {{ vente.commandeReference || '#' + vente.commandeId }}
+        </p>
+
+        <!-- Montants -->
+        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 mt-2">
+          <span class="text-sm text-gray-500">
+            Prix de vente : <span class="font-semibold text-gray-700">{{ vente.montantBrut | number }} FCFA</span>
+          </span>
+          <span *ngIf="vente.montantNet != null" class="text-sm font-bold text-[#2D6A4F]">
+            Vous recevrez : {{ vente.montantNet | number }} FCFA
+          </span>
+        </div>
+
+        <!-- Fil d'avancement -->
+        <div *ngIf="vente.statutLivraison !== 'LITIGE'" class="flex items-center gap-1 mt-3">
+          <ng-container *ngFor="let etape of etapes(vente); let last = last">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                [ngClass]="etape.done ? 'bg-[#2D6A4F]' : 'bg-[#E7E0D2]'"></span>
+              <span class="text-[11px] whitespace-nowrap"
+                [ngClass]="etape.done ? 'text-[#1B4332] font-semibold' : 'text-gray-400'">
+                {{ etape.label }}
+              </span>
+            </div>
+            <span *ngIf="!last" class="flex-1 h-px min-w-[8px]"
+              [ngClass]="etape.done ? 'bg-[#2D6A4F]/30' : 'bg-[#E7E0D2]'"></span>
+          </ng-container>
+        </div>
+
+        <!-- Suivi transporteur -->
+        <p *ngIf="vente.trackingReference" class="text-xs text-gray-500 mt-2">
+          <i class="pi pi-truck mr-1"></i>
+          {{ vente.transporteur }} · suivi {{ vente.trackingReference }}
+        </p>
+
+        <!-- Litige -->
+        <div *ngIf="vente.statutLivraison === 'LITIGE'"
+          class="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+          <p class="text-xs font-semibold text-red-800">
+            Litige ouvert par l'acheteur — vos fonds sont gelés
           </p>
-          <p class="text-sm font-semibold text-[#2D6A4F] mt-1">
-            {{ sale.amount | number }} FCFA
+          <p class="text-xs text-red-600 mt-1">{{ vente.litigeMotif }}</p>
+          <p class="text-xs text-red-500 mt-1.5">
+            Un administrateur va arbitrer. Contactez le support si besoin.
           </p>
         </div>
 
-        <!-- Actions selon statut escrow -->
-        <div class="shrink-0">
-          <!-- Vendeur attend confirmation acheteur -->
-          <span *ngIf="sale.escrowStatus === 'FUNDS_LOCKED'"
-            class="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg inline-block">
-            En attente de réception acheteur
-          </span>
-
-          <!-- Fonds libérés -->
-          <span *ngIf="sale.escrowStatus === 'RELEASED'"
-            class="text-xs text-green-700 bg-green-50 border border-green-200 px-3 py-2 rounded-lg inline-block">
-            Paiement reçu ✓
-          </span>
-
-          <!-- Litige ouvert -->
-          <span *ngIf="sale.escrowStatus === 'DISPUTED'"
-            class="text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg inline-block">
-            Litige en cours
-          </span>
-        </div>
+        <!-- Versement effectué -->
+        <p *ngIf="vente.statutVersement === 'CONFIRME'"
+          class="mt-3 text-xs text-[#2D6A4F] font-semibold">
+          <i class="pi pi-check-circle mr-1"></i>
+          Versement reçu le {{ vente.versementEnvoyeAt | date:'dd/MM/yyyy' }}
+        </p>
       </div>
 
-      <!-- Timeline escrow -->
-      <div class="mt-4 flex items-center gap-0 text-xs text-gray-400 overflow-x-auto">
-        <ng-container *ngFor="let step of getEscrowSteps(sale.escrowStatus); let last = last">
-          <div class="flex items-center gap-1 shrink-0">
-            <div class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px]"
-              [class.bg-[#2D6A4F]]="step.done"
-              [class.bg-gray-200]="!step.done">
-              {{ step.done ? '✓' : '' }}
-            </div>
-            <span [class.text-[#2D6A4F]]="step.done" [class.font-medium]="step.done">
-              {{ step.label }}
-            </span>
-          </div>
-          <div *ngIf="!last" class="w-8 h-px mx-1 shrink-0"
-            [class.bg-[#2D6A4F]]="step.done"
-            [class.bg-gray-200]="!step.done">
-          </div>
-        </ng-container>
+      <!-- Actions -->
+      <div class="shrink-0 flex flex-col gap-2 sm:w-52">
+        <button *ngIf="vente.remisable"
+          type="button"
+          [disabled]="enCours.has(vente.itemId)"
+          (click)="declarerPriseEnCharge(vente)"
+          class="px-4 py-2.5 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-50">
+          <i class="pi pi-send mr-1"></i>
+          Marquer en livraison
+        </button>
+
+        <button *ngIf="vente.depotDeclarable"
+          type="button"
+          [disabled]="enCours.has(vente.itemId)"
+          (click)="declarerDepot(vente)"
+          class="px-4 py-2.5 border border-[#2D6A4F] text-[#2D6A4F] text-sm font-semibold rounded-xl hover:bg-[#E0EEE4] transition-colors disabled:opacity-50">
+          <i class="pi pi-map-marker mr-1"></i>
+          Marquer livré
+        </button>
+
+        <span *ngIf="vente.statutLivraison === 'LIVRE'"
+          class="text-[11px] text-center text-[#8B6F55] leading-snug">
+          <i class="pi pi-hourglass"></i>
+          En attente de la confirmation de l'acheteur
+        </span>
+
+        <span *ngIf="vente.statutVersement === 'BLOQUE' && vente.statutLivraison !== 'LITIGE'"
+          class="text-[11px] text-center text-[#8B6F55] leading-snug">
+          <i class="pi pi-lock"></i> Fonds sous séquestre
+        </span>
       </div>
     </div>
-  </div>
-</div>
+
+  </article>
+
+</section>
