@@ -19,13 +19,13 @@
       <!-- Avatar -->
       <div class="flex-shrink-0">
         <img
-          *ngIf="profil.photoUrl"
-          [src]="profil.photoUrl"
+          *ngIf="profil.avatarUrl"
+          [src]="profil.avatarUrl | assetUrl"
           [alt]="profil.name"
           class="w-20 h-20 rounded-2xl object-cover border border-[#E7E0D2]"
         />
         <div
-          *ngIf="!profil.photoUrl"
+          *ngIf="!profil.avatarUrl"
           class="w-20 h-20 rounded-2xl bg-[#2D6A4F] flex items-center justify-center text-white text-2xl font-bold"
         >
           {{ profil.name.charAt(0).toUpperCase() }}
@@ -100,12 +100,12 @@
       <!-- Image -->
       <div class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#F6F1E7]">
         <img
-          *ngIf="annonce.imageUrls?.length"
-          [src]="annonce.imageUrls[0]"
+          *ngIf="annonce.image"
+          [src]="annonce.image"
           [alt]="annonce.title"
           class="w-full h-full object-cover"
         />
-        <div *ngIf="!annonce.imageUrls?.length"
+        <div *ngIf="!annonce.image"
           class="w-full h-full flex items-center justify-center">
           <i class="pi pi-image text-2xl text-gray-300"></i>
         </div>

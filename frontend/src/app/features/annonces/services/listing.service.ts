@@ -86,7 +86,15 @@ export class ListingService {
     );
   }
 
-  private toListingFrontend(a: any): Listing {
+  /**
+   * Convertit un AnimalDTO du backend en Listing utilisable par les templates :
+   * renomme les champs (displayName -> title, lieuNaissance -> location, type ->
+   * animalType) et rend les URLs de photos absolues.
+   *
+   * Public car ProfilVendeurService consomme le meme DTO : sans ce mapping, son
+   * ecran lit des champs inexistants et n'affiche ni image, ni titre, ni lieu.
+   */
+  toListingFrontend(a: any): Listing {
     const photos = (a.photos || []).map((url: string) => this.resolveAssetUrl(url));
     return {
       ...a,

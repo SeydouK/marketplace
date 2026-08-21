@@ -6,11 +6,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { PanierService } from './services/panier.service';
 import { Panier, PanierItem, PanierParVendeur } from './models/panier.model';
 import { PaiementService } from '../paiement/services/paiement.service';
+import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-panier',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AssetUrlPipe],
   templateUrl: './panier.component.html',
   styleUrls: ['./panier.component.scss']
 })
