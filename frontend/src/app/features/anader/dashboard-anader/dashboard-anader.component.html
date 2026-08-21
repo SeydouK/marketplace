@@ -121,7 +121,7 @@
         <!-- Photo miniature -->
         <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#F6F1E7] flex-shrink-0">
           <img *ngIf="animal.photos?.[0]"
-            [src]="animal.photos[0]"
+            [src]="animal.photos[0] | assetUrl"
             [alt]="animal.type"
             class="w-full h-full object-cover"/>
           <div *ngIf="!animal.photos?.[0]"

@@ -46,7 +46,7 @@
 
           <!-- Photo -->
           <div class="item-photo">
-            <img [src]="item.photoUrl || 'assets/images/animal-placeholder.png'"
+            <img [src]="item.photoUrl | assetUrl : 'assets/images/animal-placeholder.png'"
                  [alt]="item.animalNom"
                  onerror="this.src='assets/images/animal-placeholder.png'">
           </div>
