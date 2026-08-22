@@ -451,6 +451,7 @@ public class AnimalService {
         animal.setPhotos(toArray(photoUrls));
         animal.setVideos(toArray(videoUrls));
         animal.setQuantity(request.getQuantity());
+        animal.setAnimalPoids(request.getAnimalPoids());
         animal.setLongitude(request.getLongitude());
         animal.setLatitude(request.getLatitude());
     }
@@ -486,6 +487,7 @@ public class AnimalService {
         dto.setPhotos(toList(animal.getPhotos()));
         dto.setVideos(toList(animal.getVideos()));
         dto.setQuantity(animal.getQuantity());
+        dto.setAnimalPoids(animal.getAnimalPoids());
         dto.setLongitude(animal.getLongitude());
         dto.setLatitude(animal.getLatitude());
         dto.setStatus(animal.getStatus());

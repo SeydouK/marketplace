@@ -10,6 +10,7 @@ export interface Listing {
   photos?: string[];
   videos?: string[];
   quantity?: number;
+  animalPoids?: number;
   latitude?: number;
   longitude?: number;
   status?: AnimalStatus;

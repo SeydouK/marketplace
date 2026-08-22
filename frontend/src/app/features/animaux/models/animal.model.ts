@@ -48,6 +48,7 @@ export interface Animal {
   photos: string[];
   videos: string[];
   quantity: number;
+  animalPoids?: number | null;
   longitude?: number | null;
   latitude?: number | null;
   status: AnimalStatus;
@@ -78,6 +79,7 @@ export interface CreateAnimalPayload {
   photos: string[];
   videos: string[];
   quantity: number;
+  animalPoids?: number | null;
   longitude?: number | null;
   latitude?: number | null;
   healthDocuments: Array<{
