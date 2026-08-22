@@ -40,7 +40,7 @@
     </a>
 
     <!-- Favoris -->
-    <a *ngIf="isLoggedIn && !isAnaderOrVet" routerLink="/favoris" routerLinkActive="active-link"
+    <a *ngIf="isLoggedIn && isAcheteur" routerLink="/favoris" routerLinkActive="active-link"
       class="nav-item flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -49,8 +49,8 @@
       <span class="text-[10px] font-medium">Favoris</span>
     </a>
 
-    <!-- Panier (acheteur et vendeur) -->
-    <a *ngIf="isLoggedIn && (isAcheteur || isVendeur)"
+    <!-- Panier (acheteur uniquement) -->
+    <a *ngIf="isLoggedIn && isAcheteur"
       routerLink="/panier" routerLinkActive="active-link"
       class="nav-item relative flex flex-col items-center gap-1 px-3 py-1 min-w-[56px] text-gray-500">
       <div class="relative">
