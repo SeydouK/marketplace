@@ -59,12 +59,12 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/swagger-ui/**"
                 ).permitAll()
-                .requestMatchers("/api/kyc/**").authenticated() 
+                .requestMatchers("/api/kyc/**").authenticated()
                 .requestMatchers(HttpMethod.GET,  "/api/files/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/animals", "/api/animals/*").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/annonces", "/api/annonces/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/paiements/webhook/**").permitAll()
-
+                .requestMatchers(HttpMethod.GET,  "/api/users/*/profil-public", "/api/users/*/annonces").permitAll()
                 // ── Animaux (authentifié) ─────────────────────────────────
                 .requestMatchers(HttpMethod.GET,
                     "/api/animals/mine",
@@ -82,7 +82,7 @@ public class SecurityConfig {
                 // ── ANADER (authentifié — rôle vérifié dans le service) ───
                 .requestMatchers("/api/anader/**").authenticated()
 
-                // ADMIN 
+                // ADMIN
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // ── Tout le reste nécessite authentification ──────────────
                 .anyRequest().authenticated()
