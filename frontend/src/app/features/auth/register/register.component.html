@@ -18,6 +18,40 @@
   <div class="auth-card">
     <h2>Inscription</h2>
     <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+
+      <!-- Choix du parcours : un transporteur a d'autres obligations -->
+      <div class="field">
+        <label>Je m'inscris comme</label>
+        <div style="display:flex; gap:10px; margin-top:6px">
+          <button type="button" (click)="choisirRole(false)"
+            [style.border]="!estTransporteur ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
+            [style.background]="!estTransporteur ? '#E0EEE4' : '#fff'"
+            style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
+            <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
+              Acheteur
+            </span>
+            <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
+              J'achète des animaux
+            </span>
+          </button>
+          <button type="button" (click)="choisirRole(true)"
+            [style.border]="estTransporteur ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
+            [style.background]="estTransporteur ? '#E0EEE4' : '#fff'"
+            style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
+            <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
+              Transporteur
+            </span>
+            <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
+              Je convoie des animaux
+            </span>
+          </button>
+        </div>
+        <p *ngIf="estTransporteur" style="font-size:12px; color:#8B6F55; margin-top:8px">
+          Après votre inscription, vous devrez vérifier votre identité et déposer
+          votre permis de conduire avant de recevoir des courses.
+        </p>
+      </div>
+
       <div class="field">
         <label for="surname">Nom</label>
         <input
@@ -76,6 +110,53 @@
         <p *ngIf="controlInvalid('password', 'required')" class="error-text">Mot de passe requis.</p>
         <p *ngIf="controlInvalid('password', 'minlength')" class="error-text">
           Le mot de passe doit contenir au moins 6 caracteres.
+        </p>
+      </div>
+
+      <!-- Numero : indicatif separe, jamais devine -->
+      <div class="field">
+        <label for="telephone">
+          Téléphone
+          <span *ngIf="estTransporteur" style="color:#D9342B">*</span>
+          <span *ngIf="!estTransporteur" style="color:#6B6358; font-weight:400"> (facultatif)</span>
+        </label>
+        <div style="display:flex; gap:8px">
+          <div class="indicatif-champ">
+            <button type="button" class="text-field indicatif-bouton"
+              (click)="basculerIndicatifs($event)"
+              [attr.aria-expanded]="listeIndicatifsOuverte"
+              aria-haspopup="listbox"
+              [attr.aria-label]="'Indicatif : ' + indicatifChoisi.pays + ' ' + indicatifChoisi.code">
+              <span class="indicatif-drapeau">{{ indicatifChoisi.drapeau }}</span>
+              <span class="indicatif-code">{{ indicatifChoisi.code }}</span>
+              <span class="indicatif-fleche" [class.ouverte]="listeIndicatifsOuverte" aria-hidden="true"></span>
+            </button>
+
+            <ul *ngIf="listeIndicatifsOuverte" class="indicatif-liste" role="listbox"
+              (click)="$event.stopPropagation()">
+              <li *ngFor="let i of indicatifs" role="option"
+                [attr.aria-selected]="i.code === indicatifChoisi.code">
+                <button type="button" class="indicatif-option"
+                  [class.choisie]="i.code === indicatifChoisi.code"
+                  (click)="choisirIndicatif(i.code)">
+                  <span class="indicatif-drapeau">{{ i.drapeau }}</span>
+                  <span class="indicatif-pays">{{ i.pays }}</span>
+                  <span class="indicatif-option-code">{{ i.code }}</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+          <input
+            id="telephone"
+            type="tel"
+            formControlName="telephone"
+            class="text-field"
+            style="flex:1"
+            placeholder="07 01 02 03 04"
+          />
+        </div>
+        <p *ngIf="estTransporteur && controlInvalid('telephone', 'required')" class="error-text">
+          Numéro requis : c'est par là que les vendeurs vous joindront.
         </p>
       </div>
 

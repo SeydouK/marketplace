@@ -7,6 +7,7 @@ import com.marketplace.exception.ForbiddenException;
 import com.marketplace.exception.ResourceNotFoundException;
 import com.marketplace.model.Commande;
 import com.marketplace.model.CommandeItem;
+import com.marketplace.model.ModeReglement;
 import com.marketplace.model.Role;
 import com.marketplace.model.StatutVersement;
 import com.marketplace.model.User;
@@ -49,6 +50,7 @@ public class VersementService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final GeniusPayService geniusPayService;
+    private final NotificationLivraisonService notifications;
 
     public void genererVersements(Commande commande) {
         if (commande.getItems().isEmpty()) return;
@@ -112,6 +114,13 @@ public class VersementService {
             // le fera passer EN_ATTENTE quand l'acheteur aura confirme la reception.
             versement.setStatut(StatutVersement.BLOQUE);
             versementRepository.save(versement);
+
+            // Le vendeur n'etait prevenu de rien : il decouvrait la vente en
+            // ouvrant « Mes ventes » de lui-meme. Notifie ici plutot qu'a la
+            // creation de la remise, parce que c'est le seul point du parcours
+            // ou le net et sa decomposition existent au meme instant.
+            notifications.notifierVenteAuVendeur(vendeurId, commande.getId(), items,
+                    montantBrutVendeur, fraisAlloue, commissionAlloue, montantNet);
         }
     }
 
@@ -164,11 +173,57 @@ public class VersementService {
         );
 
         versement.setReference(result.reference());
+        versement.setModeReglement(ModeReglement.GENIUSPAY);
         versement.setStatut(StatutVersement.EN_COURS);
         versement.setEnvoyeAt(LocalDateTime.now());
         versement = versementRepository.save(versement);
 
+        notifications.notifierVersementEnvoye(versement.getVendeurId(), versement.getCommandeId(),
+                versement.getMontantNet(), versement.getVendeurTelephone());
+
         return toDTO(versement);
+    }
+
+    /**
+     * Enregistre un versement regle a la main.
+     *
+     * GeniusPay n'expose pas encore de transfert sortant : aujourd'hui l'argent
+     * part par Mobile Money, hors de la plateforme. Plutot que de laisser cette
+     * sortie sans trace, on enregistre qui a regle, quand, et avec quelle
+     * reference — de quoi rapprocher chaque versement du releve.
+     */
+    public AdminVersementDTO reglerManuellement(Long versementId, String reference) {
+        User admin = userService.getCurrentUser();
+        ensureAdminRole(admin);
+
+        if (reference == null || reference.isBlank()) {
+            throw new BadRequestException(
+                    "Renseignez la reference de la transaction : sans elle, le reglement n'est pas verifiable.");
+        }
+
+        Versement versement = versementRepository.findById(versementId)
+                .orElseThrow(() -> new ResourceNotFoundException("Versement introuvable : " + versementId));
+
+        if (versement.getStatut() == StatutVersement.CONFIRME) {
+            throw new BadRequestException("Ce versement a deja ete regle.");
+        }
+        // Le sequestre vaut aussi pour un reglement manuel : payer avant la remise
+        // contournerait par la main ce que le code protege.
+        if (versement.getStatut() == StatutVersement.BLOQUE) {
+            throw new BadRequestException(
+                    "Ce versement est sous sequestre : l'acheteur n'a pas encore confirme "
+                    + "la reception de l'animal.");
+        }
+
+        versement.setStatut(StatutVersement.CONFIRME);
+        versement.setModeReglement(ModeReglement.MANUEL);
+        versement.setReference(reference.trim());
+        versement.setRegleParId(admin.getId());
+        versement.setEnvoyeAt(LocalDateTime.now());
+
+        log.info("Versement {} regle manuellement par l'admin {} — reference {}",
+                versementId, admin.getId(), reference);
+        return toDTO(versementRepository.save(versement));
     }
 
     public void traiterWebhookCashout(String event, String reference) {

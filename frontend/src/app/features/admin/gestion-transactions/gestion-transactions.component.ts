@@ -8,14 +8,17 @@ import { AdminCommande, StatutCommande, AdminService } from '../services/admin.s
 })
 export class GestionTransactionsComponent implements OnInit {
   commandes: AdminCommande[] = [];
-  activeFilter: StatutCommande | 'all' = 'all';
+  activeFilter: StatutCommande | 'all' | 'ORPHELIN' = 'all';
   currentPage = 0;
   totalPages = 1;
   totalElements = 0;
   loading = false;
 
-  readonly filters: { label: string; value: StatutCommande | 'all' }[] = [
+  readonly filters: { label: string; value: StatutCommande | 'all' | 'ORPHELIN' }[] = [
     { label: 'Toutes',    value: 'all' },
+    // En tete, apres « Toutes » : c'est le seul filtre qui designe de l'argent
+    // recu que personne n'a encore traite.
+    { label: 'Paiements orphelins', value: 'ORPHELIN' },
     { label: 'En attente', value: 'EN_ATTENTE' },
     { label: 'Payées',    value: 'PAYEE' },
     { label: 'Échouées',  value: 'ECHOUEE' },
@@ -32,7 +35,12 @@ export class GestionTransactionsComponent implements OnInit {
   load(): void {
     this.loading = true;
     this.adminService
-      .getCommandes({ statut: this.activeFilter, page: this.currentPage, size: 20 })
+      .getCommandes({
+        statut: this.activeFilter === 'ORPHELIN' ? 'all' : this.activeFilter,
+        orphelins: this.activeFilter === 'ORPHELIN',
+        page: this.currentPage,
+        size: 20,
+      })
       .subscribe({
         next: (page) => {
           this.commandes = page.content;
@@ -44,7 +52,7 @@ export class GestionTransactionsComponent implements OnInit {
       });
   }
 
-  setFilter(value: StatutCommande | 'all'): void {
+  setFilter(value: StatutCommande | 'all' | 'ORPHELIN'): void {
     this.activeFilter = value;
     this.currentPage = 0;
     this.load();
@@ -60,6 +68,21 @@ export class GestionTransactionsComponent implements OnInit {
     if (this.currentPage >= this.totalPages - 1) return;
     this.currentPage++;
     this.load();
+  }
+
+  /**
+   * L'infobulle du badge « paiement orphelin ».
+   *
+   * Construite ici et non dans le gabarit : une apostrophe dans une expression
+   * Angular casse l'analyseur de gabarit, et l'erreur ne dit pas pourquoi. Le
+   * texte francais en contient forcement.
+   */
+  titreOrphelin(commande: AdminCommande): string {
+    const quand = commande.paiementOrphelinDetecteAt
+      ? new Date(commande.paiementOrphelinDetecteAt).toLocaleString("fr-FR")
+      : "";
+    return `Constaté le ${quand} — l'acheteur a été débité alors que la commande `
+      + `a été abandonnée. Rembourser, ou honorer la commande.`;
   }
 
   getStatutBadge(statut: StatutCommande): string {

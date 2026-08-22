@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -59,4 +60,21 @@ public class MaVenteDTO {
     /** Le vendeur peut-il declarer une prise en charge / un depot maintenant ? */
     private boolean remisable;
     private boolean depotDeclarable;
+
+    /** Identifiant de la remise — sert a ouvrir l'ecran livreur. */
+    private Long remiseId;
+    private com.marketplace.model.ModeRemise modeRemise;
+
+    /**
+     * Un transporteur conduit-il a la place du vendeur ?
+     *
+     * Change ce que le vendeur doit voir : quand il conduit lui-meme il lui faut
+     * l'ecran de navigation, avec « Je pars » et le partage de position. Quand un
+     * tiers conduit, il n'a rien a piloter — il a besoin de regarder.
+     */
+    private boolean livreParTransporteur;
+    private String transporteurNom;
+
+    /** Frise de suivi, du plus ancien au plus recent. */
+    private List<EvenementLivraisonDTO> evenements;
 }

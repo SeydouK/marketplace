@@ -35,6 +35,12 @@ export class MesAchatsComponent implements OnInit {
   /** Ids des articles dont une action est en vol, pour désactiver le bouton. */
   enCours = new Set<number>();
 
+  /** Frises dépliées, par identifiant d'article. */
+  frisesOuvertes = new Set<number>();
+
+  /** Codes révélés — masqués par défaut pour éviter la lecture par-dessus l'épaule. */
+  codesReveles = new Set<number>();
+
   constructor(
     private livraisonService: LivraisonService,
     private toast: ToastService,
@@ -140,6 +146,8 @@ export class MesAchatsComponent implements OnInit {
     const map: Record<EtatAchat, string> = {
       EN_ATTENTE_PAIEMENT: 'bg-[#F6F1E7] text-[#8B6F55]',
       EN_ATTENTE_LIVRAISON: 'bg-[#FDF6EC] text-[#B96416]',
+      PRET: 'bg-[#E0EEE4] text-[#1B4332]',
+      ECHEC_LIVRAISON: 'bg-red-100 text-red-800',
       EN_LIVRAISON: 'bg-[#FDF6EC] text-[#B96416]',
       A_CONFIRMER: 'bg-[#E0EEE4] text-[#1B4332]',
       TERMINE: 'bg-[#E0EEE4] text-[#2D6A4F]',
@@ -151,14 +159,30 @@ export class MesAchatsComponent implements OnInit {
 
   /** Étapes du parcours, pour le fil d'avancement d'un article. */
   etapes(item: MonAchatItem): { label: string; done: boolean }[] {
-    const ordre = ['A_REMETTRE', 'EN_LIVRAISON', 'LIVRE', 'RECEPTIONNE'];
+    const ordre = ['A_REMETTRE', 'PRET', 'EN_LIVRAISON', 'LIVRE', 'RECEPTIONNE'];
     const rang = ordre.indexOf(item.statutLivraison);
     return [
       { label: 'Payé', done: true },
-      { label: 'Pris en charge', done: rang >= 1 },
-      { label: 'Livré', done: rang >= 2 },
-      { label: 'Réceptionné', done: rang >= 3 },
+      { label: 'Prêt', done: rang >= 1 },
+      { label: 'En route', done: rang >= 2 },
+      { label: 'Reçu', done: rang >= 4 },
     ];
+  }
+
+  basculerFrise(item: MonAchatItem): void {
+    if (this.frisesOuvertes.has(item.id)) {
+      this.frisesOuvertes.delete(item.id);
+    } else {
+      this.frisesOuvertes.add(item.id);
+    }
+  }
+
+  basculerCode(item: MonAchatItem): void {
+    if (this.codesReveles.has(item.id)) {
+      this.codesReveles.delete(item.id);
+    } else {
+      this.codesReveles.add(item.id);
+    }
   }
 
   /** Les fonds sont-ils encore retenus par la plateforme pour cet article ? */

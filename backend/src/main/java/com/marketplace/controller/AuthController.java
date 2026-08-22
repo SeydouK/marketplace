@@ -34,6 +34,23 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    /**
+     * POST /api/auth/verification/renvoyer
+     *
+     * Authentifie : apres inscription l'utilisateur possede deja un jeton. Cela
+     * evite qu'une route ouverte permette de decouvrir quels emails ont un compte,
+     * ou d'expedier des messages vers une adresse arbitraire.
+     */
+    @PostMapping("/verification/renvoyer")
+    public ResponseEntity<AuthService.RenvoiVerificationResponse> renvoyerVerification() {
+        var auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(authService.renvoyerVerification(auth.getName()));
+    }
+
     @GetMapping("/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestParam String token){
         try{

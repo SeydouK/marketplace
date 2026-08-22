@@ -28,6 +28,9 @@ public interface CommandeItemRepository extends JpaRepository<CommandeItem, Long
 
     List<CommandeItem> findByCommandeIdAndVendeurId(Long commandeId, Long vendeurId);
 
+    @Query("SELECT i FROM CommandeItem i WHERE i.commande.id = :commandeId")
+    List<CommandeItem> findByCommandeId(@Param("commandeId") Long commandeId);
+
     @Query("SELECT i FROM CommandeItem i JOIN FETCH i.commande WHERE i.id = :id")
     Optional<CommandeItem> findByIdWithCommande(@Param("id") Long id);
 

@@ -5,5 +5,6 @@ public enum Role {
     ACHETEUR,      // acheteur (peut aussi être VENDEUR)
     VETERINAIRE,   // agent de santé animale
     ANADER,        // agent de contrôle ANADER
+    TRANSPORTEUR,  // convoyeur d'animaux, valide par KYC + permis de conduire
     ADMIN          // administrateur plateforme
 }

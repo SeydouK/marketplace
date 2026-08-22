@@ -11,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { LeafletLoaderService } from '../../../shared/services/leaflet-loader.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
@@ -99,7 +100,8 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     private readonly zone: NgZone,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    @Inject(DOCUMENT) private readonly document: Document
+    @Inject(DOCUMENT) private readonly document: Document,
+    private readonly leaflet: LeafletLoaderService
   ) {}
 
   ngOnInit(): void {
@@ -644,10 +646,9 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     }).setView([this.defaultMapCenter.latitude, this.defaultMapCenter.longitude], 7);
 
     L.control.zoom({ position: 'topright' }).addTo(this.map);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(this.map);
+    // Fond de carte partage : le fournisseur de tuiles se change au seul
+    // endroit ou il est declare, pas carte par carte.
+    this.leaflet.fondDeCarte(L).addTo(this.map);
 
     this.scheduleMapInvalidate();
   }

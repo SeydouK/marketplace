@@ -1,0 +1,50 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# OSRM auto-heberge, sur les donnees OpenStreetMap de Cote d'Ivoire.
+#
+# A quoi ca sert : l'application calcule des itineraires et recale les parcours
+# sur les routes. Elle le fait aujourd'hui contre router.project-osrm.org, un
+# serveur de demonstration que le projet OSRM decourage explicitement d'utiliser
+# en production — sans garantie de disponibilite, sans debit garanti, et sujet a
+# blocage. Le jour ou il coupe, plus aucun livreur n'a d'itineraire.
+#
+# Ce fichier decrit la meme chose, chez soi. Voir README.md pour la preparation
+# des donnees, qui doit avoir lieu AVANT le premier demarrage.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  osrm:
+    image: ghcr.io/project-osrm/osrm-backend:v5.27.1
+    container_name: betailmarket-osrm
+    restart: unless-stopped
+
+    # MLD : l'algorithme qui accepte un recalcul frequent sans reconstruire tout
+    # le graphe. C'est celui qu'il faut ici — la sortie d'itineraire declenche
+    # des recalculs en cours de trajet.
+    command: >
+      osrm-routed --algorithm mld
+      --max-matching-size 500
+      /data/cote-divoire-latest.osrm
+
+    volumes:
+      # Contient l'extrait .osm.pbf et tous les fichiers produits par la
+      # preparation. Monte en lecture seule : le serveur n'ecrit rien.
+      - ./data:/data:ro
+
+    ports:
+      # Expose sur la boucle locale uniquement. OSRM n'a ni authentification ni
+      # limitation de debit : l'ouvrir sur l'exterieur revient a offrir un
+      # service de calcul a qui le trouve. Passer par un mandataire inverse.
+      - "127.0.0.1:5000:5000"
+
+    healthcheck:
+      # Un point connu d'Abidjan : verifie que les donnees sont chargees, pas
+      # seulement que le processus tourne.
+      test: ["CMD-SHELL", "wget -qO- 'http://localhost:5000/route/v1/driving/-4.0083,5.3364;-3.9962,5.3199' | grep -q '\"code\":\"Ok\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # L'extrait ivoirien tient largement dans cette limite ; la borne evite
+    # qu'un pic de memoire emporte le reste de la machine.
+    mem_limit: 2g

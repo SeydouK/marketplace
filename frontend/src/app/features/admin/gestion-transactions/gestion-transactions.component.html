@@ -79,11 +79,23 @@
           </td>
 
           <td class="px-4 py-3">
-            <span
-              class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
-              [ngClass]="getStatutBadge(commande.statut)">
-              {{ getStatutLabel(commande.statut) }}
-            </span>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span
+                class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
+                [ngClass]="getStatutBadge(commande.statut)">
+                {{ getStatutLabel(commande.statut) }}
+              </span>
+
+              <!-- Contradiction entre notre statut et celui de l'operateur.
+                   Le rouge est reserve aux erreurs, et c'en est une : de
+                   l'argent a ete preleve sur une commande abandonnee. -->
+              <span *ngIf="commande.paiementOrphelinDetecteAt"
+                class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800"
+                [title]="titreOrphelin(commande)">
+                <i class="pi pi-exclamation-triangle text-[10px]"></i>
+                Payée chez l'opérateur
+              </span>
+            </div>
           </td>
 
           <td class="px-4 py-3 text-gray-500 text-xs">

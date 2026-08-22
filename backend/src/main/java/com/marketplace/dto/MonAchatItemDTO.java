@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /** Un animal d'une commande, vu par l'acheteur, avec l'etat de sa remise. */
@@ -46,4 +47,19 @@ public class MonAchatItemDTO {
      * Null tant que l'article n'est pas LIVRE.
      */
     private LocalDateTime liberationAutomatiqueLe;
+
+    /**
+     * Code a communiquer a celui qui remet l'animal.
+     *
+     * Present uniquement dans la vue acheteur, et efface une fois l'animal recu.
+     * Ne doit jamais figurer dans une reponse destinee au vendeur.
+     */
+    private String codeRemise;
+
+    /** Identifiant de la remise — sert a ouvrir le suivi et le choix d'adresse. */
+    private Long remiseId;
+    private com.marketplace.model.ModeRemise modeRemise;
+
+    /** Frise de suivi, du plus ancien au plus recent. */
+    private List<EvenementLivraisonDTO> evenements;
 }

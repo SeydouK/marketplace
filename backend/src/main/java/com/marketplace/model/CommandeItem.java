@@ -84,6 +84,17 @@ public class CommandeItem {
     @Column(name = "litige_ouvert_at")
     private LocalDateTime litigeOuvertAt;
 
+    /** Preuve de remise, obligatoire a la validation du code. */
+    @Column(name = "photo_remise_url", columnDefinition = "text")
+    private String photoRemiseUrl;
+
+    @Column(name = "echec_motif", columnDefinition = "text")
+    private String echecMotif;
+
+    /** Nombre de remises tentees sans succes — sert au suivi, pas au blocage. */
+    @Column(name = "tentatives_livraison", nullable = false)
+    private Integer tentativesLivraison = 0;
+
     public BigDecimal getSousTotal() {
         if (prixUnitaire == null) return BigDecimal.ZERO;
         return prixUnitaire.multiply(BigDecimal.valueOf(quantite));

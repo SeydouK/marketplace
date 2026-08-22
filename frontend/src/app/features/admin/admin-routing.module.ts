@@ -6,6 +6,7 @@ import { GestionUtilisateursComponent } from './gestion-utilisateurs/gestion-uti
 import { GestionAnnoncesComponent } from './gestion-annonces/gestion-annonces.component';
 import { GestionLitigesComponent } from './gestion-litiges/gestion-litiges.component';
 import { GestionTransactionsComponent } from './gestion-transactions/gestion-transactions.component';
+import { GestionTransporteursComponent } from './gestion-transporteurs/gestion-transporteurs.component';
 import { GestionVersementsComponent } from './gestion-versements/gestion-versements.component';
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'litiges', component: GestionLitigesComponent },
   { path: 'transactions', component: GestionTransactionsComponent },
   { path: 'versements', component: GestionVersementsComponent },
+  { path: 'transporteurs', component: GestionTransporteursComponent },
 ];
 
 @NgModule({

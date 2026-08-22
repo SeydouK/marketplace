@@ -61,6 +61,17 @@ public class Commande {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
+    /**
+     * Quand on a decouvert que l'operateur avait encaisse une commande que nous
+     * avions abandonnee.
+     *
+     * Une date plutot qu'un booleen : savoir QUAND la contradiction a ete vue
+     * compte autant que de savoir qu'elle existe, et c'est ce qui permet au
+     * balayage de ne pas re-signaler indefiniment le meme cas.
+     */
+    @Column(name = "paiement_orphelin_detecte_at")
+    private LocalDateTime paiementOrphelinDetecteAt;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

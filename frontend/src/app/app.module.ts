@@ -14,6 +14,8 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 import { VerifyEmailComponent } from './features/verify-email/verify-email.component';
 import { KycComponent } from './features/kyc/kyc.component';
+import { provideServiceWorker } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,22 @@ import { KycComponent } from './features/kyc/kyc.component';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+
+    /**
+     * Service worker : uniquement hors developpement.
+     *
+     * En developpement il ferait plus de mal que de bien — il sert des bundles
+     * mis en cache par-dessus ceux que le serveur vient de reconstruire, et on
+     * passe la journee a se demander pourquoi une modification ne s'affiche pas.
+     *
+     * L'enregistrement est differe jusqu'a stabilite de l'application : il ne
+     * doit pas entrer en concurrence avec le premier rendu, qui est deja lourd
+     * sur un telephone d'entree de gamme.
+     */
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   bootstrap: [AppComponent],
 })

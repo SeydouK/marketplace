@@ -72,6 +72,20 @@ public class Versement {
     @Column(name = "libere_at")
     private LocalDateTime libereAt;
 
+    /**
+     * Par quel canal l'argent est sorti.
+     *
+     * MANUEL tant que GeniusPay n'expose pas de transfert sortant : le tracer
+     * permet de rapprocher chaque versement du releve Mobile Money.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mode_reglement")
+    private ModeReglement modeReglement;
+
+    /** Quel administrateur a regle — une sortie d'argent doit avoir un responsable. */
+    @Column(name = "regle_par_id")
+    private Long regleParId;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
