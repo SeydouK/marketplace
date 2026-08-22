@@ -112,7 +112,7 @@ export class DetailAnnonceComponent implements OnInit, OnDestroy {
   }
 
   get isAcheteur(): boolean {
-    return this.auth.hasRole(Role.ACHETEUR) || this.auth.hasRole(Role.VENDEUR);
+    return this.auth.hasRole(Role.ACHETEUR);
   }
 
   togglingStatut = false;

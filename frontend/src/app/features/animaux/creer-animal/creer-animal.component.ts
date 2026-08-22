@@ -130,7 +130,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
     race: [''],
     lieuNaissance: ['', Validators.required],
     price: [null as number | null, [Validators.required, Validators.min(1)]],
-    quantity: [1, [Validators.required, Validators.min(1)]],
+    animalPoids: [null as number | null, [Validators.min(1)]],
     longitude: [null as number | null],
     latitude: [null as number | null],
   });
@@ -211,7 +211,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isGroupedLot(): boolean {
-    return (this.form.get('quantity')?.value ?? 0) > 10;
+    return false;
   }
 
   get selectedAnimalType() {
@@ -461,7 +461,8 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
       race: rawValue.race?.trim() || null,
       lieuNaissance: rawValue.lieuNaissance?.trim() || null,
       price: Number(rawValue.price),
-      quantity: Number(rawValue.quantity),
+      quantity: 1,
+      animalPoids: rawValue.animalPoids != null ? Number(rawValue.animalPoids) : null,
       longitude: rawValue.longitude != null ? Number(rawValue.longitude) : null,
       latitude: rawValue.latitude != null ? Number(rawValue.latitude) : null,
       photos: this.uploadedPhotos
@@ -511,7 +512,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
           race: animal.race ?? '',
           lieuNaissance: animal.lieuNaissance ?? '',
           price: animal.price,
-          quantity: animal.quantity,
+          animalPoids: animal.animalPoids ?? null,
           longitude: animal.longitude ?? null,
           latitude: animal.latitude ?? null,
         });
@@ -633,7 +634,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private validateIdentityStep(notify: boolean): boolean {
-    const controls = ['type', 'lieuNaissance', 'price', 'quantity'];
+    const controls = ['type', 'lieuNaissance', 'price'];
     controls.forEach((controlName) => this.form.get(controlName)?.markAsTouched());
 
     const invalid = controls.some((controlName) => this.form.get(controlName)?.invalid);

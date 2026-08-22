@@ -23,7 +23,7 @@ export class ListingCardComponent {
   get canFavorite(): boolean {
     const user = this.auth.currentUser;
     if (!user) return false;
-    return this.auth.hasRole(Role.ACHETEUR) || this.auth.hasRole(Role.VENDEUR);
+    return this.auth.hasRole(Role.ACHETEUR);
   }
 
   toggleFavori(event: Event): void {
