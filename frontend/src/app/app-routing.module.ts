@@ -68,6 +68,20 @@ const routes: Routes = [
         loadChildren: () => import('./features/vendeur/vendeur.module').then(m => m.VendeurModule),
     },
     {
+        // Sert l'acheteur et le vendeur : pas de garde de role, l'autorisation
+        // est verifiee par ressource cote serveur (proprietaire de la commande
+        // pour le suivi, vendeur des articles pour l'ecran livreur).
+        path: 'livraison',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./features/livraison/livraison.module').then(m => m.LivraisonModule),
+    },
+    {
+        path: 'transporteur',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: [Role.TRANSPORTEUR] },
+        loadChildren: () => import('./features/transporteur/transporteur.module').then(m => m.TransporteurModule),
+    },
+    {
         path: 'veterinaire',
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: [Role.VETERINAIRE] },

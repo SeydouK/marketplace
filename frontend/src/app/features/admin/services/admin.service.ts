@@ -89,6 +89,13 @@ export interface AdminCommande {
   nombreArticles: number;
   createdAt: string;
   paidAt: string | null;
+
+  /**
+   * Renseigne quand l'operateur declare payee une commande que nous avons
+   * abandonnee. Sans ce drapeau, la ligne est indistinguable d'une annulation
+   * ordinaire — alors que l'argent a bel et bien ete preleve.
+   */
+  paiementOrphelinDetecteAt: string | null;
 }
 
 export interface AdminCommandePage {
@@ -178,8 +185,15 @@ export class AdminService {
     return this.http.post<AdminUser>(`${this.base}/users/${userId}/kyc/reject`, { reason });
   }
 
-  getCommandes(params?: { statut?: StatutCommande | 'all'; page?: number; size?: number }): Observable<AdminCommandePage> {
+  getCommandes(params?: {
+    statut?: StatutCommande | 'all';
+    /** Filtre transversal : un orphelin peut etre ANNULEE ou EXPIREE. */
+    orphelins?: boolean;
+    page?: number;
+    size?: number;
+  }): Observable<AdminCommandePage> {
     let httpParams = new HttpParams();
+    if (params?.orphelins) httpParams = httpParams.set('orphelins', true);
     if (params?.statut && params.statut !== 'all') httpParams = httpParams.set('statut', params.statut);
     if (params?.page !== undefined) httpParams = httpParams.set('page', params.page);
     if (params?.size !== undefined) httpParams = httpParams.set('size', params.size);

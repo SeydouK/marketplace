@@ -26,6 +26,10 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     implementation 'org.modelmapper:modelmapper:3.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    // Suivi de livraison en temps reel : pousse les positions au lieu de les faire
+    // sonder. Un sondage toutes les 15 s fait sauter le marqueur ; un canal pousse
+    // chaque point des qu'il arrive.
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.apache.tika:tika-core:2.9.1'
     implementation 'com.bucket4j:bucket4j-core:8.10.1'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'

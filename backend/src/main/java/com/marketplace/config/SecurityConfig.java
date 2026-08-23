@@ -65,6 +65,21 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/annonces", "/api/annonces/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/paiements/webhook/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/users/*/profil-public", "/api/users/*/annonces").permitAll()
+                // ── Convoyage : le jeton de l'URL tient lieu d'authentification ──
+                // Le convoyeur n'a pas de compte, et ne s'inscrira pas pour une
+                // seule course. ConvoyageService verifie le jeton avant chaque
+                // action (existence, non-revocation, expiration), et la vue
+                // exposee ne contient ni prix ni code de remise.
+                .requestMatchers("/api/convoyage/**").permitAll()
+
+                // ── Poignee de main du canal temps reel ────────────────────
+                // Ouverte a dessein : une negociation WebSocket ne porte pas
+                // d'en-tete Authorization. Le jeton arrive dans la trame STOMP
+                // CONNECT, et WebSocketConfig refuse la session sans lui — puis
+                // verifie, abonnement par abonnement, que la livraison suivie
+                // concerne bien le demandeur.
+                .requestMatchers("/ws/**", "/ws-sockjs/**").permitAll()
+
                 // ── Animaux (authentifié) ─────────────────────────────────
                 .requestMatchers(HttpMethod.GET,
                     "/api/animals/mine",

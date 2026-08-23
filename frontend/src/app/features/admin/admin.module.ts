@@ -7,6 +7,7 @@ import { GestionUtilisateursComponent } from './gestion-utilisateurs/gestion-uti
 import { GestionAnnoncesComponent } from './gestion-annonces/gestion-annonces.component';
 import { GestionLitigesComponent } from './gestion-litiges/gestion-litiges.component';
 import { GestionTransactionsComponent } from './gestion-transactions/gestion-transactions.component';
+import { GestionTransporteursComponent } from './gestion-transporteurs/gestion-transporteurs.component';
 import { GestionVersementsComponent } from './gestion-versements/gestion-versements.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ import { FormsModule } from '@angular/forms';
     GestionLitigesComponent,
     GestionTransactionsComponent,
     GestionVersementsComponent,
+    GestionTransporteursComponent,
   ],
   imports: [SharedModule, AdminRoutingModule, RouterModule, FormsModule],
 })

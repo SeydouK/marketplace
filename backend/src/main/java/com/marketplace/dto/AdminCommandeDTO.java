@@ -18,6 +18,13 @@ public record AdminCommandeDTO(
         String acheteurEmail,
         int nombreArticles,
         LocalDateTime createdAt,
-        LocalDateTime paidAt
+        LocalDateTime paidAt,
+
+        /**
+         * Renseigne quand l'operateur declare payee une commande que nous avons
+         * abandonnee. Sans ce drapeau, la ligne est indistinguable d'une
+         * annulation ordinaire — et c'est de l'argent recu.
+         */
+        LocalDateTime paiementOrphelinDetecteAt
 ) {
 }

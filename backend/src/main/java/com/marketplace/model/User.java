@@ -78,5 +78,38 @@ public class User {
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
+    /**
+     * Dernier envoi de l'email de verification.
+     *
+     * Sert a espacer les renvois : sans cette trace, un clic repete sur
+     * « renvoyer » ferait de la plateforme un outil d'envoi massif.
+     */
+    @Column(name = "verification_email_sent_at")
+    private java.time.LocalDateTime verificationEmailSentAt;
+
+    // ── Transporteur : au-dela du KYC, le permis de conduire ────────────────
+    // Un transporteur n'est proposable aux vendeurs qu'une fois son permis
+    // valide : c'est le signal minimal avant de lui confier un animal.
+
+    @Column(name = "permis_url", columnDefinition = "text")
+    private String permisUrl;
+
+    @Column(name = "permis_valide", nullable = false)
+    private boolean permisValide = false;
+
+    @Column(name = "permis_valide_at")
+    private java.time.LocalDateTime permisValideAt;
+
+    @Column(name = "permis_valide_par_id")
+    private Long permisValideParId;
+
+    /** Nombre de tetes transportables — indicatif, affiche au vendeur. */
+    @Column(name = "capacite_tetes")
+    private Integer capaciteTetes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_vehicule", length = 40)
+    private TypeVehicule typeVehicule;
+
     
 }

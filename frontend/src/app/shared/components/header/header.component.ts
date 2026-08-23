@@ -332,6 +332,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   get isVendeur(): boolean    { return this.auth.hasRole(Role.VENDEUR) || this.auth.canAccessSellerArea; }
   get isVeterinaire(): boolean { return this.auth.hasRole(Role.VETERINAIRE); }
   get isAnader(): boolean     { return this.auth.hasRole(Role.AGENT_ANADER); }
+  get isTransporteur(): boolean { return this.auth.hasRole(Role.TRANSPORTEUR); }
   get isAdmin(): boolean      { return this.auth.hasAnyRole([Role.ADMIN, Role.ADMINISTRATEUR]); }
 
   get currentUserInitial(): string {
@@ -355,6 +356,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       [Role.VENDEUR]:        'Vendeur',
       [Role.VETERINAIRE]:    'Vétérinaire',
       [Role.AGENT_ANADER]:   'Agent ANADER',
+      [Role.TRANSPORTEUR]:   'Transporteur',
       [Role.ADMIN]:          'Administrateur',
       [Role.ADMINISTRATEUR]: 'Administrateur',
     };

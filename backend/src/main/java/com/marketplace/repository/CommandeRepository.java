@@ -39,6 +39,20 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
     List<Commande> findByStatutAndCreatedAtBefore(StatutCommande statut, LocalDateTime seuil);
 
     /**
+     * Les commandes abandonnees recemment, qui portaient un lien de paiement.
+     *
+     * Sert au filet de rattrapage : une commande annulee ou expiree de notre cote
+     * a pu etre payee juste apres, et plus rien ne la regarde une fois qu'elle a
+     * quitte EN_ATTENTE. Sans cette requete, l'argent partirait sans laisser de
+     * trace exploitable.
+     */
+    List<Commande> findByStatutInAndReferenceIsNotNullAndCreatedAtAfter(
+            List<StatutCommande> statuts, LocalDateTime depuis);
+
+    /** Les contradictions constatees entre notre statut et celui de l'operateur. */
+    Page<Commande> findByPaiementOrphelinDetecteAtIsNotNull(Pageable pageable);
+
+    /**
      * Transition atomique EN_ATTENTE -> PAYEE, deleguee a la base.
      *
      * Le webhook GeniusPay et la reconciliation declenchee par le polling du front peuvent

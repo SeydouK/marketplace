@@ -10,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { LeafletLoaderService } from '../../../shared/services/leaflet-loader.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -143,7 +144,8 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly animalService: AnimalService,
     private readonly toast: ToastService,
     private readonly zone: NgZone,
-    @Inject(DOCUMENT) private readonly document: Document
+    @Inject(DOCUMENT) private readonly document: Document,
+    private readonly leaflet: LeafletLoaderService
   ) {}
 
   ngOnInit(): void {
@@ -810,12 +812,9 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
 
     leaflet.control.zoom({ position: 'topright' }).addTo(this.map);
 
-    leaflet
-      .tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors',
-      })
-      .addTo(this.map);
+    // Fond de carte partage : le fournisseur de tuiles se change au seul
+    // endroit ou il est declare, pas carte par carte.
+    this.leaflet.fondDeCarte(leaflet).addTo(this.map);
 
     this.map.on('click', (event: any) => {
       this.zone.run(() => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserStatusService } from '../../core/services/user-status.service';
@@ -10,8 +10,15 @@ import { environment } from '../../../environments/environment';
   templateUrl: './verify-email.component.html',
   standalone: false,
 })
-export class VerifyEmailComponent implements OnInit {
+export class VerifyEmailComponent implements OnInit, OnDestroy {
   status: 'pending' | 'success' | 'error' | 'already_verified' = 'pending';
+
+  // ── Renvoi de l'email ──────────────────────────────────────────────────────
+  renvoiEnCours = false;
+  renvoiMessage: string | null = null;
+  /** Secondes avant qu'un nouveau renvoi soit possible. */
+  attenteSecondes = 0;
+  private minuterie?: ReturnType<typeof setInterval>;
 
   constructor(
     private route: ActivatedRoute,
@@ -59,6 +66,55 @@ export class VerifyEmailComponent implements OnInit {
         this.status = 'pending';
       }
     });
+  }
+
+  // ── Renvoi ─────────────────────────────────────────────────────────────────
+
+  renvoyer(): void {
+    if (this.renvoiEnCours || this.attenteSecondes > 0) return;
+    this.renvoiEnCours = true;
+    this.renvoiMessage = null;
+
+    this.http
+      .post<{ envoye: boolean; secondesAvantProchainEnvoi: number }>(
+        `${environment.apiUrl}/auth/verification/renvoyer`, {})
+      .subscribe({
+        next: (res) => {
+          this.renvoiEnCours = false;
+          this.demarrerDecompte(res.secondesAvantProchainEnvoi);
+          this.renvoiMessage = res.envoye
+            ? 'Email renvoyé. Pensez à regarder dans vos courriers indésirables.'
+            : 'Un email a déjà été envoyé récemment.';
+        },
+        error: (e) => {
+          this.renvoiEnCours = false;
+          this.renvoiMessage = e?.error?.message ?? "L'envoi a échoué. Réessayez plus tard.";
+        },
+      });
+  }
+
+  /** Décompte visible : dire « dans 7 min » vaut mieux qu'un bouton inerte. */
+  private demarrerDecompte(secondes: number): void {
+    this.attenteSecondes = secondes;
+    if (this.minuterie) clearInterval(this.minuterie);
+
+    this.minuterie = setInterval(() => {
+      this.attenteSecondes = Math.max(0, this.attenteSecondes - 1);
+      if (this.attenteSecondes === 0 && this.minuterie) {
+        clearInterval(this.minuterie);
+        this.minuterie = undefined;
+      }
+    }, 1000);
+  }
+
+  get attenteLisible(): string {
+    const m = Math.floor(this.attenteSecondes / 60);
+    const s = this.attenteSecondes % 60;
+    return m > 0 ? `${m} min ${s.toString().padStart(2, '0')} s` : `${s} s`;
+  }
+
+  ngOnDestroy(): void {
+    if (this.minuterie) clearInterval(this.minuterie);
   }
 
   goToKyc(): void { this.router.navigate(['/kyc']); }

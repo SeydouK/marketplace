@@ -9,6 +9,7 @@ import { Role } from '../models/role.enum';
 import { StorageService } from './storage.service';
 import { UserStatusService } from './user-status.service';
 import { SKIP_GLOBAL_ERROR } from '../interceptors/error.interceptor';
+import { SessionExpiryService } from './session-expiry.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -28,7 +29,17 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 
-  constructor(private http: HttpClient, private storage: StorageService, private userStatusService: UserStatusService) {
+  constructor(
+    private http: HttpClient,
+    private storage: StorageService,
+    private userStatusService: UserStatusService,
+    private sessionExpiry: SessionExpiryService,
+  ) {
+    // L'expiration doit pouvoir deconnecter sans dependre de ce service :
+    // l'injecter dans l'autre sens formerait un cycle.
+    this.sessionExpiry.enregistrerDeconnexion(() => this.logout());
+    // Un jeton peut deja etre en place au demarrage (rechargement de page).
+    if (this.storage.getToken()) this.sessionExpiry.demarrerSurveillance();
     this.currentUserSubject = new BehaviorSubject<User | null>(this.storage.getUser());
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
@@ -44,6 +55,7 @@ export class AuthService {
       .pipe(
         tap((res) => {
           this.storage.setToken(res.token);
+          this.sessionExpiry.demarrerSurveillance();
           this.setCurrentUser({
             id: res.id,
             email: res.email,
@@ -62,6 +74,10 @@ export class AuthService {
     name: string;
     email: string;
     password: string;
+    /** Obligatoire pour un transporteur : c'est par la qu'on le joint. */
+    phone?: string;
+    /** Le back n'accepte que ACHETEUR et TRANSPORTEUR. */
+    role?: 'ACHETEUR' | 'TRANSPORTEUR';
   }) {
     return this.http
       .post<JwtResponse>(`${environment.apiUrl}/auth/register`, data,
@@ -69,6 +85,7 @@ export class AuthService {
       .pipe(
         tap((res) => {
           this.storage.setToken(res.token);
+          this.sessionExpiry.demarrerSurveillance();
           this.setCurrentUser({
             id: res.id,
             email: res.email,
@@ -119,6 +136,7 @@ export class AuthService {
   }
 
   logout() {
+    this.sessionExpiry.annuler();
     this.storage.clear();
     this.currentUserSubject.next(null);
     this.userStatusService.clear();

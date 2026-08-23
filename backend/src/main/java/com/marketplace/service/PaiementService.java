@@ -53,6 +53,14 @@ public class PaiementService {
      */
     private static final long VALIDITE_PAIEMENT_MINUTES = 30;
 
+    /**
+     * Sur combien de jours le filet de rattrapage regarde en arriere.
+     *
+     * Assez large pour couvrir un incident prolonge chez l'operateur, assez etroit
+     * pour ne pas reinterroger indefiniment des commandes anciennes.
+     */
+    private static final long JOURS_RATTRAPAGE = 7;
+
     // ── Politique commerciale ────────────────────────────────────────────────
     /** Commission retenue par la plateforme sur chaque commande. */
     private static final BigDecimal TAUX_COMMISSION_PLATEFORME = new BigDecimal("0.03");
@@ -67,6 +75,7 @@ public class PaiementService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final VersementService versementService;
+    private final RemiseService remiseService;
 
     @Value("${app.frontend.url}")
     private String frontendUrl;
@@ -97,12 +106,51 @@ public class PaiementService {
         // paiement supplementaires, tous payables : l'acheteur pourrait etre debite plusieurs
         // fois pour le meme panier.
         for (Commande enAttente : commandeRepository.findByUserIdAndStatut(userId, StatutCommande.EN_ATTENTE)) {
+
+            // Demander a GeniusPay AVANT toute decision.
+            //
+            // C'est le coeur du correctif. On annulait cette commande sur le seul
+            // constat que le panier avait change, sans jamais verifier si elle
+            // avait ete payee. Un webhook perdu — coupure reseau, serveur
+            // redemarre — suffisait alors : l'acheteur avait paye, on annulait, il
+            // repayait. Deux prelevements, une commande « annulee » chez nous, et
+            // personne pour s'en apercevoir.
+            Verdict verdict = verifierAupresDeGeniusPay(enAttente);
+
+            if (verdict == Verdict.PAYEE) {
+                // Ne surtout pas lever d'exception ici : la methode est
+                // transactionnelle, et un rollback effacerait le passage en PAYEE
+                // que l'on vient d'appliquer — alors que les emails, eux, sont
+                // deja partis. On rend donc la commande payee, et c'est au client
+                // de ne pas la renvoyer vers un lien de paiement.
+                log.warn("Commande {} etait payée sans que le webhook nous l'ait appris : "
+                                + "paiement récupéré, aucune nouvelle commande créée.",
+                        enAttente.getId());
+                return toDTO(enAttente);
+            }
+
+            if (verdict == Verdict.INDETERMINE) {
+                // Rien n'a ete ecrit : lever ici ne detruit aucun etat.
+                throw new BadRequestException(
+                        "Nous n'avons pas pu vérifier votre commande précédente auprès de "
+                        + "l'opérateur de paiement. Patientez un instant et réessayez : "
+                        + "nous préférons vous faire attendre plutôt que risquer de vous "
+                        + "débiter deux fois.");
+            }
+
+            // La verification a pu conclure a un echec ou a une expiration, et
+            // l'a deja appliquee. Cette commande est reglee, on passe.
+            if (enAttente.getStatut() != StatutCommande.EN_ATTENTE) {
+                continue;
+            }
+
             if (correspondAuPanier(enAttente, panier)) {
                 log.info("Commande {} déjà en attente pour le même panier : réutilisation du lien de paiement.",
                         enAttente.getId());
                 return toDTO(enAttente);
             }
-            // Le panier a change : la commande precedente n'a plus lieu d'etre.
+            // Le panier a change, et le non-paiement est confirme : la commande
+            // precedente n'a plus lieu d'etre.
             log.info("Panier modifié depuis la commande {} : annulation et libération des animaux.",
                     enAttente.getId());
             enAttente.setStatut(StatutCommande.ANNULEE);
@@ -164,24 +212,126 @@ public class PaiementService {
      * de la disponibilite de GeniusPay — le webhook reste le chemin nominal.
      */
     private void reconcilierAupresDeGeniusPay(Commande commande) {
+        verifierAupresDeGeniusPay(commande);
+    }
+
+    /**
+     * Ce que l'interrogation de GeniusPay permet de conclure.
+     *
+     * <p>La distinction qui compte est entre NON_PAYEE et INDETERMINE. L'ancienne
+     * version, qui ne retournait rien, les confondait : un appel en echec et un
+     * paiement confirme absent produisaient le meme silence. L'appelant en
+     * deduisait « pas paye » et annulait — y compris quand l'argent etait deja
+     * parti.
+     */
+    private enum Verdict {
+        /** Le paiement a abouti : l'argent a bien ete preleve. */
+        PAYEE,
+        /** Confirme : rien n'a ete preleve, la commande peut etre abandonnee. */
+        NON_PAYEE,
+        /** Aucune conclusion possible : panne, delai, ou paiement en cours. */
+        INDETERMINE
+    }
+
+    /**
+     * Demande a GeniusPay ou en est le paiement, et applique ce qui en decoule.
+     *
+     * <p><strong>Tout ce qui n'est pas explicitement connu vaut INDETERMINE.</strong>
+     * C'est le sens de la regle qui protege l'acheteur : face a un statut qu'on ne
+     * reconnait pas, ou a un paiement en cours de traitement, la seule reponse sure
+     * est de ne rien detruire. Un acheteur bloque une minute se rattrape ; un
+     * acheteur debite deux fois, non.
+     */
+    private Verdict verifierAupresDeGeniusPay(Commande commande) {
+        // Sans reference, aucune session de paiement n'a jamais existe : il n'y a
+        // rien qui ait pu etre preleve.
+        if (commande.getReference() == null) {
+            return Verdict.NON_PAYEE;
+        }
+
         String statutDistant;
         try {
             statutDistant = geniusPayService.getPaymentStatus(commande.getReference());
         } catch (Exception e) {
-            log.warn("Réconciliation GeniusPay impossible pour {} : {}", commande.getReference(), e.getMessage());
-            return;
+            log.warn("Vérification GeniusPay impossible pour {} : {}", commande.getReference(), e.getMessage());
+            return Verdict.INDETERMINE;
         }
 
         if (statutDistant == null) {
-            return;
+            return Verdict.INDETERMINE;
         }
 
         switch (statutDistant) {
-            case "completed" -> appliquerPaiementReussi(commande);
-            case "failed" -> appliquerEchec(commande, StatutCommande.ECHOUEE);
-            case "expired" -> appliquerEchec(commande, StatutCommande.EXPIREE);
-            // "pending" / "processing" : le paiement est encore en cours, rien a trancher.
-            default -> log.debug("Statut GeniusPay non final pour {} : {}", commande.getReference(), statutDistant);
+            case "completed" -> {
+                appliquerPaiementReussi(commande);
+                return Verdict.PAYEE;
+            }
+            case "failed" -> {
+                appliquerEchec(commande, StatutCommande.ECHOUEE);
+                return Verdict.NON_PAYEE;
+            }
+            case "expired" -> {
+                appliquerEchec(commande, StatutCommande.EXPIREE);
+                return Verdict.NON_PAYEE;
+            }
+            case "pending" -> {
+                // Le lien existe, personne ne l'a encore utilise.
+                return Verdict.NON_PAYEE;
+            }
+            default -> {
+                // « processing » tombe ici, et c'est voulu : un paiement en cours
+                // de traitement peut aboutir dans la seconde qui suit.
+                log.info("Statut GeniusPay non concluant pour {} : {}",
+                        commande.getReference(), statutDistant);
+                return Verdict.INDETERMINE;
+            }
+        }
+    }
+
+    /**
+     * Filet de rattrapage sur les commandes abandonnees.
+     *
+     * <p>Annuler une commande de notre cote n'annule pas la session chez GeniusPay :
+     * leur API n'expose aucun moyen de le faire. Il reste donc une fenetre etroite
+     * ou un acheteur paie un lien juste apres qu'on l'a abandonne — et plus rien ne
+     * regarde cette commande, puisqu'elle a quitte EN_ATTENTE.
+     *
+     * <p>Ce balayage la referme, non pas en reparant automatiquement — les animaux
+     * ont ete liberes et peuvent avoir ete revendus, seul un humain peut arbitrer —
+     * mais en garantissant que le cas ne passe jamais inapercu.
+     */
+    @Scheduled(fixedDelayString = "${app.paiement.scan-rattrapage-ms:900000}")
+    public void detecterPaiementsOrphelins() {
+        LocalDateTime depuis = LocalDateTime.now().minusDays(JOURS_RATTRAPAGE);
+        List<Commande> abandonnees = commandeRepository
+                .findByStatutInAndReferenceIsNotNullAndCreatedAtAfter(
+                        List.of(StatutCommande.ANNULEE, StatutCommande.EXPIREE), depuis);
+
+        for (Commande commande : abandonnees) {
+            String statutDistant;
+            try {
+                statutDistant = geniusPayService.getPaymentStatus(commande.getReference());
+            } catch (Exception e) {
+                continue; // Reessaye au prochain passage.
+            }
+
+            if (!"completed".equals(statutDistant)) continue;
+
+            // Deja signale : ne pas reecrire la meme alerte toutes les quinze
+            // minutes, sinon elle devient du bruit et cesse d'etre lue.
+            if (commande.getPaiementOrphelinDetecteAt() != null) continue;
+
+            // Marquer d'abord. Un log finit dans un fichier que personne n'ouvre ;
+            // ce drapeau remonte dans l'ecran des transactions, ou un humain
+            // regarde deja.
+            commande.setPaiementOrphelinDetecteAt(LocalDateTime.now());
+            commandeRepository.save(commande);
+
+            log.error("PAIEMENT ORPHELIN — commande {} ({}) est {} chez nous mais payée "
+                            + "chez GeniusPay. Acheteur {}, montant {}. "
+                            + "Rembourser ou honorer la commande manuellement.",
+                    commande.getId(), commande.getReference(), commande.getStatut(),
+                    commande.getUserId(), commande.getMontant());
         }
     }
 
@@ -207,6 +357,9 @@ public class PaiementService {
         commande.setPaidAt(paidAt);
         marquerAnimauxVendus(commande);
         panierService.viderPanier(commande.getUserId());
+        // Le code de remise conditionne la sortie du sequestre : il doit exister
+        // avant meme que le versement soit calcule.
+        remiseService.genererPourCommande(commande);
         // Calcule ce qui est dû à chaque vendeur ; l'envoi effectif reste une action admin manuelle.
         versementService.genererVersements(commande);
     }
@@ -251,16 +404,24 @@ public class PaiementService {
     }
 
     @Transactional(readOnly = true)
-    public AdminCommandePageDTO listAdminCommandes(StatutCommande statut, int page, int size) {
+    public AdminCommandePageDTO listAdminCommandes(StatutCommande statut, boolean orphelinsSeulement,
+                                                   int page, int size) {
         ensureAdminRole(userService.getCurrentUser());
 
         int safePage = Math.max(page, 0);
         int safeSize = Math.min(Math.max(size, 1), 100);
         Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<Commande> commandes = statut == null
-                ? commandeRepository.findAll(pageable)
-                : commandeRepository.findByStatut(statut, pageable);
+        Page<Commande> commandes;
+        if (orphelinsSeulement) {
+            // Filtre transversal : un paiement orphelin peut etre ANNULEE ou
+            // EXPIREE, c'est la contradiction qui compte, pas le statut.
+            commandes = commandeRepository.findByPaiementOrphelinDetecteAtIsNotNull(pageable);
+        } else if (statut == null) {
+            commandes = commandeRepository.findAll(pageable);
+        } else {
+            commandes = commandeRepository.findByStatut(statut, pageable);
+        }
 
         Map<Long, User> acheteurs = userRepository.findAllById(
                 commandes.getContent().stream().map(Commande::getUserId).distinct().toList()
@@ -287,7 +448,8 @@ public class PaiementService {
                 acheteur != null ? acheteur.getEmail() : null,
                 commande.getItems().size(),
                 commande.getCreatedAt(),
-                commande.getPaidAt()
+                commande.getPaidAt(),
+                commande.getPaiementOrphelinDetecteAt()
         );
     }
 

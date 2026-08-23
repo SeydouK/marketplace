@@ -29,6 +29,11 @@ export class RoleRedirectGuard implements CanActivate {
       case Role.AGENT_ANADER:
         this.router.navigate(['/anader/dashboard']);
         break;
+      case Role.TRANSPORTEUR:
+        // Ses courses, pas un tableau de bord : c'est la seule chose qu'il vient
+        // faire, et l'attente d'une proposition est son etat normal.
+        this.router.navigate(['/transporteur/mes-courses']);
+        break;
       case Role.USER:
       case Role.ACHETEUR:
       default:

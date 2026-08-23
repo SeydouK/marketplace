@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PanierService } from './services/panier.service';
@@ -26,7 +26,8 @@ export class PanierComponent implements OnInit, OnDestroy {
 
   constructor(
     private panierService: PanierService,
-    private paiementService: PaiementService
+    private paiementService: PaiementService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +74,22 @@ export class PanierComponent implements OnInit, OnDestroy {
     this.paiementService.creerCommande()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: commande => (window.location.href = commande.checkoutUrl),
+        next: commande => {
+          // Le serveur peut repondre par une commande DEJA payee : il vient de
+          // decouvrir, en interrogeant l'operateur, qu'un paiement precedent
+          // avait abouti sans que le webhook nous l'apprenne.
+          //
+          // La renvoyer vers checkoutUrl ferait rouvrir une session de paiement
+          // consommee — au mieux une erreur, au pire un second prelevement.
+          if (commande.statut === 'PAYEE') {
+            this.commandeEnCours = false;
+            this.router.navigate(['/acheteur/mes-achats'], {
+              queryParams: { paiementRecupere: commande.id },
+            });
+            return;
+          }
+          window.location.href = commande.checkoutUrl;
+        },
         error: () => (this.commandeEnCours = false)
       });
   }

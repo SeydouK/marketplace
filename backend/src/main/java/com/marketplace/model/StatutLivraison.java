@@ -7,8 +7,14 @@ package com.marketplace.model;
  * plateforme tant que l'article n'est pas RECEPTIONNE (ou libere par delai).
  */
 public enum StatutLivraison {
-    /** Paye, mais le vendeur n'a pas encore remis l'animal. */
+    /** Paye, mais le vendeur n'a pas encore prepare l'animal. */
     A_REMETTRE,
+    /**
+     * Le vendeur declare l'animal pret a partir.
+     * Indispensable au retrait sur place : sans lui, l'acheteur ne sait pas
+     * quand se deplacer et doit appeler le vendeur.
+     */
+    PRET,
     /** Pris en charge par le vendeur ou un transporteur, en route vers l'acheteur. */
     EN_LIVRAISON,
     /**
@@ -18,6 +24,11 @@ public enum StatutLivraison {
     LIVRE,
     /** L'acheteur a confirme avoir l'animal en main : le versement peut partir. */
     RECEPTIONNE,
+    /**
+     * Remise tentee sans succes : acheteur absent, animal refuse, acces impossible.
+     * Etat non terminal — une nouvelle tentative peut repartir de EN_LIVRAISON.
+     */
+    ECHEC_LIVRAISON,
     /** L'acheteur conteste : le versement reste gele jusqu'a arbitrage d'un admin. */
     LITIGE
 }

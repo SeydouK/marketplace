@@ -1,29 +1,31 @@
 package com.marketplace.service;
 
+import com.marketplace.dto.EvenementLivraisonDTO;
 import com.marketplace.dto.MaVenteDTO;
 import com.marketplace.dto.MonAchatDTO;
 import com.marketplace.dto.MonAchatItemDTO;
 import com.marketplace.exception.BadRequestException;
 import com.marketplace.exception.ForbiddenException;
 import com.marketplace.exception.ResourceNotFoundException;
+import com.marketplace.model.AuteurEvenement;
 import com.marketplace.model.Commande;
 import com.marketplace.model.CommandeItem;
+import com.marketplace.model.Remise;
 import com.marketplace.model.Role;
 import com.marketplace.model.StatutCommande;
 import com.marketplace.model.StatutLivraison;
-import com.marketplace.model.StatutVersement;
 import com.marketplace.model.Transporteur;
+import com.marketplace.model.TypeEvenementLivraison;
 import com.marketplace.model.User;
 import com.marketplace.model.Versement;
 import com.marketplace.repository.CommandeItemRepository;
 import com.marketplace.repository.CommandeRepository;
+import com.marketplace.repository.RemiseRepository;
 import com.marketplace.repository.UserRepository;
 import com.marketplace.repository.VersementRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,16 +67,11 @@ public class LivraisonService {
     private final VersementRepository versementRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-
-    /**
-     * Delai au terme duquel un article livre libere le versement sans confirmation.
-     *
-     * Sans lui, un acheteur passif ou de mauvaise foi immobiliserait indefiniment
-     * l'argent du vendeur. Le compte a rebours part de la date de depot constatee,
-     * et un litige ouvert le suspend.
-     */
-    @Value("${app.livraison.delai-liberation-jours:7}")
-    private int delaiLiberationJours;
+    private final RemiseRepository remiseRepository;
+    private final SequestreService sequestre;
+    private final NotificationLivraisonService notifications;
+    private final RemboursementService remboursementService;
+    private final JournalLivraisonService journal;
 
     // ══ Consultation acheteur ═══════════════════════════════════════════════
 
@@ -83,6 +80,17 @@ public class LivraisonService {
         return commandeRepository.findMesCommandesAvecItems(userId).stream()
                 .map(this::toAchatDTO)
                 .toList();
+    }
+
+    /**
+     * Le code de remise des articles d'une commande, indexe par vendeur.
+     *
+     * N'est appele que depuis la vue acheteur : le code ne doit jamais transiter
+     * vers le vendeur, sous peine de perdre toute valeur de preuve.
+     */
+    private Map<Long, Remise> remisesParVendeur(Long commandeId) {
+        return remiseRepository.findByCommandeId(commandeId).stream()
+                .collect(Collectors.toMap(Remise::getVendeurId, r -> r, (a, b) -> a));
     }
 
     // ══ Consultation vendeur ════════════════════════════════════════════════
@@ -102,9 +110,18 @@ public class LivraisonService {
                 items.stream().map(i -> i.getCommande().getUserId()).distinct().toList()
         ).stream().collect(Collectors.toMap(User::getId, u -> u));
 
+        Map<Long, List<EvenementLivraisonDTO>> frises =
+                journal.frises(items.stream().map(CommandeItem::getId).toList());
+
+        // Une seule requete de remises pour toutes les ventes affichees.
+        Map<String, Remise> remises = remiseRepository.findByVendeurId(vendeurId).stream()
+                .collect(Collectors.toMap(r -> r.getCommandeId() + ":" + r.getVendeurId(), r -> r, (a, b) -> a));
+
         return items.stream()
                 .map(item -> toVenteDTO(item, versementsParCommande.get(item.getCommande().getId()),
-                        acheteurs.get(item.getCommande().getUserId())))
+                        acheteurs.get(item.getCommande().getUserId()),
+                        frises.getOrDefault(item.getId(), List.of()),
+                        remises.get(item.getCommande().getId() + ":" + vendeurId)))
                 .toList();
     }
 
@@ -148,6 +165,60 @@ public class LivraisonService {
         return toVenteDTO(commandeItemRepository.save(item));
     }
 
+    /**
+     * Le vendeur declare l'animal pret a partir.
+     *
+     * Sans cet etat, l'acheteur d'un retrait sur place ne sait pas quand se
+     * deplacer et doit appeler le vendeur.
+     */
+    public MaVenteDTO declarerPret(Long vendeurId, Long itemId) {
+        CommandeItem item = chargerItemDuVendeur(vendeurId, itemId);
+
+        if (item.getStatutLivraison() != StatutLivraison.A_REMETTRE) {
+            throw new BadRequestException("Cet animal n'est plus en attente de preparation.");
+        }
+
+        item.setStatutLivraison(StatutLivraison.PRET);
+        commandeItemRepository.save(item);
+        journal.enregistrer(item.getId(), TypeEvenementLivraison.ANIMAL_PRET,
+                AuteurEvenement.VENDEUR, vendeurId, "Animal pret a etre remis");
+        notifications.notifierAnimalPret(item.getCommande().getUserId(), item);
+        return toVenteDTO(item);
+    }
+
+    /**
+     * La remise a echoue : acheteur absent, animal refuse, acces impossible.
+     *
+     * Etat non terminal — l'article redevient remisable, et le compteur de
+     * tentatives permet de reperer les livraisons qui s'enlisent.
+     */
+    public MaVenteDTO declarerEchec(Long vendeurId, Long itemId, String motif) {
+        if (motif == null || motif.isBlank()) {
+            throw new BadRequestException("Indiquez pourquoi la remise n'a pas pu avoir lieu.");
+        }
+
+        CommandeItem item = chargerItemDuVendeur(vendeurId, itemId);
+
+        if (item.getStatutLivraison() == StatutLivraison.RECEPTIONNE
+                || item.getStatutLivraison() == StatutLivraison.LITIGE) {
+            throw new BadRequestException("Cet animal ne peut plus etre declare en echec.");
+        }
+
+        item.setStatutLivraison(StatutLivraison.ECHEC_LIVRAISON);
+        item.setEchecMotif(motif.trim());
+        item.setTentativesLivraison(item.getTentativesLivraison() + 1);
+        // livreAt est efface : rien n'a ete livre, le compte a rebours de
+        // liberation automatique ne doit surtout pas courir.
+        item.setLivreAt(null);
+        commandeItemRepository.save(item);
+
+        journal.enregistrer(item.getId(), TypeEvenementLivraison.ECHEC_LIVRAISON,
+                AuteurEvenement.VENDEUR, vendeurId,
+                "Tentative " + item.getTentativesLivraison() + " : " + motif.trim());
+        notifications.notifierEchecLivraison(item.getCommande().getUserId(), item, motif.trim());
+        return toVenteDTO(item);
+    }
+
     // ══ Transitions acheteur ════════════════════════════════════════════════
 
     /**
@@ -172,7 +243,7 @@ public class LivraisonService {
         item.setReceptionneAt(LocalDateTime.now());
         commandeItemRepository.save(item);
 
-        libererVersementSiSequestreLeve(item.getCommande().getId(), item.getVendeurId());
+        sequestre.libererSiLeve(item.getCommande().getId(), item.getVendeurId());
 
         return toAchatDTO(item.getCommande());
     }
@@ -194,7 +265,7 @@ public class LivraisonService {
         item.setLitigeOuvertAt(LocalDateTime.now());
         commandeItemRepository.save(item);
 
-        regelerVersementSiPossible(item);
+        sequestre.regelerSiPossible(item.getCommande().getId(), item.getVendeurId(), item.getId());
 
         return toAchatDTO(item.getCommande());
     }
@@ -218,6 +289,17 @@ public class LivraisonService {
             throw new BadRequestException("Aucun litige ouvert sur cet article.");
         }
         if (!enFaveurDuVendeur) {
+            // Trancher contre le vendeur ne suffisait pas : l'argent restait gele
+            // sans chemin de retour. On inscrit desormais la somme due a l'acheteur.
+            remboursementService.creer(
+                    item.getCommande().getId(),
+                    item.getSousTotal(),
+                    "Litige tranche en faveur de l'acheteur — " + item.getAnimalNom()
+                            + (item.getLitigeMotif() != null ? " : " + item.getLitigeMotif() : ""),
+                    false);
+            journal.enregistrer(item.getId(), TypeEvenementLivraison.LITIGE_ARBITRE,
+                    AuteurEvenement.ADMIN, null,
+                    "Litige tranche en faveur de l'acheteur : remboursement inscrit");
             return toVenteDTO(item);
         }
 
@@ -225,94 +307,10 @@ public class LivraisonService {
         if (item.getLivreAt() == null) item.setLivreAt(LocalDateTime.now());
         commandeItemRepository.save(item);
 
-        libererVersementSiSequestreLeve(item.getCommande().getId(), item.getVendeurId());
+        sequestre.libererSiLeve(item.getCommande().getId(), item.getVendeurId());
+        journal.enregistrer(item.getId(), TypeEvenementLivraison.LITIGE_ARBITRE,
+                AuteurEvenement.ADMIN, null, "Litige ecarte : la livraison reprend son cours");
         return toVenteDTO(item);
-    }
-
-    // ══ Liberation du sequestre ═════════════════════════════════════════════
-
-    /**
-     * Un article a-t-il quitte le sequestre ?
-     *
-     * LIVRE au-dela du delai compte comme leve sans etre requalifie en RECEPTIONNE :
-     * l'acheteur n'a rien confirme, et la trace doit rester exacte en cas de litige
-     * ulterieur.
-     */
-    private boolean sequestreLeve(CommandeItem item, LocalDateTime maintenant) {
-        return switch (item.getStatutLivraison()) {
-            case RECEPTIONNE -> true;
-            case LIVRE -> item.getLivreAt() != null
-                    && !item.getLivreAt().plusDays(delaiLiberationJours).isAfter(maintenant);
-            case A_REMETTRE, EN_LIVRAISON, LITIGE -> false;
-        };
-    }
-
-    /**
-     * Libere le versement d'un vendeur des que tous SES articles de la commande sont
-     * sortis du sequestre. Un vendeur n'attend donc jamais la livraison d'un autre.
-     */
-    private void libererVersementSiSequestreLeve(Long commandeId, Long vendeurId) {
-        if (vendeurId == null) return;
-
-        LocalDateTime maintenant = LocalDateTime.now();
-        List<CommandeItem> items = commandeItemRepository.findByCommandeIdAndVendeurId(commandeId, vendeurId);
-        if (items.isEmpty() || !items.stream().allMatch(i -> sequestreLeve(i, maintenant))) {
-            return;
-        }
-
-        Versement versement = versementRepository.findByCommandeIdAndVendeurId(commandeId, vendeurId).orElse(null);
-        if (versement == null) {
-            log.error("Commande {} / vendeur {} : sequestre leve mais aucun versement a liberer. "
-                    + "Intervention manuelle requise.", commandeId, vendeurId);
-            return;
-        }
-        if (versement.getStatut() != StatutVersement.BLOQUE) {
-            return;
-        }
-
-        versement.setStatut(StatutVersement.EN_ATTENTE);
-        versement.setLibereAt(maintenant);
-        versementRepository.save(versement);
-        log.info("Versement {} libere (commande {}, vendeur {}) : {} XOF en attente d'envoi.",
-                versement.getId(), commandeId, vendeurId, versement.getMontantNet());
-    }
-
-    /**
-     * Re-gele un versement libere mais pas encore parti, quand un litige survient
-     * dans l'intervalle. Une fois l'envoi initie, l'argent est hors de portee :
-     * le litige est alors trace, et son traitement revient a l'admin.
-     */
-    private void regelerVersementSiPossible(CommandeItem item) {
-        if (item.getVendeurId() == null) return;
-
-        versementRepository.findByCommandeIdAndVendeurId(item.getCommande().getId(), item.getVendeurId())
-                .filter(v -> v.getStatut() == StatutVersement.EN_ATTENTE)
-                .ifPresent(v -> {
-                    v.setStatut(StatutVersement.BLOQUE);
-                    v.setLibereAt(null);
-                    versementRepository.save(v);
-                    log.info("Versement {} re-gele : litige ouvert sur l'article {}.", v.getId(), item.getId());
-                });
-    }
-
-    /**
-     * Libere les versements dont la livraison est constatee depuis assez longtemps
-     * sans reaction de l'acheteur.
-     */
-    @Scheduled(fixedDelayString = "${app.livraison.scan-liberation-ms:3600000}")
-    public void libererVersementsEchus() {
-        LocalDateTime seuil = LocalDateTime.now().minusDays(delaiLiberationJours);
-        List<CommandeItem> echus = commandeItemRepository
-                .findByStatutLivraisonAndLivreAtBefore(StatutLivraison.LIVRE, seuil);
-        if (echus.isEmpty()) return;
-
-        // Le versement etant par (commande, vendeur), plusieurs articles echus d'un
-        // meme vendeur ne doivent declencher qu'une seule tentative de liberation.
-        echus.stream()
-                .filter(i -> i.getVendeurId() != null)
-                .map(i -> Map.entry(i.getCommande().getId(), i.getVendeurId()))
-                .distinct()
-                .forEach(cle -> libererVersementSiSequestreLeve(cle.getKey(), cle.getValue()));
     }
 
     // ══ Acces et garde-fous ═════════════════════════════════════════════════
@@ -352,8 +350,14 @@ public class LivraisonService {
     // ══ Mapping ═════════════════════════════════════════════════════════════
 
     private MonAchatDTO toAchatDTO(Commande commande) {
+        Map<Long, Remise> remises = commande.getStatut() == StatutCommande.PAYEE
+                ? remisesParVendeur(commande.getId())
+                : Map.of();
+        Map<Long, List<EvenementLivraisonDTO>> frises = journal.frises(
+                commande.getItems().stream().map(CommandeItem::getId).toList());
         List<MonAchatItemDTO> items = commande.getItems().stream()
-                .map(item -> toAchatItemDTO(item, commande))
+                .map(item -> toAchatItemDTO(item, commande, remises.get(item.getVendeurId()),
+                        frises.getOrDefault(item.getId(), List.of())))
                 .toList();
 
         String etat = etatGlobalAchat(commande);
@@ -371,7 +375,8 @@ public class LivraisonService {
         );
     }
 
-    private MonAchatItemDTO toAchatItemDTO(CommandeItem item, Commande commande) {
+    private MonAchatItemDTO toAchatItemDTO(CommandeItem item, Commande commande, Remise remise,
+                                           List<EvenementLivraisonDTO> evenements) {
         boolean payee = commande.getStatut() == StatutCommande.PAYEE;
         StatutLivraison statut = item.getStatutLivraison();
 
@@ -396,9 +401,11 @@ public class LivraisonService {
                 item.getLitigeMotif(),
                 payee && CONFIRMABLES.contains(statut),
                 payee && statut != StatutLivraison.LITIGE && statut != StatutLivraison.RECEPTIONNE,
-                statut == StatutLivraison.LIVRE && item.getLivreAt() != null
-                        ? item.getLivreAt().plusDays(delaiLiberationJours)
-                        : null
+                sequestre.liberationAutomatiqueLe(item),
+                statut == StatutLivraison.RECEPTIONNE || remise == null ? null : remise.getCode(),
+                remise != null ? remise.getId() : null,
+                remise != null ? remise.getModeRemise() : null,
+                evenements
         );
     }
 
@@ -415,10 +422,13 @@ public class LivraisonService {
                         .findByCommandeIdAndVendeurId(item.getCommande().getId(), item.getVendeurId())
                         .orElse(null);
         User acheteur = userRepository.findById(item.getCommande().getUserId()).orElse(null);
-        return toVenteDTO(item, versement, acheteur);
+        return toVenteDTO(item, versement, acheteur, journal.friseDTO(item.getId()),
+                remiseRepository.findByCommandeIdAndVendeurId(
+                        item.getCommande().getId(), item.getVendeurId()).orElse(null));
     }
 
-    private MaVenteDTO toVenteDTO(CommandeItem item, Versement versement, User acheteur) {
+    private MaVenteDTO toVenteDTO(CommandeItem item, Versement versement, User acheteur,
+                                  List<EvenementLivraisonDTO> evenements, Remise remise) {
         Commande commande = item.getCommande();
         StatutLivraison statut = item.getStatutLivraison();
         String etat = etatGlobalVente(item, versement);
@@ -448,7 +458,14 @@ public class LivraisonService {
                 etat,
                 libelleVente(etat),
                 statut == StatutLivraison.A_REMETTRE,
-                statut == StatutLivraison.A_REMETTRE || statut == StatutLivraison.EN_LIVRAISON
+                statut == StatutLivraison.A_REMETTRE || statut == StatutLivraison.EN_LIVRAISON,
+                remise != null ? remise.getId() : null,
+                remise != null ? remise.getModeRemise() : null,
+                remise != null
+                        && remise.getTransporteurId() != null
+                        && remise.getAffectationStatut() == com.marketplace.model.StatutAffectation.ACCEPTEE,
+                remise != null ? remise.getTransporteurNom() : null,
+                evenements
         );
     }
 
@@ -485,6 +502,11 @@ public class LivraisonService {
         if (items.stream().anyMatch(i -> i.getStatutLivraison() == StatutLivraison.LITIGE)) {
             return "LITIGE";
         }
+        // Un echec doit remonter avant tout etat d'attente : c'est le seul cas
+        // ou l'acheteur a quelque chose a faire.
+        if (items.stream().anyMatch(i -> i.getStatutLivraison() == StatutLivraison.ECHEC_LIVRAISON)) {
+            return "ECHEC_LIVRAISON";
+        }
         if (items.stream().allMatch(i -> i.getStatutLivraison() == StatutLivraison.RECEPTIONNE)) {
             return "TERMINE";
         }
@@ -494,6 +516,9 @@ public class LivraisonService {
         if (items.stream().anyMatch(i -> i.getStatutLivraison() == StatutLivraison.EN_LIVRAISON)) {
             return "EN_LIVRAISON";
         }
+        if (items.stream().anyMatch(i -> i.getStatutLivraison() == StatutLivraison.PRET)) {
+            return "PRET";
+        }
         return "EN_ATTENTE_LIVRAISON";
     }
 
@@ -501,7 +526,9 @@ public class LivraisonService {
         return switch (etat) {
             case "EN_ATTENTE_PAIEMENT" -> "En attente de paiement";
             case "EN_ATTENTE_LIVRAISON" -> "Payé — en attente de livraison";
+            case "PRET" -> "Prêt — à récupérer";
             case "EN_LIVRAISON" -> "En cours de livraison";
+            case "ECHEC_LIVRAISON" -> "Remise échouée — à replanifier";
             case "A_CONFIRMER" -> "Livré — confirmez la réception";
             case "TERMINE" -> "Réceptionné — terminé";
             case "LITIGE" -> "Litige en cours";
@@ -530,17 +557,21 @@ public class LivraisonService {
 
         return switch (item.getStatutLivraison()) {
             case A_REMETTRE -> "A_REMETTRE";
+            case PRET -> "PRET";
             case EN_LIVRAISON -> "EN_LIVRAISON";
             case LIVRE -> "EN_ATTENTE_CONFIRMATION";
             case RECEPTIONNE -> "FONDS_LIBERES";
+            case ECHEC_LIVRAISON -> "ECHEC_LIVRAISON";
             case LITIGE -> "LITIGE";
         };
     }
 
     private String libelleVente(String etat) {
         return switch (etat) {
-            case "A_REMETTRE" -> "Payé — à remettre à l'acheteur";
+            case "A_REMETTRE" -> "Payé — à préparer";
+            case "PRET" -> "Prêt — en attente de remise";
             case "EN_LIVRAISON" -> "En cours de livraison";
+            case "ECHEC_LIVRAISON" -> "Remise échouée — à replanifier";
             case "EN_ATTENTE_CONFIRMATION" -> "Livré — en attente de confirmation de l'acheteur";
             case "FONDS_LIBERES" -> "Fonds débloqués — versement à venir";
             case "VERSEMENT_EN_COURS" -> "Versement en cours";

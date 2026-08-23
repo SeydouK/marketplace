@@ -8,9 +8,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final org.slf4j.Logger LOGGER =
+            org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
@@ -48,8 +53,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    /**
+     * URL qui ne correspond a aucune route.
+     *
+     * Sans ce traitement, l'attrape-tout ci-dessous la convertissait en 500 :
+     * une simple faute de frappe dans une adresse ressemblait alors a une panne
+     * serveur, et envoyait chercher un bug la ou il n'y en avait pas.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<?> handleRouteInconnue(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", "Cette adresse n'existe pas.",
+                             "chemin", ex.getResourcePath()));
+    }
+
+    /** Methode HTTP inadaptee — 405 plutot que 500, meme raisonnement. */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleMethodeNonSupportee(HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(Map.of("message", "Methode " + ex.getMethod() + " non autorisee sur cette adresse."));
+    }
+
+    /**
+     * Dernier recours.
+     *
+     * Seules les erreurs reellement inattendues arrivent ici — et elles sont
+     * journalisees, faute de quoi une 500 en production ne laisse aucune trace
+     * exploitable.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneric(Exception ex) {
+        LOGGER.error("Erreur non traitee : {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Une erreur est survenue", "detail", ex.getMessage()));
     }
