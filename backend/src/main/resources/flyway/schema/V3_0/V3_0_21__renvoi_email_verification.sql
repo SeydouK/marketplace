@@ -12,7 +12,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 ALTER TABLE users
-    ADD COLUMN verification_email_sent_at TIMESTAMP;
+    ADD COLUMN IF NOT EXISTS verification_email_sent_at TIMESTAMP;
 
 -- Les comptes existants n'ont pas d'historique d'envoi : les laisser a NULL
 -- autorise un premier renvoi immediat, ce qui est le comportement souhaite.

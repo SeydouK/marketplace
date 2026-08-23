@@ -12,7 +12,9 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 ALTER TABLE remises
-    ADD COLUMN mode_remise VARCHAR(20) NOT NULL DEFAULT 'RETRAIT_SUR_PLACE';
+    ADD COLUMN IF NOT EXISTS mode_remise VARCHAR(20) NOT NULL DEFAULT 'RETRAIT_SUR_PLACE';
+
+ALTER TABLE remises DROP CONSTRAINT IF EXISTS chk_remise_mode;
 
 ALTER TABLE remises
     ADD CONSTRAINT chk_remise_mode
@@ -25,13 +27,13 @@ ALTER TABLE remises
 -- d'Ivoire, et on se repere par points de reference (« apres le marche, portail
 -- vert »). Sans ce champ, la moitie des livraisons se termine par un appel.
 ALTER TABLE remises
-    ADD COLUMN adresse_ligne          TEXT,
-    ADD COLUMN adresse_ville          VARCHAR(120),
-    ADD COLUMN adresse_indications    TEXT,
-    ADD COLUMN destinataire_nom       VARCHAR(160),
-    ADD COLUMN destinataire_telephone VARCHAR(20),
-    ADD COLUMN destination_latitude   NUMERIC(10, 7),
-    ADD COLUMN destination_longitude  NUMERIC(10, 7);
+    ADD COLUMN IF NOT EXISTS adresse_ligne          TEXT,
+    ADD COLUMN IF NOT EXISTS adresse_ville          VARCHAR(120),
+    ADD COLUMN IF NOT EXISTS adresse_indications    TEXT,
+    ADD COLUMN IF NOT EXISTS destinataire_nom       VARCHAR(160),
+    ADD COLUMN IF NOT EXISTS destinataire_telephone VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS destination_latitude   NUMERIC(10, 7),
+    ADD COLUMN IF NOT EXISTS destination_longitude  NUMERIC(10, 7);
 
 -- ── Position du livreur ─────────────────────────────────────────────────────
 -- Denormalisee ici plutot que journalisee dans livraison_evenements.
@@ -41,24 +43,34 @@ ALTER TABLE remises
 -- remise, echec), pas pour le flux GPS. On ne conserve donc que le dernier point
 -- connu. Un historique de trajet, s'il devient utile, mérite sa propre table.
 ALTER TABLE remises
-    ADD COLUMN livreur_latitude   NUMERIC(10, 7),
-    ADD COLUMN livreur_longitude  NUMERIC(10, 7),
-    ADD COLUMN livreur_position_at TIMESTAMP,
-    ADD COLUMN depart_at          TIMESTAMP;
+    ADD COLUMN IF NOT EXISTS livreur_latitude   NUMERIC(10, 7),
+    ADD COLUMN IF NOT EXISTS livreur_longitude  NUMERIC(10, 7),
+    ADD COLUMN IF NOT EXISTS livreur_position_at TIMESTAMP,
+    ADD COLUMN IF NOT EXISTS depart_at          TIMESTAMP;
 
 -- ── Retrait du mode porte par les articles ──────────────────────────────────
 -- Report de l'information vers les remises avant suppression, pour ne rien perdre
 -- des commandes deja passees.
-UPDATE remises r
-SET mode_remise = sous.mode_remise
-FROM (
-    SELECT DISTINCT ON (i.commande_id, i.vendeur_id)
-           i.commande_id, i.vendeur_id, i.mode_remise
-    FROM commande_items i
-    WHERE i.vendeur_id IS NOT NULL
-) AS sous
-WHERE r.commande_id = sous.commande_id
-  AND r.vendeur_id = sous.vendeur_id;
+-- Le report n'a de sens que tant que la colonne source existe : au rejeu de cette
+-- migration elle a deja ete supprimee, et l'information vit desormais sur remises.
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns
+               WHERE table_name = 'commande_items' AND column_name = 'mode_remise') THEN
+        EXECUTE $sql$
+            UPDATE remises r
+            SET mode_remise = sous.mode_remise
+            FROM (
+                SELECT DISTINCT ON (i.commande_id, i.vendeur_id)
+                       i.commande_id, i.vendeur_id, i.mode_remise
+                FROM commande_items i
+                WHERE i.vendeur_id IS NOT NULL
+            ) AS sous
+            WHERE r.commande_id = sous.commande_id
+              AND r.vendeur_id = sous.vendeur_id
+        $sql$;
+    END IF;
+END $$;
 
 ALTER TABLE commande_items DROP CONSTRAINT IF EXISTS chk_item_mode_remise;
 ALTER TABLE commande_items DROP COLUMN IF EXISTS mode_remise;
@@ -66,5 +78,5 @@ ALTER TABLE commande_items DROP COLUMN IF EXISTS mode_remise;
 -- Le suivi acheteur interroge la remise par commande : l'index existe deja
 -- (idx_remise_commande). On ajoute seulement de quoi balayer les livraisons en
 -- cours sans parcourir toute la table.
-CREATE INDEX idx_remise_en_route ON remises (livreur_position_at)
+CREATE INDEX IF NOT EXISTS idx_remise_en_route ON remises (livreur_position_at)
     WHERE livreur_position_at IS NOT NULL;

@@ -16,8 +16,8 @@
 
 -- ── Sur le trace : chaque point garde sa cinematique ────────────────────────
 ALTER TABLE livraison_positions
-    ADD COLUMN vitesse_kmh NUMERIC(6, 2),
-    ADD COLUMN cap_degres  NUMERIC(5, 2);
+    ADD COLUMN IF NOT EXISTS vitesse_kmh NUMERIC(6, 2),
+    ADD COLUMN IF NOT EXISTS cap_degres  NUMERIC(5, 2);
 
 COMMENT ON COLUMN livraison_positions.vitesse_kmh IS
     'Vitesse instantanee annoncee par le GPS, en km/h. NULL si le materiel ne la fournit pas.';
@@ -28,6 +28,6 @@ COMMENT ON COLUMN livraison_positions.cap_degres IS
 -- Dupliquee ici pour la meme raison que la position courante : repondre a
 -- « ou est-il, et dans quelle direction ? » sans relire tout le trace.
 ALTER TABLE remises
-    ADD COLUMN livreur_vitesse_kmh NUMERIC(6, 2),
-    ADD COLUMN livreur_cap_degres  NUMERIC(5, 2),
-    ADD COLUMN livreur_precision_m INTEGER;
+    ADD COLUMN IF NOT EXISTS livreur_vitesse_kmh NUMERIC(6, 2),
+    ADD COLUMN IF NOT EXISTS livreur_cap_degres  NUMERIC(5, 2),
+    ADD COLUMN IF NOT EXISTS livreur_precision_m INTEGER;

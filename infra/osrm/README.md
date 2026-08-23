@@ -24,9 +24,19 @@ sous la clé `carte`. Basculer, c'est changer une valeur :
 ```ts
 carte: {
   osrm: 'http://localhost:5000',   // au lieu de https://router.project-osrm.org
+  osrmMatchMax: 500,               // au lieu de 10 — voir ci-dessous
   ...
 }
 ```
+
+**`osrmMatchMax` se change en même temps que l'adresse.** C'est le nombre de
+points que le serveur accepte par recalage (`/match`) : au-delà, il rejette la
+requête entière par un `400 {"code":"TooBig"}` — il ne tronque pas. Le serveur
+de démonstration plafonne à **10**, ce qui réduit le recalage aux dix derniers
+points du parcours. L'instance décrite ici annonce `--max-matching-size 500`
+(voir `docker-compose.yml`) : les deux valeurs doivent rester alignées, sans
+quoi le recalage échoue en silence — l'appelant le traite comme cosmétique et
+n'affiche aucune erreur.
 
 ## Mise en place
 

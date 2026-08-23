@@ -21,13 +21,13 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 ALTER TABLE commandes
-    ADD COLUMN paiement_orphelin_detecte_at TIMESTAMP;
+    ADD COLUMN IF NOT EXISTS paiement_orphelin_detecte_at TIMESTAMP;
 
 COMMENT ON COLUMN commandes.paiement_orphelin_detecte_at IS
     'Date a laquelle on a constate que l''operateur avait encaisse cette commande alors que nous l''avions abandonnee. NULL dans le cas normal.';
 
 -- Le filtre admin ne cherche que les lignes renseignees : un index partiel
 -- suffit, et il reste minuscule puisque le cas est rare par nature.
-CREATE INDEX idx_commande_paiement_orphelin
+CREATE INDEX IF NOT EXISTS idx_commande_paiement_orphelin
     ON commandes (paiement_orphelin_detecte_at)
     WHERE paiement_orphelin_detecte_at IS NOT NULL;

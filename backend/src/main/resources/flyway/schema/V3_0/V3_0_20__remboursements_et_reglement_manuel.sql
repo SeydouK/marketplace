@@ -20,7 +20,7 @@
 -- destinataire et le motif.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-CREATE TABLE remboursements (
+CREATE TABLE IF NOT EXISTS remboursements (
     id                  BIGSERIAL PRIMARY KEY,
     commande_id         BIGINT NOT NULL,
     commande_reference  VARCHAR(255),
@@ -53,25 +53,33 @@ CREATE TABLE remboursements (
         CHECK (mode_reglement IS NULL OR mode_reglement IN ('GENIUSPAY', 'MANUEL'))
 );
 
-CREATE INDEX idx_remboursement_commande ON remboursements(commande_id);
-CREATE INDEX idx_remboursement_acheteur ON remboursements(acheteur_id);
-CREATE INDEX idx_remboursement_statut   ON remboursements(statut);
+CREATE INDEX IF NOT EXISTS idx_remboursement_commande ON remboursements(commande_id);
+CREATE INDEX IF NOT EXISTS idx_remboursement_acheteur ON remboursements(acheteur_id);
+CREATE INDEX IF NOT EXISTS idx_remboursement_statut   ON remboursements(statut);
 
 -- ── Tracabilite du reglement des versements ─────────────────────────────────
 -- Les memes colonnes cote vendeur : un versement paye a la main doit etre aussi
 -- verifiable qu'un versement passe par l'API.
 ALTER TABLE versements
-    ADD COLUMN mode_reglement VARCHAR(20),
-    ADD COLUMN regle_par_id   BIGINT;
+    ADD COLUMN IF NOT EXISTS mode_reglement VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS regle_par_id   BIGINT;
+
+ALTER TABLE versements DROP CONSTRAINT IF EXISTS chk_versement_mode;
 
 ALTER TABLE versements
     ADD CONSTRAINT chk_versement_mode
         CHECK (mode_reglement IS NULL OR mode_reglement IN ('GENIUSPAY', 'MANUEL'));
+
+ALTER TABLE versements DROP CONSTRAINT IF EXISTS fk_versement_admin;
 
 ALTER TABLE versements
     ADD CONSTRAINT fk_versement_admin FOREIGN KEY (regle_par_id) REFERENCES users(id) ON DELETE SET NULL;
 
 -- Les versements deja envoyes l'ont ete par l'API : on le note plutot que de
 -- laisser une colonne vide qui laisserait croire a un reglement manuel.
+-- `mode_reglement IS NULL` borne le rattrapage aux lignes jamais qualifiees : au
+-- rejeu, un versement passe a MANUEL depuis lors n'est pas ramene a GENIUSPAY.
 UPDATE versements SET mode_reglement = 'GENIUSPAY'
-WHERE statut IN ('EN_COURS', 'CONFIRME') AND reference IS NOT NULL;
+WHERE statut IN ('EN_COURS', 'CONFIRME')
+  AND reference IS NOT NULL
+  AND mode_reglement IS NULL;

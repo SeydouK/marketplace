@@ -26,10 +26,12 @@ ALTER TABLE commande_items
 
 -- ── Mode de remise et preuve ────────────────────────────────────────────────
 ALTER TABLE commande_items
-    ADD COLUMN mode_remise          VARCHAR(20) NOT NULL DEFAULT 'RETRAIT_SUR_PLACE',
-    ADD COLUMN photo_remise_url     TEXT,
-    ADD COLUMN echec_motif          TEXT,
-    ADD COLUMN tentatives_livraison INTEGER NOT NULL DEFAULT 0;
+    ADD COLUMN IF NOT EXISTS mode_remise          VARCHAR(20) NOT NULL DEFAULT 'RETRAIT_SUR_PLACE',
+    ADD COLUMN IF NOT EXISTS photo_remise_url     TEXT,
+    ADD COLUMN IF NOT EXISTS echec_motif          TEXT,
+    ADD COLUMN IF NOT EXISTS tentatives_livraison INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE commande_items DROP CONSTRAINT IF EXISTS chk_item_mode_remise;
 
 ALTER TABLE commande_items
     ADD CONSTRAINT chk_item_mode_remise
@@ -50,7 +52,7 @@ ALTER TABLE commande_items
 -- se retrouvent en 10 000 essais hors ligne — au prix d'une verification plus
 -- lourde. La protection repose sur : jamais expose au vendeur, jamais journalise,
 -- et 3 tentatives maximum (colonne tentatives).
-CREATE TABLE remises (
+CREATE TABLE IF NOT EXISTS remises (
     id               BIGSERIAL PRIMARY KEY,
     commande_id      BIGINT NOT NULL,
     vendeur_id       BIGINT NOT NULL,
@@ -64,8 +66,8 @@ CREATE TABLE remises (
     CONSTRAINT uq_remise_commande_vendeur UNIQUE (commande_id, vendeur_id)
 );
 
-CREATE INDEX idx_remise_commande ON remises(commande_id);
-CREATE INDEX idx_remise_vendeur  ON remises(vendeur_id);
+CREATE INDEX IF NOT EXISTS idx_remise_commande ON remises(commande_id);
+CREATE INDEX IF NOT EXISTS idx_remise_vendeur  ON remises(vendeur_id);
 
 -- ── Journal d'evenements ────────────────────────────────────────────────────
 -- Table en ajout seul : on n'y modifie jamais une ligne.
@@ -77,7 +79,7 @@ CREATE INDEX idx_remise_vendeur  ON remises(vendeur_id);
 --
 -- donnees (jsonb) accueille le detail propre a chaque type d'evenement sans
 -- imposer une colonne par cas.
-CREATE TABLE livraison_evenements (
+CREATE TABLE IF NOT EXISTS livraison_evenements (
     id               BIGSERIAL PRIMARY KEY,
     commande_item_id BIGINT NOT NULL,
 
@@ -97,17 +99,21 @@ CREATE TABLE livraison_evenements (
     CONSTRAINT fk_evenement_item FOREIGN KEY (commande_item_id) REFERENCES commande_items(id) ON DELETE CASCADE
 );
 
+ALTER TABLE livraison_evenements DROP CONSTRAINT IF EXISTS chk_evenement_auteur_type;
+
 ALTER TABLE livraison_evenements
     ADD CONSTRAINT chk_evenement_auteur_type
         CHECK (auteur_type IN ('ACHETEUR', 'VENDEUR', 'TRANSPORTEUR', 'SYSTEME', 'ADMIN'));
+
+ALTER TABLE livraison_evenements DROP CONSTRAINT IF EXISTS chk_evenement_source;
 
 ALTER TABLE livraison_evenements
     ADD CONSTRAINT chk_evenement_source
         CHECK (source IN ('APP', 'WEBHOOK', 'SCHEDULER', 'ADMIN'));
 
 -- La frise se lit par article, dans l'ordre chronologique : index composite.
-CREATE INDEX idx_evenement_item ON livraison_evenements(commande_item_id, created_at);
-CREATE INDEX idx_evenement_type ON livraison_evenements(type);
+CREATE INDEX IF NOT EXISTS idx_evenement_item ON livraison_evenements(commande_item_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_evenement_type ON livraison_evenements(type);
 
 -- ── Reprise des commandes deja payees ───────────────────────────────────────
 -- Les commandes payees avant cette migration n'ont pas de code. Elles restent

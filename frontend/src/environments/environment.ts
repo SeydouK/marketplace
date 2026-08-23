@@ -20,6 +20,20 @@ export const environment = {
      */
     osrm: 'https://router.project-osrm.org',
 
+    /**
+     * Nombre maximal de points par demande de recalage (/match).
+     *
+     * Cette borne appartient au serveur, pas à l'application : OSRM refuse la
+     * requête entière au-delà, par un 400 « TooBig ». Le serveur de démonstration
+     * la fixe à 10 — bien en dessous des 100 par défaut d'OSRM. Une instance
+     * auto-hébergée choisit la sienne via --max-matching-size ; celle décrite
+     * dans infra/osrm/docker-compose.yml annonce 500.
+     *
+     * À 10 points, le recalage ne lisse plus que la fin du parcours. C'est le
+     * prix du serveur public, et c'est une raison de plus de s'héberger.
+     */
+    osrmMatchMax: 10,
+
     tuiles: {
       /**
        * Fond de carte.

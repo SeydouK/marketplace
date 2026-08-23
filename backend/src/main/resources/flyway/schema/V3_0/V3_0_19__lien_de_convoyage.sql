@@ -17,14 +17,14 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 ALTER TABLE remises
-    ADD COLUMN convoyage_jeton        VARCHAR(64),
-    ADD COLUMN transporteur_nom       VARCHAR(160),
+    ADD COLUMN IF NOT EXISTS convoyage_jeton        VARCHAR(64),
+    ADD COLUMN IF NOT EXISTS transporteur_nom       VARCHAR(160),
     -- Format international complet (+225...), jamais l'indicatif seul : la
     -- plateforme n'est pas destinee a rester ivoirienne.
-    ADD COLUMN transporteur_telephone VARCHAR(24),
-    ADD COLUMN convoyage_confie_at    TIMESTAMP,
-    ADD COLUMN convoyage_expire_at    TIMESTAMP;
+    ADD COLUMN IF NOT EXISTS transporteur_telephone VARCHAR(24),
+    ADD COLUMN IF NOT EXISTS convoyage_confie_at    TIMESTAMP,
+    ADD COLUMN IF NOT EXISTS convoyage_expire_at    TIMESTAMP;
 
 -- Un jeton doit rester unique : c'est lui, et lui seul, qui autorise l'acces.
-CREATE UNIQUE INDEX idx_remise_convoyage_jeton ON remises(convoyage_jeton)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_remise_convoyage_jeton ON remises(convoyage_jeton)
     WHERE convoyage_jeton IS NOT NULL;

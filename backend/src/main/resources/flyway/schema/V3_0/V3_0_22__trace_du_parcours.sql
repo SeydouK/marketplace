@@ -18,7 +18,7 @@
 -- Sur un trajet de huit heures, cela donne quelques centaines de lignes.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-CREATE TABLE livraison_positions (
+CREATE TABLE IF NOT EXISTS livraison_positions (
     id            BIGSERIAL PRIMARY KEY,
     remise_id     BIGINT NOT NULL,
 
@@ -33,4 +33,4 @@ CREATE TABLE livraison_positions (
 );
 
 -- Le trace se lit toujours par remise, dans l'ordre chronologique.
-CREATE INDEX idx_position_remise ON livraison_positions(remise_id, enregistre_le);
+CREATE INDEX IF NOT EXISTS idx_position_remise ON livraison_positions(remise_id, enregistre_le);

@@ -12,6 +12,8 @@ export const environment = {
    */
   carte: {
     osrm: 'https://router.project-osrm.org',
+    /** Plafond /match du serveur vise — voir environment.ts. 500 en auto-heberge. */
+    osrmMatchMax: 10,
     tuiles: {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

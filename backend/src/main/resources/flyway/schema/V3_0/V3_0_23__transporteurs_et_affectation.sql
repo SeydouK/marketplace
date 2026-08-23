@@ -21,18 +21,22 @@
 -- n'est proposable qu'une fois son permis valide : c'est le signal minimal avant
 -- de lui confier un animal de plusieurs centaines de milliers de francs.
 ALTER TABLE users
-    ADD COLUMN permis_url          TEXT,
-    ADD COLUMN permis_valide       BOOLEAN NOT NULL DEFAULT FALSE,
-    ADD COLUMN permis_valide_at    TIMESTAMP,
-    ADD COLUMN permis_valide_par_id BIGINT,
+    ADD COLUMN IF NOT EXISTS permis_url          TEXT,
+    ADD COLUMN IF NOT EXISTS permis_valide       BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN IF NOT EXISTS permis_valide_at    TIMESTAMP,
+    ADD COLUMN IF NOT EXISTS permis_valide_par_id BIGINT,
     -- Nombre de tetes transportables : affiche au vendeur pour qu'il choisisse
     -- un vehicule adapte, sans bloquer quoi que ce soit a ce stade.
-    ADD COLUMN capacite_tetes      INTEGER,
-    ADD COLUMN type_vehicule       VARCHAR(40);
+    ADD COLUMN IF NOT EXISTS capacite_tetes      INTEGER,
+    ADD COLUMN IF NOT EXISTS type_vehicule       VARCHAR(40);
+
+ALTER TABLE users DROP CONSTRAINT IF EXISTS fk_permis_valide_par;
 
 ALTER TABLE users
     ADD CONSTRAINT fk_permis_valide_par FOREIGN KEY (permis_valide_par_id)
         REFERENCES users(id) ON DELETE SET NULL;
+
+ALTER TABLE users DROP CONSTRAINT IF EXISTS chk_type_vehicule;
 
 ALTER TABLE users
     ADD CONSTRAINT chk_type_vehicule
@@ -45,15 +49,19 @@ ALTER TABLE users
 -- REFUSEE   : il a decline, la place se libere aussitot
 -- ANNULEE   : le vendeur a retire sa proposition
 ALTER TABLE remises
-    ADD COLUMN transporteur_id         BIGINT,
-    ADD COLUMN affectation_statut      VARCHAR(20),
-    ADD COLUMN affectation_at          TIMESTAMP,
-    ADD COLUMN affectation_reponse_at  TIMESTAMP,
-    ADD COLUMN affectation_refus_motif TEXT;
+    ADD COLUMN IF NOT EXISTS transporteur_id         BIGINT,
+    ADD COLUMN IF NOT EXISTS affectation_statut      VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS affectation_at          TIMESTAMP,
+    ADD COLUMN IF NOT EXISTS affectation_reponse_at  TIMESTAMP,
+    ADD COLUMN IF NOT EXISTS affectation_refus_motif TEXT;
+
+ALTER TABLE remises DROP CONSTRAINT IF EXISTS fk_remise_transporteur;
 
 ALTER TABLE remises
     ADD CONSTRAINT fk_remise_transporteur FOREIGN KEY (transporteur_id)
         REFERENCES users(id) ON DELETE SET NULL;
+
+ALTER TABLE remises DROP CONSTRAINT IF EXISTS chk_affectation_statut;
 
 ALTER TABLE remises
     ADD CONSTRAINT chk_affectation_statut
@@ -63,4 +71,4 @@ ALTER TABLE remises
 -- La disponibilite se deduit de cette table plutot que d'un drapeau sur users :
 -- un indicateur maintenu a la main finit toujours par desynchroniser, et laisser
 -- un transporteur « occupe » sur une course terminee le prive de travail.
-CREATE INDEX idx_remise_transporteur ON remises(transporteur_id, affectation_statut);
+CREATE INDEX IF NOT EXISTS idx_remise_transporteur ON remises(transporteur_id, affectation_statut);

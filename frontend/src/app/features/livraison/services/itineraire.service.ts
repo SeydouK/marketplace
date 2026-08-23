@@ -63,10 +63,17 @@ export class ItineraireService {
   /**
    * Plafond de points par recalage.
    *
-   * OSRM refuse les demandes trop longues sur son serveur public. Au-delà, on
-   * ne garde que la fin du parcours : c'est la portion que l'on regarde.
+   * OSRM rejette la demande entière au-delà — un 400 « TooBig », pas un résultat
+   * tronqué. Au-delà, on ne garde donc que la fin du parcours : c'est la portion
+   * que l'on regarde.
+   *
+   * La valeur suit le serveur et vient de l'environnement : le serveur public de
+   * démonstration plafonne à 10, une instance auto-hébergée à ce que lui dit
+   * --max-matching-size. La coder en dur revenait à faire échouer tout recalage
+   * de plus de dix points sans que rien ne le signale, l'appelant traitant
+   * l'échec comme cosmétique.
    */
-  private static readonly POINTS_RECALAGE_MAX = 100;
+  private static readonly POINTS_RECALAGE_MAX = environment.carte.osrmMatchMax;
 
   private version = 0;
 
