@@ -40,6 +40,13 @@ const routes: Routes = [
         path: 'annonces',
         loadChildren: () => import('./features/annonces/annonces.module').then(m => m.AnnoncesModule),
     },
+    // ── ACTUALITES — lecture publique, aucun compte requis ───────────────────
+    // Le module existait deja mais n'etait rattache a aucune route : l'onglet de
+    // l'en-tete retombait sur le joker et renvoyait vers l'accueil.
+    {
+        path: 'actualites',
+        loadChildren: () => import('./features/actualites/actualites.module').then(m => m.ActualitesModule),
+    },
 
     // ── PANIER — composant standalone, route protégée ────────────────────────
     {
