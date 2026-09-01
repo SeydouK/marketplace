@@ -59,11 +59,20 @@ public class PaiementController {
             String event = root.path("event").asText(null);
             JsonNode data = root.path("data");
 
-            if (event != null && event.startsWith("cashout.")) {
-                // La structure exacte du payload cashout n'est pas documentee (cf. GeniusPayService.initiatePayout) :
-                // on accepte la reference a la racine de data comme imbriquee sous data.cashout.
-                JsonNode cashoutNode = data.has("cashout") ? data.path("cashout") : data;
-                String reference = cashoutNode.path("reference").asText(null);
+            // Le prefixe decide vers quel cote de l'argent l'evenement part : un
+            // versement sortant et un encaissement entrant n'ont ni le meme objet
+            // ni la meme table. « payout » est le nom documente par l'API de
+            // versement, « cashout » celui sur lequel ce code a ete ecrit avant :
+            // les deux sont acceptes, faute de pouvoir observer ce que GeniusPay
+            // emet reellement. Router un payout vers le traitement des paiements
+            // laisserait le versement EN_COURS indefiniment.
+            if (event != null && (event.startsWith("payout.") || event.startsWith("cashout."))) {
+                // La structure exacte du payload n'est pas garantie : on accepte la
+                // reference a la racine de data comme imbriquee sous data.payout /
+                // data.cashout.
+                JsonNode noeud = data.has("payout") ? data.path("payout")
+                        : data.has("cashout") ? data.path("cashout") : data;
+                String reference = noeud.path("reference").asText(null);
                 if (reference != null) {
                     versementService.traiterWebhookCashout(event, reference);
                 }

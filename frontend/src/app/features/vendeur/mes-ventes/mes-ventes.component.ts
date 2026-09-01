@@ -7,6 +7,12 @@ import {
 } from '../../../shared/services/livraison.service';
 import { ToastService } from '../../../core/services/toast.service';
 import {
+  LIBELLES_OPERATEUR,
+  MoyenRetrait,
+  OperateurPayout,
+  VersementService,
+} from '../../../core/services/versement.service';
+import {
   LIBELLES_VEHICULE,
   TransporteurDisponible,
   TransporteurService,
@@ -57,14 +63,27 @@ export class MesVentesComponent implements OnInit {
   propositionEnCours = false;
   readonly libellesVehicule = LIBELLES_VEHICULE;
 
+  // ── Retrait des gains ──────────────────────────────────────────────────────
+  retraitOuvert = false;
+  retraitEnCours = false;
+  moyenRetrait: MoyenRetrait | null = null;
+  operateurChoisi: OperateurPayout | null = null;
+  numeroSaisi = '';
+  readonly operateurs = Object.entries(LIBELLES_OPERATEUR) as [OperateurPayout, string][];
+
   constructor(
     private livraisonService: LivraisonService,
     private transporteurService: TransporteurService,
+    private versementService: VersementService,
     private toast: ToastService,
   ) {}
 
   ngOnInit(): void {
     this.charger();
+    // Charge des l'ouverture, et pas seulement a l'ouverture de la modale :
+    // l'ecran doit savoir si les retraits sont ouverts avant de proposer un
+    // bouton qui ne pourrait pas aboutir.
+    this.chargerMoyenRetrait();
   }
 
   charger(): void {
@@ -132,6 +151,132 @@ export class MesVentesComponent implements OnInit {
     return this.ventes
       .filter((v) => v.statutVersement === 'EN_ATTENTE' || v.statutVersement === 'EN_COURS')
       .reduce((somme, v) => somme + (v.montantNet ?? 0), 0);
+  }
+
+  // ── Retrait des gains ──────────────────────────────────────────────────────
+
+  /**
+   * Versements que le vendeur peut retirer maintenant.
+   *
+   * Dedoublonnes : un versement couvre une commande entiere, donc plusieurs
+   * lignes de vente peuvent porter le meme identifiant. Sans ce Set, une
+   * commande de trois animaux declencherait trois retraits pour le meme argent.
+   */
+  get versementsRetirables(): number[] {
+    return [
+      ...new Set(
+        this.ventes
+          .filter((v) => v.versementRetirable && v.versementId != null)
+          .map((v) => v.versementId as number),
+      ),
+    ];
+  }
+
+  /** Montant reellement retirable, hors versements deja partis. */
+  get totalRetirable(): number {
+    return this.ventes
+      .filter((v) => v.versementRetirable)
+      .reduce((somme, v) => somme + (v.montantNet ?? 0), 0);
+  }
+
+  /** Les retraits sont-ils ouverts cote plateforme ? Faux tant qu'on l'ignore. */
+  get retraitsOuverts(): boolean {
+    return this.moyenRetrait?.retraitsOuverts === true;
+  }
+
+  private chargerMoyenRetrait(): void {
+    // Le formulaire est prerempli s'il l'a deja renseigne, mais reste editable :
+    // changer de numero juste avant un retrait est un besoin courant, et forcer
+    // un detour par le profil ferait perdre le fil au vendeur.
+    this.versementService.getMoyenRetrait().subscribe({
+      next: (moyen) => {
+        this.moyenRetrait = moyen;
+        this.operateurChoisi = moyen.operateur ?? null;
+        this.numeroSaisi = moyen.numero ?? '';
+      },
+      error: () => {
+        this.moyenRetrait = null;
+      },
+    });
+  }
+
+  ouvrirRetrait(): void {
+    this.retraitOuvert = true;
+    this.chargerMoyenRetrait();
+  }
+
+  fermerRetrait(): void {
+    if (this.retraitEnCours) return;
+    this.retraitOuvert = false;
+  }
+
+  /**
+   * Enregistre la destination si elle a change, puis declenche les retraits.
+   *
+   * Les deux gestes sont enchaines plutot que separes en deux ecrans : la
+   * destination n'a d'interet qu'au moment ou l'argent part, et la faire saisir
+   * ailleurs multiplierait les occasions de l'oublier.
+   */
+  confirmerRetrait(): void {
+    if (this.retraitEnCours) return;
+    if (!this.operateurChoisi || !this.numeroSaisi.trim()) {
+      this.toast.error('Choisissez un opérateur et renseignez le numéro à créditer.');
+      return;
+    }
+
+    const ids = this.versementsRetirables;
+    if (ids.length === 0) {
+      this.toast.error("Vous n'avez aucun montant retirable pour l'instant.");
+      return;
+    }
+
+    this.retraitEnCours = true;
+    this.versementService
+      .enregistrerMoyenRetrait(this.operateurChoisi, this.numeroSaisi.trim())
+      .subscribe({
+        next: () => this.lancerRetraits(ids),
+        error: (e) => {
+          this.retraitEnCours = false;
+          this.toast.error(e?.error?.message ?? "Le moyen de retrait n'a pas pu être enregistré.");
+        },
+      });
+  }
+
+  /**
+   * Envoie un retrait par versement, en sequence.
+   *
+   * Sequentiel et non en parallele : chaque appel sort de l'argent, et un envoi
+   * groupe rendrait indechiffrable le cas ou l'un des deux echoue. On s'arrete
+   * au premier refus, en disant lesquels sont partis.
+   */
+  private lancerRetraits(ids: number[], index = 0, envoyes = 0): void {
+    if (index >= ids.length) {
+      this.retraitEnCours = false;
+      this.retraitOuvert = false;
+      this.toast.success(
+        envoyes > 1
+          ? `${envoyes} retraits envoyés vers ${this.libelleOperateur(this.operateurChoisi)}.`
+          : `Retrait envoyé vers ${this.libelleOperateur(this.operateurChoisi)}.`,
+      );
+      this.charger();
+      return;
+    }
+
+    this.versementService.retirer(ids[index]).subscribe({
+      next: () => this.lancerRetraits(ids, index + 1, envoyes + 1),
+      error: (e) => {
+        this.retraitEnCours = false;
+        const message = e?.error?.message ?? "Le retrait n'a pas pu être envoyé.";
+        this.toast.error(
+          envoyes > 0 ? `${envoyes} retrait(s) envoyé(s), puis : ${message}` : message,
+        );
+        this.charger();
+      },
+    });
+  }
+
+  libelleOperateur(op: OperateurPayout | null): string {
+    return op ? LIBELLES_OPERATEUR[op] : '';
   }
 
   // ── Infobulles des KPI ─────────────────────────────────────────────────────

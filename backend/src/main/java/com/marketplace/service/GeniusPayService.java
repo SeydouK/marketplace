@@ -2,6 +2,7 @@ package com.marketplace.service;
 
 import com.marketplace.config.GeniusPayProperties;
 import com.marketplace.exception.BadRequestException;
+import com.marketplace.model.OperateurPayout;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -128,9 +129,56 @@ public class GeniusPayService {
      * ce qui suggère que l'endpoint réel est plutôt "/cashouts".
      * → Obtenir la spec auprès de support@genius.ci avant d'utiliser cette méthode.
      */
+    /**
+     * La plateforme est-elle en mesure d'envoyer de l'argent ?
+     *
+     * Les versements tirent sur un wallet marchand dont l'identifiant est fourni
+     * par GeniusPay a l'ouverture du compte. Tant qu'il manque, aucun retrait ne
+     * peut aboutir — et c'est une information que les ecrans doivent connaitre
+     * AVANT de proposer un bouton, pas au moment ou il echoue.
+     *
+     * Lue a chaque appel plutot que mise en cache : renseigner la variable
+     * d'environnement et redemarrer suffit alors a ouvrir les retraits, sans
+     * autre intervention.
+     */
+    public boolean versementsOperationnels() {
+        return properties.getWalletId() != null && !properties.getWalletId().isBlank();
+    }
+
+    /**
+     * Signale au demarrage que les versements sont hors service.
+     *
+     * Sans cette ligne, l'absence de wallet ne se manifeste qu'au premier retrait
+     * tente par un vendeur — c'est-a-dire au pire moment, et pour la mauvaise
+     * personne.
+     */
+    @jakarta.annotation.PostConstruct
+    void signalerConfigurationIncomplete() {
+        if (!versementsOperationnels()) {
+            log.warn("GENIUSPAY_WALLET_ID absent : les versements aux vendeurs restent fermes. "
+                    + "Les fonds continuent d'etre encaisses et liberes du sequestre normalement ; "
+                    + "seul l'envoi est indisponible.");
+        }
+    }
+
     public PayoutResult initiatePayout(BigDecimal montant, String recipientName, String recipientPhone,
                                         String recipientEmail, String description,
                                         Map<String, String> metadata, String idempotencyKey) {
+        return initiatePayout(montant, recipientName, recipientPhone, recipientEmail, description,
+                metadata, idempotencyKey, null, null);
+    }
+
+    /**
+     * Initie un versement sortant.
+     *
+     * @param operateur      destination declaree par le beneficiaire. GeniusPay refuse la
+     *                       demande sans lui : un numero ne dit pas son reseau.
+     * @param compteDestination numero a crediter, distinct du numero de contact.
+     */
+    public PayoutResult initiatePayout(BigDecimal montant, String recipientName, String recipientPhone,
+                                        String recipientEmail, String description,
+                                        Map<String, String> metadata, String idempotencyKey,
+                                        OperateurPayout operateur, String compteDestination) {
 
         if (properties.getWalletId() == null || properties.getWalletId().isBlank()) {
             throw new BadRequestException(
@@ -140,12 +188,22 @@ public class GeniusPayService {
         if (recipientPhone == null || recipientPhone.isBlank()) {
             throw new BadRequestException("Le vendeur n'a pas de numéro de téléphone renseigné : versement impossible.");
         }
+        if (operateur == null) {
+            throw new BadRequestException(
+                    "Aucun operateur de retrait n'est renseigne : GeniusPay refuse un versement sans destination.provider.");
+        }
+
+        String compte = (compteDestination != null && !compteDestination.isBlank())
+                ? compteDestination : recipientPhone;
 
         Map<String, Object> requestBody = Map.of(
                 "wallet_id", properties.getWalletId(),
                 "recipient", Map.of("name", recipientName, "phone", recipientPhone, "email",
                         recipientEmail != null ? recipientEmail : ""),
-                "destination", Map.of("type", "mobile_money", "account", recipientPhone),
+                "destination", Map.of(
+                        "type", "mobile_money",
+                        "provider", operateur.getProvider(),
+                        "account", compte),
                 "amount", montant,
                 "currency", "XOF",
                 "description", description,
@@ -153,8 +211,16 @@ public class GeniusPayService {
                 "idempotency_key", idempotencyKey
         );
 
+        // Les deux schemas d'authentification sont envoyes ensemble, et ce n'est pas
+        // une hesitation : la documentation du payout annonce « Authorization: Bearer
+        // <MERCHANT_API_KEY> », tandis que les appels d'encaissement de ce meme service
+        // fonctionnent en production avec X-API-Key / X-API-Secret. Impossible de
+        // trancher sans essayer contre leur bac a sable, et se tromper de schema donne
+        // un 401 sur un versement deja libere. Un en-tete ignore ne coute rien ; a
+        // confirmer aupres de GeniusPay, puis retirer celui qui ne sert pas.
         String rawResponse = webClient.post()
                 .uri(properties.getBaseUrl() + "/payouts")
+                .header("Authorization", "Bearer " + properties.getApiKey())
                 .header("X-API-Key", properties.getApiKey())
                 .header("X-API-Secret", properties.getApiSecret())
                 .header("Content-Type", "application/json")

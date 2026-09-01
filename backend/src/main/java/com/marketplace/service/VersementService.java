@@ -2,6 +2,7 @@ package com.marketplace.service;
 
 import com.marketplace.dto.AdminVersementDTO;
 import com.marketplace.dto.AdminVersementPageDTO;
+import com.marketplace.dto.MonVersementDTO;
 import com.marketplace.exception.BadRequestException;
 import com.marketplace.exception.ForbiddenException;
 import com.marketplace.exception.ResourceNotFoundException;
@@ -158,30 +159,115 @@ public class VersementService {
             versement.setLibereAt(LocalDateTime.now());
         }
 
+        return toDTO(initierPayout(versement));
+    }
+
+    /**
+     * Retrait declenche par le vendeur lui-meme.
+     *
+     * Aucune regle de sequestre n'est reecrite ici : la seule condition est que le
+     * versement soit EN_ATTENTE, statut qui signifie deja « tous les articles de ce
+     * vendeur sont sortis du sequestre ». Dupliquer la condition de
+     * {@link SequestreService#estLeve} reviendrait a se donner deux verites a tenir
+     * synchronisees.
+     *
+     * Pas de {@code forcer} de ce cote, contrairement au chemin admin : passer outre
+     * le sequestre est un acte d'arbitrage, pas un geste que le beneficiaire
+     * s'accorde a lui-meme.
+     */
+    public MonVersementDTO retirer(Long versementId) {
+        User vendeur = userService.getCurrentUser();
+
+        Versement versement = versementRepository.findById(versementId)
+                .orElseThrow(() -> new ResourceNotFoundException("Versement introuvable : " + versementId));
+
+        // Reponse volontairement identique a l'inexistence : confirmer qu'un
+        // versement existe chez quelqu'un d'autre renseignerait deja trop.
+        if (!versement.getVendeurId().equals(vendeur.getId())) {
+            throw new ResourceNotFoundException("Versement introuvable : " + versementId);
+        }
+
+        switch (versement.getStatut()) {
+            case BLOQUE -> throw new BadRequestException(
+                    "Ces fonds sont encore sous sequestre : l'acheteur n'a pas confirme avoir recu l'animal.");
+            case EN_COURS -> throw new BadRequestException("Ce retrait est deja en cours d'envoi.");
+            case CONFIRME -> throw new BadRequestException("Ces fonds vous ont deja ete verses.");
+            case EN_ATTENTE, ECHOUE -> { }
+        }
+
+        // Verifie avant le moyen de retrait, et non apres : quand le canal d'envoi
+        // n'est pas ouvert, le defaut est du cote de la plateforme, et reprocher au
+        // vendeur un profil incomplet le mettrait en faute a tort.
+        if (!geniusPayService.versementsOperationnels()) {
+            throw new BadRequestException(
+                    "Les retraits ne sont pas encore ouverts sur la plateforme. Ces fonds vous sont acquis "
+                    + "et resteront disponibles : vous pourrez les retirer des l'ouverture.");
+        }
+
+        if (vendeur.getPayoutOperateur() == null
+                || vendeur.getPayoutNumero() == null || vendeur.getPayoutNumero().isBlank()) {
+            throw new BadRequestException(
+                    "Renseignez d'abord votre moyen de retrait (operateur et numero) dans votre profil.");
+        }
+
+        log.info("Retrait demande par le vendeur {} sur le versement {} ({} XOF).",
+                vendeur.getId(), versement.getId(), versement.getMontantNet());
+
+        return toMonVersementDTO(initierPayout(versement));
+    }
+
+    /**
+     * Envoie l'argent et enregistre ce qui est parti.
+     *
+     * Commun aux deux declencheurs : que le retrait vienne du vendeur ou d'un
+     * administrateur, l'appel a l'operateur et la trace laissee doivent etre les
+     * memes — c'est la meme sortie d'argent.
+     */
+    private Versement initierPayout(Versement versement) {
+        User vendeur = userRepository.findById(versement.getVendeurId()).orElse(null);
+        if (vendeur == null) {
+            throw new BadRequestException("Le vendeur de ce versement n'existe plus : envoi impossible.");
+        }
+        if (vendeur.getPayoutOperateur() == null) {
+            throw new BadRequestException(
+                    "Ce vendeur n'a pas declare de moyen de retrait : GeniusPay refuse un versement "
+                    + "sans operateur de destination.");
+        }
+
+        String compte = (vendeur.getPayoutNumero() != null && !vendeur.getPayoutNumero().isBlank())
+                ? vendeur.getPayoutNumero()
+                : versement.getVendeurTelephone();
+
         GeniusPayService.PayoutResult result = geniusPayService.initiatePayout(
                 versement.getMontantNet(),
                 versement.getVendeurNom(),
                 versement.getVendeurTelephone(),
-                null,
+                vendeur.getEmail(),
                 "Versement vendeur - commande #" + versement.getCommandeId(),
                 Map.of(
                         "versement_id", String.valueOf(versement.getId()),
                         "commande_id", String.valueOf(versement.getCommandeId()),
                         "vendeur_id", String.valueOf(versement.getVendeurId())
                 ),
-                "versement-" + versement.getId()
+                // Clef stable par versement : un double clic, un retry reseau ou une
+                // relance admin apres un echec apparent ne doivent pas payer deux fois.
+                "versement-" + versement.getId(),
+                vendeur.getPayoutOperateur(),
+                compte
         );
 
         versement.setReference(result.reference());
         versement.setModeReglement(ModeReglement.GENIUSPAY);
         versement.setStatut(StatutVersement.EN_COURS);
+        versement.setDestinationOperateur(vendeur.getPayoutOperateur());
+        versement.setDestinationNumero(compte);
         versement.setEnvoyeAt(LocalDateTime.now());
         versement = versementRepository.save(versement);
 
         notifications.notifierVersementEnvoye(versement.getVendeurId(), versement.getCommandeId(),
-                versement.getMontantNet(), versement.getVendeurTelephone());
+                versement.getMontantNet(), compte);
 
-        return toDTO(versement);
+        return versement;
     }
 
     /**
@@ -226,6 +312,16 @@ public class VersementService {
         return toDTO(versementRepository.save(versement));
     }
 
+    /**
+     * Applique l'issue d'un versement annoncee par GeniusPay.
+     *
+     * Accepte les deux familles d'evenements : {@code payout.*}, celle que
+     * documente l'API de versement, et {@code cashout.*}, sur laquelle ce code a
+     * ete ecrit avant publication de la doc. Les deux coexistent tant que l'on
+     * n'a pas observe ce que l'operateur emet reellement — et se tromper de
+     * prefixe laisserait un versement EN_COURS pour toujours, avec un vendeur
+     * paye qui ne le voit nulle part.
+     */
     public void traiterWebhookCashout(String event, String reference) {
         Versement versement = versementRepository.findByReference(reference).orElse(null);
         if (versement == null) {
@@ -239,11 +335,13 @@ public class VersementService {
         }
 
         switch (event) {
-            case "cashout.completed" -> versementRepository.save(setStatut(versement, StatutVersement.CONFIRME));
-            case "cashout.failed" -> versementRepository.save(setStatut(versement, StatutVersement.ECHOUE));
-            case "cashout.requested", "cashout.approved" ->
+            case "payout.completed", "cashout.completed" ->
+                    versementRepository.save(setStatut(versement, StatutVersement.CONFIRME));
+            case "payout.failed", "cashout.failed" ->
+                    versementRepository.save(setStatut(versement, StatutVersement.ECHOUE));
+            case "payout.created", "cashout.requested", "cashout.approved" ->
                     versementRepository.save(setStatut(versement, StatutVersement.EN_COURS));
-            default -> log.debug("Événement cashout GeniusPay ignoré : {}", event);
+            default -> log.debug("Événement de versement GeniusPay ignoré : {}", event);
         }
     }
 
@@ -275,6 +373,21 @@ public class VersementService {
         if (!EnumSet.of(Role.ADMIN).contains(user.getRole())) {
             throw new ForbiddenException("Cette action est reservee aux administrateurs.");
         }
+    }
+
+    private MonVersementDTO toMonVersementDTO(Versement v) {
+        return new MonVersementDTO(
+                v.getId(),
+                v.getCommandeId(),
+                v.getCommandeReference(),
+                v.getMontantNet(),
+                v.getStatut(),
+                v.getLibereAt(),
+                v.getEnvoyeAt(),
+                v.getDestinationOperateur(),
+                v.getDestinationNumero(),
+                v.getReference()
+        );
     }
 
     private AdminVersementDTO toDTO(Versement v) {

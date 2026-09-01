@@ -209,6 +209,14 @@ export interface MaVente {
   statutVersement?: StatutVersement;
   versementLibereAt?: string;
   versementEnvoyeAt?: string;
+  versementId?: number;
+  /**
+   * Le vendeur peut-il retirer ces fonds maintenant ?
+   *
+   * Calcule par le serveur : la condition de retrait appartient au sequestre, et
+   * la rededuire ici du statut en ferait une seconde verite a tenir a jour.
+   */
+  versementRetirable?: boolean;
   etatGlobal: EtatVente;
   etatLibelle: string;
   remisable: boolean;

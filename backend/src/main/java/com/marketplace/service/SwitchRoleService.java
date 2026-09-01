@@ -1,13 +1,13 @@
 package com.marketplace.service;
 
-import com.marketplace.dto.AuthResponse;
+import com.marketplace.dto.JwtResponse;
 import com.marketplace.dto.SwitchRoleRequest;
 import com.marketplace.exception.BadRequestException;
 import com.marketplace.exception.ForbiddenException;
 import com.marketplace.model.Role;
 import com.marketplace.model.User;
 import com.marketplace.repository.UserRepository;
-import com.marketplace.security.JwtUtil;
+import com.marketplace.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ public class SwitchRoleService {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * Rôles autorisés à switcher vers ACHETEUR (et retour).
@@ -29,7 +29,7 @@ public class SwitchRoleService {
     private static final Set<Role> SWITCHABLE_ROLES = Set.of(Role.VENDEUR);
 
     @Transactional
-    public AuthResponse switchRole(SwitchRoleRequest request) {
+    public JwtResponse switchRole(SwitchRoleRequest request) {
         User user = userService.getCurrentUser();
         Role currentRole = user.getRole();
         Role targetRole;
@@ -65,20 +65,16 @@ public class SwitchRoleService {
         userRepository.save(user);
 
         // Générer un nouveau JWT avec le rôle mis à jour
-        String newToken = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(newToken, mapToUserDTO(user));
-    }
-
-    private com.marketplace.dto.UserProfileDTO mapToUserDTO(User user) {
-        com.marketplace.dto.UserProfileDTO dto = new com.marketplace.dto.UserProfileDTO();
-        dto.setId(user.getId());
-        dto.setName(user.getName());
-        dto.setSurname(user.getSurname());
-        dto.setEmail(user.getEmail());
-        dto.setRole(user.getRole());
-        dto.setKycStatus(user.getKycStatus());
-        dto.setBadgeVerifie(user.getBadgeVerifie());
-        dto.setAvatarUrl(user.getAvatarUrl());
-        return dto;
+        String newToken = jwtTokenProvider.generateToken(user.getEmail());
+        return new JwtResponse(
+                newToken,
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                user.getName(),
+                user.isEmailVerified(),
+                user.getKycStatus(),
+                user.isDevenirVendeur()
+        );
     }
 }

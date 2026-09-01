@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/files/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/animals", "/api/animals/*").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/annonces", "/api/annonces/**").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/api/actualites", "/api/actualites/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/paiements/webhook/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/users/*/profil-public", "/api/users/*/annonces").permitAll()
                 // ── Convoyage : le jeton de l'URL tient lieu d'authentification ──

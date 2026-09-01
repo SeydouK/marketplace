@@ -87,6 +87,27 @@ public class User {
     @Column(name = "verification_email_sent_at")
     private java.time.LocalDateTime verificationEmailSentAt;
 
+    // ── Moyen de retrait : ou part l'argent des ventes ──────────────────────
+    // Renseigne par le vendeur lui-meme depuis son espace. Deux champs et non
+    // un seul : l'API de payout exige l'operateur en plus du numero, et le
+    // deviner a partir du prefixe serait faux — les numeros sont portables
+    // entre reseaux, et Wave sert des numeros emis par d'autres operateurs.
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payout_operateur", length = 20)
+    private OperateurPayout payoutOperateur;
+
+    /**
+     * Numero credite lors d'un retrait.
+     *
+     * Distinct de {@link #phone}, volontairement : le numero de contact et le
+     * numero qui recoit l'argent n'ont aucune raison d'etre le meme, et forcer
+     * l'egalite obligerait un vendeur a changer son numero de connexion pour
+     * encaisser ailleurs.
+     */
+    @Column(name = "payout_numero", length = 20)
+    private String payoutNumero;
+
     // ── Transporteur : au-dela du KYC, le permis de conduire ────────────────
     // Un transporteur n'est proposable aux vendeurs qu'une fois son permis
     // valide : c'est le signal minimal avant de lui confier un animal.

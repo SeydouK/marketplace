@@ -8,6 +8,7 @@ import { GestionLitigesComponent } from './gestion-litiges/gestion-litiges.compo
 import { GestionTransactionsComponent } from './gestion-transactions/gestion-transactions.component';
 import { GestionTransporteursComponent } from './gestion-transporteurs/gestion-transporteurs.component';
 import { GestionVersementsComponent } from './gestion-versements/gestion-versements.component';
+import { GestionActualitesComponent } from './gestion-actualites/gestion-actualites.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'transactions', component: GestionTransactionsComponent },
   { path: 'versements', component: GestionVersementsComponent },
   { path: 'transporteurs', component: GestionTransporteursComponent },
+  { path: 'actualites', component: GestionActualitesComponent },
 ];
 
 @NgModule({

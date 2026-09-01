@@ -5,6 +5,7 @@ import com.marketplace.dto.AdminStatsDTO;
 import com.marketplace.dto.AdminUserDTO;
 import com.marketplace.dto.AdminUserPageDTO;
 import com.marketplace.dto.StoredFileDTO;
+import com.marketplace.dto.MoyenRetraitDTO;
 import com.marketplace.dto.UserProfileDTO;
 import com.marketplace.exception.BadRequestException;
 import com.marketplace.exception.ForbiddenException;
@@ -12,10 +13,13 @@ import com.marketplace.exception.UnauthorizedException;
 import com.marketplace.model.AnimalStatus;
 import com.marketplace.model.KycStatus;
 import com.marketplace.model.Role;
+import com.marketplace.model.OperateurPayout;
 import com.marketplace.model.User;
 import com.marketplace.repository.AnimalRepository;
 import com.marketplace.repository.AnimalSellerRepository;
 import com.marketplace.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,21 +37,27 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
     private final AnimalSellerRepository animalSellerRepository;
     private final AnimalRepository animalRepository;
     private final FileStorageService fileStorageService;
+    /** Uniquement pour savoir si les versements sont ouverts — aucun appel sortant d'ici. */
+    private final GeniusPayService geniusPayService;
 
     public UserService(
             UserRepository userRepository,
             AnimalSellerRepository animalSellerRepository,
             AnimalRepository animalRepository,
-            FileStorageService fileStorageService
+            FileStorageService fileStorageService,
+            GeniusPayService geniusPayService
     ) {
         this.userRepository = userRepository;
         this.animalSellerRepository = animalSellerRepository;
         this.animalRepository = animalRepository;
         this.fileStorageService = fileStorageService;
+        this.geniusPayService = geniusPayService;
     }
 
     public User getCurrentUser() {
@@ -113,6 +123,60 @@ public class UserService {
         return toUserProfile(current);
     }
     
+
+    // ── Moyen de retrait ────────────────────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public MoyenRetraitDTO getMoyenRetrait() {
+        return toMoyenRetrait(getCurrentUser());
+    }
+
+    /**
+     * Enregistre ou remplace la destination de retrait du vendeur.
+     *
+     * Aucune verification de propriete du numero : la plateforme n'a pas les
+     * moyens de la faire, et l'operateur, lui, refusera un compte inexistant.
+     * Le risque reel est la faute de frappe vers un numero valide d'un tiers —
+     * c'est pourquoi le changement est trace et la destination figee dans chaque
+     * versement au moment de l'envoi.
+     */
+    @Transactional
+    public MoyenRetraitDTO updateMoyenRetrait(OperateurPayout operateur, String numero) {
+        User current = getCurrentUser();
+        // Espaces, points et tirets retires : « 07 00 00 00 00 » et « 0700000000 »
+        // designent le meme compte, et les garder ferait echouer la comparaison qui
+        // detecte un changement de destination.
+        String normalise = numero == null ? null : numero.replaceAll("[ .-]", "");
+
+        if (normalise == null || normalise.isBlank()) {
+            throw new BadRequestException("Renseignez le numero a crediter.");
+        }
+
+        boolean changement = current.getPayoutOperateur() != operateur
+                || !normalise.equals(current.getPayoutNumero());
+
+        current.setPayoutOperateur(operateur);
+        current.setPayoutNumero(normalise);
+        userRepository.save(current);
+
+        if (changement) {
+            // Trace volontaire : une modification de destination de retrait est le
+            // geste qu'on veut pouvoir dater si de l'argent part au mauvais endroit.
+            log.info("Moyen de retrait modifie par l'utilisateur {} : operateur {}.",
+                    current.getId(), operateur);
+        }
+        return toMoyenRetrait(current);
+    }
+
+    private MoyenRetraitDTO toMoyenRetrait(User user) {
+        OperateurPayout operateur = user.getPayoutOperateur();
+        return new MoyenRetraitDTO(
+                operateur,
+                user.getPayoutNumero(),
+                operateur != null ? operateur.getLibelle() : null,
+                operateur != null && user.getPayoutNumero() != null && !user.getPayoutNumero().isBlank(),
+                geniusPayService.versementsOperationnels());
+    }
 
     private UserProfileDTO toUserProfile(User current) {
         long animalsCount = animalSellerRepository.countBySeller(current);
