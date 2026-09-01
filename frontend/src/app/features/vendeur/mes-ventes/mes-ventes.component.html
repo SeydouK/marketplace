@@ -68,7 +68,23 @@
           <p class="mt-2 text-2xl font-extrabold text-[#1B4332] leading-none">
             {{ totalALiberer | number }} <span class="text-sm">FCFA</span>
           </p>
-          <p class="mt-2 text-xs text-gray-400">Débloqué, versement en préparation</p>
+          <p class="mt-2 text-xs text-gray-400">
+            {{ totalRetirable > 0 ? 'Débloqué, retirable maintenant' : 'Débloqué, versement en cours' }}
+          </p>
+
+          <button *ngIf="totalRetirable > 0 && retraitsOuverts" type="button" (click)="ouvrirRetrait()"
+            class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2D6A4F] hover:bg-[#245540] text-white text-sm font-bold shadow-cta transition-colors">
+            <i class="pi pi-send text-xs"></i>
+            Retirer {{ totalRetirable | number }} FCFA
+          </button>
+
+          <!-- Canal d'envoi pas encore ouvert : on le dit, plutot que d'offrir un
+               bouton qui echouerait. L'argent, lui, est bien acquis au vendeur. -->
+          <p *ngIf="totalRetirable > 0 && !retraitsOuverts"
+            class="mt-3 text-xs text-[#8B6F55] bg-[#FBF7EE] border border-[#EEE3CE] rounded-xl px-3 py-2 leading-relaxed">
+            Ce montant vous est acquis. Les retraits en libre-service ouvrent bientôt —
+            d'ici là, l'équipe BétailMarket procède aux versements.
+          </p>
         </div>
         <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
           <i class="pi pi-clock text-lg text-[#2D6A4F]"></i>
@@ -499,3 +515,71 @@
   </article>
 
 </section>
+
+<!-- ── Retrait des gains ────────────────────────────────────────────────────── -->
+<div *ngIf="retraitOuvert"
+  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 px-0 sm:px-4"
+  (click)="fermerRetrait()">
+
+  <div class="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh]"
+    (click)="$event.stopPropagation()">
+
+    <div class="flex items-center justify-between p-5 border-b border-[#F0EAD9]">
+      <h2 class="text-base font-extrabold text-gray-900">Retirer mes gains</h2>
+      <button type="button" (click)="fermerRetrait()"
+        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-500">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="overflow-y-auto p-5 flex-1 flex flex-col gap-4">
+
+      <div class="rounded-xl bg-[#F2F7F3] p-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-[#2D6A4F]">Montant</p>
+        <p class="mt-1 text-2xl font-extrabold text-[#1B4332] leading-none">
+          {{ totalRetirable | number }} <span class="text-sm">FCFA</span>
+        </p>
+        <p class="mt-2 text-xs text-gray-500">
+          Seuls les animaux effectivement remis sont inclus. Ce qui est encore en cours
+          de livraison reste sous séquestre jusqu'à la confirmation de l'acheteur.
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-700 mb-1.5">Opérateur</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button *ngFor="let op of operateurs" type="button"
+            (click)="operateurChoisi = op[0]"
+            class="px-3 py-2.5 rounded-xl border text-sm font-semibold transition-colors"
+            [ngClass]="operateurChoisi === op[0]
+              ? 'border-[#2D6A4F] bg-[#F2F7F3] text-[#2D6A4F]'
+              : 'border-[#E7E0D2] bg-white text-gray-600 hover:border-[#2D6A4F]'">
+            {{ op[1] }}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-700 mb-1.5">Numéro à créditer</label>
+        <input type="tel" [(ngModel)]="numeroSaisi" name="numeroRetrait"
+          placeholder="+225 07 00 00 00 00"
+          class="w-full px-3 py-2.5 rounded-xl border border-[#E7E0D2] focus:border-[#2D6A4F] focus:outline-none text-sm" />
+        <p class="mt-1.5 text-[11px] text-gray-400">
+          Vérifiez-le : un numéro valide mais erroné crédite quelqu'un d'autre, et
+          l'opérateur ne permet pas d'annuler un envoi abouti.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 p-5 border-t border-[#F0EAD9]">
+      <button type="button" (click)="fermerRetrait()" [disabled]="retraitEnCours"
+        class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-[#F6F1E7] transition-colors disabled:opacity-60">
+        Annuler
+      </button>
+      <button type="button" (click)="confirmerRetrait()" [disabled]="retraitEnCours"
+        class="px-5 py-2.5 rounded-xl bg-[#2D6A4F] hover:bg-[#245540] text-white text-sm font-bold shadow-cta transition-colors disabled:opacity-60">
+        {{ retraitEnCours ? 'Envoi…' : 'Confirmer le retrait' }}
+      </button>
+    </div>
+  </div>
+</div>

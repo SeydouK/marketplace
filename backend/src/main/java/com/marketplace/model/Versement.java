@@ -62,6 +62,20 @@ public class Versement {
     @Column(name = "reference")
     private String reference;
 
+    /**
+     * Destination reellement creditee, figee au moment de l'envoi.
+     *
+     * Snapshot et non lecture du profil vendeur, pour la meme raison que
+     * {@link #vendeurTelephone} : si le vendeur change d'operateur trois mois
+     * plus tard, la trace doit continuer de dire ou l'argent est parti.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "destination_operateur", length = 20)
+    private OperateurPayout destinationOperateur;
+
+    @Column(name = "destination_numero", length = 20)
+    private String destinationNumero;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

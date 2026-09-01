@@ -14,6 +14,7 @@ import com.marketplace.model.Remise;
 import com.marketplace.model.Role;
 import com.marketplace.model.StatutCommande;
 import com.marketplace.model.StatutLivraison;
+import com.marketplace.model.StatutVersement;
 import com.marketplace.model.Transporteur;
 import com.marketplace.model.TypeEvenementLivraison;
 import com.marketplace.model.User;
@@ -455,6 +456,12 @@ public class LivraisonService {
                 versement != null ? versement.getStatut() : null,
                 versement != null ? versement.getLibereAt() : null,
                 versement != null ? versement.getEnvoyeAt() : null,
+                versement != null ? versement.getId() : null,
+                // ECHOUE autant qu'EN_ATTENTE : un envoi refuse par l'operateur
+                // (numero errone, compte plafonne) doit pouvoir etre relance par le
+                // vendeur une fois sa destination corrigee, sans passer par un admin.
+                versement != null && (versement.getStatut() == StatutVersement.EN_ATTENTE
+                        || versement.getStatut() == StatutVersement.ECHOUE),
                 etat,
                 libelleVente(etat),
                 statut == StatutLivraison.A_REMETTRE,

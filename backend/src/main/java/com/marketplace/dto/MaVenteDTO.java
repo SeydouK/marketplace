@@ -54,6 +54,19 @@ public class MaVenteDTO {
     private LocalDateTime versementLibereAt;
     private LocalDateTime versementEnvoyeAt;
 
+    /** Identifiant du versement — cible de l'action de retrait. */
+    private Long versementId;
+
+    /**
+     * Le vendeur peut-il retirer ces fonds maintenant ?
+     *
+     * Calcule cote serveur et non deduit du statut cote front : la condition de
+     * retrait appartient au sequestre, et la recopier dans le navigateur en
+     * ferait une seconde verite a tenir a jour. Le bouton peut donc etre absent
+     * sans que le front ait a savoir pourquoi.
+     */
+    private boolean versementRetirable;
+
     private String etatGlobal;
     private String etatLibelle;
 

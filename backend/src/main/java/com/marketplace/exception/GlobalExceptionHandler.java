@@ -3,6 +3,7 @@ package com.marketplace.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -51,6 +52,23 @@ public class GlobalExceptionHandler {
         body.put("message", message);
         body.put("errors", errors);
         return ResponseEntity.badRequest().body(body);
+    }
+
+    /**
+     * Corps de requete illisible : JSON mal forme, ou valeur qui n'entre dans
+     * aucune enumeration.
+     *
+     * Meme raisonnement que pour les routes inconnues : sans ce traitement,
+     * l'attrape-tout convertissait en 500 une faute de saisie du client. Un
+     * operateur de retrait mal orthographie ressemblait alors a une panne
+     * serveur. Le detail du parseur n'est pas renvoye — il expose la structure
+     * interne sans aider celui qui appelle.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleCorpsIllisible(HttpMessageNotReadableException ex) {
+        LOGGER.debug("Corps de requete refuse : {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(Map.of(
+                "message", "Les donnees envoyees sont invalides ou mal formees."));
     }
 
     /**
