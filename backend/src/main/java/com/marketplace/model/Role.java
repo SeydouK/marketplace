@@ -6,5 +6,5 @@ public enum Role {
     VETERINAIRE,   // agent de santé animale
     ANADER,        // agent de contrôle ANADER
     TRANSPORTEUR,  // convoyeur d'animaux, valide par KYC + permis de conduire
-    ADMIN          // administrateur plateforme
+    ADMIN,        // administrateur plateforme
 }
