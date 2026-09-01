@@ -26,7 +26,7 @@ public class SwitchRoleService {
      * Rôles autorisés à switcher vers ACHETEUR (et retour).
      * TRANSPORTEUR sera ajouté ici quand il sera créé dans l'enum.
      */
-    private static final Set<Role> SWITCHABLE_ROLES = Set.of(Role.VENDEUR);
+    private static final Set<Role> SWITCHABLE_ROLES = Set.of(Role.VENDEUR, Role.TRANSPORTEUR);
 
     @Transactional
     public JwtResponse switchRole(SwitchRoleRequest request) {
@@ -54,6 +54,7 @@ public class SwitchRoleService {
             if (targetRole == Role.VENDEUR && !user.isDevenirVendeur()) {
                 throw new ForbiddenException("Votre demande vendeur n'a pas encore été approuvée.");
             }
+            // TRANSPORTEUR : pas de condition supplémentaire, le rôle est validé par KYC
         }
 
         // VENDEUR → ACHETEUR (ou autre switchable → ACHETEUR)
