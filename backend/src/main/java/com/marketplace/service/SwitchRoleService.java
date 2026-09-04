@@ -68,14 +68,14 @@ public class SwitchRoleService {
         // Générer un nouveau JWT avec le rôle mis à jour
         String newToken = jwtTokenProvider.generateToken(user.getEmail());
         return new JwtResponse(
-                newToken,
-                user.getId(),
-                user.getEmail(),
-                user.getRole(),
-                user.getName(),
-                user.isEmailVerified(),
-                user.getKycStatus(),
-                user.isDevenirVendeur()
+            newToken,
+            user.getId(),
+            user.getEmail(),
+            user.getRole(),
+            user.getName(),
+            user.isEmailVerified(),
+            user.getKycStatus(),
+            user.isDevenirVendeur()
         );
     }
 }

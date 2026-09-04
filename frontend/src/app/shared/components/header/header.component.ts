@@ -1,7 +1,8 @@
 import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
-import {Observable, Subject, Subscription, takeUntil} from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.enum';
 import { AuthService } from '../../../core/services/auth.service';
@@ -143,6 +144,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.subscriptions.unsubscribe();
         this.document.body.style.overflow = '';
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     // ── Listeners ────────────────────────────────────────────────────────────
