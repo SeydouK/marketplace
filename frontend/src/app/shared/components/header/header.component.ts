@@ -369,6 +369,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
     get isVeterinaire(): boolean { return this.auth.hasRole(Role.VETERINAIRE); }
     get isAnader(): boolean     { return this.auth.hasRole(Role.AGENT_ANADER); }
     get isTransporteur(): boolean { return this.auth.hasRole(Role.TRANSPORTEUR); }
+
+    /** Route "Mon espace" selon le rôle actif */
+    get monEspaceRoute(): string {
+        if (this.isAdmin)        return '/admin/utilisateurs';
+        if (this.isVendeur)      return '/vendeur/mes-annonces';
+        if (this.isVeterinaire)  return '/veterinaire/dashboard';
+        if (this.isAnader)       return '/anader/dashboard';
+        if (this.isTransporteur) return '/transporteur/mes-courses';
+        return '/acheteur/dashboard';
+    }
+
+    get monEspaceLabel(): string {
+        if (this.isAdmin)        return 'Admin';
+        if (this.isVendeur)      return 'Éleveur';
+        if (this.isVeterinaire)  return 'Véto';
+        if (this.isAnader)       return 'ANADER';
+        if (this.isTransporteur) return 'Transport';
+        return 'Mon espace';
+    }
     get isAdmin(): boolean      { return this.auth.hasAnyRole([Role.ADMIN, Role.ADMINISTRATEUR]); }
 
     get currentUserInitial(): string {
