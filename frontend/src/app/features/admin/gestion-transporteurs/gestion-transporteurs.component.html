@@ -1,0 +1,101 @@
+<!-- admin/gestion-transporteurs/gestion-transporteurs.component.html -->
+<section class="max-w-4xl mx-auto py-8 px-4 space-y-6">
+
+  <div>
+    <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">Permis de conduire</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      Dossiers de transporteurs en attente d'examen.
+    </p>
+  </div>
+
+  <div class="flex items-start gap-3 p-4 bg-[#FDF6EC] border border-[#F4D4A3] rounded-2xl">
+    <i class="pi pi-exclamation-triangle text-lg text-[#B96416] flex-shrink-0 mt-0.5"></i>
+    <p class="text-sm text-[#8B6F55] leading-relaxed">
+      <span class="font-semibold text-amber-800">Ce que vous engagez.</span>
+      En validant un permis, la plateforme présente ce transporteur aux vendeurs comme
+      fiable. Vérifiez que le document est lisible, en cours de validité, et au nom
+      de la personne inscrite.
+    </p>
+  </div>
+
+  <div *ngIf="chargement" class="py-16 text-center text-gray-400">
+    <i class="pi pi-spin pi-spinner text-2xl"></i>
+    <p class="mt-3 text-sm">Chargement…</p>
+  </div>
+
+  <div *ngIf="erreur && !chargement"
+    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    Impossible de charger les dossiers.
+  </div>
+
+  <div *ngIf="!chargement && !erreur && dossiers.length === 0"
+    class="text-center py-16 border border-dashed border-[#E7E0D2] rounded-2xl">
+    <i class="pi pi-check-circle text-3xl text-[#C9BCA3]"></i>
+    <p class="mt-3 text-gray-500">Aucun permis en attente.</p>
+  </div>
+
+  <article *ngFor="let d of dossiers"
+    class="p-5 bg-white border border-[#E7E0D2] rounded-2xl shadow-card">
+
+    <div class="flex flex-col sm:flex-row gap-5">
+      <img *ngIf="d.permisUrl" [src]="d.permisUrl | assetUrl" alt="Permis de conduire"
+        class="w-full sm:w-56 h-40 object-cover rounded-xl border border-[#E7E0D2] bg-[#F6F1E7]" />
+
+      <div class="flex-1 min-w-0">
+        <p class="text-base font-bold text-gray-900">{{ d.nom }}</p>
+        <p class="text-sm text-gray-500">{{ d.email }}</p>
+        <p class="text-sm text-gray-700 mt-1">{{ d.telephone || 'Aucun numéro' }}</p>
+
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span class="text-xs px-2.5 py-1 rounded-full font-semibold"
+            [ngClass]="identiteOk(d) ? 'bg-[#E0EEE4] text-[#2D6A4F]' : 'bg-red-100 text-red-800'">
+            Identité : {{ identiteOk(d) ? 'vérifiée' : d.kycStatus }}
+          </span>
+          <span *ngIf="d.typeVehicule"
+            class="text-xs px-2.5 py-1 rounded-full font-semibold bg-[#F6F1E7] text-[#8B6F55]">
+            {{ libellesVehicule[d.typeVehicule] }}
+            <span *ngIf="d.capaciteTetes"> · {{ d.capaciteTetes }} tête(s)</span>
+          </span>
+        </div>
+
+        <p *ngIf="!identiteOk(d)" class="mt-3 text-xs text-red-700">
+          Son identité n'est pas encore vérifiée : valider le permis ne le rendra pas
+          habilité pour autant.
+        </p>
+
+        <div class="flex flex-wrap gap-2 mt-4">
+          <a *ngIf="d.permisUrl" [href]="d.permisUrl | assetUrl" target="_blank" rel="noopener"
+            class="px-4 py-2 bg-[#F6F1E7] text-[#1B4332] text-sm font-semibold rounded-lg hover:bg-[#EDE5D5] transition-colors">
+            <i class="pi pi-external-link mr-1"></i> Voir en grand
+          </a>
+          <button type="button" [disabled]="enCours.has(d.id)" (click)="valider(d)"
+            class="px-5 py-2 bg-[#2D6A4F] text-white text-sm font-bold rounded-lg hover:bg-[#245540] transition-colors disabled:opacity-40">
+            <i class="pi pi-check mr-1"></i> Valider
+          </button>
+          <button type="button" (click)="ouvrirRefus(d)"
+            class="px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors">
+            Refuser
+          </button>
+        </div>
+
+        <div *ngIf="refusId === d.id" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <label class="block text-xs font-bold text-red-800 mb-2">Motif du refus</label>
+          <textarea [(ngModel)]="refusMotif" name="refusMotif" rows="2"
+            placeholder="Ex. : document illisible, permis expiré, nom différent…"
+            class="w-full px-3 py-2 text-sm border border-red-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-red-300"></textarea>
+          <div class="flex gap-2 mt-3">
+            <button type="button" (click)="refuser(d)"
+              class="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">
+              Confirmer le refus
+            </button>
+            <button type="button" (click)="fermerRefus()"
+              class="px-4 py-2 border border-red-200 text-red-600 text-sm rounded-lg hover:bg-white transition-colors">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</section>

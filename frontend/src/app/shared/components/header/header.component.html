@@ -1,555 +1,563 @@
 <!-- shared/components/header/header.component.html -->
 <header class="bg-white border-b border-[#F0EAD9]">
 
-  <!-- ════ DESKTOP ════ -->
-  <div class="hidden md:block">
+    <!-- ════ DESKTOP ════ -->
+    <div class="hidden md:block">
 
-    <!-- Ligne 1 : Logo | Tabs | Menu -->
-    <div class="flex items-center justify-between px-8 py-4 gap-6">
+        <!-- Ligne 1 : Logo | Tabs | Menu -->
+        <div class="flex items-center justify-between px-8 py-4 gap-6">
 
-      <!-- Logo -->
-      <div class="flex-shrink-0 w-52">
-        <a routerLink="/" class="flex items-center gap-2.5">
+            <!-- Logo -->
+            <div class="flex-shrink-0 w-52">
+                <a routerLink="/" class="flex items-center gap-2.5">
           <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] flex items-center justify-center shadow-sm flex-shrink-0">
             <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 12.5c-2.9 0-5.5 2.1-5.5 4.6 0 1.7 1.3 2.9 3 2.9.9 0 1.6-.4 2.5-.4s1.6.4 2.5.4c1.7 0 3-1.2 3-2.9 0-2.5-2.6-4.6-5.5-4.6zM7.4 8.1c-.4-1.6-1.6-2.7-2.8-2.4-1.2.3-1.8 1.8-1.4 3.4.4 1.6 1.6 2.7 2.8 2.4 1.2-.3 1.8-1.8 1.4-3.4zM11.2 6.6c.3-1.7-.4-3.2-1.6-3.4C8.4 3 7.3 4.2 7 5.9c-.3 1.7.4 3.2 1.6 3.4 1.2.2 2.3-1 2.6-2.7zM16.6 8.1c.4-1.6 1.6-2.7 2.8-2.4 1.2.3 1.8 1.8 1.4 3.4-.4 1.6-1.6 2.7-2.8 2.4-1.2-.3-1.8-1.8-1.4-3.4zM12.8 6.6c-.3-1.7.4-3.2 1.6-3.4 1.2-.2 2.3 1 2.6 2.7.3 1.7-.4 3.2-1.6 3.4-1.2.2-2.3-1-2.6-2.7z"/>
             </svg>
           </span>
-          <span class="text-xl font-extrabold tracking-tight text-[#1B4332] leading-none">Bétail<span class="text-[#D97E1F]">Market</span></span>
-        </a>
-      </div>
-
-      <!-- Tabs centraux -->
-      <div *ngIf="isHomePage" class="flex items-center gap-2 flex-1 justify-center">
-        <a routerLink="/" (click)="setActiveTab('logements')"
-          class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
-          [ngClass]="activeTab === 'logements' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
-          <i class="pi pi-home text-[1.6rem] leading-none"></i>
-          <span class="text-sm font-semibold">Accueil</span>
-          <span *ngIf="activeTab === 'logements'"
-            class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
-        </a>
-
-        <a routerLink="/annonces" (click)="setActiveTab('experiences')"
-          class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
-          [ngClass]="activeTab === 'experiences' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
-          <i class="pi pi-th-large text-[1.6rem] leading-none"></i>
-          <span class="text-sm font-semibold">Annonces</span>
-          <span *ngIf="activeTab === 'experiences'"
-            class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
-        </a>
-
-        <a routerLink="/services" (click)="setActiveTab('services')"
-          class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
-          [ngClass]="activeTab === 'services' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
-          <div class="relative">
-            <i class="pi pi-wrench text-[1.6rem] leading-none"></i>
-            <span class="absolute -top-2 -right-7 bg-[#D97E1F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
-          </div>
-          <span class="text-sm font-semibold">Services</span>
-          <span *ngIf="activeTab === 'services'"
-            class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
-        </a>
-      </div>
-
-      <div *ngIf="!isHomePage" class="flex-1"></div>
-
-      <!-- Droite -->
-      <div class="flex items-center gap-3 flex-shrink-0 justify-end">
-        <a *ngIf="isAcheteur || !currentUser" [routerLink]="currentUser ? '/devenir-vendeur' : '/auth/login'"
-          class="text-sm font-semibold text-[#2D6A4F] hover:bg-[#F2F7F3] px-4 py-2.5 rounded-full transition-colors whitespace-nowrap">
-          Devenir vendeur
-        </a>
-
-        <button type="button"
-          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors flex-shrink-0">
-          <img src="assets/images/globe.png" alt="langue" class="h-5 w-5"/>
-        </button>
-
-        <div class="relative flex-shrink-0">
-          <button type="button" (click)="toggleMenu()"
-            class="relative flex items-center gap-2 px-3 py-2 rounded-full border border-[#E7E0D2] shadow-sm hover:shadow-md transition-all bg-white">
-            <img src="assets/images/menu.png" class="h-5 w-5 flex-shrink-0" alt="menu"/>
-            <div *ngIf="currentUser"
-              class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 overflow-hidden bg-[#2D6A4F]">
-              {{ currentUserInitial }}
+                    <span class="text-xl font-extrabold tracking-tight text-[#1B4332] leading-none">Bétail<span class="text-[#D97E1F]">Market</span></span>
+                </a>
             </div>
-            <div *ngIf="!currentUser"
-              class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-              <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-            </div>
-            <span *ngIf="currentUser"
-              class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#2D6A4F] rounded-full border-2 border-white"></span>
-          </button>
 
-          <div *ngIf="menuOpen"
-            class="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] overflow-hidden z-50">
+            <!-- Tabs centraux -->
+            <div *ngIf="showTabs" class="flex items-center gap-2 flex-1 justify-center">
+                <a routerLink="/" (click)="setActiveTab('logements')"
+                   class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
+                   [ngClass]="activeTab === 'logements' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+                    <i class="pi pi-home text-[1.6rem] leading-none"></i>
+                    <span class="text-sm font-semibold">Accueil</span>
+                    <span *ngIf="activeTab === 'logements'"
+                          class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
+                </a>
+
+                <a routerLink="/actualites" (click)="setActiveTab('actualites')"
+                   class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
+                   [ngClass]="activeTab === 'actualites' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+                    <div class="relative">
+                        <i class="pi pi-th-large text-[1.6rem] leading-none"></i>
+                        <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+                              class="absolute -top-2 -right-7 bg-[#D97E1F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+              NOUVEAU
+            </span>
+                    </div>
+                    <span class="text-sm font-semibold">Actualités</span>
+                    <span *ngIf="activeTab === 'actualites'"
+                          class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
+                </a>
+
+                <a routerLink="/services" (click)="setActiveTab('services')"
+                   class="relative flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-colors"
+                   [ngClass]="activeTab === 'services' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+                    <div class="relative">
+                        <i class="pi pi-wrench text-[1.6rem] leading-none"></i>
+                        <span class="absolute -top-2 -right-7 bg-[#D97E1F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">NOUVEAU</span>
+                    </div>
+                    <span class="text-sm font-semibold">Services</span>
+                    <span *ngIf="activeTab === 'services'"
+                          class="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-[#2D6A4F] rounded-full"></span>
+                </a>
+            </div>
+
+            <div *ngIf="!showTabs" class="flex-1"></div>
+
+            <!-- Droite -->
+            <div class="flex items-center gap-3 flex-shrink-0 justify-end">
+                <button *ngIf="isAcheteur || !currentUser" type="button"
+                        (click)="handleSellerClick()"
+                        class="text-sm font-semibold text-[#2D6A4F] hover:bg-[#F2F7F3] px-4 py-2.5 rounded-full transition-colors whitespace-nowrap cursor-pointer">
+                    Devenir vendeur
+                </button>
+
+                <button type="button"
+                        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors flex-shrink-0">
+                    <img src="assets/images/globe.png" alt="langue" class="h-5 w-5"/>
+                </button>
+
+                <div class="relative flex-shrink-0">
+                    <button type="button" (click)="toggleMenu()"
+                            class="relative flex items-center gap-2 px-3 py-2 rounded-full border border-[#E7E0D2] shadow-sm hover:shadow-md transition-all bg-white">
+                        <img src="assets/images/menu.png" class="h-5 w-5 flex-shrink-0" alt="menu"/>
+                        <div *ngIf="currentUser"
+                             class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 overflow-hidden bg-[#2D6A4F]">
+                            {{ currentUserInitial }}
+                        </div>
+                        <div *ngIf="!currentUser"
+                             class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <span *ngIf="currentUser"
+                              class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#2D6A4F] rounded-full border-2 border-white"></span>
+                    </button>
+
+                    <div *ngIf="menuOpen"
+                         class="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] overflow-hidden z-50">
+                        <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ligne 2 : Barre de recherche -->
+        <div *ngIf="isHomePage" class="flex justify-center px-8 pb-5">
+            <div class="flex items-center border border-[#E7E0D2] rounded-full shadow-md hover:shadow-lg transition-shadow bg-white w-full max-w-3xl relative">
+
+                <button type="button" (click)="openSearchPanel('region')"
+                        class="flex-1 text-left px-6 py-4 hover:bg-[#FBF9F4] rounded-l-full transition-colors border-r border-[#E7E0D2]">
+                    <p class="text-xs font-bold text-gray-900">Région</p>
+                    <p class="text-sm mt-0.5" [class.text-gray-400]="!searchRegion" [class.text-gray-800]="searchRegion">
+                        {{ searchRegion || 'Chercher une région...' }}
+                    </p>
+                </button>
+
+                <button type="button" (click)="openSearchPanel('date')"
+                        class="flex-1 text-left px-6 py-4 hover:bg-[#FBF9F4] transition-colors border-r border-[#E7E0D2]">
+                    <p class="text-xs font-bold text-gray-900">Date de publication</p>
+                    <p class="text-sm mt-0.5" [class.text-gray-400]="!searchDate" [class.text-gray-800]="searchDate">
+                        {{ searchDate || 'Quand ?' }}
+                    </p>
+                </button>
+
+                <button type="button" (click)="openSearchPanel('budget')"
+                        class="flex-1 text-left px-6 py-4 hover:bg-[#FBF9F4] transition-colors">
+                    <p class="text-xs font-bold text-gray-900">Budget max</p>
+                    <p class="text-sm mt-0.5" [class.text-gray-400]="!searchBudget" [class.text-gray-800]="searchBudget">
+                        {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Prix maximum' }}
+                    </p>
+                </button>
+
+                <!-- Bouton reset -->
+                <button *ngIf="searchRegion || searchDate || searchBudget"
+                        type="button" (click)="resetDesktopSearch()"
+                        class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E7E0D2] hover:bg-[#F6F1E7] transition-colors mx-2 flex-shrink-0"
+                        title="Réinitialiser les filtres">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                <div class="pr-2 pl-1">
+                    <button type="button" (click)="submitSearch()"
+                            class="w-12 h-12 bg-[#2D6A4F] rounded-full flex items-center justify-center hover:bg-[#245540] transition-colors">
+                        <i class="pi pi-search text-white text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Panneau Région -->
+                <div *ngIf="activeSearchPanel === 'region'"
+                     class="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 p-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase mb-3">Suggestions de régions</p>
+                    <div *ngFor="let r of regionSuggestions" (click)="selectRegion(r.value)"
+                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FBF9F4] cursor-pointer"
+                         [class.bg-[#FBF9F4]]="searchRegion === r.label">
+                        <i class="pi pi-globe text-lg"></i>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">{{ r.label }}</p>
+                            <p class="text-xs text-gray-500">{{ r.sub }}</p>
+                        </div>
+                        <svg *ngIf="searchRegion === r.label" class="w-4 h-4 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Panneau Date -->
+                <div *ngIf="activeSearchPanel === 'date'"
+                     class="absolute top-full left-1/4 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 p-5">
+                    <div class="flex bg-[#F6F1E7] rounded-full p-1 w-fit mx-auto mb-5">
+                        <button type="button" (click)="dateMode='exact'"
+                                class="px-5 py-1.5 rounded-full text-sm transition-all"
+                                [class.bg-white]="dateMode==='exact'" [class.shadow-sm]="dateMode==='exact'">Dates exactes</button>
+                        <button type="button" (click)="dateMode='flexible'"
+                                class="px-5 py-1.5 rounded-full text-sm transition-all"
+                                [class.bg-white]="dateMode==='flexible'" [class.shadow-sm]="dateMode==='flexible'">Flexible</button>
+                    </div>
+
+                    <div *ngIf="dateMode === 'exact'">
+                        <div class="flex justify-between items-center mb-3">
+                            <button type="button" (click)="prevCalMonth()" class="p-1 rounded-lg hover:bg-[#F6F1E7]">‹</button>
+                            <span class="text-sm font-semibold">{{ calMonthLabel }}</span>
+                            <button type="button" (click)="nextCalMonth()" class="p-1 rounded-lg hover:bg-[#F6F1E7]">›</button>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-400 mb-1">
+                            <span *ngFor="let d of calDays">{{ d }}</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-center">
+                            <span *ngFor="let e of calEmptyDays"></span>
+                            <button *ngFor="let d of calDaysInMonth" type="button" (click)="selectCalDay(d)"
+                                    class="text-sm py-1.5 rounded-lg hover:bg-[#F6F1E7] transition-colors"
+                                    [class.bg-[#2D6A4F]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
+                                    [class.text-gray-300]="isPastDay(d)" [class.cursor-default]="isPastDay(d)">{{ d }}</button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="dateMode === 'flexible'" class="flex flex-wrap gap-2">
+                        <button *ngFor="let opt of flexDateOptions" type="button" (click)="selectFlexDate(opt)"
+                                class="px-4 py-2 rounded-full border text-sm transition-all hover:border-gray-400"
+                                [class.border-[#2D6A4F]]="searchDate === opt" [class.bg-brand-50]="searchDate === opt">
+                            {{ opt }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panneau Budget -->
+                <div *ngIf="activeSearchPanel === 'budget'"
+                     class="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 p-5">
+                    <p class="text-sm text-gray-500 mb-2">Prix maximum (FCFA)</p>
+                    <p class="text-2xl font-semibold text-gray-900 mb-4">
+                        {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Pas de limite' }}
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button *ngFor="let p of budgetPresets" type="button" (click)="selectBudgetPreset(p)"
+                                class="px-3 py-1.5 rounded-full border text-sm hover:border-gray-400 transition-all"
+                                [class.border-[#2D6A4F]]="searchBudget === p.value" [class.bg-brand-50]="searchBudget === p.value">
+                            {{ p.label }}
+                        </button>
+                    </div>
+                    <input type="range" min="0" max="2000000" step="50000" [value]="searchBudget || 0"
+                           (input)="searchBudget = +$any($event.target).value" class="w-full accent-[#2D6A4F]"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres animaux : déplacés sur la page d'accueil (catégories vertes) pour éviter le doublon -->
+    </div>
+
+    <!-- ════ MOBILE ════ -->
+    <div class="flex flex-col md:hidden">
+
+        <!-- Barre de recherche (home uniquement) -->
+        <div *ngIf="isHomePage" class="px-4 pt-3 pb-2">
+            <button type="button" (click)="openMobileSearch()"
+                    class="w-full flex items-center gap-3 px-5 py-4 border border-[#DFD2B8] rounded-full shadow-sm bg-white">
+                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span class="text-sm font-semibold text-gray-700">Commencer ma recherche</span>
+            </button>
+        </div>
+
+        <!-- Header minimaliste hors home -->
+        <div *ngIf="!showTabs && currentUser" class="flex items-center justify-end px-4 py-3 gap-2">
+
+            <button type="button" routerLink="/notifications"
+                    class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span *ngIf="actualiteSvc.hasNewActualites$ | async" class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#D97E1F] rounded-full border border-white"></span>
+            </button>
+        </div>
+
+        <!-- Tabs mobiles -->
+        <div *ngIf="showTabs" class="flex justify-center gap-4 px-4 py-3 pb-1 border-b border-[#F0EAD9]">
+            <a routerLink="/" (click)="setActiveTab('logements')"
+               class="flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
+               [ngClass]="activeTab === 'logements' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+                <i class="pi pi-home text-2xl leading-none"></i>
+                <span class="text-xs font-semibold">Accueil</span>
+            </a>
+
+            <a routerLink="/actualites" (click)="setActiveTab('actualites')"
+               class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
+               [ngClass]="activeTab === 'actualites' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+                <div class="relative">
+                    <i class="pi pi-th-large text-2xl leading-none"></i>
+                    <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+                          class="absolute -top-1.5 -right-3 w-2 h-2 bg-[#D97E1F] rounded-full border border-white"></span>
+                </div>
+                <span class="text-xs font-semibold">Actualités</span>
+            </a>
+
+            <a routerLink="/services" (click)="setActiveTab('services')"
+               class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
+               [ngClass]="activeTab === 'services' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+                <i class="pi pi-wrench text-2xl leading-none"></i>
+                <span class="text-xs font-semibold">Services</span>
+                <span class="absolute -top-1 right-0 bg-[#D97E1F] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+            </a>
+        </div>
+
+        <!-- Dropdown sur home mobile -->
+        <div *ngIf="menuOpen && isHomePage"
+             class="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 overflow-hidden">
             <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
-          </div>
         </div>
-      </div>
     </div>
-
-    <!-- Ligne 2 : Barre de recherche -->
-    <div *ngIf="isHomePage" class="flex justify-center px-8 pb-5">
-      <div class="flex items-center border border-[#E7E0D2] rounded-full shadow-md hover:shadow-lg transition-shadow bg-white w-full max-w-3xl relative">
-
-        <button type="button" (click)="openSearchPanel('region')"
-          class="flex-1 text-left px-6 py-4 hover:bg-[#FBF9F4] rounded-l-full transition-colors border-r border-[#E7E0D2]">
-          <p class="text-xs font-bold text-gray-900">Région</p>
-          <p class="text-sm mt-0.5" [class.text-gray-400]="!searchRegion" [class.text-gray-800]="searchRegion">
-            {{ searchRegion || 'Chercher une région...' }}
-          </p>
-        </button>
-
-        <button type="button" (click)="openSearchPanel('date')"
-          class="flex-1 text-left px-6 py-4 hover:bg-[#FBF9F4] transition-colors border-r border-[#E7E0D2]">
-          <p class="text-xs font-bold text-gray-900">Date de publication</p>
-          <p class="text-sm mt-0.5" [class.text-gray-400]="!searchDate" [class.text-gray-800]="searchDate">
-            {{ searchDate || 'Quand ?' }}
-          </p>
-        </button>
-
-        <button type="button" (click)="openSearchPanel('budget')"
-          class="flex-1 text-left px-6 py-4 hover:bg-[#FBF9F4] transition-colors">
-          <p class="text-xs font-bold text-gray-900">Budget max</p>
-          <p class="text-sm mt-0.5" [class.text-gray-400]="!searchBudget" [class.text-gray-800]="searchBudget">
-            {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Prix maximum' }}
-          </p>
-        </button>
-
-        <!-- Bouton reset -->
-        <button *ngIf="searchRegion || searchDate || searchBudget"
-          type="button" (click)="resetDesktopSearch()"
-          class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E7E0D2] hover:bg-[#F6F1E7] transition-colors mx-2 flex-shrink-0"
-          title="Réinitialiser les filtres">
-          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-
-        <div class="pr-2 pl-1">
-          <button type="button" (click)="submitSearch()"
-            class="w-12 h-12 bg-[#2D6A4F] rounded-full flex items-center justify-center hover:bg-[#245540] transition-colors">
-            <i class="pi pi-search text-white text-lg"></i>
-          </button>
-        </div>
-
-        <!-- Panneau Région -->
-        <div *ngIf="activeSearchPanel === 'region'"
-          class="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 p-4">
-          <p class="text-xs font-semibold text-gray-500 uppercase mb-3">Suggestions de régions</p>
-          <div *ngFor="let r of regionSuggestions" (click)="selectRegion(r.value)"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FBF9F4] cursor-pointer"
-            [class.bg-[#FBF9F4]]="searchRegion === r.label">
-            <i class="pi pi-globe text-lg"></i>
-            <div class="flex-1">
-              <p class="text-sm font-medium text-gray-900">{{ r.label }}</p>
-              <p class="text-xs text-gray-500">{{ r.sub }}</p>
-            </div>
-            <svg *ngIf="searchRegion === r.label" class="w-4 h-4 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Panneau Date -->
-        <div *ngIf="activeSearchPanel === 'date'"
-          class="absolute top-full left-1/4 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 p-5">
-          <div class="flex bg-[#F6F1E7] rounded-full p-1 w-fit mx-auto mb-5">
-            <button type="button" (click)="dateMode='exact'"
-              class="px-5 py-1.5 rounded-full text-sm transition-all"
-              [class.bg-white]="dateMode==='exact'" [class.shadow-sm]="dateMode==='exact'">Dates exactes</button>
-            <button type="button" (click)="dateMode='flexible'"
-              class="px-5 py-1.5 rounded-full text-sm transition-all"
-              [class.bg-white]="dateMode==='flexible'" [class.shadow-sm]="dateMode==='flexible'">Flexible</button>
-          </div>
-
-          <div *ngIf="dateMode === 'exact'">
-            <div class="flex justify-between items-center mb-3">
-              <button type="button" (click)="prevCalMonth()" class="p-1 rounded-lg hover:bg-[#F6F1E7]">‹</button>
-              <span class="text-sm font-semibold">{{ calMonthLabel }}</span>
-              <button type="button" (click)="nextCalMonth()" class="p-1 rounded-lg hover:bg-[#F6F1E7]">›</button>
-            </div>
-            <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-400 mb-1">
-              <span *ngFor="let d of calDays">{{ d }}</span>
-            </div>
-            <div class="grid grid-cols-7 gap-1 text-center">
-              <span *ngFor="let e of calEmptyDays"></span>
-              <button *ngFor="let d of calDaysInMonth" type="button" (click)="selectCalDay(d)"
-                class="text-sm py-1.5 rounded-lg hover:bg-[#F6F1E7] transition-colors"
-                [class.bg-[#2D6A4F]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
-                [class.text-gray-300]="isPastDay(d)" [class.cursor-default]="isPastDay(d)">{{ d }}</button>
-            </div>
-          </div>
-
-          <div *ngIf="dateMode === 'flexible'" class="flex flex-wrap gap-2">
-            <button *ngFor="let opt of flexDateOptions" type="button" (click)="selectFlexDate(opt)"
-              class="px-4 py-2 rounded-full border text-sm transition-all hover:border-gray-400"
-              [class.border-[#2D6A4F]]="searchDate === opt" [class.bg-brand-50]="searchDate === opt">
-              {{ opt }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Panneau Budget -->
-        <div *ngIf="activeSearchPanel === 'budget'"
-          class="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 p-5">
-          <p class="text-sm text-gray-500 mb-2">Prix maximum (FCFA)</p>
-          <p class="text-2xl font-semibold text-gray-900 mb-4">
-            {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Pas de limite' }}
-          </p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <button *ngFor="let p of budgetPresets" type="button" (click)="selectBudgetPreset(p)"
-              class="px-3 py-1.5 rounded-full border text-sm hover:border-gray-400 transition-all"
-              [class.border-[#2D6A4F]]="searchBudget === p.value" [class.bg-brand-50]="searchBudget === p.value">
-              {{ p.label }}
-            </button>
-          </div>
-          <input type="range" min="0" max="2000000" step="50000" [value]="searchBudget || 0"
-            (input)="searchBudget = +$any($event.target).value" class="w-full accent-[#2D6A4F]"/>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ligne 3 : Filtres animaux -->
-    <div *ngIf="isHomePage" class="flex items-center justify-center gap-10 pb-4">
-      <button *ngFor="let filter of animalFilters" type="button"
-        (click)="setAnimalFilter(filter.value)"
-        class="flex-shrink-0 flex flex-col items-center gap-2 pb-2 border-b-2 transition-all"
-        [ngClass]="animalFilter === filter.value
-          ? 'border-[#2D6A4F] opacity-100'
-          : 'border-transparent opacity-50 hover:opacity-90 hover:border-[#E7E0D2]'">
-        <img [src]="filter.icon" class="h-7 w-7" [alt]="filter.label"/>
-        <span class="text-xs font-medium text-gray-700 whitespace-nowrap">{{ filter.label }}</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- ════ MOBILE ════ -->
-  <div class="flex flex-col md:hidden">
-
-    <!-- Barre de recherche (home uniquement) -->
-    <div *ngIf="isHomePage" class="px-4 pt-3 pb-2">
-      <button type="button" (click)="openMobileSearch()"
-        class="w-full flex items-center gap-3 px-5 py-4 border border-[#DFD2B8] rounded-full shadow-sm bg-white">
-        <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span class="text-sm font-semibold text-gray-700">Commencer ma recherche</span>
-      </button>
-    </div>
-
-    <!-- Header minimaliste hors home -->
-    <div *ngIf="!isHomePage && currentUser" class="flex items-center justify-end px-4 py-3 gap-2">
-
-      <button type="button" routerLink="/notifications"
-        class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
-        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-        </svg>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#2D6A4F] rounded-full border border-white"></span>
-      </button>
-    </div>
-
-    <!-- Tabs mobiles -->
-    <div *ngIf="isHomePage" class="flex justify-center gap-4 px-4 py-3 pb-1 border-b border-[#F0EAD9]">
-      <a routerLink="/" (click)="setActiveTab('logements')"
-        class="flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'logements' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-home text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Accueil</span>
-      </a>
-
-      <a routerLink="/annonces" (click)="setActiveTab('experiences')"
-        class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'experiences' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-th-large text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Annonces</span>
-      </a>
-
-      <a routerLink="/services" (click)="setActiveTab('services')"
-        class="relative flex flex-col items-center gap-1 px-4 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'services' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-wrench text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Services</span>
-        <span class="absolute -top-1 right-0 bg-[#D97E1F] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
-      </a>
-    </div>
-
-    <!-- Dropdown sur home mobile -->
-    <div *ngIf="menuOpen && isHomePage"
-      class="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-2xl border border-[#F0EAD9] z-50 overflow-hidden">
-      <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
-    </div>
-  </div>
 
 </header>
 
 <!-- ════ MOBILE : Overlay de recherche plein écran ════ -->
 <div *ngIf="mobileSearchOpen"
-  class="fixed inset-0 z-[200] bg-[#F6F1E7] flex flex-col md:hidden">
+     class="fixed inset-0 z-[200] bg-[#F6F1E7] flex flex-col md:hidden">
 
-  <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#E7E0D2] bg-[#F6F1E7]">
-    <div class="flex items-center justify-center gap-6 flex-1">
-      <a routerLink="/" (click)="setActiveTab('logements'); closeMobileSearch()"
-        class="flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'logements' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-home text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Accueil</span>
-      </a>
-      <a routerLink="/annonces" (click)="setActiveTab('experiences'); closeMobileSearch()"
-        class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'experiences' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-th-large text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Annonces</span>
-      </a>
-      <a routerLink="/services" (click)="setActiveTab('services'); closeMobileSearch()"
-        class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
-        [ngClass]="activeTab === 'services' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
-        <i class="pi pi-wrench text-2xl leading-none"></i>
-        <span class="text-xs font-semibold">Services</span>
-        <span class="absolute -top-1 right-0 bg-[#D97E1F] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
-      </a>
-    </div>
-    <button type="button" (click)="closeMobileSearch()"
-      class="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-[#E7E0D2] flex-shrink-0">
-      <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-      </svg>
-    </button>
-  </div>
-
-  <div class="flex-1 overflow-y-auto px-4 pt-4 pb-4 space-y-3">
-
-    <!-- Section Région -->
-    <div class="bg-white rounded-2xl overflow-hidden border border-[#E7E0D2]"
-      [class.shadow-md]="mobileActiveSection === 'region'">
-      <div class="flex items-center justify-between px-5 py-4 cursor-pointer" (click)="toggleMobileSection('region')">
-        <div>
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Où ?</p>
-          <p class="text-base font-semibold mt-0.5"
-            [class.text-gray-900]="searchRegion" [class.text-gray-400]="!searchRegion">
-            {{ searchRegion || 'Rechercher une région' }}
-          </p>
+    <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#E7E0D2] bg-[#F6F1E7]">
+        <div class="flex items-center justify-center gap-6 flex-1">
+            <a routerLink="/" (click)="setActiveTab('logements'); closeMobileSearch()"
+               class="flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
+               [ngClass]="activeTab === 'logements' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+                <i class="pi pi-home text-2xl leading-none"></i>
+                <span class="text-xs font-semibold">Accueil</span>
+            </a>
+            <a routerLink="/actualites" (click)="setActiveTab('actualites'); closeMobileSearch()"
+               class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
+               [ngClass]="activeTab === 'actualites' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+                <div class="relative">
+                    <i class="pi pi-th-large text-2xl leading-none"></i>
+                    <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+                          class="absolute -top-1.5 -right-3 w-2 h-2 bg-[#D97E1F] rounded-full border border-white"></span>
+                </div>
+                <span class="text-xs font-semibold">Actualités</span>
+            </a>
+            <a routerLink="/services" (click)="setActiveTab('services'); closeMobileSearch()"
+               class="relative flex flex-col items-center gap-1 px-3 pb-2 border-b-2 transition-all -mb-px"
+               [ngClass]="activeTab === 'services' ? 'border-[#2D6A4F] text-gray-900' : 'border-transparent text-gray-500'">
+                <i class="pi pi-wrench text-2xl leading-none"></i>
+                <span class="text-xs font-semibold">Services</span>
+                <span class="absolute -top-1 right-0 bg-[#D97E1F] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none">NOUVEAU</span>
+            </a>
         </div>
-        <button *ngIf="searchRegion" type="button"
-          (click)="searchRegion = ''; mobileRegionInput = ''; filteredMobileRegions = allMobileRegions; uiState.setSearchTerm(''); $event.stopPropagation()"
-          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex-shrink-0">
-          <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+        <button type="button" (click)="closeMobileSearch()"
+                class="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-[#E7E0D2] flex-shrink-0">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
         </button>
-      </div>
-      <div *ngIf="mobileActiveSection === 'region'" class="px-5 pb-5">
-        <div class="flex items-center gap-3 border border-[#DFD2B8] rounded-xl px-4 py-3 mb-4 bg-[#FBF9F4]">
-          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input type="text" placeholder="Rechercher des destinations"
-            class="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
-            [(ngModel)]="mobileRegionInput"
-            (ngModelChange)="filterMobileRegions($event)"/>
-        </div>
-        <p class="text-xs font-semibold text-gray-400 mb-3">Suggestions de régions</p>
-        <div *ngFor="let r of filteredMobileRegions"
-          (click)="selectMobileRegion(r)"
-          class="flex items-center gap-4 py-3 cursor-pointer hover:bg-[#FBF9F4] rounded-xl px-2 -mx-2 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0 overflow-hidden">
-            <img [src]="r.icon" [alt]="r.label" class="w-8 h-8 object-contain"
-              onerror="this.style.display='none';this.parentElement.innerHTML='<i class=&quot;pi pi-globe text-lg text-gray-500&quot;></i>'"/>
-          </div>
-          <div>
-            <p class="text-sm font-semibold text-gray-900">{{ r.label }}</p>
-            <p class="text-xs text-gray-500">{{ r.sub }}</p>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- Section Quand -->
-    <div class="bg-white rounded-2xl overflow-hidden border border-[#E7E0D2]"
-      [class.shadow-md]="mobileActiveSection === 'date'">
-      <div class="flex items-center justify-between px-5 py-4 cursor-pointer" (click)="toggleMobileSection('date')">
-        <div>
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Quand ?</p>
-          <p class="text-base font-semibold mt-0.5"
-            [class.text-gray-900]="searchDate" [class.text-gray-400]="!searchDate">
-            {{ searchDate || 'Ajouter des dates' }}
-          </p>
+    <div class="flex-1 overflow-y-auto px-4 pt-4 pb-4 space-y-3">
+
+        <!-- Section Région -->
+        <div class="bg-white rounded-2xl overflow-hidden border border-[#E7E0D2]"
+             [class.shadow-md]="mobileActiveSection === 'region'">
+            <div class="flex items-center justify-between px-5 py-4 cursor-pointer" (click)="toggleMobileSection('region')">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Où ?</p>
+                    <p class="text-base font-semibold mt-0.5"
+                       [class.text-gray-900]="searchRegion" [class.text-gray-400]="!searchRegion">
+                        {{ searchRegion || 'Rechercher une région' }}
+                    </p>
+                </div>
+                <button *ngIf="searchRegion" type="button"
+                        (click)="searchRegion = ''; mobileRegionInput = ''; filteredMobileRegions = allMobileRegions; uiState.setSearchTerm(''); $event.stopPropagation()"
+                        class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex-shrink-0">
+                    <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div *ngIf="mobileActiveSection === 'region'" class="px-5 pb-5">
+                <div class="flex items-center gap-3 border border-[#DFD2B8] rounded-xl px-4 py-3 mb-4 bg-[#FBF9F4]">
+                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" placeholder="Rechercher des destinations"
+                           class="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
+                           [(ngModel)]="mobileRegionInput"
+                           (ngModelChange)="filterMobileRegions($event)"/>
+                </div>
+                <p class="text-xs font-semibold text-gray-400 mb-3">Suggestions de régions</p>
+                <div *ngFor="let r of filteredMobileRegions"
+                     (click)="selectMobileRegion(r)"
+                     class="flex items-center gap-4 py-3 cursor-pointer hover:bg-[#FBF9F4] rounded-xl px-2 -mx-2 transition-colors">
+                    <div class="w-12 h-12 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img [src]="r.icon" [alt]="r.label" class="w-8 h-8 object-contain"
+                             onerror="this.style.display='none';this.parentElement.innerHTML='<i class=&quot;pi pi-globe text-lg text-gray-500&quot;></i>'"/>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">{{ r.label }}</p>
+                        <p class="text-xs text-gray-500">{{ r.sub }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button *ngIf="searchDate" type="button"
-          (click)="searchDate = ''; $event.stopPropagation()"
-          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex-shrink-0">
-          <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+
+        <!-- Section Quand -->
+        <div class="bg-white rounded-2xl overflow-hidden border border-[#E7E0D2]"
+             [class.shadow-md]="mobileActiveSection === 'date'">
+            <div class="flex items-center justify-between px-5 py-4 cursor-pointer" (click)="toggleMobileSection('date')">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Quand ?</p>
+                    <p class="text-base font-semibold mt-0.5"
+                       [class.text-gray-900]="searchDate" [class.text-gray-400]="!searchDate">
+                        {{ searchDate || 'Ajouter des dates' }}
+                    </p>
+                </div>
+                <button *ngIf="searchDate" type="button"
+                        (click)="searchDate = ''; $event.stopPropagation()"
+                        class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex-shrink-0">
+                    <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <span *ngIf="!searchDate" class="text-sm font-semibold text-gray-700">Ajouter des dates</span>
+            </div>
+            <div *ngIf="mobileActiveSection === 'date'" class="px-5 pb-5">
+                <div class="flex bg-[#F6F1E7] rounded-full p-1 w-fit mx-auto mb-5">
+                    <button type="button" (click)="dateMode = 'exact'"
+                            class="px-5 py-2 rounded-full text-sm font-medium transition-all"
+                            [class.bg-white]="dateMode === 'exact'" [class.shadow-sm]="dateMode === 'exact'"
+                            [class.text-gray-900]="dateMode === 'exact'" [class.text-gray-500]="dateMode !== 'exact'">Dates</button>
+                    <button type="button" (click)="dateMode = 'flexible'"
+                            class="px-5 py-2 rounded-full text-sm font-medium transition-all"
+                            [class.bg-white]="dateMode === 'flexible'" [class.shadow-sm]="dateMode === 'flexible'"
+                            [class.text-gray-900]="dateMode === 'flexible'" [class.text-gray-500]="dateMode !== 'flexible'">Flexible</button>
+                </div>
+                <div *ngIf="dateMode === 'exact'">
+                    <div class="flex justify-between items-center mb-3">
+                        <button type="button" (click)="prevCalMonth()"
+                                class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-600">‹</button>
+                        <span class="text-sm font-semibold text-gray-900">{{ calMonthLabel }}</span>
+                        <button type="button" (click)="nextCalMonth()"
+                                class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-600">›</button>
+                    </div>
+                    <div class="grid grid-cols-7 text-center mb-2">
+                        <span *ngFor="let d of calDays" class="text-xs text-gray-400 font-medium py-1">{{ d }}</span>
+                    </div>
+                    <div class="grid grid-cols-7 text-center gap-y-1">
+                        <span *ngFor="let e of calEmptyDays"></span>
+                        <button *ngFor="let d of calDaysInMonth" type="button"
+                                (click)="!isPastDay(d) && selectCalDay(d)"
+                                class="text-sm rounded-full transition-colors mx-auto w-9 h-9 flex items-center justify-center"
+                                [class.bg-[#2D6A4F]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
+                                [class.text-gray-300]="isPastDay(d)" [class.cursor-default]="isPastDay(d)">{{ d }}</button>
+                    </div>
+                </div>
+                <div *ngIf="dateMode === 'flexible'">
+                    <p class="text-sm font-semibold text-gray-900 text-center mb-4">Publiés dans les derniers...</p>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button *ngFor="let opt of flexDateOptions" type="button" (click)="selectFlexDate(opt)"
+                                class="px-4 py-2 rounded-full border text-sm font-medium transition-all"
+                                [class.border-[#2D6A4F]]="searchDate === opt" [class.bg-[#2D6A4F]]="searchDate === opt"
+                                [class.text-white]="searchDate === opt" [class.border-[#E7E0D2]]="searchDate !== opt"
+                                [class.text-gray-700]="searchDate !== opt">{{ opt }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Budget -->
+        <div class="bg-white rounded-2xl overflow-hidden border border-[#E7E0D2]"
+             [class.shadow-md]="mobileActiveSection === 'budget'">
+            <div class="flex items-center justify-between px-5 py-4 cursor-pointer" (click)="toggleMobileSection('budget')">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Budget max</p>
+                    <p class="text-base font-semibold mt-0.5"
+                       [class.text-gray-900]="searchBudget" [class.text-gray-400]="!searchBudget">
+                        {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Ajouter un budget' }}
+                    </p>
+                </div>
+                <button *ngIf="searchBudget" type="button"
+                        (click)="searchBudget = null; $event.stopPropagation()"
+                        class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex-shrink-0">
+                    <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <span *ngIf="!searchBudget" class="text-sm font-semibold text-gray-700">Ajouter un budget</span>
+            </div>
+            <div *ngIf="mobileActiveSection === 'budget'" class="px-5 pb-5">
+                <div class="flex flex-wrap gap-2 mb-5">
+                    <button *ngFor="let p of budgetPresets" type="button" (click)="selectBudgetPreset(p)"
+                            class="px-4 py-2 rounded-full border text-sm font-medium transition-all"
+                            [class.border-[#2D6A4F]]="searchBudget === p.value && p.value !== 0"
+                            [class.bg-[#2D6A4F]]="searchBudget === p.value && p.value !== 0"
+                            [class.text-white]="searchBudget === p.value && p.value !== 0"
+                            [class.border-[#E7E0D2]]="searchBudget !== p.value || p.value === 0"
+                            [class.text-gray-700]="searchBudget !== p.value || p.value === 0">{{ p.label }}</button>
+                </div>
+                <input type="range" min="0" max="2000000" step="50000"
+                       [value]="searchBudget || 0"
+                       (input)="searchBudget = +$any($event.target).value || null"
+                       class="w-full accent-[#2D6A4F]"/>
+                <div class="flex justify-between text-xs text-gray-400 mt-2">
+                    <span>0 FCFA</span>
+                    <span>2 000 000 FCFA</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bg-white border-t border-[#F0EAD9] px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex items-center justify-between flex-shrink-0">
+        <button type="button" (click)="clearMobileSearch()"
+                class="text-sm font-semibold text-gray-700 underline underline-offset-2">
+            Effacer tout
         </button>
-        <span *ngIf="!searchDate" class="text-sm font-semibold text-gray-700">Ajouter des dates</span>
-      </div>
-      <div *ngIf="mobileActiveSection === 'date'" class="px-5 pb-5">
-        <div class="flex bg-[#F6F1E7] rounded-full p-1 w-fit mx-auto mb-5">
-          <button type="button" (click)="dateMode = 'exact'"
-            class="px-5 py-2 rounded-full text-sm font-medium transition-all"
-            [class.bg-white]="dateMode === 'exact'" [class.shadow-sm]="dateMode === 'exact'"
-            [class.text-gray-900]="dateMode === 'exact'" [class.text-gray-500]="dateMode !== 'exact'">Dates</button>
-          <button type="button" (click)="dateMode = 'flexible'"
-            class="px-5 py-2 rounded-full text-sm font-medium transition-all"
-            [class.bg-white]="dateMode === 'flexible'" [class.shadow-sm]="dateMode === 'flexible'"
-            [class.text-gray-900]="dateMode === 'flexible'" [class.text-gray-500]="dateMode !== 'flexible'">Flexible</button>
-        </div>
-        <div *ngIf="dateMode === 'exact'">
-          <div class="flex justify-between items-center mb-3">
-            <button type="button" (click)="prevCalMonth()"
-              class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-600">‹</button>
-            <span class="text-sm font-semibold text-gray-900">{{ calMonthLabel }}</span>
-            <button type="button" (click)="nextCalMonth()"
-              class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-600">›</button>
-          </div>
-          <div class="grid grid-cols-7 text-center mb-2">
-            <span *ngFor="let d of calDays" class="text-xs text-gray-400 font-medium py-1">{{ d }}</span>
-          </div>
-          <div class="grid grid-cols-7 text-center gap-y-1">
-            <span *ngFor="let e of calEmptyDays"></span>
-            <button *ngFor="let d of calDaysInMonth" type="button"
-              (click)="!isPastDay(d) && selectCalDay(d)"
-              class="text-sm rounded-full transition-colors mx-auto w-9 h-9 flex items-center justify-center"
-              [class.bg-[#2D6A4F]]="isSelectedDay(d)" [class.text-white]="isSelectedDay(d)"
-              [class.text-gray-300]="isPastDay(d)" [class.cursor-default]="isPastDay(d)">{{ d }}</button>
-          </div>
-        </div>
-        <div *ngIf="dateMode === 'flexible'">
-          <p class="text-sm font-semibold text-gray-900 text-center mb-4">Publiés dans les derniers...</p>
-          <div class="flex flex-wrap gap-2 justify-center">
-            <button *ngFor="let opt of flexDateOptions" type="button" (click)="selectFlexDate(opt)"
-              class="px-4 py-2 rounded-full border text-sm font-medium transition-all"
-              [class.border-[#2D6A4F]]="searchDate === opt" [class.bg-[#2D6A4F]]="searchDate === opt"
-              [class.text-white]="searchDate === opt" [class.border-[#E7E0D2]]="searchDate !== opt"
-              [class.text-gray-700]="searchDate !== opt">{{ opt }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Budget -->
-    <div class="bg-white rounded-2xl overflow-hidden border border-[#E7E0D2]"
-      [class.shadow-md]="mobileActiveSection === 'budget'">
-      <div class="flex items-center justify-between px-5 py-4 cursor-pointer" (click)="toggleMobileSection('budget')">
-        <div>
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Budget max</p>
-          <p class="text-base font-semibold mt-0.5"
-            [class.text-gray-900]="searchBudget" [class.text-gray-400]="!searchBudget">
-            {{ searchBudget ? (searchBudget | number:'1.0-0') + ' FCFA' : 'Ajouter un budget' }}
-          </p>
-        </div>
-        <button *ngIf="searchBudget" type="button"
-          (click)="searchBudget = null; $event.stopPropagation()"
-          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex-shrink-0">
-          <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+        <button type="button" (click)="submitMobileSearch()"
+                class="flex items-center gap-2 bg-[#2D6A4F] text-white px-6 py-3.5 rounded-xl font-semibold text-sm hover:bg-[#245540] transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Rechercher
         </button>
-        <span *ngIf="!searchBudget" class="text-sm font-semibold text-gray-700">Ajouter un budget</span>
-      </div>
-      <div *ngIf="mobileActiveSection === 'budget'" class="px-5 pb-5">
-        <div class="flex flex-wrap gap-2 mb-5">
-          <button *ngFor="let p of budgetPresets" type="button" (click)="selectBudgetPreset(p)"
-            class="px-4 py-2 rounded-full border text-sm font-medium transition-all"
-            [class.border-[#2D6A4F]]="searchBudget === p.value && p.value !== 0"
-            [class.bg-[#2D6A4F]]="searchBudget === p.value && p.value !== 0"
-            [class.text-white]="searchBudget === p.value && p.value !== 0"
-            [class.border-[#E7E0D2]]="searchBudget !== p.value || p.value === 0"
-            [class.text-gray-700]="searchBudget !== p.value || p.value === 0">{{ p.label }}</button>
-        </div>
-        <input type="range" min="0" max="2000000" step="50000"
-          [value]="searchBudget || 0"
-          (input)="searchBudget = +$any($event.target).value || null"
-          class="w-full accent-[#2D6A4F]"/>
-        <div class="flex justify-between text-xs text-gray-400 mt-2">
-          <span>0 FCFA</span>
-          <span>2 000 000 FCFA</span>
-        </div>
-      </div>
     </div>
-
-  </div>
-
-  <div class="bg-white border-t border-[#F0EAD9] px-4 py-4 flex items-center justify-between">
-    <button type="button" (click)="clearMobileSearch()"
-      class="text-sm font-semibold text-gray-700 underline underline-offset-2">
-      Effacer tout
-    </button>
-    <button type="button" (click)="submitMobileSearch()"
-      class="flex items-center gap-2 bg-[#2D6A4F] text-white px-6 py-3.5 rounded-xl font-semibold text-sm hover:bg-[#245540] transition-colors">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-      </svg>
-      Rechercher
-    </button>
-  </div>
 </div>
 
 
 <!-- ════ MOBILE : Bottom Navigation Bar ════ -->
 <!-- Visible uniquement sur mobile, uniquement si l'utilisateur est connecté -->
 <nav *ngIf="currentUser && !mobileSearchOpen"
-  class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#F0EAD9] shadow-lg md:hidden">
-  <div class="flex items-center justify-around px-2 py-2">
+     class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#F0EAD9] shadow-lg md:hidden">
+    <div class="flex items-center justify-around px-2 py-2">
 
-    <!-- Accueil -->
-    <a routerLink="/home" routerLinkActive="text-[#2D6A4F]"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors"
-      [ngClass]="isHomePage ? 'text-[#2D6A4F]' : 'text-gray-500'">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      <span class="text-[10px] font-medium">Accueil</span>
-    </a>
+        <!-- Accueil -->
+        <a routerLink="/home" routerLinkActive="text-[#2D6A4F]"
+           [routerLinkActiveOptions]="{ exact: true }"
+           class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors"
+           [ngClass]="isHomePage ? 'text-[#2D6A4F]' : 'text-gray-500'">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            <span class="text-[10px] font-medium">Accueil</span>
+        </a>
 
-    <!-- Annonces -->
-    <a routerLink="/annonces" routerLinkActive="text-[#2D6A4F]"
-      class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-      </svg>
-      <span class="text-[10px] font-medium">Annonces</span>
-    </a>
+        <!-- Actualités -->
+        <a routerLink="/actualites" routerLinkActive="text-[#2D6A4F]"
+           class="relative flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
+            <div class="relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6"/>
+                </svg>
+                <span *ngIf="actualiteSvc.hasNewActualites$ | async"
+                      class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#D97E1F] rounded-full border border-white"></span>
+            </div>
+            <span class="text-[10px] font-medium">Actualités</span>
+        </a>
 
-    <!-- Panier (acheteur uniquement) -->
-    <a *ngIf="isAcheteur"
-      routerLink="/panier" routerLinkActive="text-[#2D6A4F]"
-      class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors relative">
-      <div class="relative">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
-        <span *ngIf="(panierCount$ | async)! > 0"
-          class="absolute -top-2 -right-2 min-w-[16px] h-4 bg-[#2D6A4F] text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 border border-white leading-none">
+        <!-- Panier -->
+        <a *ngIf="isAcheteur"
+           routerLink="/panier" routerLinkActive="text-[#2D6A4F]"
+           class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors relative">
+            <div class="relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <span *ngIf="(panierCount$ | async)! > 0"
+                      class="absolute -top-2 -right-2 min-w-[16px] h-4 bg-[#2D6A4F] text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 border border-white leading-none">
           {{ panierCount$ | async }}
         </span>
-      </div>
-      <span class="text-[10px] font-medium">Panier</span>
-    </a>
+            </div>
+            <span class="text-[10px] font-medium">Panier</span>
+        </a>
 
-    <!-- Profil -->
-    <a routerLink="/profil" routerLinkActive="text-[#2D6A4F]"
-      class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
-      <div class="w-6 h-6 rounded-full bg-[#2D6A4F] flex items-center justify-center text-white text-xs font-bold">
-        {{ currentUserInitial }}
-      </div>
-      <span class="text-[10px] font-medium">Profil</span>
-    </a>
+        <!-- Profil -->
+        <a routerLink="/profil" routerLinkActive="text-[#2D6A4F]"
+           class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-gray-500 transition-colors">
+            <div class="w-6 h-6 rounded-full bg-[#2D6A4F] flex items-center justify-center text-white text-xs font-bold">
+                {{ currentUserInitial }}
+            </div>
+            <span class="text-[10px] font-medium">Profil</span>
+        </a>
 
-  </div>
+    </div>
 </nav>
 
 <!-- Espaceur pour éviter que le contenu soit caché par la bottom nav -->
@@ -557,181 +565,257 @@
 
 <!-- Template partagé dropdown -->
 <ng-template #dropdownContent>
-  <ng-container *ngIf="!currentUser">
-    <div class="p-2">
-      <a routerLink="/annonces" (click)="closeMenu()"
-        class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
-        Explorer les annonces
-      </a>
-    </div>
-    <div class="border-t border-[#F0EAD9] p-2">
-      <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600">Centre d'aide</a>
-    </div>
-    <div class="border-t border-[#F0EAD9] p-4">
-      <div class="flex flex-col gap-2">
-        <a routerLink="/auth/login" (click)="closeMenu()"
-          class="w-full text-center px-4 py-2.5 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
-          Connexion
-        </a>
-        <a routerLink="/auth/register" (click)="closeMenu()"
-          class="w-full text-center px-4 py-2.5 border border-[#DFD2B8] text-gray-700 text-sm font-medium rounded-xl hover:bg-[#FBF9F4] transition-colors">
-          Inscription
-        </a>
-      </div>
-    </div>
-  </ng-container>
+    <ng-container *ngIf="!currentUser">
+        <div class="p-2">
+            <a routerLink="/annonces" (click)="closeMenu()"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Explorer les annonces
+            </a>
+        </div>
+        <div class="border-t border-[#F0EAD9] p-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600">Centre d'aide</a>
+        </div>
+        <div class="border-t border-[#F0EAD9] p-4">
+            <div class="flex flex-col gap-2">
+                <a routerLink="/auth/login" (click)="closeMenu()"
+                   class="w-full text-center px-4 py-2.5 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
+                    Connexion
+                </a>
+                <a routerLink="/auth/register" (click)="closeMenu()"
+                   class="w-full text-center px-4 py-2.5 border border-[#DFD2B8] text-gray-700 text-sm font-medium rounded-xl hover:bg-[#FBF9F4] transition-colors">
+                    Inscription
+                </a>
+            </div>
+        </div>
+    </ng-container>
 
-  <ng-container *ngIf="currentUser">
-    <div class="p-2">
+    <ng-container *ngIf="currentUser">
+        <div class="p-2">
 
-      <!-- ACHETEUR -->
-      <ng-container *ngIf="isAcheteur">
-        <!-- ── Lien panier dans le dropdown acheteur ── -->
-        <a routerLink="/panier" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <div class="relative">
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            <span *ngIf="(panierCount$ | async)! > 0"
-              class="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] bg-[#2D6A4F] text-white text-[8px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
+            <!-- ACHETEUR -->
+            <ng-container *ngIf="isAcheteur">
+                <a routerLink="/acheteur/dashboard" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F2F7F3] text-sm font-bold text-[#2D6A4F] transition-colors mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Mon espace acheteur
+                </a>
+                <!-- Switch retour VENDEUR si ex-vendeur -->
+                <button *ngIf="currentUser?.devenirVendeur" type="button"
+                        (click)="switchRole('VENDEUR')"
+                        [disabled]="switchingRole"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-[#C2DCCB] bg-[#F2F7F3] hover:bg-[#E0EDE6] text-sm font-semibold text-[#2D6A4F] transition-colors disabled:opacity-50 mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    <span>{{ switchingRole ? 'Changement...' : 'Repasser en mode vendeur' }}</span>
+                </button>
+                <!-- Switch retour TRANSPORTEUR si ex-transporteur -->
+                <button *ngIf="currentUser?.estTransporteur" type="button"
+                        (click)="switchRole('TRANSPORTEUR')"
+                        [disabled]="switchingRole"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-[#C2DCCB] bg-[#F2F7F3] hover:bg-[#E0EDE6] text-sm font-semibold text-[#2D6A4F] transition-colors disabled:opacity-50 mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1"/></svg>
+                    <span>{{ switchingRole ? 'Changement...' : 'Repasser en mode transporteur' }}</span>
+                </button>
+                <!-- ── Lien panier dans le dropdown acheteur ── -->
+                <a routerLink="/panier" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <div class="relative">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span *ngIf="(panierCount$ | async)! > 0"
+                              class="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] bg-[#2D6A4F] text-white text-[8px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
               {{ panierCount$ | async }}
             </span>
-          </div>
-          Mon panier
-          <span *ngIf="(panierCount$ | async)! > 0" class="ml-auto text-xs font-semibold text-[#2D6A4F]">
+                    </div>
+                    Mon panier
+                    <span *ngIf="(panierCount$ | async)! > 0" class="ml-auto text-xs font-semibold text-[#2D6A4F]">
             {{ panierCount$ | async }} animal{{ (panierCount$ | async)! > 1 ? 'x' : '' }}
           </span>
-        </a>
-        <a routerLink="/acheteur/mes-achats" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-          Mes achats
-        </a>
-        <a routerLink="/favoris" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-          Favoris
-        </a>
-        <a routerLink="/messages" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-          Messages
-        </a>
-        <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          Profil
-        </a>
-      </ng-container>
+                </a>
+                <a routerLink="/acheteur/mes-achats" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    Mes achats
+                </a>
+                <a routerLink="/favoris" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Favoris
+                </a>
+                <a routerLink="/messages" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    Messages
+                </a>
+                <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                </a>
+            </ng-container>
 
-      <!-- VENDEUR -->
-      <ng-container *ngIf="isVendeur">
-        <a routerLink="/vendeur/mes-annonces" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          Mes annonces
-        </a>
-        <a routerLink="/vendeur/mes-ventes" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          Mes ventes
-        </a>
-        <a routerLink="/messages" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-          Messages
-        </a>
-        <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          Profil
-        </a>
-      </ng-container>
+            <!-- VENDEUR -->
+            <ng-container *ngIf="isVendeur && !isAdmin">
+                <a routerLink="/vendeur/mes-annonces" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F2F7F3] text-sm font-bold text-[#2D6A4F] transition-colors mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Mon espace vendeur
+                </a>
+                <a routerLink="/vendeur/mes-annonces" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Mes annonces
+                </a>
+                <a routerLink="/vendeur/mes-ventes" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    Mes ventes
+                </a>
+                <a routerLink="/messages" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    Messages
+                </a>
+                <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                </a>
+                <button type="button"
+                        (click)="switchRole('ACHETEUR')"
+                        [disabled]="switchingRole"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-[#E7E0D2] bg-[#F6F1E7] hover:bg-[#EEE8D8] text-sm font-semibold text-[#2D6A4F] transition-colors disabled:opacity-50 mt-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    <span>{{ switchingRole ? 'Changement...' : 'Passer en mode acheteur' }}</span>
+                </button>
+            </ng-container>
 
-      <!-- VÉTÉRINAIRE -->
-      <ng-container *ngIf="isVeterinaire">
-        <a routerLink="/veterinaire/certificats" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Certificats sanitaires
-        </a>
-        <a routerLink="/veterinaire/inspections" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          Inspections
-        </a>
-        <a routerLink="/messages" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-          Messages
-        </a>
-        <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          Profil
-        </a>
-      </ng-container>
+            <!-- VÉTÉRINAIRE -->
+            <ng-container *ngIf="isVeterinaire">
+                <a routerLink="/veterinaire/dashboard" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F2F7F3] text-sm font-bold text-[#2D6A4F] transition-colors mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Mon espace vétérinaire
+                </a>
+                <a routerLink="/veterinaire/certificats" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Certificats sanitaires
+                </a>
+                <a routerLink="/veterinaire/inspections" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Inspections
+                </a>
+                <a routerLink="/messages" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    Messages
+                </a>
+                <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                </a>
+            </ng-container>
 
-      <!-- ANADER -->
-      <ng-container *ngIf="isAnader">
-        <a routerLink="/anader/dashboard" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          Mon espace ANADER
-        </a>
-        <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          Profil
-        </a>
-      </ng-container>
+            <!-- ANADER -->
+            <ng-container *ngIf="isAnader">
+                <a routerLink="/anader/dashboard" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F2F7F3] text-sm font-bold text-[#2D6A4F] transition-colors mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Mon espace ANADER
+                </a>
 
-      <!-- ADMIN -->
-      <ng-container *ngIf="isAdmin">
-        <a routerLink="/admin/utilisateurs" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          Utilisateurs
-        </a>
-        <a routerLink="/admin/annonces" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-          Modération
-        </a>
-        <a routerLink="/admin/litiges" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-          Litiges
-        </a>
-        <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          Profil
-        </a>
-      </ng-container>
+                <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                </a>
+            </ng-container>
 
-    </div>
+            <!-- TRANSPORTEUR -->
+            <ng-container *ngIf="isTransporteur">
+                <a routerLink="/transporteur/mes-courses" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F2F7F3] text-sm font-bold text-[#2D6A4F] transition-colors mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Mon espace transporteur
+                </a>
+                <a routerLink="/transporteur/mes-courses" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1"/></svg>
+                    Mes courses
+                </a>
+                <a routerLink="/transporteur/dossier" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Mon dossier
+                </a>
+                <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                </a>
+                <button type="button"
+                        (click)="switchRole('ACHETEUR')"
+                        [disabled]="switchingRole"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-[#E7E0D2] bg-[#F6F1E7] hover:bg-[#EEE8D8] text-sm font-semibold text-[#2D6A4F] transition-colors disabled:opacity-50 mt-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    <span>{{ switchingRole ? 'Changement...' : 'Passer en mode acheteur' }}</span>
+                </button>
+            </ng-container>
 
-    <div class="border-t border-[#F0EAD9] p-2">
-      <a routerLink="/profil/parametres" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        Paramètres du compte
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
-        Langues et devise
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        Centre d'aide
-      </a>
-    </div>
+            <!-- ADMIN -->
+            <ng-container *ngIf="isAdmin">
+                <a routerLink="/admin/utilisateurs" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F2F7F3] text-sm font-bold text-[#2D6A4F] transition-colors mb-1">
+                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Mon espace admin
+                </a>
+                <a routerLink="/admin/utilisateurs" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Utilisateurs
+                </a>
+                <a routerLink="/admin/annonces" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+                    Modération
+                </a>
+                <a routerLink="/admin/transporteurs" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                    Permis transporteurs
+                </a>
+                <a routerLink="/admin/litiges" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    Litiges
+                </a>
+                <a routerLink="/admin/actualites" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m0 0h2a2 2 0 012 2v9a2 2 0 01-2 2h-2m0-13v13M7 8h6M7 12h6M7 16h4"/></svg>
+                    Actualités
+                </a>
+                <a routerLink="/profil" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                </a>
+            </ng-container>
 
-    <div *ngIf="isAcheteur" class="border-t border-[#F0EAD9] mx-4 my-2 p-4 rounded-xl bg-[#FBF9F4]">
-      <div class="flex items-start gap-3">
-        <div class="flex-1">
-          <p class="text-sm font-semibold text-gray-900">Devenir vendeur</p>
-          <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Devenir vendeur et gagner des revenus supplémentaires, c'est facile.</p>
         </div>
-        <svg class="w-12 h-12 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-        </svg>
-      </div>
-    </div>
 
-    <div class="border-t border-[#F0EAD9] p-2">
-      <a *ngIf="isAcheteur" href="#" class="flex items-center px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">Parrainer un vendeur</a>
-      <a href="#" class="flex items-center px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">Cartes cadeaux</a>
-      <button type="button" (click)="logout()"
-        class="w-full flex items-center px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 text-left transition-colors">
-        Déconnexion
-      </button>
-    </div>
+        <div class="border-t border-[#F0EAD9] p-2">
+            <a routerLink="/profil/parametres" (click)="closeMenu()" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Paramètres du compte
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
+                Langues et devise
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Centre d'aide
+            </a>
+        </div>
 
-  </ng-container>
+        <div *ngIf="isAcheteur && !currentUser?.devenirVendeur && !currentUser?.estTransporteur" class="border-t border-[#F0EAD9] mx-4 my-2 p-4 rounded-xl bg-[#FBF9F4] cursor-pointer hover:bg-[#EEE8D8] transition-colors"
+             (click)="handleSellerClick(true)">
+            <div class="flex items-start gap-3">
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-900">Devenir vendeur</p>
+                    <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Devenir vendeur et gagner des revenus supplémentaires, c'est facile.</p>
+                </div>
+                <svg class="w-12 h-12 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="border-t border-[#F0EAD9] p-2">
+            <a *ngIf="isAcheteur" href="#" class="flex items-center px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">Parrainer un vendeur</a>
+            <a href="#" class="flex items-center px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 transition-colors">Cartes cadeaux</a>
+            <button type="button" (click)="logout()"
+                    class="w-full flex items-center px-4 py-2.5 rounded-xl hover:bg-[#FBF9F4] text-sm text-gray-600 text-left transition-colors">
+                Déconnexion
+            </button>
+        </div>
+
+    </ng-container>
 </ng-template>

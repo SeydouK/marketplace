@@ -1,0 +1,40 @@
+<div *ngIf="open$ | async"
+  class="fixed inset-0 z-50 grid place-items-center bg-black/50 px-4"
+  (click)="svc.close()">
+
+  <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl"
+    (click)="$event.stopPropagation()">
+
+    <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#2D6A4F] text-white">
+      <!-- Meme icone que le bloc « Devenir vendeur » du menu, pour que la modale
+           ressemble au bouton qui l'ouvre. -->
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+    </div>
+
+    <h2 class="text-xl font-bold text-gray-900">Envoyer une demande vendeur</h2>
+    <p class="mt-3 text-sm leading-6 text-gray-600">
+      Votre demande sera transmise à l'administration. Une fois validée, votre compte pourra accéder à l'espace vendeur.
+    </p>
+
+    <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      <button
+        type="button"
+        class="rounded-xl border border-[#E7E0D2] px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#FBF9F4]"
+        (click)="svc.close()"
+      >
+        Annuler
+      </button>
+      <button
+        type="button"
+        class="rounded-xl bg-[#2D6A4F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#245540] disabled:opacity-60"
+        [disabled]="svc.submitting"
+        (click)="svc.submit()"
+      >
+        {{ svc.submitting ? 'Envoi...' : 'Confirmer la demande' }}
+      </button>
+    </div>
+  </div>
+</div>

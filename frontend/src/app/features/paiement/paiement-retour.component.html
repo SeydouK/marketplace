@@ -1,0 +1,67 @@
+<div class="min-h-screen bg-[#FBF9F4] flex items-center justify-center px-4">
+  <div class="bg-white rounded-2xl shadow-sm border border-[#F0EAD9] max-w-md w-full p-10 text-center">
+
+    <!-- VÉRIFICATION EN COURS -->
+    <ng-container *ngIf="affichage === 'verification'">
+      <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-spin pi-spinner text-amber-500 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Vérification du paiement…</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-6">
+        Nous confirmons votre paiement auprès de GeniusPay. Cela ne prend que quelques secondes.
+      </p>
+    </ng-container>
+
+    <!-- SUCCÈS -->
+    <ng-container *ngIf="affichage === 'succes'">
+      <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-check-circle text-green-500 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Paiement confirmé !</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+        Votre commande a bien été payée. Le vendeur a été notifié.
+      </p>
+      <button
+        (click)="retourAccueil()"
+        class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
+      >
+        Retour à l'accueil
+      </button>
+    </ng-container>
+
+    <!-- ÉCHEC / ANNULÉ / EXPIRÉ -->
+    <ng-container *ngIf="affichage === 'echec'">
+      <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-times-circle text-red-400 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Paiement non abouti</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+        Le paiement a été annulé, refusé ou a expiré. Votre panier est toujours disponible, vous pouvez réessayer.
+      </p>
+      <button
+        (click)="retourAuPanier()"
+        class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
+      >
+        Retourner au panier
+      </button>
+    </ng-container>
+
+    <!-- COMMANDE INTROUVABLE -->
+    <ng-container *ngIf="affichage === 'introuvable'">
+      <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="pi pi-times-circle text-red-400 text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Commande introuvable</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+        Impossible de retrouver cette commande. Contactez le support si le montant a été débité.
+      </p>
+      <button
+        (click)="retourAuPanier()"
+        class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
+      >
+        Retourner au panier
+      </button>
+    </ng-container>
+
+  </div>
+</div>

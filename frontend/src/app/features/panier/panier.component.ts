@@ -1,15 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PanierService } from './services/panier.service';
 import { Panier, PanierItem, PanierParVendeur } from './models/panier.model';
+import { PaiementService } from '../paiement/services/paiement.service';
+import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-panier',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AssetUrlPipe],
   templateUrl: './panier.component.html',
   styleUrls: ['./panier.component.scss']
 })
@@ -22,7 +24,11 @@ export class PanierComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private panierService: PanierService) {}
+  constructor(
+    private panierService: PanierService,
+    private paiementService: PaiementService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.panierService.panier$
@@ -65,7 +71,27 @@ export class PanierComponent implements OnInit, OnDestroy {
 
   passerCommande(): void {
     this.commandeEnCours = true;
-    setTimeout(() => (this.commandeEnCours = false), 2000);
+    this.paiementService.creerCommande()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: commande => {
+          // Le serveur peut repondre par une commande DEJA payee : il vient de
+          // decouvrir, en interrogeant l'operateur, qu'un paiement precedent
+          // avait abouti sans que le webhook nous l'apprenne.
+          //
+          // La renvoyer vers checkoutUrl ferait rouvrir une session de paiement
+          // consommee — au mieux une erreur, au pire un second prelevement.
+          if (commande.statut === 'PAYEE') {
+            this.commandeEnCours = false;
+            this.router.navigate(['/acheteur/mes-achats'], {
+              queryParams: { paiementRecupere: commande.id },
+            });
+            return;
+          }
+          window.location.href = commande.checkoutUrl;
+        },
+        error: () => (this.commandeEnCours = false)
+      });
   }
 
   ngOnDestroy(): void {

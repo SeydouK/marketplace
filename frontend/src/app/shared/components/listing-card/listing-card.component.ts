@@ -23,8 +23,7 @@ export class ListingCardComponent {
   get canFavorite(): boolean {
     const user = this.auth.currentUser;
     if (!user) return false;
-    const excluded = [Role.AGENT_ANADER, Role.VETERINAIRE, Role.ADMIN, Role.ADMINISTRATEUR];
-    return !excluded.some(role => this.auth.hasRole(role));
+    return this.auth.hasRole(Role.ACHETEUR);
   }
 
   toggleFavori(event: Event): void {

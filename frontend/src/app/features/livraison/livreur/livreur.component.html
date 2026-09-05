@@ -1,0 +1,311 @@
+<!-- livraison/livreur/livreur.component.html -->
+<section class="max-w-lg mx-auto py-6 px-4 space-y-5">
+
+  <div *ngIf="chargement" class="py-20 text-center text-gray-400">
+    <i class="pi pi-spin pi-spinner text-2xl"></i>
+    <p class="mt-3 text-sm">Chargement de la livraison…</p>
+  </div>
+
+  <div *ngIf="erreur && !chargement"
+    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    Cette livraison est introuvable ou ne vous concerne pas.
+  </div>
+
+  <ng-container *ngIf="suivi && !chargement">
+
+    <!-- ═══ EN-TÊTE ═══ -->
+    <div>
+      <a [routerLink]="lienRetour"
+        class="inline-flex items-center gap-1 text-xs font-semibold text-[#2D6A4F] mb-3">
+        <i class="pi pi-arrow-left text-[10px]"></i> {{ libelleRetour }}
+      </a>
+      <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">
+        {{ enObservation ? 'Suivi de la livraison' : 'Livraison en cours' }}
+      </h1>
+      <p class="mt-1 text-sm text-gray-500">
+        {{ suivi.animaux.join(', ') }} · commande #{{ suivi.commandeId }}
+      </p>
+    </div>
+
+    <!-- Course confiée : on regarde, on ne conduit pas -->
+    <div *ngIf="enObservation && suivi.modeRemise === 'TRANSPORT'"
+      class="flex items-start gap-3 p-4 bg-[#F6F1E7] border border-[#E7E0D2] rounded-2xl">
+      <i class="pi pi-eye text-lg text-[#8B6F55] flex-shrink-0 mt-0.5"></i>
+      <div>
+        <p class="text-sm font-semibold text-gray-900">
+          {{ suivi.transporteurNom ? suivi.transporteurNom + ' assure cette livraison' : "Cette livraison est assurée par un tiers" }}
+        </p>
+        <p class="text-xs text-gray-600 mt-0.5">
+          Vous suivez son avancement. C'est lui qui partage sa position et saisira
+          le code de remise à l'arrivée.
+        </p>
+      </div>
+    </div>
+
+    <!-- ═══ RETRAIT SUR PLACE ═══ -->
+    <div *ngIf="suivi.modeRemise === 'RETRAIT_SUR_PLACE'"
+      class="p-5 bg-[#F6F1E7] border border-[#E7E0D2] rounded-2xl">
+      <i class="pi pi-home text-2xl text-[#8B6F55]"></i>
+      <p class="mt-2 text-sm font-semibold text-gray-900">Retrait sur place</p>
+      <p class="mt-1 text-sm text-gray-600">
+        L'acheteur vient chercher l'animal. Il n'y a pas de trajet à suivre —
+        au moment où il se présente, demandez-lui son code de remise.
+      </p>
+      <button *ngIf="!remiseOuverte" type="button" (click)="ouvrirRemise()"
+        class="mt-4 px-5 py-2.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl">
+        Saisir le code de remise
+      </button>
+    </div>
+
+    <ng-container *ngIf="suivi.modeRemise === 'TRANSPORT'">
+
+      <!-- ═══ NAVIGATION INTÉGRÉE ═══ -->
+      <!-- En plein écran, le bloc sort du flux et couvre la fenêtre : c'est le
+           mode normal en conduisant. -->
+      <div *ngIf="suivi.departAt && !enObservation"
+        [ngClass]="pleinEcran
+          ? 'fixed inset-0 z-[2000] bg-white flex flex-col'
+          : 'rounded-2xl overflow-hidden border border-[#E7E0D2] shadow-card'">
+
+        <!-- Prochaine consigne, en bandeau -->
+        <div *ngIf="prochaineEtape"
+          class="flex items-center gap-4 p-4 bg-[#1B4332] text-white flex-shrink-0">
+          <i class="pi text-3xl flex-shrink-0" [ngClass]="iconeManoeuvre(prochaineEtape.manoeuvre)"></i>
+          <div class="flex-1 min-w-0">
+            <p class="text-base font-bold leading-tight">{{ prochaineEtape.instruction }}</p>
+            <p class="text-xs text-white/70 mt-0.5">
+              dans {{ itineraireService.formaterDistance(distanceEtapeM) }}
+            </p>
+          </div>
+          <button type="button" (click)="basculerPleinEcran()"
+            class="flex-shrink-0 w-11 h-11 rounded-xl bg-white/15 hover:bg-white/25 transition-colors"
+            [attr.aria-label]="pleinEcran ? 'Réduire la carte' : 'Agrandir la carte'">
+            <i class="pi" [ngClass]="pleinEcran ? 'pi-window-minimize' : 'pi-window-maximize'"></i>
+          </button>
+        </div>
+
+        <!-- Sortie d'itineraire : dire que c'est vu, sinon le livreur voit une
+             route qui ne correspond plus a la sienne sans savoir si
+             l'application l'a remarque. -->
+        <div *ngIf="horsItineraire"
+          class="flex items-center gap-3 px-4 py-2.5 bg-[#B96416] text-white text-xs font-semibold flex-shrink-0">
+          <i class="pi" [ngClass]="recalculEnCours ? 'pi-spin pi-spinner' : 'pi-directions'"></i>
+          <span>{{ recalculEnCours ? 'Nouvel itinéraire en cours…' : "Vous avez quitté l'itinéraire." }}</span>
+        </div>
+
+        <div class="relative" [ngClass]="pleinEcran ? 'flex-1 min-h-0' : ''">
+          <div #carte class="w-full bg-[#F6F1E7]" [ngClass]="pleinEcran ? 'h-full' : 'h-[340px]'"></div>
+
+          <!-- Sans bandeau de consigne, le bouton reste accessible sur la carte -->
+          <button *ngIf="!prochaineEtape" type="button" (click)="basculerPleinEcran()"
+            class="absolute top-3 right-3 z-[500] w-11 h-11 rounded-xl bg-white/95 border border-[#E7E0D2] shadow-lg text-[#1B4332]"
+            [attr.aria-label]="pleinEcran ? 'Réduire la carte' : 'Agrandir la carte'">
+            <i class="pi" [ngClass]="pleinEcran ? 'pi-window-minimize' : 'pi-window-maximize'"></i>
+          </button>
+        </div>
+
+        <!-- Distance et durée restantes -->
+        <div *ngIf="itineraire" class="flex items-center justify-between gap-3 p-4 bg-white flex-shrink-0">
+          <div>
+            <p class="text-xl font-extrabold text-[#1B4332] leading-none">
+              {{ itineraireService.formaterDistance(itineraire.distanceM) }}
+            </p>
+            <p class="text-xs text-gray-400 mt-1">
+              environ {{ itineraireService.formaterDuree(itineraire.dureeS) }}
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" (click)="recalculer()" [disabled]="recalculEnCours"
+              class="px-3 py-2 bg-[#F6F1E7] text-[#1B4332] text-xs font-semibold rounded-lg disabled:opacity-50">
+              <i class="pi mr-1" [ngClass]="recalculEnCours ? 'pi-spin pi-spinner' : 'pi-refresh'"></i>
+              Recalculer
+            </button>
+            <button type="button" (click)="etapesDepliees = !etapesDepliees"
+              class="px-3 py-2 bg-[#F6F1E7] text-[#1B4332] text-xs font-semibold rounded-lg">
+              {{ etapesDepliees ? 'Masquer' : 'Toutes les étapes' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Feuille de route complète -->
+        <ol *ngIf="etapesDepliees && itineraire && !pleinEcran"
+          class="divide-y divide-[#F0EAD9] bg-white max-h-64 overflow-y-auto">
+          <li *ngFor="let e of etapesRestantes" class="flex items-start gap-3 px-4 py-3">
+            <i class="pi text-[#2D6A4F] mt-0.5 flex-shrink-0" [ngClass]="iconeManoeuvre(e.manoeuvre)"></i>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-900">{{ e.instruction }}</p>
+              <p class="text-xs text-gray-400">{{ itineraireService.formaterDistance(e.distanceM) }}</p>
+            </div>
+          </li>
+        </ol>
+
+        <p *ngIf="itineraireIndisponible" class="p-4 text-xs text-[#B96416] bg-[#FDF6EC]">
+          L'itinéraire n'a pas pu être calculé. Fiez-vous à l'adresse et aux repères
+          ci-dessous, et appelez le destinataire si besoin.
+        </p>
+      </div>
+
+      <!-- ═══ DESTINATION ═══ -->
+      <div class="p-5 bg-white border border-[#E7E0D2] rounded-2xl shadow-card">
+        <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Livrer à</p>
+        <p class="mt-2 text-base font-bold text-gray-900">{{ suivi.adresseLigne }}</p>
+        <p *ngIf="suivi.adresseVille" class="text-sm text-gray-600">{{ suivi.adresseVille }}</p>
+
+        <div *ngIf="suivi.adresseIndications"
+          class="mt-3 p-3 bg-[#FDF6EC] border border-[#F4D4A3] rounded-xl">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-[#B96416]">Repères</p>
+          <p class="mt-1 text-sm text-[#8B6F55]">{{ suivi.adresseIndications }}</p>
+        </div>
+
+        <p *ngIf="suivi.destinataireNom" class="mt-3 text-sm text-gray-700">
+          <span class="font-semibold">Demander :</span> {{ suivi.destinataireNom }}
+        </p>
+
+        <div class="flex flex-wrap gap-2 mt-4">
+          <a *ngIf="suivi.destinataireTelephone" [href]="'tel:' + suivi.destinataireTelephone"
+            class="px-4 py-2.5 bg-[#F6F1E7] text-[#1B4332] text-sm font-semibold rounded-xl">
+            <i class="pi pi-phone mr-1"></i> Destinataire
+          </a>
+          <a *ngIf="suivi.vendeurTelephone" [href]="'tel:' + suivi.vendeurTelephone"
+            class="px-4 py-2.5 bg-[#F6F1E7] text-[#1B4332] text-sm font-semibold rounded-xl">
+            <i class="pi pi-phone mr-1"></i> Vendeur
+          </a>
+        </div>
+      </div>
+
+      <!-- ═══ DÉPART ═══ -->
+      <button *ngIf="!suivi.departAt && !enObservation"
+        type="button"
+        [disabled]="demarrageEnCours"
+        (click)="demarrer()"
+        class="w-full py-5 bg-[#2D6A4F] text-white text-lg font-extrabold rounded-2xl
+               hover:bg-[#245540] active:scale-[0.99] transition-all disabled:opacity-50 shadow-lg shadow-emerald-900/20">
+        <i class="pi pi-send mr-2"></i>
+        {{ demarrageEnCours ? 'Un instant…' : 'Je pars maintenant' }}
+      </button>
+
+      <p *ngIf="!suivi.departAt && !enObservation" class="text-xs text-center text-gray-500 px-4">
+        L'itinéraire s'affichera ici, dans l'application. Gardez cette page ouverte
+        pendant le trajet : votre position est partagée avec l'acheteur.
+      </p>
+
+      <!-- ═══ TRANSMISSION ═══ -->
+      <div *ngIf="suivi.departAt && !enObservation" class="p-5 rounded-2xl border-2 transition-colors"
+        [ngClass]="transmissionSaine
+          ? 'bg-[#E0EEE4] border-[#2D6A4F]'
+          : 'bg-[#FDF6EC] border-[#D97E1F]'">
+
+        <div class="flex items-start gap-3">
+          <span class="relative flex h-3 w-3 mt-1.5 flex-shrink-0">
+            <span *ngIf="transmissionSaine"
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D6A4F] opacity-60"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3"
+              [ngClass]="transmissionSaine ? 'bg-[#2D6A4F]' : 'bg-[#D97E1F]'"></span>
+          </span>
+
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold"
+              [ngClass]="transmissionSaine ? 'text-[#1B4332]' : 'text-amber-800'">
+              {{ transmissionSaine ? "L'acheteur vous suit" : 'Transmission perturbée' }}
+            </p>
+
+            <p *ngIf="secondesDepuisEnvoi !== null" class="text-xs mt-0.5"
+              [ngClass]="transmissionSaine ? 'text-[#2D6A4F]' : 'text-[#B96416]'">
+              Dernière position envoyée il y a {{ secondesDepuisEnvoi }} s
+            </p>
+
+            <p *ngIf="etat.precisionM" class="text-xs text-gray-500 mt-0.5">
+              Précision : {{ etat.precisionM }} m
+            </p>
+
+            <p *ngIf="etat.enAttente > 0" class="text-xs text-[#B96416] mt-1">
+              <i class="pi pi-wifi mr-1"></i>
+              {{ etat.enAttente }} position(s) en attente de réseau — elles partiront à la reconnexion.
+            </p>
+
+            <!-- La limite la plus importante de tout l'ecran, donc elle est
+                 ecrite, pas sous-entendue. Un navigateur suspend la
+                 geolocalisation des que la page passe en arriere-plan : ni le
+                 service worker ni l'installation n'y changent quoi que ce soit.
+                 Mieux vaut que le livreur l'apprenne ici qu'en decouvrant que
+                 l'acheteur l'a perdu de vue pendant deux heures. -->
+            <p *ngIf="etat.actif" class="text-xs text-[#8B6F55] mt-2 pt-2 border-t border-black/10 leading-relaxed">
+              <i class="pi pi-sun mr-1"></i>
+              <span class="font-semibold">Gardez cet écran ouvert.</span>
+              Si vous verrouillez le téléphone ou passez sur une autre application,
+              l'envoi de votre position s'arrête et l'acheteur ne vous voit plus avancer.
+              L'écran est maintenu allumé automatiquement — pensez au chargeur.
+            </p>
+
+            <p *ngIf="etat.erreur" class="text-xs text-red-700 mt-1">{{ etat.erreur }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vu par l'observateur -->
+      <div *ngIf="enObservation" class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+        <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">État</p>
+        <p class="mt-2 text-base font-bold text-[#1B4332]">{{ suivi.etatLibelle }}</p>
+        <p *ngIf="suivi.departAt" class="mt-1 text-sm text-gray-600">
+          Parti à {{ suivi.departAt | date:'HH:mm' }}
+        </p>
+        <p *ngIf="suivi.distanceKm != null" class="mt-1 text-sm text-gray-600">
+          Encore {{ suivi.distanceKm }} km à vol d'oiseau
+        </p>
+        <p *ngIf="!suivi.positionDisponible && suivi.departAt" class="mt-2 text-xs text-[#B96416]">
+          Position momentanément indisponible — souvent une zone sans réseau.
+        </p>
+      </div>
+
+      <!-- ═══ ARRIVÉE ═══ -->
+      <div *ngIf="suivi.departAt && !enObservation && !remiseOuverte"
+        class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+        <p class="text-sm font-bold text-gray-900">À l'arrivée</p>
+        <p class="mt-1 text-sm text-gray-600">
+          Demandez son <strong>code à 4 chiffres</strong> au destinataire, prenez une
+          photo de l'animal remis, et validez.
+        </p>
+        <button type="button" (click)="ouvrirRemise()"
+          class="mt-4 w-full px-5 py-3.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors">
+          <i class="pi pi-key mr-1"></i> Saisir le code de remise
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- ═══ SAISIE DU CODE ═══ -->
+    <div *ngIf="remiseOuverte" class="p-5 bg-[#E0EEE4] border-2 border-[#2D6A4F] rounded-2xl">
+      <h3 class="text-sm font-bold text-[#1B4332]">Confirmer la remise</h3>
+      <p class="text-xs text-[#2D6A4F] mt-1 mb-4">
+        Le code débloque immédiatement le paiement du vendeur.
+      </p>
+
+      <label class="block text-xs font-bold text-[#1B4332] mb-1.5">Code à 4 chiffres</label>
+      <input [(ngModel)]="codeSaisi" inputmode="numeric" maxlength="4" placeholder="0000"
+        class="w-40 px-4 py-3 text-2xl font-mono tracking-[0.4em] text-center border border-[#B7D8C3] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+
+      <label class="block text-xs font-bold text-[#1B4332] mt-4 mb-1.5">
+        Photo de l'animal remis <span class="text-[#B96416]">(obligatoire)</span>
+      </label>
+      <input type="file" accept="image/*" capture="environment" (change)="choisirPhoto($event)"
+        class="block w-full text-xs text-gray-600 file:mr-3 file:px-4 file:py-2 file:rounded-lg
+               file:border-0 file:bg-[#2D6A4F] file:text-white file:text-xs file:font-semibold
+               hover:file:bg-[#245540] file:cursor-pointer" />
+
+      <img *ngIf="photoApercu" [src]="photoApercu" alt="Aperçu de la photo de remise"
+        class="mt-3 w-32 h-32 object-cover rounded-xl border border-[#B7D8C3]" />
+
+      <div class="flex gap-2 mt-5">
+        <button type="button" [disabled]="!remisePrete || remiseEnCours" (click)="validerRemise()"
+          class="px-5 py-2.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-40">
+          {{ remiseEnCours ? 'Validation…' : 'Valider la remise' }}
+        </button>
+        <button type="button" (click)="fermerRemise()"
+          class="px-4 py-2.5 border border-[#B7D8C3] text-[#1B4332] text-sm rounded-xl hover:bg-white transition-colors">
+          Annuler
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+</section>

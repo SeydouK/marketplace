@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { SKIP_GLOBAL_ERROR } from '../../../core/interceptors/error.interceptor';
 import { Panier, PanierItem,
   PanierParVendeur,
   AjouterAuPanierRequest,
@@ -29,9 +30,13 @@ export class PanierService {
   }
 
   rafraichirCount(): Observable<{ count: number }> {
-    return this.http.get<{ count: number }>(`${this.apiUrl}/count`).pipe(
-      tap(res => this.countSubject.next(res.count))
-    );
+    // Appel d'arrière-plan (badge du menu) : on n'affiche pas de toast global
+    // en cas d'échec, le composant gère/ignore l'erreur silencieusement.
+    return this.http
+      .get<{ count: number }>(`${this.apiUrl}/count`, {
+        context: new HttpContext().set(SKIP_GLOBAL_ERROR, true),
+      })
+      .pipe(tap(res => this.countSubject.next(res.count)));
   }
 
   // animalId est un string (UUID) côté frontend

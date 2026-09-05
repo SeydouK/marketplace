@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailVerificationToken(String token);
     List<User> findByDevenirVendeurTrueOrderByUpdatedAtDesc();
     Page<User> findByRole(Role role, Pageable pageable);
+
+    List<User> findByRole(Role role);
     Page<User> findByKycStatusIn(List<KycStatus> statuses, Pageable pageable);
     long countByKycStatusIn(List<KycStatus> statuses);
 }

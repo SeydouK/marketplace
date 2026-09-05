@@ -1,0 +1,129 @@
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Transactions</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {{ totalElements }} commande{{ totalElements > 1 ? 's' : '' }}
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button
+        *ngFor="let f of filters"
+        type="button"
+        (click)="setFilter(f.value)"
+        [class.bg-[#2D6A4F]]="activeFilter === f.value"
+        [class.text-white]="activeFilter === f.value"
+        class="px-4 py-2 rounded-lg text-sm border border-[#2D6A4F]/30 hover:bg-[#2D6A4F]/10 transition">
+        {{ f.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-xl border border-[#E7E0D2] bg-white">
+    <table class="w-full text-sm">
+      <thead class="bg-[#FBF9F4] text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3 text-left">Commande</th>
+          <th class="px-4 py-3 text-left">Acheteur</th>
+          <th class="px-4 py-3 text-right">Montant</th>
+          <th class="px-4 py-3 text-right">Frais GeniusPay</th>
+          <th class="px-4 py-3 text-right">Commission (3%)</th>
+          <th class="px-4 py-3 text-right">Net vendeur</th>
+          <th class="px-4 py-3 text-left">Statut</th>
+          <th class="px-4 py-3 text-left">Date</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-[#F0EAD9]">
+        <tr *ngIf="loading">
+          <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+            Chargement des transactions...
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && commandes.length === 0">
+          <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+            Aucune transaction trouvée.
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="let commande of commandes; trackBy: trackByCommandeId"
+          class="hover:bg-[#FBF9F4] transition">
+          <td class="px-4 py-3">
+            <div class="font-medium text-gray-900">#{{ commande.id }}</div>
+            <div class="text-xs text-gray-500">{{ commande.reference || '—' }}</div>
+            <div class="text-xs text-gray-400">{{ commande.nombreArticles }} article{{ commande.nombreArticles > 1 ? 's' : '' }}</div>
+          </td>
+
+          <td class="px-4 py-3">
+            <div class="text-gray-700">{{ commande.acheteurNom || 'N/A' }}</div>
+            <div class="text-xs text-gray-500">{{ commande.acheteurEmail || 'Email indisponible' }}</div>
+          </td>
+
+          <td class="px-4 py-3 text-right font-medium text-[#2D6A4F]">
+            {{ commande.montant | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3 text-right text-gray-500">
+            {{ commande.fraisGeniusPay | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3 text-right text-gray-500">
+            {{ commande.commissionPlateforme | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3 text-right font-medium text-gray-900">
+            {{ commande.montantNetVendeur | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span
+                class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
+                [ngClass]="getStatutBadge(commande.statut)">
+                {{ getStatutLabel(commande.statut) }}
+              </span>
+
+              <!-- Contradiction entre notre statut et celui de l'operateur.
+                   Le rouge est reserve aux erreurs, et c'en est une : de
+                   l'argent a ete preleve sur une commande abandonnee. -->
+              <span *ngIf="commande.paiementOrphelinDetecteAt"
+                class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800"
+                [title]="titreOrphelin(commande)">
+                <i class="pi pi-exclamation-triangle text-[10px]"></i>
+                Payée chez l'opérateur
+              </span>
+            </div>
+          </td>
+
+          <td class="px-4 py-3 text-gray-500 text-xs">
+            {{ commande.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex items-center justify-between mt-4 text-sm text-gray-500" *ngIf="totalPages > 1">
+    <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+    <div class="flex gap-2">
+      <button
+        type="button"
+        (click)="prevPage()"
+        [disabled]="currentPage === 0 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
+        Précédent
+      </button>
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
+        Suivant
+      </button>
+    </div>
+  </div>
+</div>

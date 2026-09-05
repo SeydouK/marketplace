@@ -1,0 +1,133 @@
+<main class="max-w-3xl mx-auto px-4 py-8">
+
+  <!-- En-tête -->
+  <div class="mb-8">
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Actualités</h1>
+    <p class="mt-1 text-sm text-gray-500">Élevage, santé animale et marchés en Côte d'Ivoire</p>
+  </div>
+
+  <!-- Filtres catégories -->
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+    <button
+      *ngFor="let cat of categories"
+      type="button"
+      (click)="categorieActive = cat.value"
+      class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+      [ngClass]="categorieActive === cat.value
+        ? 'bg-[#2D6A4F] text-white'
+        : 'bg-[#F6F1E7] text-gray-600 hover:bg-[#EEE8D8]'"
+    >
+      {{ cat.label }}
+    </button>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="chargement" class="flex flex-col gap-4">
+    <div *ngFor="let i of [1,2,3]"
+      class="bg-white rounded-2xl border border-[#E7E0D2] p-5 animate-pulse">
+      <div class="h-4 w-28 bg-[#F0EAD9] rounded-full mb-4"></div>
+      <div class="h-4 w-3/4 bg-[#F0EAD9] rounded mb-3"></div>
+      <div class="h-3 w-full bg-[#F6F1E7] rounded mb-2"></div>
+      <div class="h-3 w-5/6 bg-[#F6F1E7] rounded"></div>
+    </div>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="erreur && !chargement"
+    class="bg-white rounded-2xl border border-[#E7E0D2] p-8 text-center">
+    <i class="pi pi-wifi text-2xl text-gray-300"></i>
+    <p class="mt-3 text-sm text-gray-600">Les actualités n'ont pas pu être chargées.</p>
+    <button type="button" (click)="charger()"
+      class="mt-4 px-4 py-2 rounded-xl bg-[#2D6A4F] hover:bg-[#245540] text-white text-sm font-semibold transition-colors">
+      Réessayer
+    </button>
+  </div>
+
+  <!-- Liste des actualités -->
+  <div *ngIf="!chargement && !erreur" class="flex flex-col gap-4">
+    <article
+      *ngFor="let actu of filteredActualites"
+      class="bg-white rounded-2xl border border-[#E7E0D2] overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      (click)="openDetail(actu)"
+    >
+      <img *ngIf="actu.imageUrl" [src]="actu.imageUrl" [alt]="actu.titre"
+        class="w-full h-44 object-cover" />
+
+      <div class="p-5">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full"
+              [ngClass]="svc.getCategorieColor(actu.categorie)">
+              {{ svc.getCategorieLabel(actu.categorie) }}
+            </span>
+            <span *ngIf="isNew(actu)"
+              class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D97E1F] text-white uppercase tracking-wide">
+              Nouveau
+            </span>
+          </div>
+          <span class="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">{{ actu.datePublication | date:'d MMM yyyy' }}</span>
+        </div>
+
+        <h2 class="text-base font-bold text-gray-900 leading-snug mb-2">{{ actu.titre }}</h2>
+        <p class="text-sm text-gray-600 leading-relaxed line-clamp-2">{{ actu.resume }}</p>
+
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-xs text-gray-400">Par {{ actu.auteur }}</span>
+          <span class="text-sm font-semibold text-[#2D6A4F] flex items-center gap-1">
+            Lire la suite <i class="pi pi-arrow-right text-xs"></i>
+          </span>
+        </div>
+      </div>
+    </article>
+
+    <p *ngIf="filteredActualites.length === 0" class="text-center text-gray-500 py-12">
+      {{ categorieActive
+        ? 'Aucune actualité dans cette catégorie pour le moment.'
+        : 'Aucune actualité publiée pour le moment.' }}
+    </p>
+  </div>
+</main>
+
+<!-- Fiche détail -->
+<div *ngIf="selected"
+  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 px-0 sm:px-4"
+  (click)="fermerDetail()">
+
+  <div class="w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-2xl max-h-[90vh] flex flex-col shadow-2xl"
+    (click)="$event.stopPropagation()">
+
+    <!-- Header fiche -->
+    <div class="flex items-center justify-between p-5 border-b border-[#F0EAD9]">
+      <span class="text-xs font-bold px-2.5 py-1 rounded-full"
+        [ngClass]="svc.getCategorieColor(selected.categorie)">
+        {{ svc.getCategorieLabel(selected.categorie) }}
+      </span>
+      <button type="button" (click)="fermerDetail()"
+        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-500">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <!-- Contenu scrollable -->
+    <div class="overflow-y-auto p-5 flex-1">
+      <img *ngIf="selected.imageUrl" [src]="selected.imageUrl" [alt]="selected.titre"
+        class="w-full h-52 object-cover rounded-xl mb-5" />
+
+      <h2 class="text-xl font-extrabold text-gray-900 leading-snug mb-2">{{ selected.titre }}</h2>
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-xs text-gray-400">Par {{ selected.auteur }}</span>
+        <span class="text-gray-300">·</span>
+        <span class="text-xs text-gray-400">{{ selected.datePublication | date:'d MMMM yyyy' }}</span>
+      </div>
+
+      <div *ngIf="chargementDetail" class="animate-pulse space-y-3">
+        <div class="h-3 w-full bg-[#F6F1E7] rounded"></div>
+        <div class="h-3 w-11/12 bg-[#F6F1E7] rounded"></div>
+        <div class="h-3 w-4/5 bg-[#F6F1E7] rounded"></div>
+      </div>
+
+      <div *ngIf="!chargementDetail"
+        class="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-line">{{ selected.contenu }}</div>
+    </div>
+  </div>
+</div>

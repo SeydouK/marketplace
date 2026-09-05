@@ -222,3 +222,102 @@
     padding: 1.5rem;
   }
 }
+
+/* ── Indicatif telephonique ────────────────────────────────────────────────
+   Ferme : drapeau + indicatif, rien de plus, pour tenir dans un champ etroit.
+   Ouvert : le pays en entier, la ou la place existe. */
+
+.indicatif-champ {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.indicatif-bouton {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: auto;
+  padding: 0.9rem 0.75rem;
+  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.indicatif-drapeau {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.indicatif-code {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Chevron dessine en CSS : une icone de plus a charger pour deux traits. */
+.indicatif-fleche {
+  width: 0;
+  height: 0;
+  margin-left: 0.15rem;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #6B6358;
+  transition: transform 0.15s ease;
+}
+
+.indicatif-fleche.ouverte {
+  transform: rotate(180deg);
+}
+
+.indicatif-liste {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 4px);
+  left: 0;
+  /* Plus large que le bouton : c'est tout l'interet de la liste deroulee. */
+  min-width: 15rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 12px 32px rgba(17, 24, 39, 0.14);
+}
+
+.indicatif-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: transparent;
+  font: inherit;
+  color: #111827;
+  text-align: left;
+  cursor: pointer;
+}
+
+.indicatif-option:hover,
+.indicatif-option:focus-visible {
+  background: #F6F1E7;
+  outline: none;
+}
+
+.indicatif-option.choisie {
+  background: #E0EEE4;
+  font-weight: 600;
+}
+
+.indicatif-pays {
+  flex: 1;
+  min-width: 0;
+}
+
+.indicatif-option-code {
+  color: #6B6358;
+  font-variant-numeric: tabular-nums;
+}

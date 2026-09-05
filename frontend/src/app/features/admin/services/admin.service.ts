@@ -46,7 +46,7 @@ export interface SellerRequest {
   updatedAt: string;
 }
 
-export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU' | 'EN_ATTENTE';
+export type AdminListingStatus = 'DISPONIBLE' | 'INDISPONIBLE' | 'RESERVE' | 'VENDU' | 'EN_ATTENTE';
 
 export interface AdminListing {
   id: string;
@@ -68,6 +68,64 @@ export interface AdminListing {
 
 export interface AdminListingPage {
   content: AdminListing[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+}
+
+export type StatutCommande = 'EN_ATTENTE' | 'PAYEE' | 'ECHOUEE' | 'ANNULEE' | 'EXPIREE';
+
+export interface AdminCommande {
+  id: number;
+  reference: string | null;
+  statut: StatutCommande;
+  montant: number;
+  fraisGeniusPay: number;
+  commissionPlateforme: number;
+  montantNetVendeur: number;
+  acheteurId: number;
+  acheteurNom: string | null;
+  acheteurEmail: string | null;
+  nombreArticles: number;
+  createdAt: string;
+  paidAt: string | null;
+
+  /**
+   * Renseigne quand l'operateur declare payee une commande que nous avons
+   * abandonnee. Sans ce drapeau, la ligne est indistinguable d'une annulation
+   * ordinaire — alors que l'argent a bel et bien ete preleve.
+   */
+  paiementOrphelinDetecteAt: string | null;
+}
+
+export interface AdminCommandePage {
+  content: AdminCommande[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+}
+
+export type StatutVersement = 'EN_ATTENTE' | 'EN_COURS' | 'CONFIRME' | 'ECHOUE';
+
+export interface AdminVersement {
+  id: number;
+  commandeId: number;
+  commandeReference: string | null;
+  vendeurId: number;
+  vendeurNom: string | null;
+  vendeurTelephone: string | null;
+  montantBrut: number;
+  fraisGeniusPayAlloue: number;
+  commissionPlateformeAlloue: number;
+  montantNet: number;
+  statut: StatutVersement;
+  reference: string | null;
+  createdAt: string;
+  envoyeAt: string | null;
+}
+
+export interface AdminVersementPage {
+  content: AdminVersement[];
   totalElements: number;
   totalPages: number;
   number: number;
@@ -125,6 +183,33 @@ export class AdminService {
 
   rejectKyc(userId: number, reason: string): Observable<AdminUser> {
     return this.http.post<AdminUser>(`${this.base}/users/${userId}/kyc/reject`, { reason });
+  }
+
+  getCommandes(params?: {
+    statut?: StatutCommande | 'all';
+    /** Filtre transversal : un orphelin peut etre ANNULEE ou EXPIREE. */
+    orphelins?: boolean;
+    page?: number;
+    size?: number;
+  }): Observable<AdminCommandePage> {
+    let httpParams = new HttpParams();
+    if (params?.orphelins) httpParams = httpParams.set('orphelins', true);
+    if (params?.statut && params.statut !== 'all') httpParams = httpParams.set('statut', params.statut);
+    if (params?.page !== undefined) httpParams = httpParams.set('page', params.page);
+    if (params?.size !== undefined) httpParams = httpParams.set('size', params.size);
+    return this.http.get<AdminCommandePage>(`${this.base}/commandes`, { params: httpParams });
+  }
+
+  getVersements(params?: { statut?: StatutVersement | 'all'; page?: number; size?: number }): Observable<AdminVersementPage> {
+    let httpParams = new HttpParams();
+    if (params?.statut && params.statut !== 'all') httpParams = httpParams.set('statut', params.statut);
+    if (params?.page !== undefined) httpParams = httpParams.set('page', params.page);
+    if (params?.size !== undefined) httpParams = httpParams.set('size', params.size);
+    return this.http.get<AdminVersementPage>(`${this.base}/versements`, { params: httpParams });
+  }
+
+  envoyerVersement(versementId: number): Observable<AdminVersement> {
+    return this.http.post<AdminVersement>(`${this.base}/versements/${versementId}/envoyer`, {});
   }
 
   // ⚠️ TODO backend : POST /api/admin/users/{id}/suspend n'existe pas encore.

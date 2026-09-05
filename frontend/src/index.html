@@ -2,10 +2,24 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Marketplace</title>
+  <title>BétailMarket</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta name="theme-color" content="#2D6A4F">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+
+  <!-- Manifeste : c'est lui qui rend l'application installable sur l'ecran
+       d'accueil. Sans cette ligne, le navigateur ne propose jamais l'ajout. -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- iOS ignore une partie du manifeste et lit encore ces balises. Sans elles,
+       une app ajoutee depuis Safari s'ouvre dans un onglet avec la barre
+       d'adresse, au lieu de s'ouvrir en plein ecran. -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BétailMarket">
 </head>
 <body>
   <app-root></app-root>

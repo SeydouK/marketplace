@@ -309,18 +309,85 @@
 }
 
 /* ── Méthodes de paiement ── */
+/* Les moyens de paiement sont presentes par GeniusPay sur sa propre page de checkout :
+   on ne les liste pas ici, l'operateur disponible depend de la passerelle qu'il retient. */
 .paiement-methodes {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   margin-top: 16px;
+  font-size: 0.8rem;
+  color: #6B6358;
+  text-align: center;
+  line-height: 1.5;
 
-  img {
-    height: 28px;
-    object-fit: contain;
-    filter: grayscale(0.3);
-    transition: filter 0.15s;
-    &:hover { filter: none; }
+  i {
+    color: #2D6A4F;
+    flex-shrink: 0;
   }
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .panier-page { padding: 16px 12px; }
+
+  .panier-header h1 { font-size: 1.3rem; margin-bottom: 18px; }
+
+  /* Chaque item passe en 2 rangées */
+  .panier-item {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 14px;
+    position: relative;
+  }
+
+  /* Photo + infos côte à côte sur la 1ère rangée */
+  .item-photo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .item-infos {
+    flex: 1;
+    min-width: 0;
+    .item-nom { font-size: 0.9rem; }
+    .item-prix-unitaire { font-size: 0.8rem; }
+  }
+
+  /* Bouton supprimer en haut à droite */
+  .btn-supprimer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  /* Quantité + sous-total sur la 2ème rangée, côte à côte */
+  .item-quantite { flex: 1; }
+
+  .item-sous-total {
+    min-width: unset;
+    flex: 1;
+    text-align: right;
+    font-size: 0.95rem;
+  }
+
+  /* Actions bas en colonne */
+  .panier-actions-bas {
+    flex-direction: column;
+    .btn-vider, .btn-continuer { width: 100%; text-align: center; }
+  }
+
+  /* Récap collé en bas sur mobile */
+  .panier-recapitulatif {
+    position: static;
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .recap-total strong { font-size: 1.1rem; }
+
+  .btn-commander { padding: 13px; font-size: 0.95rem; }
+
+  .paiement-methodes { font-size: 0.75rem; }
 }

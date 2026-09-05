@@ -3,14 +3,20 @@ package com.marketplace.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final org.slf4j.Logger LOGGER =
+            org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
@@ -48,8 +54,54 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    /**
+     * Corps de requete illisible : JSON mal forme, ou valeur qui n'entre dans
+     * aucune enumeration.
+     *
+     * Meme raisonnement que pour les routes inconnues : sans ce traitement,
+     * l'attrape-tout convertissait en 500 une faute de saisie du client. Un
+     * operateur de retrait mal orthographie ressemblait alors a une panne
+     * serveur. Le detail du parseur n'est pas renvoye — il expose la structure
+     * interne sans aider celui qui appelle.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleCorpsIllisible(HttpMessageNotReadableException ex) {
+        LOGGER.debug("Corps de requete refuse : {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(Map.of(
+                "message", "Les donnees envoyees sont invalides ou mal formees."));
+    }
+
+    /**
+     * URL qui ne correspond a aucune route.
+     *
+     * Sans ce traitement, l'attrape-tout ci-dessous la convertissait en 500 :
+     * une simple faute de frappe dans une adresse ressemblait alors a une panne
+     * serveur, et envoyait chercher un bug la ou il n'y en avait pas.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<?> handleRouteInconnue(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", "Cette adresse n'existe pas.",
+                             "chemin", ex.getResourcePath()));
+    }
+
+    /** Methode HTTP inadaptee — 405 plutot que 500, meme raisonnement. */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleMethodeNonSupportee(HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(Map.of("message", "Methode " + ex.getMethod() + " non autorisee sur cette adresse."));
+    }
+
+    /**
+     * Dernier recours.
+     *
+     * Seules les erreurs reellement inattendues arrivent ici — et elles sont
+     * journalisees, faute de quoi une 500 en production ne laisse aucune trace
+     * exploitable.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneric(Exception ex) {
+        LOGGER.error("Erreur non traitee : {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Une erreur est survenue", "detail", ex.getMessage()));
     }

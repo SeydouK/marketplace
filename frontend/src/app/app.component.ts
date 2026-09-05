@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from './core/services/auth.service';
 import { PanierService } from './features/panier/services/panier.service';
 import { Role } from './core/models/role.enum';
+import { PwaService } from './core/services/pwa.service';
 
 @Component({
   selector: 'app-root',
@@ -30,10 +31,12 @@ export class AppComponent implements OnInit {
     private router: Router,
     public auth: AuthService,
     private panierService: PanierService,
+    public pwa: PwaService,
   ) {}
 
   ngOnInit(): void {
     this.panierCount$ = this.panierService.count$;
+    this.pwa.initialiser();
 
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
@@ -51,6 +54,10 @@ export class AppComponent implements OnInit {
 
   get isAcheteur(): boolean {
     return this.auth.hasAnyRole([Role.USER, Role.ACHETEUR]);
+  }
+
+  get isVendeur(): boolean {
+    return this.auth.hasRole(Role.VENDEUR);
   }
 
   get isAnaderOrVet(): boolean {
