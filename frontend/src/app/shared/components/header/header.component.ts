@@ -184,6 +184,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
                         emailVerified: res.emailVerified,
                         kycStatus: res.kycStatus,
                         devenirVendeur: res.devenirVendeur,
+                        estTransporteur: res.estTransporteur,
                     });
                     this.switchingRole = false;
                     this.closeMenu();

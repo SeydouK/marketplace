@@ -45,16 +45,17 @@ public class SwitchRoleService {
             throw new ForbiddenException("Votre rôle ne permet pas de changer de mode.");
         }
 
-        // ACHETEUR → son rôle d'origine (VENDEUR uniquement pour l'instant)
+        // ACHETEUR → son rôle d'origine
         if (currentRole == Role.ACHETEUR) {
             if (!SWITCHABLE_ROLES.contains(targetRole)) {
                 throw new ForbiddenException("Vous ne pouvez pas passer au rôle : " + targetRole);
             }
-            // Vérifier que l'utilisateur a bien eu ce rôle (devenirVendeur = true)
             if (targetRole == Role.VENDEUR && !user.isDevenirVendeur()) {
                 throw new ForbiddenException("Votre demande vendeur n'a pas encore été approuvée.");
             }
-            // TRANSPORTEUR : pas de condition supplémentaire, le rôle est validé par KYC
+            if (targetRole == Role.TRANSPORTEUR && !user.isPermisValide()) {
+                throw new ForbiddenException("Votre permis de conduire n'a pas encore été validé.");
+            }
         }
 
         // VENDEUR → ACHETEUR (ou autre switchable → ACHETEUR)
@@ -75,7 +76,8 @@ public class SwitchRoleService {
             user.getName(),
             user.isEmailVerified(),
             user.getKycStatus(),
-            user.isDevenirVendeur()
+            user.isDevenirVendeur(),
+            user.isPermisValide()
         );
     }
 }

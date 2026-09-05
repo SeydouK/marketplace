@@ -66,7 +66,7 @@ public class AuthService {
         String telephone = request.getPhone() != null ? request.getPhone().trim() : null;
         if (roleDemande == Role.TRANSPORTEUR && (telephone == null || telephone.isBlank())) {
             throw new BadRequestException(
-                    "Un transporteur doit renseigner son numero : c'est par la que les vendeurs le joindront.");
+                "Un transporteur doit renseigner son numero : c'est par la que les vendeurs le joindront.");
         }
 
         String verificationToken = UUID.randomUUID().toString();
@@ -92,14 +92,15 @@ public class AuthService {
         String token = jwtTokenProvider.generateToken(user.getEmail());
 
         return new JwtResponse(
-                token,
-                user.getId(),
-                user.getEmail(),
-                user.getRole(),
-                user.getName(),
-                user.isEmailVerified(),
-                user.getKycStatus(),
-                user.isDevenirVendeur()
+            token,
+            user.getId(),
+            user.getEmail(),
+            user.getRole(),
+            user.getName(),
+            user.isEmailVerified(),
+            user.getKycStatus(),
+            user.isDevenirVendeur(),
+            user.isPermisValide()
         );
 
     }
@@ -117,7 +118,7 @@ public class AuthService {
      */
     public RenvoiVerificationResponse renvoyerVerification(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("Aucun compte n'est associe a cet email."));
+            .orElseThrow(() -> new BadRequestException("Aucun compte n'est associe a cet email."));
 
         if (user.isEmailVerified()) {
             throw new BadRequestException("Votre adresse est deja verifiee.");
@@ -148,11 +149,11 @@ public class AuthService {
 
     public JwtResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadRequestException("Aucun compte n'est associe a cet email."));
+            .orElseThrow(() -> new BadRequestException("Aucun compte n'est associe a cet email."));
 
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
         String token = jwtTokenProvider.generateToken(authentication.getName());
@@ -162,9 +163,10 @@ public class AuthService {
             user.getEmail(),
             user.getRole(),
             user.getName(),
-            user.isEmailVerified(), 
+            user.isEmailVerified(),
             user.getKycStatus(),
-            user.isDevenirVendeur()
+            user.isDevenirVendeur(),
+            user.isPermisValide()
         );
     }
 
@@ -172,17 +174,17 @@ public class AuthService {
         User user = userRepository
             .findByEmailVerificationToken(token)
             .orElseThrow(() -> new BadRequestException("Token invalide ou expiré."));
-    
+
         if (user.isEmailVerified()) {
             throw new BadRequestException("Email déjà vérifié.");
         }
-    
+
         // ← NOUVEAU : vérifier l'expiration
         if (user.getEmailTokenExpiresAt() == null
-                || LocalDateTime.now().isAfter(user.getEmailTokenExpiresAt())) {
+            || LocalDateTime.now().isAfter(user.getEmailTokenExpiresAt())) {
             throw new BadRequestException("Token expiré. Veuillez demander un nouvel email de vérification.");
         }
-    
+
         user.setEmailVerified(true);
         user.setEmailVerificationToken(null);
         user.setEmailTokenExpiresAt(null); // ← NOUVEAU
