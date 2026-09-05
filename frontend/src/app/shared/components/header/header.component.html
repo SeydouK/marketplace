@@ -62,7 +62,7 @@
 
             <!-- Droite -->
             <div class="flex items-center gap-3 flex-shrink-0 justify-end">
-                <button *ngIf="isAcheteur || !currentUser" type="button"
+                <button *ngIf="(isAcheteur && !currentUser?.devenirVendeur && !currentUser?.estTransporteur) || !currentUser" type="button"
                         (click)="handleSellerClick()"
                         class="text-sm font-semibold text-[#2D6A4F] hover:bg-[#F2F7F3] px-4 py-2.5 rounded-full transition-colors whitespace-nowrap cursor-pointer">
                     Devenir vendeur
