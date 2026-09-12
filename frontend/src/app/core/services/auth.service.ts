@@ -76,8 +76,12 @@ export class AuthService {
         password: string;
         /** Obligatoire pour un transporteur : c'est par la qu'on le joint. */
         phone?: string;
-        /** Le back n'accepte que ACHETEUR et TRANSPORTEUR. */
-        role?: 'ACHETEUR' | 'TRANSPORTEUR';
+        /**
+         * Trois valeurs possibles. VENDEUR ne donne pas le role directement :
+         * le back cree un compte ACHETEUR avec une demande vendeur en attente
+         * d'approbation admin (devenirVendeur = true dans la reponse).
+         */
+        role?: 'ACHETEUR' | 'VENDEUR' | 'TRANSPORTEUR';
     }) {
         return this.http
             .post<JwtResponse>(`${environment.apiUrl}/auth/register`, data,

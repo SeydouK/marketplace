@@ -31,10 +31,20 @@ export class RegisterComponent {
   );
 
   /**
-   * Un transporteur s'inscrit comme tel : son parcours differe des le depart
-   * (numero obligatoire, puis permis de conduire a deposer).
+   * Trois parcours possibles a l'inscription. Le vendeur n'obtient pas le
+   * role immediatement (cf. choisirRole) : sa demande part directement en
+   * attente admin, comme le parcours "Devenir vendeur" existant.
    */
-  estTransporteur = false;
+  roleChoisi: 'ACHETEUR' | 'VENDEUR' | 'TRANSPORTEUR' = 'ACHETEUR';
+
+  /** Le numero devient obligatoire uniquement pour le transporteur. */
+  get estTransporteur(): boolean {
+    return this.roleChoisi === 'TRANSPORTEUR';
+  }
+
+  get estVendeur(): boolean {
+    return this.roleChoisi === 'VENDEUR';
+  }
 
   /** Indicatifs proposes — la liste s'allonge sans toucher au code. */
   // ── Choix de l'indicatif ───────────────────────────────────────────────────
@@ -126,11 +136,11 @@ export class RegisterComponent {
     return !!this.form.hasError(errorName) && (this.form.dirty || this.form.touched || this.submitted);
   }
 
-  /** Bascule vendeur/transporteur : le numero devient exige. */
-  choisirRole(transporteur: boolean): void {
-    this.estTransporteur = transporteur;
+  /** Change le parcours choisi : seul le transporteur exige le numero. */
+  choisirRole(role: 'ACHETEUR' | 'VENDEUR' | 'TRANSPORTEUR'): void {
+    this.roleChoisi = role;
     const champ = this.form.get('telephone');
-    if (transporteur) {
+    if (role === 'TRANSPORTEUR') {
       champ?.addValidators([Validators.required, Validators.minLength(8)]);
     } else {
       champ?.clearValidators();
@@ -152,7 +162,7 @@ export class RegisterComponent {
     this.auth.register({
       surname: surname!, name: name!, email: email!, password: password!,
       phone: numero,
-      role: this.estTransporteur ? 'TRANSPORTEUR' : 'ACHETEUR',
+      role: this.roleChoisi,
     }).subscribe({
       next: (res: any) => {
         // Le token est déjà persisté par AuthService.register() (clé marketplace_token).

@@ -8,14 +8,11 @@ import com.marketplace.model.Role;
 import com.marketplace.model.User;
 import com.marketplace.repository.UserRepository;
 import com.marketplace.security.JwtTokenProvider;
-import com.marketplace.service.EmailService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 import java.time.LocalDateTime;
@@ -59,8 +56,10 @@ public class AuthService {
             throw new BadRequestException("Un compte avec cet email existe deja.");
         }
 
-        // Seuls ces deux roles peuvent etre demandes a l'inscription. Tout le
-        // reste (vendeur, veterinaire, admin) s'obtient par une validation.
+        // Seul TRANSPORTEUR donne directement son propre role. VENDEUR est un
+        // parcours particulier (cf. plus bas) : tout le reste (veterinaire,
+        // admin, agent ANADER) s'obtient uniquement par une validation.
+        boolean demandeVendeur = request.getRole() == Role.VENDEUR;
         Role roleDemande = request.getRole() == Role.TRANSPORTEUR ? Role.TRANSPORTEUR : Role.ACHETEUR;
 
         String telephone = request.getPhone() != null ? request.getPhone().trim() : null;
@@ -82,6 +81,9 @@ public class AuthService {
             .badgeVerifie(false)
             .phone(telephone)
             .role(roleDemande)
+            // Qui a choisi "Vendeur" a l'inscription atterrit directement dans la
+            // file d'attente admin, sans repasser par requestSellerAccess().
+            .devenirVendeur(demandeVendeur)
             .build();
 
         user.setVerificationEmailSentAt(LocalDateTime.now());

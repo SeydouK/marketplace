@@ -19,13 +19,13 @@
     <h2>Inscription</h2>
     <form [formGroup]="form" (ngSubmit)="submit()" class="form">
 
-      <!-- Choix du parcours : un transporteur a d'autres obligations -->
+      <!-- Choix du parcours : chaque role a ses propres obligations -->
       <div class="field">
         <label>Je m'inscris comme</label>
         <div style="display:flex; gap:10px; margin-top:6px">
-          <button type="button" (click)="choisirRole(false)"
-            [style.border]="!estTransporteur ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
-            [style.background]="!estTransporteur ? '#E0EEE4' : '#fff'"
+          <button type="button" (click)="choisirRole('ACHETEUR')"
+            [style.border]="roleChoisi === 'ACHETEUR' ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
+            [style.background]="roleChoisi === 'ACHETEUR' ? '#E0EEE4' : '#fff'"
             style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
             <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
               Acheteur
@@ -33,10 +33,27 @@
             <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
               J'achète des animaux
             </span>
+            <span style="display:block; font-size:11px; color:#8B6F55; margin-top:6px">
+              Vérification d'identité (KYC) obligatoire
+            </span>
           </button>
-          <button type="button" (click)="choisirRole(true)"
-            [style.border]="estTransporteur ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
-            [style.background]="estTransporteur ? '#E0EEE4' : '#fff'"
+          <button type="button" (click)="choisirRole('VENDEUR')"
+            [style.border]="roleChoisi === 'VENDEUR' ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
+            [style.background]="roleChoisi === 'VENDEUR' ? '#E0EEE4' : '#fff'"
+            style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
+            <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
+              Vendeur
+            </span>
+            <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
+              Je vends des animaux
+            </span>
+            <span style="display:block; font-size:11px; color:#8B6F55; margin-top:6px">
+              Vérification d'identité (KYC) obligatoire
+            </span>
+          </button>
+          <button type="button" (click)="choisirRole('TRANSPORTEUR')"
+            [style.border]="roleChoisi === 'TRANSPORTEUR' ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
+            [style.background]="roleChoisi === 'TRANSPORTEUR' ? '#E0EEE4' : '#fff'"
             style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
             <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
               Transporteur
@@ -44,8 +61,15 @@
             <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
               Je convoie des animaux
             </span>
+            <span style="display:block; font-size:11px; color:#8B6F55; margin-top:6px">
+              Vérification d'identité (KYC) obligatoire
+            </span>
           </button>
         </div>
+        <p *ngIf="estVendeur" style="font-size:12px; color:#8B6F55; margin-top:8px">
+          Après votre inscription, votre demande vendeur sera transmise à un
+          administrateur. Vous restez acheteur en attendant sa validation.
+        </p>
         <p *ngIf="estTransporteur" style="font-size:12px; color:#8B6F55; margin-top:8px">
           Après votre inscription, vous devrez vérifier votre identité et déposer
           votre permis de conduire avant de recevoir des courses.
