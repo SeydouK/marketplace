@@ -32,7 +32,10 @@ import { environment } from '../environments/environment';
   ],
   providers: [
     provideAnimationsAsync(),
-    providePrimeNG({ theme: { preset: Lara } }),
+    // darkModeSelector: false -> l'app n'a pas de theme sombre. Par defaut PrimeNG suit le
+    // mode sombre du systeme et injecte `color-scheme: dark` : les champs de formulaire
+    // deviennent noirs alors que le texte saisi reste fonce (illisible).
+    providePrimeNG({ theme: { preset: Lara, options: { darkModeSelector: false } } }),
     MessageService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

@@ -50,8 +50,12 @@ public class SwitchRoleService {
             if (!SWITCHABLE_ROLES.contains(targetRole)) {
                 throw new ForbiddenException("Vous ne pouvez pas passer au rôle : " + targetRole);
             }
-            if (targetRole == Role.VENDEUR && !user.isDevenirVendeur()) {
-                throw new ForbiddenException("Votre demande vendeur n'a pas encore été approuvée.");
+            // Le statut vendeur ne se récupère pas par simple bascule : quand un vendeur
+            // repasse acheteur, il doit refaire une demande validée par l'admin.
+            // (devenirVendeur = demande EN ATTENTE, pas une approbation.)
+            if (targetRole == Role.VENDEUR) {
+                throw new ForbiddenException(
+                    "Pour redevenir vendeur, vous devez soumettre une nouvelle demande à l'administration.");
             }
             if (targetRole == Role.TRANSPORTEUR && !user.isPermisValide()) {
                 throw new ForbiddenException("Votre permis de conduire n'a pas encore été validé.");
@@ -61,6 +65,11 @@ public class SwitchRoleService {
         // VENDEUR → ACHETEUR (ou autre switchable → ACHETEUR)
         if (SWITCHABLE_ROLES.contains(currentRole) && targetRole != Role.ACHETEUR) {
             throw new ForbiddenException("Depuis votre rôle actuel, vous ne pouvez switcher que vers ACHETEUR.");
+        }
+
+        // Un vendeur qui repasse acheteur perd son statut : pas de demande résiduelle.
+        if (currentRole == Role.VENDEUR && targetRole == Role.ACHETEUR) {
+            user.setDevenirVendeur(false);
         }
 
         user.setRole(targetRole);

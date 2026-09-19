@@ -569,8 +569,45 @@
             </a>
         </ng-template>
 
+
+        <!-- Menu : reprend toutes les options du menu déroulant desktop -->
+        <button type="button" (click)="toggleMobileMenu()"
+                class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-colors"
+                [ngClass]="mobileMenuOpen ? 'text-[#2D6A4F]' : 'text-gray-500'"
+                [attr.aria-expanded]="mobileMenuOpen" aria-label="Ouvrir le menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <span class="text-[10px] font-medium">Menu</span>
+        </button>
+
     </div>
 </nav>
+
+<!-- ════ MOBILE : Menu complet (bottom sheet) ════ -->
+<div *ngIf="mobileMenuOpen && currentUser" class="fixed inset-0 z-[150] md:hidden">
+    <div class="absolute inset-0 bg-black/40" (click)="closeMenu()"></div>
+    <div class="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto overscroll-contain bg-white rounded-t-3xl shadow-2xl pb-[env(safe-area-inset-bottom)] animate-slideUp">
+        <div class="sticky top-0 z-10 flex items-center justify-between bg-white px-5 pt-4 pb-2 border-b border-[#F0EAD9]">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-full bg-[#2D6A4F] text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                    {{ currentUserInitial }}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ currentUser?.name }}</p>
+                    <p class="text-xs text-gray-500">{{ roleLabel }}</p>
+                </div>
+            </div>
+            <button type="button" (click)="closeMenu()" aria-label="Fermer le menu"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-[#F6F1E7] flex-shrink-0">
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+    </div>
+</div>
 
 <!-- Espaceur pour éviter que le contenu soit caché par la bottom nav -->
 <div *ngIf="currentUser" class="h-16 md:hidden"></div>
@@ -613,14 +650,6 @@
                     <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                     Mon espace acheteur
                 </a>
-                <!-- Switch retour VENDEUR si ex-vendeur -->
-                <button *ngIf="currentUser?.devenirVendeur" type="button"
-                        (click)="switchRole('VENDEUR')"
-                        [disabled]="switchingRole"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-[#C2DCCB] bg-[#F2F7F3] hover:bg-[#E0EDE6] text-sm font-semibold text-[#2D6A4F] transition-colors disabled:opacity-50 mb-1">
-                    <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                    <span>{{ switchingRole ? 'Changement...' : 'Repasser en mode vendeur' }}</span>
-                </button>
                 <!-- Switch retour TRANSPORTEUR si ex-transporteur -->
                 <button *ngIf="currentUser?.estTransporteur" type="button"
                         (click)="switchRole('TRANSPORTEUR')"
@@ -692,6 +721,9 @@
                     <svg class="w-5 h-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                     <span>{{ switchingRole ? 'Changement...' : 'Passer en mode acheteur' }}</span>
                 </button>
+                <p class="px-4 pt-1.5 pb-1 text-[11px] leading-snug text-gray-500">
+                    Vous devrez refaire une demande à l'administration pour redevenir vendeur.
+                </p>
             </ng-container>
 
             <!-- VÉTÉRINAIRE -->
