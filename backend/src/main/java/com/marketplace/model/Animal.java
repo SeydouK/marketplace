@@ -51,6 +51,10 @@ public class Animal {
     @Column(name = "nombre", nullable = false)
     private Integer quantity = 1;
 
+    /** Poids de l'animal en kilogrammes. */
+    @Column(name = "animal_poids", precision = 8, scale = 2)
+    private BigDecimal animalPoids;
+
     private Double longitude;
     private Double latitude;
 

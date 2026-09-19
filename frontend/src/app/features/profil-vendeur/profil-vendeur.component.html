@@ -1,0 +1,151 @@
+<!-- Loader -->
+<div *ngIf="loading" class="flex justify-center items-center min-h-[60vh]">
+  <p-progressSpinner strokeWidth="4" styleClass="w-10 h-10"></p-progressSpinner>
+</div>
+
+<!-- Erreur -->
+<div *ngIf="error && !loading" class="max-w-lg mx-auto px-4 py-20 text-center">
+  <i class="pi pi-exclamation-circle text-4xl text-gray-300 mb-3"></i>
+  <p class="text-gray-500">Impossible de charger ce profil.</p>
+</div>
+
+<!-- Contenu -->
+<main *ngIf="profil && !loading" class="max-w-2xl mx-auto px-4 py-8">
+
+  <!-- Carte identité vendeur -->
+  <div class="bg-white rounded-2xl border border-[#E7E0D2] shadow-sm p-6 mb-6">
+    <div class="flex items-center gap-4">
+
+      <!-- Avatar -->
+      <div class="flex-shrink-0">
+        <img
+          *ngIf="profil.avatarUrl"
+          [src]="profil.avatarUrl | assetUrl"
+          [alt]="profil.name"
+          class="w-20 h-20 rounded-2xl object-cover border border-[#E7E0D2]"
+        />
+        <div
+          *ngIf="!profil.avatarUrl"
+          class="w-20 h-20 rounded-2xl bg-[#2D6A4F] flex items-center justify-center text-white text-2xl font-bold"
+        >
+          {{ profil.name.charAt(0).toUpperCase() }}
+        </div>
+      </div>
+
+      <!-- Infos -->
+      <div class="flex-1 min-w-0">
+        <h1 class="text-xl font-extrabold text-gray-900 truncate">{{ profil.name }}</h1>
+
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+          <span *ngIf="profil.region" class="flex items-center gap-1 text-sm text-gray-500">
+            <i class="pi pi-map-marker text-[#2D6A4F] text-xs"></i>
+            {{ profil.region }}
+          </span>
+          <span class="flex items-center gap-1 text-sm text-gray-500">
+            <i class="pi pi-calendar text-[#2D6A4F] text-xs"></i>
+            Membre depuis {{ membreDepuis }}
+          </span>
+        </div>
+
+        <!-- Badge annonces -->
+        <div class="mt-2">
+          <span class="inline-flex items-center gap-1.5 bg-[#F2F7F3] text-[#2D6A4F] text-xs font-semibold px-2.5 py-1 rounded-full">
+            <i class="pi pi-tag text-[10px]"></i>
+            {{ profil.nombreAnnonces }} annonce{{ profil.nombreAnnonces > 1 ? 's' : '' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <p *ngIf="profil.bio" class="mt-4 text-sm text-gray-600 leading-relaxed border-t border-[#F0EAD9] pt-4">
+      {{ profil.bio }}
+    </p>
+
+    <!-- Avertissement contact -->
+    <div class="mt-4 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+      <i class="pi pi-shield text-amber-600 mt-0.5 flex-shrink-0"></i>
+      <p class="text-xs text-amber-700 leading-relaxed">
+        Pour votre sécurité, effectuez toutes vos transactions via BétailMarket.
+        Les coordonnées personnelles des vendeurs ne sont pas affichées.
+      </p>
+    </div>
+  </div>
+
+  <!-- Onglet Annonces -->
+  <div class="mb-4 flex items-center justify-between">
+    <h2 class="text-base font-bold text-gray-900">
+      Annonces
+      <span class="ml-1.5 text-sm font-normal text-gray-400">({{ annonces.length }})</span>
+    </h2>
+
+    <!-- Filtre ordre -->
+    <button
+      type="button"
+      (click)="toggleSort()"
+      class="flex items-center gap-1.5 text-sm font-semibold text-[#2D6A4F] hover:bg-[#F2F7F3] px-3 py-1.5 rounded-xl transition-colors"
+    >
+      <i class="pi pi-sort-alt text-xs"></i>
+      {{ sortOrder === 'recent' ? 'Plus récentes' : 'Plus anciennes' }}
+    </button>
+  </div>
+
+  <!-- Liste annonces -->
+  <div class="flex flex-col gap-3" *ngIf="annoncesTriees.length > 0">
+    <a
+      *ngFor="let annonce of annoncesTriees"
+      [routerLink]="['/annonces', annonce.id]"
+      class="flex gap-4 bg-white rounded-2xl border border-[#E7E0D2] p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+    >
+      <!-- Image -->
+      <div class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#F6F1E7]">
+        <img
+          *ngIf="annonce.image"
+          [src]="annonce.image"
+          [alt]="annonce.title"
+          class="w-full h-full object-cover"
+        />
+        <div *ngIf="!annonce.image"
+          class="w-full h-full flex items-center justify-center">
+          <i class="pi pi-image text-2xl text-gray-300"></i>
+        </div>
+      </div>
+
+      <!-- Infos -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <h3 class="text-sm font-bold text-gray-900 truncate">{{ annonce.title }}</h3>
+          <span
+            class="flex-shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full"
+            [ngClass]="annonce.status === 'DISPONIBLE'
+              ? 'bg-[#F2F7F3] text-[#2D6A4F]'
+              : 'bg-gray-100 text-gray-400'"
+          >
+            {{ annonce.status === 'DISPONIBLE' ? 'Disponible' : 'Indisponible' }}
+          </span>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-0.5">
+          {{ annonce.animalType | titlecase }}
+          <span *ngIf="annonce.location"> · {{ annonce.location }}</span>
+        </p>
+
+        <div class="flex items-center justify-between mt-2">
+          <span class="text-base font-extrabold text-[#2D6A4F]">
+            {{ annonce.price | number:'1.0-0' }} FCFA
+          </span>
+          <span class="text-[11px] text-gray-400">
+            {{ annonce.createdAt | date:'d MMM yyyy' }}
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Aucune annonce -->
+  <div *ngIf="annoncesTriees.length === 0" class="text-center py-12 text-gray-400">
+    <i class="pi pi-inbox text-3xl mb-2"></i>
+    <p class="text-sm">Aucune annonce pour le moment.</p>
+  </div>
+
+</main>

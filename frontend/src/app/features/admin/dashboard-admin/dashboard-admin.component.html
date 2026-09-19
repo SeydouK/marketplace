@@ -1,123 +1,236 @@
 <!-- admin/dashboard-admin/dashboard-admin.component.html -->
-<section class="dashboard-shell max-w-7xl mx-auto py-8 px-4">
-  <div class="dashboard-hero">
-    <div>
-      <p class="dashboard-eyebrow">Administration</p>
-      <h1>Tableau de bord global</h1>
-      <p class="dashboard-copy">
-        Pilotage de la plateforme : utilisateurs, annonces, transactions et litiges.
-      </p>
-    </div>
-  </div>
+<section class="max-w-7xl mx-auto py-8 px-4 space-y-8">
 
-  <!-- KPIs -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
-    <article class="dashboard-card">
-      <span class="dashboard-label">Utilisateurs</span>
-      <strong class="dashboard-value">{{ stats?.totalUsers ?? '—' }}</strong>
-    </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">KYC en attente</span>
-      <strong class="dashboard-value">{{ stats?.pendingKyc ?? '—' }}</strong>
-    </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">Annonces actives</span>
-      <strong class="dashboard-value">{{ stats?.activeListings ?? '—' }}</strong>
-    </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">Litiges ouverts</span>
-      <strong class="dashboard-value">{{ stats?.openDisputes ?? '—' }}</strong>
-    </article>
-  </div>
-
-  <!-- Navigation rapide -->
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold text-[#611a24] mb-4">Gestion</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <a routerLink="/admin/utilisateurs" class="dashboard-action dashboard-action--solid">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
-        </svg>
-        <span class="font-medium">Utilisateurs &amp; KYC</span>
-      </a>
-
-      <a routerLink="/admin/annonces" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
-        </svg>
-        <span class="font-medium">Modération annonces</span>
-      </a>
-
-      <a routerLink="/admin/litiges" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-        <span class="font-medium">Litiges &amp; arbitrage escrow</span>
-      </a>
-
-      <a routerLink="/admin/utilisateurs" [queryParams]="{ filter: 'pending-kyc' }" class="dashboard-action">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-        </svg>
-        <span class="font-medium">Valider KYC en attente</span>
-      </a>
-
-    </div>
-  </div>
-
-  <div class="mt-8">
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+  <!-- ═══ HERO ═══ -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/20">
+    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h2 class="text-xl font-semibold text-[#611a24]">Demandes vendeur</h2>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-2">Administration</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Tableau de bord global</h1>
+        <p class="mt-2 text-sm text-white/75 max-w-xl leading-relaxed">
+          Pilotage de la plateforme : utilisateurs, annonces, transactions et litiges.
+        </p>
+      </div>
+      <span class="hidden sm:flex w-16 h-16 rounded-2xl bg-white/10 border border-white/15 items-center justify-center flex-shrink-0">
+        <i class="pi pi-shield text-2xl text-[#ECB867]"></i>
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ KPI ═══ -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Utilisateurs</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.totalUsers ?? '—' }}</p>
+          <p class="mt-2 text-xs text-gray-400">Comptes inscrits</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-users text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">KYC en attente</p>
+          <p class="mt-2 text-3xl font-extrabold leading-none"
+            [ngClass]="(stats?.pendingKyc ?? 0) > 0 ? 'text-[#B96416]' : 'text-[#1B4332]'">
+            {{ stats?.pendingKyc ?? '—' }}
+          </p>
+          <p class="mt-2 text-xs text-gray-400">Identités à vérifier</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-id-card text-lg text-[#B96416]"></i>
+        </span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Annonces actives</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.activeListings ?? '—' }}</p>
+          <p class="mt-2 text-xs text-gray-400">Publiées sur la marketplace</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-megaphone text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Litiges ouverts</p>
+          <p class="mt-2 text-3xl font-extrabold leading-none"
+            [ngClass]="(stats?.openDisputes ?? 0) > 0 ? 'text-red-600' : 'text-[#1B4332]'">
+            {{ stats?.openDisputes ?? '—' }}
+          </p>
+          <p class="mt-2 text-xs text-gray-400">À arbitrer</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-exclamation-triangle text-lg text-red-500"></i>
+        </span>
+      </div>
+    </article>
+  </div>
+
+  <!-- ═══ GESTION ═══ -->
+  <div>
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Gestion</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+      <a routerLink="/admin/utilisateurs"
+        class="group flex items-center gap-4 rounded-2xl bg-[#2D6A4F] hover:bg-[#245540] text-white p-5 shadow-cta transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-users text-lg"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm">Utilisateurs &amp; KYC</p>
+          <p class="text-xs text-white/70 mt-0.5">Rôles, vérifications et comptes</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm opacity-60 group-hover:translate-x-1 transition-transform"></i>
+      </a>
+
+      <a routerLink="/admin/annonces"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-megaphone text-lg text-[#7A5C43]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Modération annonces</p>
+          <p class="text-xs text-gray-400 mt-0.5">Approuver ou suspendre les publications</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+      </a>
+
+      <a routerLink="/admin/litiges"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-exclamation-triangle text-lg text-red-500"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Litiges &amp; arbitrage escrow</p>
+          <p class="text-xs text-gray-400 mt-0.5">Libérer les fonds ou rembourser</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+      </a>
+
+      <a routerLink="/admin/transactions"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-wallet text-lg text-[#7A5C43]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Transactions &amp; paiements</p>
+          <p class="text-xs text-gray-400 mt-0.5">Commandes GeniusPay, commission et frais</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+      </a>
+
+      <a routerLink="/admin/versements"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#F2F7F3] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-send text-lg text-[#2D6A4F]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Versements vendeurs</p>
+          <p class="text-xs text-gray-400 mt-0.5">Envoyer les paiements dus via GeniusPay</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+      </a>
+
+      <a routerLink="/admin/utilisateurs" [queryParams]="{ filter: 'pending-kyc' }"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-id-card text-lg text-[#B96416]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Valider KYC en attente</p>
+          <p class="text-xs text-gray-400 mt-0.5">{{ stats?.pendingKyc ?? 0 }} dossier(s) à traiter</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+      </a>
+
+      <a routerLink="/admin/actualites"
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-file-edit text-lg text-[#7A5C43]"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-gray-900">Actualités</p>
+          <p class="text-xs text-gray-400 mt-0.5">Rédiger et publier les articles de la rubrique</p>
+        </div>
+        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ DEMANDES VENDEUR ═══ -->
+  <div>
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">Demandes vendeur</h2>
         <p class="text-sm text-gray-500">Validez les acheteurs qui demandent l'accès vendeur.</p>
       </div>
       <button
         type="button"
-        class="rounded-xl border border-[#E7E0D2] bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-[#FBF9F4]"
+        class="self-start sm:self-auto inline-flex items-center gap-2 rounded-xl border border-[#E7E0D2] bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#2D6A4F] hover:text-[#2D6A4F] transition-colors"
         (click)="loadSellerRequests()"
       >
+        <i class="pi pi-refresh text-xs"></i>
         Actualiser
       </button>
     </div>
 
-    <div *ngIf="!sellerRequests.length" class="mt-4 rounded-2xl border border-[#F0EAD9] bg-white p-6 text-sm text-gray-500 shadow-sm">
-      Aucune demande vendeur en attente.
+    <div *ngIf="!sellerRequests.length" class="rounded-2xl border border-dashed border-[#DFD2B8] bg-white p-10 text-center">
+      <span class="inline-flex w-12 h-12 rounded-full bg-[#F6F1E7] items-center justify-center mb-3">
+        <i class="pi pi-inbox text-lg text-[#8B6F55]"></i>
+      </span>
+      <p class="text-sm font-semibold text-gray-700">Aucune demande vendeur en attente</p>
+      <p class="text-xs text-gray-400 mt-1">Les nouvelles demandes apparaîtront ici.</p>
     </div>
 
-    <div *ngIf="sellerRequests.length" class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <article *ngFor="let request of sellerRequests" class="rounded-2xl border border-[#F0EAD9] bg-white p-5 shadow-sm">
+    <div *ngIf="sellerRequests.length" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <article *ngFor="let request of sellerRequests" class="rounded-2xl border border-[#E7E0D2] bg-white p-5 shadow-card">
         <div class="flex items-start justify-between gap-4">
-          <div>
-            <h3 class="font-semibold text-gray-900">{{ request.name }} {{ request.surname }}</h3>
-            <p class="mt-1 text-sm text-gray-500">{{ request.email }}</p>
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-10 h-10 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] text-white font-bold flex items-center justify-center flex-shrink-0">
+              {{ (request.name || 'U').charAt(0) | uppercase }}
+            </span>
+            <div class="min-w-0">
+              <h3 class="font-bold text-gray-900 truncate">{{ request.name }} {{ request.surname }}</h3>
+              <p class="text-sm text-gray-500 truncate">{{ request.email }}</p>
+            </div>
           </div>
-          <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+          <span class="rounded-full bg-[#FDF6EC] border border-[#F4D4A3] px-3 py-1 text-xs font-bold text-[#7A4A10] whitespace-nowrap">
             En attente
           </span>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <p class="text-gray-400">Rôle actuel</p>
-            <p class="font-semibold text-gray-900">{{ request.role }}</p>
+          <div class="rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-3 py-2">
+            <p class="text-xs text-gray-400">Rôle actuel</p>
+            <p class="font-bold text-gray-900">{{ request.role }}</p>
           </div>
-          <div>
-            <p class="text-gray-400">KYC</p>
-            <p class="font-semibold text-gray-900">{{ request.kycStatus || 'N/A' }}</p>
+          <div class="rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-3 py-2">
+            <p class="text-xs text-gray-400">KYC</p>
+            <p class="font-bold text-gray-900">{{ request.kycStatus || 'N/A' }}</p>
           </div>
         </div>
 
         <button
           type="button"
-          class="mt-5 w-full rounded-xl bg-[#611a24] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#7a2030] disabled:opacity-60"
+          class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#2D6A4F] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#245540] disabled:opacity-60 transition-colors"
           [disabled]="approvingSellerRequestId === request.id"
           (click)="approveSellerRequest(request)"
         >
+          <i class="pi" [ngClass]="approvingSellerRequestId === request.id ? 'pi-spin pi-spinner' : 'pi-check'"></i>
           {{ approvingSellerRequestId === request.id ? 'Validation...' : 'Approuver vendeur' }}
         </button>
       </article>

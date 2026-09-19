@@ -1,0 +1,156 @@
+<!-- transporteur/dossier/dossier.component.html -->
+<section class="max-w-2xl mx-auto py-8 px-4 space-y-6">
+
+  <div>
+    <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">Mon dossier transporteur</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      Complétez ces étapes pour recevoir des courses des vendeurs.
+    </p>
+  </div>
+
+  <div *ngIf="chargement" class="py-16 text-center text-gray-400">
+    <i class="pi pi-spin pi-spinner text-2xl"></i>
+    <p class="mt-3 text-sm">Chargement…</p>
+  </div>
+
+  <div *ngIf="erreur && !chargement"
+    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    Impossible de charger votre dossier. Cet espace est réservé aux transporteurs.
+  </div>
+
+  <ng-container *ngIf="dossier && !chargement">
+
+    <!-- ═══ HABILITÉ ═══ -->
+    <div *ngIf="dossier.habilite"
+      class="flex items-start gap-3 p-5 bg-[#E0EEE4] border border-[#2D6A4F] rounded-2xl">
+      <i class="pi pi-verified text-2xl text-[#2D6A4F] flex-shrink-0"></i>
+      <div>
+        <p class="text-sm font-bold text-[#1B4332]">Vous êtes habilité</p>
+        <p class="text-sm text-[#2D6A4F] mt-1">
+          Les vendeurs peuvent vous proposer des courses. Elles apparaîtront dans
+          <a routerLink="/transporteur/mes-courses" class="underline font-semibold">Mes courses</a>.
+        </p>
+      </div>
+    </div>
+
+    <!-- ═══ CE QUI MANQUE ═══ -->
+    <div *ngIf="!dossier.habilite && dossier.prochaineEtape"
+      class="flex items-start gap-3 p-5 bg-[#FDF6EC] border border-[#F4D4A3] rounded-2xl">
+      <i class="pi pi-info-circle text-2xl text-[#B96416] flex-shrink-0"></i>
+      <div>
+        <p class="text-sm font-bold text-amber-800">Prochaine étape</p>
+        <p class="text-sm text-[#8B6F55] mt-1">{{ dossier.prochaineEtape }}</p>
+      </div>
+    </div>
+
+    <!-- ═══ PROGRESSION ═══ -->
+    <div class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+      <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55] mb-4">Avancement</p>
+      <ol class="space-y-3">
+        <li *ngFor="let e of etapes" class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs"
+            [ngClass]="e.fait ? 'bg-[#2D6A4F] text-white'
+                              : (e.encours ? 'bg-[#FDF6EC] text-[#B96416] border border-[#F4D4A3]'
+                                           : 'bg-[#F6F1E7] text-gray-400')">
+            <i class="pi" [ngClass]="e.fait ? 'pi-check' : 'pi-circle'" style="font-size:10px"></i>
+          </span>
+          <span class="text-sm"
+            [ngClass]="e.fait ? 'text-gray-900 font-semibold'
+                              : (e.encours ? 'text-[#B96416] font-semibold' : 'text-gray-400')">
+            {{ e.label }}
+          </span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- ═══ IDENTITÉ ═══ -->
+    <div *ngIf="dossier.kycStatus !== 'VALIDATED'"
+      class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+      <p class="text-sm font-bold text-gray-900">Vérification d'identité</p>
+      <p class="mt-1 text-sm text-gray-600">
+        Pièce d'identité puis selfie. C'est la même vérification que pour les vendeurs.
+      </p>
+      <a routerLink="/kyc"
+        class="mt-4 inline-block px-5 py-2.5 bg-[#2D6A4F] text-white text-sm font-semibold rounded-xl hover:bg-[#245540] transition-colors">
+        Vérifier mon identité
+      </a>
+    </div>
+
+    <!-- ═══ PERMIS ═══ -->
+    <div class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="text-sm font-bold text-gray-900">Permis de conduire</p>
+          <p class="mt-1 text-sm text-gray-600">
+            Un membre de notre équipe l'examine — la validation n'est pas automatique.
+          </p>
+        </div>
+        <span *ngIf="dossier.permisValide"
+          class="shrink-0 text-xs px-3 py-1 rounded-full font-bold bg-[#E0EEE4] text-[#2D6A4F]">
+          Validé
+        </span>
+        <span *ngIf="permisEnExamen"
+          class="shrink-0 text-xs px-3 py-1 rounded-full font-bold bg-[#FDF6EC] text-[#B96416]">
+          En examen
+        </span>
+      </div>
+
+      <p *ngIf="permisEnExamen" class="mt-3 text-xs text-[#8B6F55]">
+        Votre permis a bien été reçu. Vous serez habilité dès qu'il sera validé.
+      </p>
+
+      <div *ngIf="!dossier.permisValide" class="mt-4">
+        <input type="file" accept="image/*,application/pdf" capture="environment"
+          (change)="choisirPermis($event)"
+          class="block w-full text-xs text-gray-600 file:mr-3 file:px-4 file:py-2 file:rounded-lg
+                 file:border-0 file:bg-[#2D6A4F] file:text-white file:text-xs file:font-semibold
+                 hover:file:bg-[#245540] file:cursor-pointer" />
+
+        <img *ngIf="permisApercu" [src]="permisApercu" alt="Aperçu du permis"
+          class="mt-3 w-40 h-28 object-cover rounded-xl border border-[#E7E0D2]" />
+
+        <button type="button" [disabled]="!permisFichier || envoiPermis" (click)="envoyerPermis()"
+          class="mt-4 px-5 py-2.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-40">
+          {{ envoiPermis ? 'Envoi…' : (dossier.permisUrl ? 'Remplacer mon permis' : 'Déposer mon permis') }}
+        </button>
+
+        <p *ngIf="dossier.permisUrl" class="mt-2 text-xs text-[#8B6F55]">
+          Déposer un nouveau document annule l'examen en cours.
+        </p>
+      </div>
+    </div>
+
+    <!-- ═══ VÉHICULE ═══ -->
+    <div class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+      <p class="text-sm font-bold text-gray-900">Mon véhicule</p>
+      <p class="mt-1 text-sm text-gray-600">
+        C'est ce que le vendeur regarde pour savoir si vous pouvez transporter ses bêtes.
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4">
+        <button *ngFor="let v of vehicules" type="button" (click)="vehicule = v"
+          class="px-3 py-3 rounded-xl border-2 text-sm font-semibold transition-all"
+          [ngClass]="vehicule === v
+            ? 'border-[#2D6A4F] bg-[#E0EEE4] text-[#1B4332]'
+            : 'border-[#E7E0D2] bg-white text-gray-600 hover:border-[#C9BCA3]'">
+          {{ libelles[v] }}
+        </button>
+      </div>
+
+      <label for="capacite" class="block text-xs font-bold text-gray-700 mt-4 mb-1.5">
+        Capacité (nombre de têtes)
+      </label>
+      <input id="capacite" type="number" min="1" [(ngModel)]="capacite" name="capacite"
+        placeholder="Ex. : 8"
+        class="w-40 px-4 py-3 text-sm border border-[#E7E0D2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+
+      <div class="mt-4">
+        <button type="button" [disabled]="!vehicule || envoiVehicule" (click)="enregistrerVehicule()"
+          class="px-5 py-2.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-40">
+          {{ envoiVehicule ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+</section>

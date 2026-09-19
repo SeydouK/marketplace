@@ -3,10 +3,13 @@ package com.marketplace.service;
 import com.marketplace.dto.PanierDTO;
 import com.marketplace.exception.ResourceNotFoundException;
 import com.marketplace.model.Animal;
+import com.marketplace.model.AnimalSeller;
 import com.marketplace.model.AnimalStatus;
 import com.marketplace.model.Panier;
 import com.marketplace.model.PanierItem;
+import com.marketplace.model.User;
 import com.marketplace.repository.AnimalRepository;
+import com.marketplace.repository.AnimalSellerRepository;
 import com.marketplace.repository.PanierItemRepository;
 import com.marketplace.repository.PanierRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class PanierService {
     private final PanierRepository panierRepository;
     private final PanierItemRepository panierItemRepository;
     private final AnimalRepository animalRepository;
+    private final AnimalSellerRepository animalSellerRepository;
 
     public Panier getOuCreerPanier(Long userId) {
         return panierRepository.findByUserId(userId)
@@ -114,10 +118,16 @@ public class PanierService {
         item.setPrixUnitaire(animal.getPrice());
         item.setQuantite(quantite);
 
-        if (animal.getOwner() != null) {
-            item.setVendeurId(animal.getOwner().getId());
-            item.setVendeurNom((animal.getOwner().getSurname() + " " + animal.getOwner().getName()).trim());
-        }
+        // Le vendeur vient de animal_vendeur (AnimalSeller), source canonique dans toute l'application.
+        // Animal.owner est un champ hérité qui n'est plus peuplé : le lire ici laissait vendeurId à null,
+        // ce qui ne se voyait qu'au paiement, dans VersementService.genererVersements.
+        User vendeur = animalSellerRepository.findByAnimalId(animal.getId())
+                .map(AnimalSeller::getSeller)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Aucun vendeur associé à l'animal " + animal.getId() + " : ajout au panier impossible."));
+
+        item.setVendeurId(vendeur.getId());
+        item.setVendeurNom((vendeur.getSurname() + " " + vendeur.getName()).trim());
 
         if (animal.getPhotos() != null && animal.getPhotos().length > 0)
             item.setPhotoUrl(animal.getPhotos()[0]);

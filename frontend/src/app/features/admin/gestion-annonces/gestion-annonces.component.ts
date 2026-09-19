@@ -21,6 +21,7 @@ export class GestionAnnoncesComponent implements OnInit {
     { label: 'Disponibles',         value: 'DISPONIBLE' },
     { label: 'Indisponibles',       value: 'INDISPONIBLE' },
     { label: 'Attente vétérinaire', value: 'EN_ATTENTE' },
+    { label: 'Réservées',           value: 'RESERVE' },
     { label: 'Vendues',             value: 'VENDU' },
   ];
 
@@ -94,6 +95,7 @@ export class GestionAnnoncesComponent implements OnInit {
       DISPONIBLE:  'bg-green-100 text-green-800',
       INDISPONIBLE: 'bg-amber-100 text-amber-800',
       EN_ATTENTE:   'bg-blue-100 text-blue-800',
+      RESERVE:      'bg-[#FDF6EC] text-[#B96416]',
       VENDU:        'bg-[#F6F1E7] text-gray-600',
     };
     return status ? (map[status] ?? 'bg-[#F6F1E7] text-gray-600') : 'bg-[#F6F1E7] text-gray-600';
@@ -105,6 +107,7 @@ export class GestionAnnoncesComponent implements OnInit {
       DISPONIBLE:   'Disponible',
       INDISPONIBLE: 'Indisponible',
       EN_ATTENTE:   'Attente vétérinaire',
+      RESERVE:      'Réservé (paiement en cours)',
       VENDU:        'Vendu',
     };
     return status ? (map[status] ?? status) : '';

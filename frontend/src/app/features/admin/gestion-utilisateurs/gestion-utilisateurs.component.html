@@ -12,9 +12,9 @@
         *ngFor="let f of filters"
         type="button"
         (click)="setFilter(f.value)"
-        [class.bg-[#611a24]]="activeFilter === f.value"
+        [class.bg-[#2D6A4F]]="activeFilter === f.value"
         [class.text-white]="activeFilter === f.value"
-        class="px-4 py-2 rounded-lg text-sm border border-[#611a24]/30 hover:bg-[#611a24]/10 transition">
+        class="px-4 py-2 rounded-lg text-sm border border-[#2D6A4F]/30 hover:bg-[#2D6A4F]/10 transition">
         {{ f.label }}
       </button>
     </div>

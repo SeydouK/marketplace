@@ -1,0 +1,120 @@
+<div class="max-w-7xl mx-auto py-6 px-4">
+  <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Versements vendeurs</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {{ totalElements }} versement{{ totalElements > 1 ? 's' : '' }} — envoi via l'API de payout GeniusPay (sandbox)
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button
+        *ngFor="let f of filters"
+        type="button"
+        (click)="setFilter(f.value)"
+        [class.bg-[#2D6A4F]]="activeFilter === f.value"
+        [class.text-white]="activeFilter === f.value"
+        class="px-4 py-2 rounded-lg text-sm border border-[#2D6A4F]/30 hover:bg-[#2D6A4F]/10 transition">
+        {{ f.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-xl border border-[#E7E0D2] bg-white">
+    <table class="w-full text-sm">
+      <thead class="bg-[#FBF9F4] text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3 text-left">Commande</th>
+          <th class="px-4 py-3 text-left">Vendeur</th>
+          <th class="px-4 py-3 text-right">Montant brut</th>
+          <th class="px-4 py-3 text-right">Frais alloués</th>
+          <th class="px-4 py-3 text-right">Net à verser</th>
+          <th class="px-4 py-3 text-left">Statut</th>
+          <th class="px-4 py-3 text-right">Action</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-[#F0EAD9]">
+        <tr *ngIf="loading">
+          <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+            Chargement des versements...
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && versements.length === 0">
+          <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+            Aucun versement trouvé.
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="let versement of versements; trackBy: trackByVersementId"
+          class="hover:bg-[#FBF9F4] transition">
+          <td class="px-4 py-3">
+            <div class="font-medium text-gray-900">#{{ versement.commandeId }}</div>
+            <div class="text-xs text-gray-500">{{ versement.commandeReference || '—' }}</div>
+          </td>
+
+          <td class="px-4 py-3">
+            <div class="text-gray-700">{{ versement.vendeurNom || 'N/A' }}</div>
+            <div class="text-xs" [ngClass]="versement.vendeurTelephone ? 'text-gray-500' : 'text-red-500'">
+              {{ versement.vendeurTelephone || 'Téléphone manquant' }}
+            </div>
+          </td>
+
+          <td class="px-4 py-3 text-right text-gray-500">
+            {{ versement.montantBrut | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3 text-right text-gray-500">
+            {{ (versement.fraisGeniusPayAlloue + versement.commissionPlateformeAlloue) | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3 text-right font-medium text-[#2D6A4F]">
+            {{ versement.montantNet | number }} FCFA
+          </td>
+
+          <td class="px-4 py-3">
+            <span
+              class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getStatutBadge(versement.statut)">
+              {{ getStatutLabel(versement.statut) }}
+            </span>
+          </td>
+
+          <td class="px-4 py-3 text-right">
+            <button
+              type="button"
+              *ngIf="canEnvoyer(versement)"
+              (click)="envoyer(versement)"
+              [disabled]="envoiEnCoursId === versement.id"
+              class="text-xs px-3 py-2 bg-[#2D6A4F] text-white rounded-lg hover:bg-[#245540] transition disabled:opacity-50">
+              {{ envoiEnCoursId === versement.id ? 'Envoi...' : 'Envoyer' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex items-center justify-between mt-4 text-sm text-gray-500" *ngIf="totalPages > 1">
+    <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+    <div class="flex gap-2">
+      <button
+        type="button"
+        (click)="prevPage()"
+        [disabled]="currentPage === 0 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
+        Précédent
+      </button>
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1 || loading"
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
+        Suivant
+      </button>
+    </div>
+  </div>
+</div>

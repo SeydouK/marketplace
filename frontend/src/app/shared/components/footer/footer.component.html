@@ -92,8 +92,8 @@
       <div>
         <h4 class="text-xs font-bold uppercase tracking-widest text-[#ECB867] mb-4">Vendre</h4>
         <ul class="space-y-3">
-          <li><a routerLink="/animaux/creer" class="text-sm text-white/70 hover:text-white transition-colors">Publier une annonce</a></li>
-          <li><a routerLink="/devenir-vendeur" class="text-sm text-white/70 hover:text-white transition-colors">Devenir vendeur</a></li>
+          <li><button type="button" (click)="handlePublishClick()" class="text-sm text-white/70 hover:text-white transition-colors cursor-pointer">Publier une annonce</button></li>
+          <li><button type="button" (click)="handleSellerClick()" class="text-sm text-white/70 hover:text-white transition-colors cursor-pointer">Devenir vendeur</button></li>
           <li><a href="#" class="text-sm text-white/70 hover:text-white transition-colors">Ressources pour éleveurs</a></li>
           <li><a href="#" class="text-sm text-white/70 hover:text-white transition-colors">Forum des éleveurs</a></li>
         </ul>

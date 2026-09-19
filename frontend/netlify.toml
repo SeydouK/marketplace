@@ -1,0 +1,54 @@
+[build]
+  base = "frontend"
+  command = "npm run build -- --configuration production"
+  publish = "dist/marketplace-frontend"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# SPA Angular : toutes les routes renvoient index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Service worker : ces trois fichiers ne doivent JAMAIS etre mis en cache.
+#
+# ngsw.json est le manifeste de version : c'est en le relisant que l'application
+# decouvre qu'une nouvelle version existe. S'il est servi depuis le cache du CDN,
+# les telephones restent indefiniment sur l'ancienne version — y compris apres
+# une correction touchant la remise ou le suivi. Le symptome est deroutant : le
+# deploiement reussit, et rien ne change sur le terrain.
+#
+# La redirection SPA ci-dessus ne les intercepte pas : sans « force = true »,
+# Netlify sert d'abord les fichiers qui existent.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[[headers]]
+  for = "/ngsw.json"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/ngsw-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/safety-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# index.html porte les references aux bundles horodates : le mettre en cache
+# ferait charger d'anciens bundles apres un deploiement.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "no-cache"

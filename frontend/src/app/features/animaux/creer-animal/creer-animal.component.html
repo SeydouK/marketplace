@@ -132,17 +132,18 @@
             </div>
 
             <div>
-              <label class="form-label" for="quantity">Nombre de têtes</label>
-              <input id="quantity" formControlName="quantity" type="number" class="form-input" placeholder="1" />
-              <p *ngIf="controlInvalid('quantity', 'min')" class="form-error">
-                Le nombre de têtes doit être au moins de 1.
+              <label class="form-label" for="animalPoids">Poids (kg)</label>
+              <input
+                id="animalPoids"
+                formControlName="animalPoids"
+                type="number"
+                class="form-input"
+                placeholder="Ex. : 250"
+              />
+              <p *ngIf="controlInvalid('animalPoids', 'min')" class="form-error">
+                Le poids doit être positif.
               </p>
             </div>
-          </div>
-
-          <div *ngIf="isGroupedLot" class="lot-banner mt-5">
-            <strong>Mode lot activé.</strong>
-            Ce dossier porte plusieurs têtes sous une même référence de suivi.
           </div>
         </div>
 

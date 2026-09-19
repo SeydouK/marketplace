@@ -248,8 +248,10 @@ public class AnimalService {
         long available   = animals.stream().filter(a -> a.getStatus() == AnimalStatus.DISPONIBLE).count();
         long unavailable = animals.stream().filter(a -> a.getStatus() == AnimalStatus.INDISPONIBLE).count();
         long pending     = animals.stream().filter(a -> a.getStatus() == AnimalStatus.EN_ATTENTE).count();
+        long reserved    = animals.stream().filter(a -> a.getStatus() == AnimalStatus.RESERVE).count();
+        long sold        = animals.stream().filter(a -> a.getStatus() == AnimalStatus.VENDU).count();
 
-        return new AnimalStatsDTO((long) animals.size(), available, unavailable, pending);
+        return new AnimalStatsDTO((long) animals.size(), available, unavailable, pending, reserved, sold);
     }
 
     // ── Toggle statut vendeur (DISPONIBLE ↔ INDISPONIBLE) ───────────────────
@@ -449,6 +451,7 @@ public class AnimalService {
         animal.setPhotos(toArray(photoUrls));
         animal.setVideos(toArray(videoUrls));
         animal.setQuantity(request.getQuantity());
+        animal.setAnimalPoids(request.getAnimalPoids());
         animal.setLongitude(request.getLongitude());
         animal.setLatitude(request.getLatitude());
     }
@@ -484,6 +487,7 @@ public class AnimalService {
         dto.setPhotos(toList(animal.getPhotos()));
         dto.setVideos(toList(animal.getVideos()));
         dto.setQuantity(animal.getQuantity());
+        dto.setAnimalPoids(animal.getAnimalPoids());
         dto.setLongitude(animal.getLongitude());
         dto.setLatitude(animal.getLatitude());
         dto.setStatus(animal.getStatus());

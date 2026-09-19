@@ -5,7 +5,7 @@ import { AcheteurRoutingModule } from './acheteur-routing.module';
 import { DashboardAcheteurComponent } from './dashboard-acheteur/dashboard-acheteur.component';
 import { MesAchatsComponent } from './mes-achats/mes-achats.component';
 import { FormsModule } from '@angular/forms';
-
+//
 @NgModule({
   declarations: [
     DashboardAcheteurComponent,

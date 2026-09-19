@@ -33,7 +33,7 @@ export class UserStatusService {
   }
 
   clear(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('marketplace_token');
     localStorage.removeItem('emailVerified');
     localStorage.removeItem('kycStatus');
     localStorage.removeItem('role');

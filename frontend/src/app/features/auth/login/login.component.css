@@ -92,6 +92,7 @@
   width: 100%;
   padding: 0.875rem 1rem;
   color: #2A2620;
+  color-scheme: light;
   outline: none;
   font-size: 0.9375rem;
 }
@@ -104,7 +105,7 @@
 .password-group input {
   width: 100%;
   border: 0;
-  background: transparent;
+  background: #fff;
   padding: 0.875rem 0;
   color: #2A2620;
   outline: none;
@@ -141,4 +142,14 @@
 @media (max-width: 768px) {
   .auth-hero { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
   .auth-card { padding: 1.5rem; }
+}
+
+/* Champs pre-remplis par le navigateur (autofill) : garder fond blanc / texte fonce,
+   sinon Chrome impose son propre fond et le texte devient illisible. */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #2A2620;
+  caret-color: #2A2620;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  box-shadow: 0 0 0 1000px #fff inset;
 }

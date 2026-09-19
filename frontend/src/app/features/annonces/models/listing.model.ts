@@ -1,4 +1,4 @@
-export type AnimalStatus = 'DISPONIBLE' | 'EN_ATTENTE' | 'VENDU' | 'INDISPONIBLE';
+export type AnimalStatus = 'DISPONIBLE' | 'EN_ATTENTE' | 'RESERVE' | 'VENDU' | 'INDISPONIBLE';
 
 export interface Listing {
   id: string;
@@ -10,6 +10,7 @@ export interface Listing {
   photos?: string[];
   videos?: string[];
   quantity?: number;
+  animalPoids?: number;
   latitude?: number;
   longitude?: number;
   status?: AnimalStatus;

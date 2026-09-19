@@ -1,33 +1,39 @@
 <!-- features/profil/parametres/parametres.component.html -->
-<div class="min-h-screen bg-white">
+<div class="min-h-screen bg-[#FBF9F4]">
 
-  <!-- ════ MOBILE : Flèche retour + titre ════ -->
-  <div class="md:hidden flex items-center gap-3 px-4 py-4 border-b border-[#F0EAD9]">
-    <button type="button" onclick="history.back()"
-      class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
-      <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-    </button>
+  <!-- ════ BANDEAU HERO ════ -->
+  <div class="relative overflow-hidden bg-gradient-to-br from-[#1B4332] to-[#2D6A4F]">
+    <div class="absolute -top-20 -right-16 w-72 h-72 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
+    <div class="relative max-w-6xl mx-auto px-4 md:px-6 pt-8 md:pt-10 pb-20 md:pb-24">
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="history.back()"
+          class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors flex-shrink-0">
+          <i class="pi pi-arrow-left text-white"></i>
+        </button>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-1">Mon compte</p>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Paramètres</h1>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
+  <div class="max-w-6xl mx-auto px-4 md:px-6 -mt-12 pb-16 relative">
 
-    <h1 class="text-2xl font-bold text-gray-900 mb-6 md:mb-8">Paramètres du compte</h1>
-
-    <div class="flex gap-0">
+    <div class="flex gap-6 items-start">
 
       <!-- ═══ SIDEBAR DESKTOP ═══ -->
-      <aside class="hidden md:block w-72 flex-shrink-0 border-r border-[#E7E0D2] pr-4">
+      <aside class="hidden md:block w-72 flex-shrink-0 bg-white border border-[#E7E0D2] rounded-2xl shadow-card p-3 sticky top-6">
         <nav class="flex flex-col gap-1">
           <button *ngFor="let section of sections"
             type="button"
             (click)="setSection(section.key)"
             class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-colors text-left w-full"
             [ngClass]="activeSection === section.key
-              ? 'bg-[#F6F1E7] font-semibold text-gray-900'
+              ? 'bg-[#E0EEE4] font-semibold text-[#1B4332]'
               : 'text-gray-600 hover:bg-[#FBF9F4] font-normal'">
-            <i class="pi text-xl flex-shrink-0" [ngClass]="section.icon"></i>
+            <i class="pi text-xl flex-shrink-0" [ngClass]="section.icon"
+              [class.text-[#2D6A4F]]="activeSection === section.key"></i>
             <span class="leading-tight">{{ section.label }}</span>
           </button>
 
@@ -38,9 +44,9 @@
             (click)="setSection('pro')"
             class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-colors text-left w-full"
             [ngClass]="activeSection === 'pro'
-              ? 'bg-[#F6F1E7] font-semibold text-gray-900'
+              ? 'bg-[#E0EEE4] font-semibold text-[#1B4332]'
               : 'text-gray-600 hover:bg-[#FBF9F4]'">
-            <i class="pi pi-shop text-xl"></i>
+            <i class="pi pi-shop text-xl" [class.text-[#2D6A4F]]="activeSection === 'pro'"></i>
             <span>Espace vendeur</span>
           </button>
         </nav>
@@ -81,21 +87,21 @@
       <!-- ═══ MOBILE : Contenu d'une section (avec flèche retour) ═══ -->
       <div class="md:hidden w-full" *ngIf="mobileActiveSection">
         <!-- Header section mobile -->
-        <div class="flex items-center gap-3 mb-6">
+        <div class="flex items-center gap-3 mb-4">
           <button type="button" (click)="closeMobileSection()"
-            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] transition-colors">
-            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-[#E7E0D2] hover:bg-[#F6F1E7] transition-colors">
+            <i class="pi pi-arrow-left text-gray-700 text-sm"></i>
           </button>
-          <h2 class="text-lg font-semibold text-gray-900">{{ activeSectionLabel }}</h2>
+          <h2 class="text-lg font-bold text-gray-900">{{ activeSectionLabel }}</h2>
         </div>
         <!-- Contenu partagé -->
-        <ng-container *ngTemplateOutlet="sectionContent"></ng-container>
+        <div class="bg-white border border-[#E7E0D2] rounded-2xl shadow-card p-5">
+          <ng-container *ngTemplateOutlet="sectionContent"></ng-container>
+        </div>
       </div>
 
       <!-- ═══ DESKTOP : Contenu ═══ -->
-      <main class="hidden md:block flex-1 md:pl-16 min-w-0">
+      <main class="hidden md:block flex-1 min-w-0 bg-white border border-[#E7E0D2] rounded-2xl shadow-card p-8">
         <ng-container *ngTemplateOutlet="sectionContent"></ng-container>
       </main>
 

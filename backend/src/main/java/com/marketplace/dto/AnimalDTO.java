@@ -21,6 +21,7 @@ public class AnimalDTO {
     private List<String> photos = new ArrayList<>();
     private List<String> videos = new ArrayList<>();
     private Integer quantity;
+    private BigDecimal animalPoids;
     private Double longitude;
     private Double latitude;
     private AnimalStatus status;

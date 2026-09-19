@@ -14,6 +14,7 @@ public class JwtResponse {
     private Role role;
     private String name;
     private boolean emailVerified;
-    private KycStatus kycStatus; 
+    private KycStatus kycStatus;
     private boolean devenirVendeur;
+    private boolean estTransporteur;
 }

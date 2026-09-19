@@ -34,6 +34,9 @@ public class AnimalCreateRequest {
     @Min(1)
     private Integer quantity = 1;
 
+    @DecimalMin(value = "0.1")
+    private BigDecimal animalPoids;
+
     @DecimalMin(value = "-180.0")
     @DecimalMax(value = "180.0")
     private Double longitude;

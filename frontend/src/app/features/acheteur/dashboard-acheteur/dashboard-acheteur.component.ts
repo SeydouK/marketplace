@@ -1,10 +1,9 @@
 // acheteur/dashboard-acheteur/dashboard-acheteur.component.ts
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
-import { environment } from '../../../../environments/environment';
 import { UserStatusService } from '../../../core/services/user-status.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { LivraisonService } from '../../../shared/services/livraison.service';
 
 @Component({
   selector: 'app-dashboard-acheteur',
@@ -23,9 +22,9 @@ export class DashboardAcheteurComponent implements OnInit {
 
   constructor(
     public auth: AuthService,
-    private http: HttpClient,
     private userStatusService: UserStatusService,
     private toast: ToastService,
+    private livraisonService: LivraisonService,
   ) {}
 
   ngOnInit(): void {
@@ -33,17 +32,25 @@ export class DashboardAcheteurComponent implements OnInit {
       this.profile = d;
     });
 
-   /* this.http.get<any>(`${environment.apiUrl}/transactions/mes-achats/stats`).subscribe({
-      next: (stats) => {
-        this.activeOrdersCount    = stats?.active    ?? 0;
-        this.completedOrdersCount = stats?.completed ?? 0;
-        this.escrowCount          = stats?.escrow    ?? 0;
-        this.favoritesCount       = stats?.favorites ?? 0;
+    // Les compteurs se deduisent de la liste des achats : pas d'endpoint de stats
+    // dedie, et le volume par acheteur reste faible.
+    this.livraisonService.getMesAchats().subscribe({
+      next: (achats) => {
+        this.activeOrdersCount = achats.filter(
+          a => a.etatGlobal === 'EN_ATTENTE_LIVRAISON'
+            || a.etatGlobal === 'EN_LIVRAISON'
+            || a.etatGlobal === 'A_CONFIRMER',
+        ).length;
+        this.completedOrdersCount = achats.filter(a => a.etatGlobal === 'TERMINE').length;
+        // Fonds encore retenus par la plateforme : tout achat paye non solde.
+        this.escrowCount = achats.filter(
+          a => a.statut === 'PAYEE' && a.etatGlobal !== 'TERMINE',
+        ).length;
       },
       error: () => {
         // Stats non disponibles — on garde les 0 par défaut
       }
-    });*/
+    });
   }
 
   // ── KYC ──

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import com.marketplace.model.Role;
 
 @Data
 @Getter
@@ -26,4 +27,6 @@ public class RegisterRequest {
 
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
+    private String phone;
+    private Role role;
 }

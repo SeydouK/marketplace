@@ -3,22 +3,50 @@
   <h1 class="text-2xl font-bold mb-6">Statistiques de ma zone</h1>
 
   <!-- Résumé KPIs -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <article class="dashboard-card">
-      <span class="dashboard-label">Éleveurs actifs</span>
-      <strong class="dashboard-value">{{ stats?.activeFarmers ?? '—' }}</strong>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Éleveurs actifs</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.activeFarmers ?? '—' }}</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-users text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">Animaux enregistrés</span>
-      <strong class="dashboard-value">{{ stats?.totalAnimals ?? '—' }}</strong>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Animaux enregistrés</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.totalAnimals ?? '—' }}</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-box text-lg text-[#7A5C43]"></i>
+        </span>
+      </div>
     </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">Taux conformité</span>
-      <strong class="dashboard-value">{{ stats?.complianceRate ?? '—' }}%</strong>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Taux conformité</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#2D6A4F] leading-none">{{ stats?.complianceRate ?? '—' }}%</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-verified text-lg text-[#2D6A4F]"></i>
+        </span>
+      </div>
     </article>
-    <article class="dashboard-card">
-      <span class="dashboard-label">RFID posées ce mois</span>
-      <strong class="dashboard-value">{{ stats?.rfidThisMonth ?? '—' }}</strong>
+    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">RFID posées ce mois</p>
+          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.rfidThisMonth ?? '—' }}</p>
+        </div>
+        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-qrcode text-lg text-[#B96416]"></i>
+        </span>
+      </div>
     </article>
   </div>
 
@@ -32,7 +60,7 @@
           <span class="font-medium">{{ species.count }} ({{ species.percent }}%)</span>
         </div>
         <div class="h-2 bg-[#F6F1E7] rounded-full overflow-hidden">
-          <div class="h-full bg-[#611a24] rounded-full transition-all duration-500"
+          <div class="h-full bg-[#2D6A4F] rounded-full transition-all duration-500"
             [style.width.%]="species.percent">
           </div>
         </div>

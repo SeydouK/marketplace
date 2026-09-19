@@ -1,7 +1,7 @@
 // features/auth/login/login.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -35,13 +35,23 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private toast: ToastService
+    private toast: ToastService,
+    private route: ActivatedRoute,
   ) {}
 
+  /** Vrai quand l'utilisateur arrive ici parce que sa session a expiré. */
+  sessionExpiree = false;
+
+  /** Page a rouvrir apres reconnexion, transmise par la deconnexion automatique. */
+  private retour: string | null = null;
+
   ngOnInit(): void {
+    // La deconnexion automatique passe la raison et la page d'origine.
+    this.sessionExpiree = this.route.snapshot.queryParamMap.get('raison') === 'expiree';
+    this.retour = this.route.snapshot.queryParamMap.get('retour');
+
     try {
       const raw = localStorage.getItem('bm_saved_user');
-      console.log('savedUser raw:', raw); // debug
       if (raw) {
         this.savedUser = JSON.parse(raw);
         this.form.patchValue({ email: this.savedUser!.email });

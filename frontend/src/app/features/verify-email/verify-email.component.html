@@ -24,6 +24,31 @@
           </li>
         </ul>
       </div>
+      <!-- Email non recu : renvoyer, avec un delai visible -->
+      <div class="border-t border-[#E7E0D2] pt-5 mb-5">
+        <p class="text-sm font-semibold text-gray-700 mb-1">Email non reçu ?</p>
+        <p class="text-xs text-gray-400 mb-3">
+          Nous vous en renvoyons un. Le lien précédent cessera alors de fonctionner.
+        </p>
+
+        <button type="button"
+          [disabled]="renvoiEnCours || attenteSecondes > 0"
+          (click)="renvoyer()"
+          class="w-full py-3 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+          <i class="pi pi-send mr-1"></i>
+          <span *ngIf="renvoiEnCours">Envoi…</span>
+          <span *ngIf="!renvoiEnCours && attenteSecondes > 0">
+            Nouvel envoi possible dans {{ attenteLisible }}
+          </span>
+          <span *ngIf="!renvoiEnCours && attenteSecondes === 0">Renvoyer l'email</span>
+        </button>
+
+        <p *ngIf="renvoiMessage" class="mt-3 text-xs"
+          [ngClass]="attenteSecondes > 0 ? 'text-[#2D6A4F]' : 'text-[#B96416]'">
+          {{ renvoiMessage }}
+        </p>
+      </div>
+
       <p class="text-xs text-gray-400">
         Mauvais email ?
         <a routerLink="/auth/register" class="text-[#2D6A4F] hover:underline">Recommencer l'inscription</a>

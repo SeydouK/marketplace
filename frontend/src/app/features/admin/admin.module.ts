@@ -6,6 +6,10 @@ import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.compo
 import { GestionUtilisateursComponent } from './gestion-utilisateurs/gestion-utilisateurs.component';
 import { GestionAnnoncesComponent } from './gestion-annonces/gestion-annonces.component';
 import { GestionLitigesComponent } from './gestion-litiges/gestion-litiges.component';
+import { GestionTransactionsComponent } from './gestion-transactions/gestion-transactions.component';
+import { GestionTransporteursComponent } from './gestion-transporteurs/gestion-transporteurs.component';
+import { GestionVersementsComponent } from './gestion-versements/gestion-versements.component';
+import { GestionActualitesComponent } from './gestion-actualites/gestion-actualites.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -15,6 +19,10 @@ import { FormsModule } from '@angular/forms';
     GestionUtilisateursComponent,
     GestionAnnoncesComponent,
     GestionLitigesComponent,
+    GestionTransactionsComponent,
+    GestionVersementsComponent,
+    GestionTransporteursComponent,
+    GestionActualitesComponent,
   ],
   imports: [SharedModule, AdminRoutingModule, RouterModule, FormsModule],
 })

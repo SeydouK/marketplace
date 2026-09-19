@@ -1,5 +1,5 @@
 export type AnimalType = 'BOVIN' | 'OVIN' | 'CAPRIN' | 'PORCIN' | 'AUTRE';
-export type AnimalStatus = 'EN_ATTENTE' | 'DISPONIBLE' | 'INDISPONIBLE' | 'VENDU';
+export type AnimalStatus = 'EN_ATTENTE' | 'DISPONIBLE' | 'RESERVE' | 'INDISPONIBLE' | 'VENDU';
 export type HealthDocumentType =
   | 'CERTIFICAT_VETERINAIRE'
   | 'FICHE_VACCINATION'
@@ -48,6 +48,7 @@ export interface Animal {
   photos: string[];
   videos: string[];
   quantity: number;
+  animalPoids?: number | null;
   longitude?: number | null;
   latitude?: number | null;
   status: AnimalStatus;
@@ -78,6 +79,7 @@ export interface CreateAnimalPayload {
   photos: string[];
   videos: string[];
   quantity: number;
+  animalPoids?: number | null;
   longitude?: number | null;
   latitude?: number | null;
   healthDocuments: Array<{

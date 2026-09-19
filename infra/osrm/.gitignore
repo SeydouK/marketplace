@@ -1,0 +1,3 @@
+# Les donnees OSM et le graphe compile : plusieurs centaines de Mo, regenerables
+# en une commande. Ils n'ont rien a faire dans un depot.
+data/

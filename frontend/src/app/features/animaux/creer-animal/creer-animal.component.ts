@@ -10,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { LeafletLoaderService } from '../../../shared/services/leaflet-loader.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -130,7 +131,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
     race: [''],
     lieuNaissance: ['', Validators.required],
     price: [null as number | null, [Validators.required, Validators.min(1)]],
-    quantity: [1, [Validators.required, Validators.min(1)]],
+    animalPoids: [null as number | null, [Validators.min(1)]],
     longitude: [null as number | null],
     latitude: [null as number | null],
   });
@@ -143,7 +144,8 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly animalService: AnimalService,
     private readonly toast: ToastService,
     private readonly zone: NgZone,
-    @Inject(DOCUMENT) private readonly document: Document
+    @Inject(DOCUMENT) private readonly document: Document,
+    private readonly leaflet: LeafletLoaderService
   ) {}
 
   ngOnInit(): void {
@@ -211,7 +213,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isGroupedLot(): boolean {
-    return (this.form.get('quantity')?.value ?? 0) > 10;
+    return false;
   }
 
   get selectedAnimalType() {
@@ -461,7 +463,8 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
       race: rawValue.race?.trim() || null,
       lieuNaissance: rawValue.lieuNaissance?.trim() || null,
       price: Number(rawValue.price),
-      quantity: Number(rawValue.quantity),
+      quantity: 1,
+      animalPoids: rawValue.animalPoids != null ? Number(rawValue.animalPoids) : null,
       longitude: rawValue.longitude != null ? Number(rawValue.longitude) : null,
       latitude: rawValue.latitude != null ? Number(rawValue.latitude) : null,
       photos: this.uploadedPhotos
@@ -511,7 +514,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
           race: animal.race ?? '',
           lieuNaissance: animal.lieuNaissance ?? '',
           price: animal.price,
-          quantity: animal.quantity,
+          animalPoids: animal.animalPoids ?? null,
           longitude: animal.longitude ?? null,
           latitude: animal.latitude ?? null,
         });
@@ -633,7 +636,7 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private validateIdentityStep(notify: boolean): boolean {
-    const controls = ['type', 'lieuNaissance', 'price', 'quantity'];
+    const controls = ['type', 'lieuNaissance', 'price'];
     controls.forEach((controlName) => this.form.get(controlName)?.markAsTouched());
 
     const invalid = controls.some((controlName) => this.form.get(controlName)?.invalid);
@@ -809,12 +812,9 @@ export class CreerAnimalComponent implements OnInit, AfterViewInit, OnDestroy {
 
     leaflet.control.zoom({ position: 'topright' }).addTo(this.map);
 
-    leaflet
-      .tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors',
-      })
-      .addTo(this.map);
+    // Fond de carte partage : le fournisseur de tuiles se change au seul
+    // endroit ou il est declare, pas carte par carte.
+    this.leaflet.fondDeCarte(leaflet).addTo(this.map);
 
     this.map.on('click', (event: any) => {
       this.zone.run(() => {
