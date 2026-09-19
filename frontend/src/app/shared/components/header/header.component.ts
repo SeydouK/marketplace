@@ -133,7 +133,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 if (event instanceof NavigationEnd) {
                     this.currentUrl = event.urlAfterRedirects;
                     this.menuOpen = false;
-                    this.mobileMenuOpen = false;
                     this.syncTabFromUrl(this.currentUrl);
                 }
             })
@@ -165,12 +164,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     // ── Menu ─────────────────────────────────────────────────────────────────
-    /** Menu complet mobile (bottom sheet) : mêmes entrées que le déroulant desktop. */
-    mobileMenuOpen = false;
-
     toggleMenu(): void { this.menuOpen = !this.menuOpen; }
-    toggleMobileMenu(): void { this.mobileMenuOpen = !this.mobileMenuOpen; }
-    closeMenu(): void  { this.menuOpen = false; this.mobileMenuOpen = false; }
+    closeMenu(): void  { this.menuOpen = false; }
 
     switchingRole = false;
 

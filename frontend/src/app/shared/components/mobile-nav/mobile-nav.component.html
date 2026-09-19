@@ -1,0 +1,145 @@
+<!-- Bouton flottant : ouvre la navigation. Mobile uniquement (md:hidden). -->
+<button type="button" (click)="toggle()"
+        class="md:hidden fixed right-4 z-30 flex items-center gap-2 h-14 pl-4 pr-5 rounded-full bg-[#2D6A4F] text-white font-semibold text-sm ring-2 ring-white/80 shadow-lg shadow-black/25 active:scale-95 transition-transform bottom-[calc(1rem+env(safe-area-inset-bottom))]"
+        aria-haspopup="dialog" [attr.aria-expanded]="open" aria-label="Ouvrir le menu de navigation">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.menu"/>
+    </svg>
+    Menu
+</button>
+
+<!-- Fenêtre de navigation -->
+<div *ngIf="open" class="md:hidden fixed inset-0 z-[200]" role="dialog" aria-modal="true" aria-label="Menu de navigation">
+    <div class="absolute inset-0 bg-black/40" (click)="close()"></div>
+
+    <div class="absolute inset-x-0 bottom-0 max-h-[88vh] flex flex-col bg-white rounded-t-3xl shadow-2xl animate-slideUp">
+
+        <!-- En-tête -->
+        <div class="flex items-center justify-between gap-3 px-5 pt-4 pb-3 border-b border-[#F0EAD9] flex-shrink-0">
+            <div *ngIf="user; else invite" class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-full bg-[#2D6A4F] text-white flex items-center justify-center font-semibold flex-shrink-0">
+                    {{ initial }}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ user.name }}</p>
+                    <p class="text-xs text-gray-500">{{ roleLabel }}</p>
+                </div>
+            </div>
+            <ng-template #invite>
+                <p class="text-base font-semibold text-gray-900">Menu</p>
+            </ng-template>
+
+            <button type="button" (click)="close()" aria-label="Fermer le menu"
+                    class="w-9 h-9 flex items-center justify-center rounded-full bg-[#F6F1E7] flex-shrink-0">
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" [attr.d]="icons.close"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Contenu défilant -->
+        <div class="overflow-y-auto overscroll-contain px-3 pt-2 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+
+            <!-- Visiteur non connecté -->
+            <ng-container *ngIf="!user">
+                <a routerLink="/" routerLinkActive="bg-[#F2F7F3] text-[#2D6A4F]" [routerLinkActiveOptions]="{ exact: true }"
+                   class="flex items-center gap-3 px-3 py-3.5 rounded-xl text-[15px] text-gray-800 active:bg-[#F6F1E7]">
+                    <svg class="w-5 h-5 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.search"/>
+                    </svg>
+                    Explorer
+                </a>
+                <a routerLink="/annonces" routerLinkActive="bg-[#F2F7F3] text-[#2D6A4F]"
+                   class="flex items-center gap-3 px-3 py-3.5 rounded-xl text-[15px] text-gray-800 active:bg-[#F6F1E7]">
+                    <svg class="w-5 h-5 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.list"/>
+                    </svg>
+                    Annonces
+                </a>
+                <div class="flex flex-col gap-2 px-1 pt-4">
+                    <a routerLink="/auth/login"
+                       class="w-full text-center px-4 py-3 bg-[#2D6A4F] text-white text-[15px] font-semibold rounded-xl">
+                        Connexion
+                    </a>
+                    <a routerLink="/auth/register"
+                       class="w-full text-center px-4 py-3 border border-[#DFD2B8] text-gray-700 text-[15px] font-medium rounded-xl">
+                        Inscription
+                    </a>
+                </div>
+            </ng-container>
+
+            <!-- Utilisateur connecté : entrées selon le rôle -->
+            <ng-container *ngIf="user">
+                <section *ngFor="let section of sections; trackBy: trackSection" class="mb-1">
+                    <h3 class="px-3 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                        {{ section.title }}
+                    </h3>
+                    <a *ngFor="let item of section.items; trackBy: trackItem"
+                       [routerLink]="item.route"
+                       routerLinkActive="bg-[#F2F7F3] text-[#2D6A4F] font-semibold"
+                       [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                       class="flex items-center gap-3 px-3 py-3.5 rounded-xl text-[15px] text-gray-800 active:bg-[#F6F1E7]">
+                        <svg class="w-5 h-5 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons[item.icon]"/>
+                        </svg>
+                        <span class="flex-1">{{ item.label }}</span>
+                        <span *ngIf="item.badge === 'panier' && ((panierCount$ | async) ?? 0) > 0"
+                              class="min-w-[22px] h-[22px] px-1.5 rounded-full bg-[#2D6A4F] text-white text-xs font-bold flex items-center justify-center">
+                            {{ panierCount$ | async }}
+                        </span>
+                    </a>
+                </section>
+
+                <!-- Changement de mode / demande vendeur -->
+                <div class="mt-2 pt-3 border-t border-[#F0EAD9] px-1 flex flex-col gap-2">
+
+                    <button *ngIf="canSwitchBackToTransporteur" type="button"
+                            (click)="switchRole('TRANSPORTEUR')" [disabled]="switchingRole"
+                            class="w-full flex items-center gap-3 px-3 py-3.5 rounded-xl border border-[#C2DCCB] bg-[#F2F7F3] text-[15px] font-semibold text-[#2D6A4F] disabled:opacity-50">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.truck"/>
+                        </svg>
+                        {{ switchingRole ? 'Changement...' : 'Repasser en mode transporteur' }}
+                    </button>
+
+                    <ng-container *ngIf="canSwitchToAcheteur">
+                        <button type="button" (click)="switchRole('ACHETEUR')" [disabled]="switchingRole"
+                                class="w-full flex items-center gap-3 px-3 py-3.5 rounded-xl border border-[#E7E0D2] bg-[#F6F1E7] text-[15px] font-semibold text-[#2D6A4F] disabled:opacity-50">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.switch"/>
+                            </svg>
+                            {{ switchingRole ? 'Changement...' : 'Passer en mode acheteur' }}
+                        </button>
+                        <p *ngIf="isVendeur" class="px-3 text-[11px] leading-snug text-gray-500">
+                            Vous devrez refaire une demande à l'administration pour redevenir vendeur.
+                        </p>
+                    </ng-container>
+
+                    <button *ngIf="canRequestSeller" type="button" (click)="requestSeller()"
+                            class="w-full flex items-center gap-3 px-3 py-3.5 rounded-xl bg-[#FBF9F4] text-left active:bg-[#EEE8D8]">
+                        <svg class="w-5 h-5 flex-shrink-0 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.shop"/>
+                        </svg>
+                        <span>
+                            <span class="block text-[15px] font-semibold text-gray-900">Devenir vendeur</span>
+                            <span class="block text-xs text-gray-500">Publiez vos annonces et gagnez des revenus.</span>
+                        </span>
+                    </button>
+
+                    <p *ngIf="sellerRequestPending"
+                       class="px-3 py-2.5 rounded-xl bg-[#FBF9F4] text-xs text-gray-600">
+                        Votre demande pour devenir vendeur est en attente de validation.
+                    </p>
+
+                    <button type="button" (click)="logout()"
+                            class="w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-[15px] text-gray-600 active:bg-[#F6F1E7]">
+                        <svg class="w-5 h-5 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="icons.logout"/>
+                        </svg>
+                        Déconnexion
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
