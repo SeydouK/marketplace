@@ -245,7 +245,10 @@
   <!-- ═══════════════════════════════════════════
        BANNIÈRE DEVENIR VENDEUR
   ═══════════════════════════════════════════ -->
-  <div class="rounded-2xl border border-[#E7E0D2] bg-[#FBF9F4] p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+  <!-- Masquée pour les comptes déjà vendeur (ils peuvent basculer vendeur ↔ acheteur
+       depuis le menu) : ils n'ont pas de demande à faire. -->
+  <div *ngIf="!auth.canAccessSellerArea"
+       class="rounded-2xl border border-[#E7E0D2] bg-[#FBF9F4] p-6 flex flex-col sm:flex-row sm:items-center gap-4">
     <div class="flex-1">
       <h3 class="font-semibold text-gray-900">Vous souhaitez vendre du bétail ?</h3>
       <p class="text-sm text-gray-500 mt-1">

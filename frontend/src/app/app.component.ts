@@ -6,6 +6,7 @@ import { AuthService } from './core/services/auth.service';
 import { PanierService } from './features/panier/services/panier.service';
 import { Role } from './core/models/role.enum';
 import { PwaService } from './core/services/pwa.service';
+import { MobileMenuService } from './core/services/mobile-menu.service';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
     public auth: AuthService,
     private panierService: PanierService,
     public pwa: PwaService,
+    public mobileMenu: MobileMenuService,
   ) {}
 
   ngOnInit(): void {
