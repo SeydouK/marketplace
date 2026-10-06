@@ -32,5 +32,7 @@ export class StorageService {
     localStorage.removeItem(this.EMAIL_VERIFIED_KEY);
     localStorage.removeItem(this.KYC_STATUS_KEY);     
     localStorage.removeItem(this.ROLE_KEY);           
+    // Tickets de remise gardés pour l'affichage hors connexion : ils portent les codes.
+    localStorage.removeItem('bm.tickets');
   }
 }

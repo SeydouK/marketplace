@@ -1,223 +1,159 @@
-<div class="auth-hero">
-  <div class="hero-copy">
-    <span class="badge">
-      <i class="pi pi-user-plus"></i>
-      Nouveau sur BétailMarket
-    </span>
-    <h1>Créez votre compte et vendez en toute confiance</h1>
-    <p class="subtitle">
-      Publiez vos annonces de bétail, suivez vos ventes et retrouvez facilement les offres par ville.
-    </p>
-    <ul class="trust-list">
-      <li><i class="pi pi-verified"></i> Vendeurs vérifiés</li>
-      <li><i class="pi pi-shield"></i> Annonces contrôlées</li>
-      <li><i class="pi pi-lock"></i> Paiement sécurisé</li>
-    </ul>
-  </div>
+<div class="auth-shell">
+  <app-auth-aside
+    titre="Rejoignez la place de marché du bétail de Côte d'Ivoire."
+    [points]="['Publiez vos animaux, contrôlés par un vétérinaire', 'Encaissez sans risque grâce au séquestre', 'Faites livrer par des transporteurs vérifiés']">
+  </app-auth-aside>
 
-  <div class="auth-card">
-    <h2>Inscription</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+  <div class="auth-main">
+    <div class="auth-card max-w-[480px]">
+      <h1 class="auth-title">Créer un compte</h1>
+      <p class="auth-lead">Quelques informations, puis une vérification d'identité rapide.</p>
 
-      <!-- Choix du parcours : chaque role a ses propres obligations -->
-      <div class="field">
-        <label>Je m'inscris comme</label>
-        <div style="display:flex; gap:10px; margin-top:6px">
-          <button type="button" (click)="choisirRole('ACHETEUR')"
-            [style.border]="roleChoisi === 'ACHETEUR' ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
-            [style.background]="roleChoisi === 'ACHETEUR' ? '#E0EEE4' : '#fff'"
-            style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
-            <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
-              Acheteur
-            </span>
-            <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
-              J'achète des animaux
-            </span>
-            <span style="display:block; font-size:11px; color:#8B6F55; margin-top:6px">
-              Vérification d'identité (KYC) obligatoire
-            </span>
-          </button>
-          <button type="button" (click)="choisirRole('VENDEUR')"
-            [style.border]="roleChoisi === 'VENDEUR' ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
-            [style.background]="roleChoisi === 'VENDEUR' ? '#E0EEE4' : '#fff'"
-            style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
-            <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
-              Vendeur
-            </span>
-            <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
-              Je vends des animaux
-            </span>
-            <span style="display:block; font-size:11px; color:#8B6F55; margin-top:6px">
-              Vérification d'identité (KYC) obligatoire
-            </span>
-          </button>
-          <button type="button" (click)="choisirRole('TRANSPORTEUR')"
-            [style.border]="roleChoisi === 'TRANSPORTEUR' ? '2px solid #2D6A4F' : '1px solid #E7E0D2'"
-            [style.background]="roleChoisi === 'TRANSPORTEUR' ? '#E0EEE4' : '#fff'"
-            style="flex:1; padding:14px 12px; border-radius:12px; text-align:left; cursor:pointer">
-            <span style="display:block; font-weight:700; font-size:14px; color:#1B4332">
-              Transporteur
-            </span>
-            <span style="display:block; font-size:12px; color:#6B6358; margin-top:2px">
-              Je convoie des animaux
-            </span>
-            <span style="display:block; font-size:11px; color:#8B6F55; margin-top:6px">
-              Vérification d'identité (KYC) obligatoire
-            </span>
-          </button>
-        </div>
-        <p *ngIf="estVendeur" style="font-size:12px; color:#8B6F55; margin-top:8px">
-          Après votre inscription, votre demande vendeur sera transmise à un
-          administrateur. Vous restez acheteur en attendant sa validation.
-        </p>
-        <p *ngIf="estTransporteur" style="font-size:12px; color:#8B6F55; margin-top:8px">
-          Après votre inscription, vous devrez vérifier votre identité et déposer
-          votre permis de conduire avant de recevoir des courses.
-        </p>
-      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form" novalidate>
 
-      <div class="field">
-        <label for="surname">Nom</label>
-        <input
-          id="surname"
-          type="text"
-          formControlName="surname"
-          class="text-field"
-          placeholder="Votre nom de famille"
-        />
-        <p *ngIf="controlInvalid('surname', 'required')" class="error-text">Nom requis.</p>
-      </div>
-
-      <div class="field">
-        <label for="name">Prénom</label>
-        <input 
-        id="name"
-        type="text"
-        formControlName ="name"
-        class="text-field"
-        placeholder="Votre prénom"
-        />
-        <p *ngIf="controlInvalid('name','required')" class="error-text">Prénom requis.</p>
-      </div>
-
-      <div class="field">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          class="text-field"
-          placeholder="email@exemple.com"
-        />
-        <p *ngIf="controlInvalid('email', 'required')" class="error-text">Email requis.</p>
-        <p *ngIf="controlInvalid('email', 'email')" class="error-text">Email invalide.</p>
-      </div>
-
-      <div class="field">
-        <label for="password">Mot de passe</label>
-        <div class="password-group">
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            formControlName="password"
-            placeholder="Au moins 6 caracteres"
-          />
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="togglePassword()"
-            aria-label="Afficher ou masquer le mot de passe"
-          >
-            <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
-          </button>
-        </div>
-        <p *ngIf="controlInvalid('password', 'required')" class="error-text">Mot de passe requis.</p>
-        <p *ngIf="controlInvalid('password', 'minlength')" class="error-text">
-          Le mot de passe doit contenir au moins 6 caracteres.
-        </p>
-      </div>
-
-      <!-- Numero : indicatif separe, jamais devine -->
-      <div class="field">
-        <label for="telephone">
-          Téléphone
-          <span *ngIf="estTransporteur" style="color:#D9342B">*</span>
-          <span *ngIf="!estTransporteur" style="color:#6B6358; font-weight:400"> (facultatif)</span>
-        </label>
-        <div style="display:flex; gap:8px">
-          <div class="indicatif-champ">
-            <button type="button" class="text-field indicatif-bouton"
-              (click)="basculerIndicatifs($event)"
-              [attr.aria-expanded]="listeIndicatifsOuverte"
-              aria-haspopup="listbox"
-              [attr.aria-label]="'Indicatif : ' + indicatifChoisi.pays + ' ' + indicatifChoisi.code">
-              <span class="indicatif-drapeau">{{ indicatifChoisi.drapeau }}</span>
-              <span class="indicatif-code">{{ indicatifChoisi.code }}</span>
-              <span class="indicatif-fleche" [class.ouverte]="listeIndicatifsOuverte" aria-hidden="true"></span>
+        <!-- Choix du parcours : chaque rôle a ses propres obligations -->
+        <fieldset class="field">
+          <legend class="field-label mb-1.5">Je m'inscris comme</legend>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" (click)="choisirRole('ACHETEUR')"
+              class="role-option" [class.role-option--active]="roleChoisi === 'ACHETEUR'"
+              [attr.aria-pressed]="roleChoisi === 'ACHETEUR'">
+              <i class="pi pi-shopping-bag"></i>
+              <span class="role-option__title">Acheteur</span>
+              <span class="role-option__text">J'achète</span>
             </button>
-
-            <ul *ngIf="listeIndicatifsOuverte" class="indicatif-liste" role="listbox"
-              (click)="$event.stopPropagation()">
-              <li *ngFor="let i of indicatifs" role="option"
-                [attr.aria-selected]="i.code === indicatifChoisi.code">
-                <button type="button" class="indicatif-option"
-                  [class.choisie]="i.code === indicatifChoisi.code"
-                  (click)="choisirIndicatif(i.code)">
-                  <span class="indicatif-drapeau">{{ i.drapeau }}</span>
-                  <span class="indicatif-pays">{{ i.pays }}</span>
-                  <span class="indicatif-option-code">{{ i.code }}</span>
-                </button>
-              </li>
-            </ul>
+            <button type="button" (click)="choisirRole('VENDEUR')"
+              class="role-option" [class.role-option--active]="roleChoisi === 'VENDEUR'"
+              [attr.aria-pressed]="roleChoisi === 'VENDEUR'">
+              <i class="pi pi-tag"></i>
+              <span class="role-option__title">Vendeur</span>
+              <span class="role-option__text">Je vends</span>
+            </button>
+            <button type="button" (click)="choisirRole('TRANSPORTEUR')"
+              class="role-option" [class.role-option--active]="roleChoisi === 'TRANSPORTEUR'"
+              [attr.aria-pressed]="roleChoisi === 'TRANSPORTEUR'">
+              <i class="pi pi-truck"></i>
+              <span class="role-option__title">Transporteur</span>
+              <span class="role-option__text">Je convoie</span>
+            </button>
           </div>
-          <input
-            id="telephone"
-            type="tel"
-            formControlName="telephone"
-            class="text-field"
-            style="flex:1"
-            placeholder="07 01 02 03 04"
-          />
+          <p class="field-hint">Une vérification d'identité (pièce + selfie) sera demandée.</p>
+          <p *ngIf="estVendeur" class="alert-info mt-1 py-2.5 text-[13px]">
+            Votre demande vendeur sera transmise à un administrateur. Vous restez acheteur en attendant sa validation.
+          </p>
+          <p *ngIf="estTransporteur" class="alert-info mt-1 py-2.5 text-[13px]">
+            Après l'inscription, vous vérifierez votre identité et déposerez votre permis de conduire avant de recevoir des courses.
+          </p>
+        </fieldset>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field">
+            <label for="name" class="field-label">Prénom</label>
+            <input id="name" type="text" formControlName="name" autocomplete="given-name"
+              class="field-input" [class.is-invalid]="controlInvalid('name','required')" />
+            <p *ngIf="controlInvalid('name','required')" class="field-error">Prénom requis.</p>
+          </div>
+
+          <div class="field">
+            <label for="surname" class="field-label">Nom</label>
+            <input id="surname" type="text" formControlName="surname" autocomplete="family-name"
+              class="field-input" [class.is-invalid]="controlInvalid('surname', 'required')" />
+            <p *ngIf="controlInvalid('surname', 'required')" class="field-error">Nom requis.</p>
+          </div>
         </div>
-        <p *ngIf="estTransporteur && controlInvalid('telephone', 'required')" class="error-text">
-          Numéro requis : c'est par là que les vendeurs vous joindront.
-        </p>
-      </div>
 
-      <div class="field">
-        <label for="passwordConfirmation">Confirmation</label>
-        <div class="password-group">
-          <input
-            id="passwordConfirmation"
-            [type]="showPasswordConfirmation ? 'text' : 'password'"
-            formControlName="passwordConfirmation"
-            placeholder="Retapez votre mot de passe"
-          />
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="togglePasswordConfirmation()"
-            aria-label="Afficher ou masquer la confirmation du mot de passe"
-          >
-            <i class="pi" [ngClass]="showPasswordConfirmation ? 'pi-eye-slash' : 'pi-eye'"></i>
-          </button>
+        <div class="field">
+          <label for="email" class="field-label">Adresse email</label>
+          <input id="email" type="email" formControlName="email" autocomplete="email" inputmode="email"
+            class="field-input" placeholder="vous@exemple.com"
+            [class.is-invalid]="controlInvalid('email', 'required') || controlInvalid('email', 'email')" />
+          <p *ngIf="controlInvalid('email', 'required')" class="field-error">Email requis.</p>
+          <p *ngIf="controlInvalid('email', 'email')" class="field-error">Email invalide.</p>
         </div>
-        <p *ngIf="controlInvalid('passwordConfirmation', 'required')" class="error-text">
-          Confirmation requise.
-        </p>
-        <p *ngIf="formInvalid('passwordMismatch')" class="error-text">
-          Les mots de passe ne correspondent pas.
-        </p>
-      </div>      
 
-      <button type="submit" class="primary-submit" [disabled]="form.invalid">
-        Créer mon compte
-      </button>
+        <!-- Numéro : indicatif séparé, jamais deviné -->
+        <div class="field">
+          <label for="telephone" class="field-label">
+            Téléphone
+            <span *ngIf="estTransporteur" class="text-danger">*</span>
+            <span *ngIf="!estTransporteur" class="font-normal text-ink-3">(facultatif)</span>
+          </label>
+          <div class="flex gap-2">
+            <div class="indicatif-champ">
+              <button type="button" class="field-input indicatif-bouton"
+                (click)="basculerIndicatifs($event)"
+                [attr.aria-expanded]="listeIndicatifsOuverte"
+                aria-haspopup="listbox"
+                [attr.aria-label]="'Indicatif : ' + indicatifChoisi.pays + ' ' + indicatifChoisi.code">
+                <span class="indicatif-drapeau">{{ indicatifChoisi.drapeau }}</span>
+                <span class="indicatif-code">{{ indicatifChoisi.code }}</span>
+                <span class="indicatif-fleche" [class.ouverte]="listeIndicatifsOuverte" aria-hidden="true"></span>
+              </button>
 
-      <p class="hint">
+              <ul *ngIf="listeIndicatifsOuverte" class="indicatif-liste" role="listbox"
+                (click)="$event.stopPropagation()">
+                <li *ngFor="let i of indicatifs" role="option"
+                  [attr.aria-selected]="i.code === indicatifChoisi.code">
+                  <button type="button" class="indicatif-option"
+                    [class.choisie]="i.code === indicatifChoisi.code"
+                    (click)="choisirIndicatif(i.code)">
+                    <span class="indicatif-drapeau">{{ i.drapeau }}</span>
+                    <span class="indicatif-pays">{{ i.pays }}</span>
+                    <span class="indicatif-option-code">{{ i.code }}</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <input id="telephone" type="tel" formControlName="telephone" autocomplete="tel-national" inputmode="tel"
+              class="field-input flex-1" placeholder="07 01 02 03 04"
+              [class.is-invalid]="estTransporteur && controlInvalid('telephone', 'required')" />
+          </div>
+          <p *ngIf="estTransporteur && controlInvalid('telephone', 'required')" class="field-error">
+            Numéro requis : c'est par là que les vendeurs vous joindront.
+          </p>
+        </div>
+
+        <div class="field">
+          <label for="password" class="field-label">Mot de passe</label>
+          <div class="password-field">
+            <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+              autocomplete="new-password" placeholder="Au moins 6 caractères" class="field-input"
+              [class.is-invalid]="controlInvalid('password', 'required') || controlInvalid('password', 'minlength')" />
+            <button type="button" class="password-toggle" (click)="togglePassword()"
+              aria-label="Afficher ou masquer le mot de passe">
+              <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+          <p *ngIf="controlInvalid('password', 'required')" class="field-error">Mot de passe requis.</p>
+          <p *ngIf="controlInvalid('password', 'minlength')" class="field-error">
+            Le mot de passe doit contenir au moins 6 caractères.
+          </p>
+        </div>
+
+        <div class="field">
+          <label for="passwordConfirmation" class="field-label">Confirmation du mot de passe</label>
+          <div class="password-field">
+            <input id="passwordConfirmation" [type]="showPasswordConfirmation ? 'text' : 'password'"
+              formControlName="passwordConfirmation" autocomplete="new-password" class="field-input"
+              [class.is-invalid]="controlInvalid('passwordConfirmation', 'required') || formInvalid('passwordMismatch')" />
+            <button type="button" class="password-toggle" (click)="togglePasswordConfirmation()"
+              aria-label="Afficher ou masquer la confirmation du mot de passe">
+              <i class="pi text-sm" [ngClass]="showPasswordConfirmation ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+          <p *ngIf="controlInvalid('passwordConfirmation', 'required')" class="field-error">Confirmation requise.</p>
+          <p *ngIf="formInvalid('passwordMismatch')" class="field-error">Les mots de passe ne correspondent pas.</p>
+        </div>
+
+        <button type="submit" class="btn-primary btn-lg btn-block mt-1" [disabled]="form.invalid">
+          Créer mon compte
+        </button>
+      </form>
+
+      <p class="auth-foot">
         Vous avez déjà un compte ?
-        <a routerLink="/auth/login">Se connecter</a>
+        <a routerLink="/auth/login" class="link">Se connecter</a>
       </p>
-    </form>
+    </div>
   </div>
 </div>

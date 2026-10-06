@@ -1,8 +1,8 @@
 <div class="max-w-7xl mx-auto py-6 px-4">
   <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">Transactions</h1>
-      <p class="text-sm text-gray-500 mt-1">
+      <h1 class="page-title">Transactions</h1>
+      <p class="text-sm text-ink-3 mt-1">
         {{ totalElements }} commande{{ totalElements > 1 ? 's' : '' }}
       </p>
     </div>
@@ -12,17 +12,17 @@
         *ngFor="let f of filters"
         type="button"
         (click)="setFilter(f.value)"
-        [class.bg-[#2D6A4F]]="activeFilter === f.value"
+        [class.bg-brand-600]="activeFilter === f.value"
         [class.text-white]="activeFilter === f.value"
-        class="px-4 py-2 rounded-lg text-sm border border-[#2D6A4F]/30 hover:bg-[#2D6A4F]/10 transition">
+        class="px-4 py-2 rounded-lg text-sm border border-brand-600/30 hover:bg-brand-600/10 transition">
         {{ f.label }}
       </button>
     </div>
   </div>
 
-  <div class="overflow-x-auto rounded-xl border border-[#E7E0D2] bg-white">
+  <div class="overflow-x-auto rounded-xl border border-line bg-white">
     <table class="w-full text-sm">
-      <thead class="bg-[#FBF9F4] text-gray-600 uppercase text-xs">
+      <thead class="bg-canvas text-ink-2 uppercase text-xs">
         <tr>
           <th class="px-4 py-3 text-left">Commande</th>
           <th class="px-4 py-3 text-left">Acheteur</th>
@@ -35,46 +35,46 @@
         </tr>
       </thead>
 
-      <tbody class="divide-y divide-[#F0EAD9]">
+      <tbody class="divide-y divide-line">
         <tr *ngIf="loading">
-          <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+          <td colspan="8" class="px-4 py-8 text-center text-ink-3">
             Chargement des transactions...
           </td>
         </tr>
 
         <tr *ngIf="!loading && commandes.length === 0">
-          <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+          <td colspan="8" class="px-4 py-8 text-center text-ink-3">
             Aucune transaction trouvée.
           </td>
         </tr>
 
         <tr
           *ngFor="let commande of commandes; trackBy: trackByCommandeId"
-          class="hover:bg-[#FBF9F4] transition">
+          class="hover:bg-canvas transition">
           <td class="px-4 py-3">
-            <div class="font-medium text-gray-900">#{{ commande.id }}</div>
-            <div class="text-xs text-gray-500">{{ commande.reference || '—' }}</div>
-            <div class="text-xs text-gray-400">{{ commande.nombreArticles }} article{{ commande.nombreArticles > 1 ? 's' : '' }}</div>
+            <div class="font-medium text-ink">#{{ commande.id }}</div>
+            <div class="text-xs text-ink-3">{{ commande.reference || '—' }}</div>
+            <div class="text-xs text-ink-3">{{ commande.nombreArticles }} article{{ commande.nombreArticles > 1 ? 's' : '' }}</div>
           </td>
 
           <td class="px-4 py-3">
-            <div class="text-gray-700">{{ commande.acheteurNom || 'N/A' }}</div>
-            <div class="text-xs text-gray-500">{{ commande.acheteurEmail || 'Email indisponible' }}</div>
+            <div class="text-ink-2">{{ commande.acheteurNom || 'N/A' }}</div>
+            <div class="text-xs text-ink-3">{{ commande.acheteurEmail || 'Email indisponible' }}</div>
           </td>
 
-          <td class="px-4 py-3 text-right font-medium text-[#2D6A4F]">
+          <td class="px-4 py-3 text-right font-medium text-brand-600">
             {{ commande.montant | number }} FCFA
           </td>
 
-          <td class="px-4 py-3 text-right text-gray-500">
+          <td class="px-4 py-3 text-right text-ink-3">
             {{ commande.fraisGeniusPay | number }} FCFA
           </td>
 
-          <td class="px-4 py-3 text-right text-gray-500">
+          <td class="px-4 py-3 text-right text-ink-3">
             {{ commande.commissionPlateforme | number }} FCFA
           </td>
 
-          <td class="px-4 py-3 text-right font-medium text-gray-900">
+          <td class="px-4 py-3 text-right font-medium text-ink">
             {{ commande.montantNetVendeur | number }} FCFA
           </td>
 
@@ -90,7 +90,7 @@
                    Le rouge est reserve aux erreurs, et c'en est une : de
                    l'argent a ete preleve sur une commande abandonnee. -->
               <span *ngIf="commande.paiementOrphelinDetecteAt"
-                class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800"
+                class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-danger-soft text-danger"
                 [title]="titreOrphelin(commande)">
                 <i class="pi pi-exclamation-triangle text-[10px]"></i>
                 Payée chez l'opérateur
@@ -98,7 +98,7 @@
             </div>
           </td>
 
-          <td class="px-4 py-3 text-gray-500 text-xs">
+          <td class="px-4 py-3 text-ink-3 text-xs">
             {{ commande.createdAt | date:'dd/MM/yyyy HH:mm' }}
           </td>
         </tr>
@@ -106,14 +106,14 @@
     </table>
   </div>
 
-  <div class="flex items-center justify-between mt-4 text-sm text-gray-500" *ngIf="totalPages > 1">
+  <div class="flex items-center justify-between mt-4 text-sm text-ink-3" *ngIf="totalPages > 1">
     <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
     <div class="flex gap-2">
       <button
         type="button"
         (click)="prevPage()"
         [disabled]="currentPage === 0 || loading"
-        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-canvas transition">
         Précédent
       </button>
 
@@ -121,7 +121,7 @@
         type="button"
         (click)="nextPage()"
         [disabled]="currentPage >= totalPages - 1 || loading"
-        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-[#FBF9F4] transition">
+        class="px-3 py-2 border rounded-lg disabled:opacity-40 hover:bg-canvas transition">
         Suivant
       </button>
     </div>

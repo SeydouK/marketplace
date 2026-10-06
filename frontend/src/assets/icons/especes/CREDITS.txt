@@ -1,0 +1,7 @@
+Silhouettes d'animaux : game-icons.net — licence CC BY 3.0
+https://creativecommons.org/licenses/by/3.0/
+  bovin.svg, ovin.svg, avicole.svg : Delapouite (cow, sheep, chicken)
+  caprin.svg : darkzaitzev (ram)
+  porcin.svg : Skoll (pig)
+Tracés d'origine conservés ; seul le fond a été retiré. Les vignettes de
+assets/images/especes/ en sont dérivées (fond teinté et ombre ajoutés).

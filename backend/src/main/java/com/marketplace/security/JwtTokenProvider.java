@@ -44,6 +44,16 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
+    /** Date d'emission du jeton — sert a refuser les sessions anterieures a un changement de mot de passe. */
+    public Date getIssuedAtFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getIssuedAt();
+    }
+
     public boolean validateToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);

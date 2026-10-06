@@ -1,132 +1,148 @@
 <!-- frontend/src/app/features/panier/panier.component.html -->
 
-<div class="panier-page">
+<div class="page">
 
-  <!-- ── En-tête ── -->
-  <div class="panier-header">
-    <h1>
-      <span class="icon"><i class="pi pi-shopping-cart"></i></span>
-      Mon Panier
-      <span class="badge" *ngIf="panier?.nombreArticles">
-        {{ panier!.nombreArticles }} animal{{ panier!.nombreArticles > 1 ? 'x' : '' }}
-      </span>
-    </h1>
+  <!-- En-tête -->
+  <header class="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-8">
+    <div>
+      <p class="eyebrow">Achat</p>
+      <h1 class="page-title mt-1.5 flex items-center gap-3">
+        Mon panier
+        <span class="badge-brand mt-1 font-sans text-xs tracking-normal" *ngIf="panier?.nombreArticles">
+          {{ panier!.nombreArticles }} animal{{ panier!.nombreArticles > 1 ? 'x' : '' }}
+        </span>
+      </h1>
+    </div>
+  </header>
+
+  <!-- Chargement : silhouette de la page plutôt qu'un second chargeur -->
+  <div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]" *ngIf="chargement" aria-busy="true">
+    <div class="space-y-4">
+      <div class="skeleton h-32 rounded-2xl"></div>
+      <div class="skeleton h-32 rounded-2xl"></div>
+    </div>
+    <div class="skeleton h-64 rounded-2xl"></div>
   </div>
 
-  <!-- ── Loader ── -->
-  <div class="loader-wrapper" *ngIf="chargement">
-    <app-loader></app-loader>
+  <!-- Panier vide -->
+  <div class="empty" *ngIf="!chargement && (!panier || panier.items.length === 0)">
+    <div class="empty-icon"><i class="pi pi-shopping-cart"></i></div>
+    <h2 class="empty-title">Votre panier est vide</h2>
+    <p class="empty-text">Parcourez les annonces pour trouver votre prochain animal.</p>
+    <button class="btn-primary mt-5" routerLink="/annonces">Voir les annonces</button>
   </div>
 
-  <!-- ── Panier vide ── -->
-  <div class="panier-vide" *ngIf="!chargement && (!panier || panier.items.length === 0)">
-    <div class="vide-illustration"><i class="pi pi-shopping-cart"></i></div>
-    <h2>Votre panier est vide</h2>
-    <p>Parcourez nos annonces pour trouver votre prochain animal.</p>
-    <button class="btn-primary" routerLink="/annonces">Voir les annonces</button>
-  </div>
+  <!-- Contenu -->
+  <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]"
+       *ngIf="!chargement && panier && panier.items.length > 0">
 
-  <!-- ── Contenu du panier ── -->
-  <div class="panier-contenu" *ngIf="!chargement && panier && panier.items.length > 0">
+    <div class="min-w-0 space-y-5">
 
-    <div class="panier-gauche">
+      <!-- Un bloc par vendeur -->
+      <section class="card overflow-hidden" *ngFor="let groupe of groupesParVendeur">
 
-      <!-- Items groupés par vendeur -->
-      <div class="vendeur-groupe" *ngFor="let groupe of groupesParVendeur">
-
-        <div class="vendeur-header">
-          <span class="vendeur-icone"><i class="pi pi-shop"></i></span>
-          <strong>{{ groupe.vendeurNom }}</strong>
-          <span class="vendeur-localisation" *ngIf="groupe.items[0]?.localisation">
-            <i class="pi pi-map-marker"></i> {{ groupe.items[0].localisation }}
+        <header class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line bg-canvas px-5 py-3">
+          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-ink-2 ring-1 ring-line"><i class="pi pi-shop text-xs"></i></span>
+          <strong class="text-sm font-semibold text-ink">{{ groupe.vendeurNom }}</strong>
+          <span class="inline-flex items-center gap-1 text-[13px] text-ink-3" *ngIf="groupe.items[0]?.localisation">
+            <i class="pi pi-map-marker text-[11px]"></i> {{ groupe.items[0].localisation }}
           </span>
-        </div>
+        </header>
 
-        <div class="panier-item" *ngFor="let item of groupe.items">
+        <div class="flex gap-4 border-b border-line px-5 py-4 last-of-type:border-b-0" *ngFor="let item of groupe.items">
 
           <!-- Photo -->
-          <div class="item-photo">
-            <img [src]="item.photoUrl | assetUrl : 'assets/images/animal-placeholder.png'"
+          <div class="h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:h-24 sm:w-28">
+            <img [src]="item.photoUrl | assetUrl : 'assets/images/especes/autre.svg'"
                  [alt]="item.animalNom"
-                 onerror="this.src='assets/images/animal-placeholder.png'">
+                 class="h-full w-full object-cover"
+                 onerror="this.src='assets/images/especes/autre.svg'">
           </div>
 
           <!-- Infos -->
-          <div class="item-infos">
-            <h3 class="item-nom">{{ item.animalNom }}</h3>
-            <div class="item-details">
-              <span class="detail-tag" *ngIf="item.animalRace">{{ item.animalRace }}</span>
-              <span class="detail-tag" *ngIf="item.animalPoids">{{ item.animalPoids }} kg</span>
+          <div class="flex min-w-0 flex-1 flex-col">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <h3 class="truncate text-[15px] font-semibold text-ink">{{ item.animalNom }}</h3>
+                <div class="mt-1 flex flex-wrap gap-1.5">
+                  <span class="badge-neutral" *ngIf="item.animalRace">{{ item.animalRace }}</span>
+                  <span class="badge-neutral" *ngIf="item.animalPoids">{{ item.animalPoids }} kg</span>
+                </div>
+              </div>
+              <button class="btn-ghost btn-icon h-8 w-8 shrink-0 text-ink-3 hover:text-danger" (click)="supprimerItem(item)"
+                      title="Retirer du panier" aria-label="Retirer du panier">
+                <i class="pi pi-times text-xs"></i>
+              </button>
             </div>
-            <p class="item-prix-unitaire">{{ item.prixUnitaire | number:'1.0-0' }} FCFA / animal</p>
-          </div>
 
-          <!-- Quantité -->
-          <div class="item-quantite">
-            <button class="qty-btn" (click)="modifierQuantite(item, item.quantite - 1)"
-                    [disabled]="item.quantite <= 1">−</button>
-            <span class="qty-valeur">{{ item.quantite }}</span>
-            <button class="qty-btn" (click)="modifierQuantite(item, item.quantite + 1)">+</button>
-          </div>
+            <div class="mt-auto flex flex-wrap items-end justify-between gap-3 pt-3">
+              <div class="flex items-center gap-3">
+                <!-- Quantité -->
+                <div class="inline-flex items-center rounded-full border border-line-strong bg-surface">
+                  <button class="flex h-8 w-8 items-center justify-center rounded-full text-ink transition-colors hover:bg-muted disabled:opacity-30"
+                          (click)="modifierQuantite(item, item.quantite - 1)"
+                          [disabled]="item.quantite <= 1" aria-label="Diminuer">−</button>
+                  <span class="w-7 text-center text-sm font-semibold text-ink tabular">{{ item.quantite }}</span>
+                  <button class="flex h-8 w-8 items-center justify-center rounded-full text-ink transition-colors hover:bg-muted"
+                          (click)="modifierQuantite(item, item.quantite + 1)" aria-label="Augmenter">+</button>
+                </div>
+                <p class="text-[13px] text-ink-3 tabular">{{ item.prixUnitaire | number:'1.0-0' }} FCFA / animal</p>
+              </div>
 
-          <!-- Sous-total -->
-          <div class="item-sous-total">
-            <span>{{ item.sousTotal | number:'1.0-0' }} FCFA</span>
+              <!-- Sous-total -->
+              <p class="text-[15px] font-semibold text-ink tabular">{{ item.sousTotal | number:'1.0-0' }} FCFA</p>
+            </div>
           </div>
-
-          <!-- Supprimer -->
-          <button class="btn-supprimer" (click)="supprimerItem(item)" title="Retirer du panier">
-            <i class="pi pi-times"></i>
-          </button>
         </div>
 
-        <div class="vendeur-sous-total">
-          Sous-total vendeur : <strong>{{ groupe.sousTotal | number:'1.0-0' }} FCFA</strong>
-        </div>
-      </div>
+        <footer class="flex justify-end bg-canvas px-5 py-3 text-sm text-ink-2">
+          Sous-total vendeur&nbsp;: <strong class="ml-1 font-semibold text-ink tabular">{{ groupe.sousTotal | number:'1.0-0' }} FCFA</strong>
+        </footer>
+      </section>
 
-      <!-- Action vider -->
-      <div class="panier-actions-bas">
-        <button class="btn-vider" (click)="confirmerVider()">
-          <i class="pi pi-trash"></i> Vider le panier
+      <!-- Actions -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <button class="btn-ghost" routerLink="/annonces">
+          <i class="pi pi-arrow-left text-xs"></i> Continuer mes achats
         </button>
-        <button class="btn-continuer" routerLink="/annonces">
-          <i class="pi pi-arrow-left"></i> Continuer mes achats
+        <button class="btn-ghost text-danger hover:bg-danger-soft hover:text-danger" (click)="confirmerVider()">
+          <i class="pi pi-trash text-xs"></i> Vider le panier
         </button>
       </div>
     </div>
 
-    <!-- ── Récapitulatif ── -->
-    <div class="panier-recapitulatif">
-      <h2>Récapitulatif</h2>
+    <!-- Récapitulatif -->
+    <aside class="card card-pad h-fit shadow-card-hover lg:sticky lg:top-24">
+      <h2 class="section-title">Récapitulatif</h2>
 
-      <div class="recap-ligne" *ngFor="let groupe of groupesParVendeur">
-        <span>{{ groupe.vendeurNom }}</span>
-        <span>{{ groupe.sousTotal | number:'1.0-0' }} FCFA</span>
+      <dl class="mt-4 space-y-2.5 text-sm">
+        <div class="flex justify-between gap-3" *ngFor="let groupe of groupesParVendeur">
+          <dt class="truncate text-ink-2">{{ groupe.vendeurNom }}</dt>
+          <dd class="whitespace-nowrap text-ink tabular">{{ groupe.sousTotal | number:'1.0-0' }} FCFA</dd>
+        </div>
+      </dl>
+
+      <div class="mt-4 flex items-baseline justify-between gap-3 border-t border-line pt-4">
+        <span class="font-semibold text-ink">Total</span>
+        <strong class="text-2xl font-bold tracking-[-0.02em] text-ink tabular">{{ panier.total | number:'1.0-0' }} <span class="text-sm font-semibold text-ink-2">FCFA</span></strong>
       </div>
 
-      <div class="recap-separateur"></div>
-
-      <div class="recap-total">
-        <span>Total</span>
-        <strong>{{ panier.total | number:'1.0-0' }} FCFA</strong>
-      </div>
-
-      <p class="recap-note">
-        <i class="pi pi-lock"></i> Paiement sécurisé. BétailMarket conserve les fonds et ne les verse au
-        vendeur qu'après validation de la vente par notre équipe.
-      </p>
-
-      <button class="btn-commander" (click)="passerCommande()" [disabled]="commandeEnCours">
-        <span *ngIf="!commandeEnCours"><i class="pi pi-check-circle"></i> Passer la commande</span>
-        <span *ngIf="commandeEnCours"><i class="pi pi-spin pi-spinner"></i> Traitement...</span>
+      <button class="btn-primary btn-lg btn-block mt-5" (click)="passerCommande()" [disabled]="commandeEnCours">
+        <span *ngIf="!commandeEnCours" class="inline-flex items-center gap-2"><i class="pi pi-lock text-sm"></i> Passer la commande</span>
+        <span *ngIf="commandeEnCours" class="inline-flex items-center gap-2"><i class="pi pi-spin pi-spinner text-sm"></i> Traitement…</span>
       </button>
 
-      <p class="paiement-methodes">
-        <i class="pi pi-mobile"></i> Paiement Mobile Money sécurisé.
-        Vous choisirez votre opérateur à l'étape suivante.
-      </p>
-    </div>
+      <div class="mt-5 space-y-3 border-t border-line pt-5 text-[13px] leading-relaxed text-ink-2">
+        <p class="flex gap-2.5">
+          <i class="pi pi-shield mt-0.5 text-brand-600"></i>
+          <span>Paiement protégé&nbsp;: les fonds restent bloqués et ne sont versés au vendeur qu'à la remise de l'animal, quand vous donnez votre code.</span>
+        </p>
+        <p class="flex gap-2.5">
+          <i class="pi pi-mobile mt-0.5 text-brand-600"></i>
+          <span>Paiement Mobile Money. Vous choisirez votre opérateur à l'étape suivante.</span>
+        </p>
+      </div>
+    </aside>
   </div>
 
 </div>

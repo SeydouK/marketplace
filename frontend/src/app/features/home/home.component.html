@@ -1,195 +1,297 @@
-<main class="flex-1 overflow-auto bg-[#FBF9F4]">
+<main class="flex-1 overflow-auto bg-canvas">
 
-  <!-- ════ HERO ════ -->
-  <section class="relative overflow-hidden bg-gradient-to-br from-[#1B4332] via-[#245540] to-[#2D6A4F]">
-    <!-- Décor -->
-    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -left-20 w-80 h-80 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
+  <!-- ════ ACCUEIL ════ -->
+  <section class="bg-brand-800 text-white">
+    <div class="mx-auto grid max-w-page items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14 lg:py-20">
 
-    <div class="relative max-w-6xl mx-auto px-4 lg:px-8 py-14 lg:py-20 text-center">
-      <span class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-4 py-1.5 text-xs font-semibold text-[#F4D4A3] tracking-wide uppercase mb-6">
-        <i class="pi pi-verified"></i>
-        La marketplace de confiance pour l'élevage
-      </span>
+      <div>
+        <p class="inline-flex items-center gap-2 text-2xs font-semibold uppercase tracking-eyebrow text-accent-200">
+          <i class="pi pi-verified text-xs"></i>
+          La place de marché de confiance pour l'élevage
+        </p>
 
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight max-w-3xl mx-auto">
-        Achetez et vendez vos animaux
-        <span class="text-[#ECB867]">en toute confiance</span>
-      </h1>
+        <h1 class="display mt-4 max-w-xl text-[2.25rem] font-semibold leading-[1.08] text-white sm:text-5xl lg:text-[3.5rem]">
+          Achetez et vendez votre bétail
+          <span class="text-accent-300">en toute confiance</span>
+        </h1>
 
-      <p class="mt-4 text-base lg:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-        Bovins, moutons, chèvres, volailles et animaux de compagnie — des vendeurs vérifiés,
-        des annonces contrôlées et un paiement sécurisé, partout en Côte d'Ivoire.
-      </p>
+        <p class="mt-5 max-w-lg text-base leading-relaxed text-white/75 lg:text-lg">
+          Bovins, ovins, caprins et volailles contrôlés par un vétérinaire, vendus par des éleveurs
+          vérifiés — partout en Côte d'Ivoire.
+        </p>
 
-      <!-- Barre de recherche -->
-      <form (ngSubmit)="submitHeroSearch()"
-        class="mt-8 max-w-2xl mx-auto flex items-center gap-2 bg-white rounded-full p-2 shadow-xl">
-        <i class="pi pi-search text-gray-400 ml-4 hidden sm:block"></i>
-        <input
-          type="text"
-          name="heroSearch"
-          [(ngModel)]="heroSearchInput"
-          placeholder="Rechercher un animal, une race, une ville..."
-          class="flex-1 min-w-0 bg-transparent px-3 py-2.5 text-sm sm:text-base text-gray-800 placeholder-gray-400 outline-none"/>
-        <button type="submit"
-          class="flex-shrink-0 inline-flex items-center gap-2 bg-[#2D6A4F] hover:bg-[#245540] text-white font-semibold text-sm sm:text-base px-5 sm:px-7 py-3 rounded-full transition-colors">
-          <i class="pi pi-search sm:hidden"></i>
-          <span class="hidden sm:inline">Rechercher</span>
-        </button>
-      </form>
+        <!-- Recherche -->
+        <form (ngSubmit)="submitHeroSearch()"
+              class="mt-8 flex max-w-xl items-center gap-1.5 rounded-2xl bg-surface p-1.5 shadow-pop">
+          <svg class="ml-3 hidden h-[18px] w-[18px] shrink-0 text-ink-3 sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-5.2-5.2M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/>
+          </svg>
+          <input
+            type="text"
+            name="heroSearch"
+            [(ngModel)]="heroSearchInput"
+            placeholder="Un animal, une race, une ville…"
+            class="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-[15px] text-ink outline-none placeholder:text-ink-3"/>
+          <button type="submit" class="btn-primary h-11 shrink-0 rounded-xl px-5">
+            <i class="pi pi-search text-sm sm:hidden"></i>
+            <span class="hidden sm:inline">Rechercher</span>
+          </button>
+        </form>
 
-      <!-- CTA -->
-      <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <button type="button" (click)="handlePublishClick()"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#E59C3C] to-[#D97E1F] hover:from-[#D97E1F] hover:to-[#B96416] text-white font-bold px-8 py-4 rounded-2xl shadow-lg shadow-amber-900/30 transition-all text-base">
-          <i class="pi pi-plus-circle"></i>
-          Publier une annonce
-        </button>
-        <a routerLink="/annonces"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-2xl transition-colors text-base">
-          Voir les annonces
-          <i class="pi pi-arrow-right text-sm"></i>
-        </a>
+        <!-- Appels à l'action -->
+        <div class="mt-5 flex flex-col gap-2.5 sm:flex-row">
+          <button type="button" (click)="handlePublishClick()" class="btn-accent btn-lg">
+            <i class="pi pi-plus text-xs"></i>
+            Publier une annonce
+          </button>
+          <a routerLink="/annonces"
+             class="btn btn-lg border-white/25 text-white hover:border-white/50 hover:bg-white/5">
+            Voir les annonces
+            <i class="pi pi-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+        <!-- Réassurance -->
+        <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/70">
+          <li class="inline-flex items-center gap-2"><i class="pi pi-check text-xs text-accent-300"></i> Vendeurs vérifiés</li>
+          <li class="inline-flex items-center gap-2"><i class="pi pi-check text-xs text-accent-300"></i> Annonces contrôlées</li>
+          <li class="inline-flex items-center gap-2"><i class="pi pi-check text-xs text-accent-300"></i> Paiement sécurisé</li>
+          <li class="inline-flex items-center gap-2"><i class="pi pi-check text-xs text-accent-300"></i> Contact direct vendeur</li>
+        </ul>
       </div>
 
-      <!-- Réassurance -->
-      <div class="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-white/85">
-        <span class="inline-flex items-center gap-2">
-          <i class="pi pi-verified text-[#ECB867]"></i> Vendeurs vérifiés
-        </span>
-        <span class="inline-flex items-center gap-2">
-          <i class="pi pi-shield text-[#ECB867]"></i> Annonces contrôlées
-        </span>
-        <span class="inline-flex items-center gap-2">
-          <i class="pi pi-lock text-[#ECB867]"></i> Paiement sécurisé
-        </span>
-        <span class="inline-flex items-center gap-2">
-          <i class="pi pi-whatsapp text-[#ECB867]"></i> Contact direct vendeur
-        </span>
-      </div>
+      <!-- Le paiement protégé, expliqué -->
+      <aside class="rounded-2xl bg-surface p-6 text-ink shadow-pop sm:p-7" aria-label="Comment fonctionne le paiement protégé">
+        <div class="flex items-center gap-3">
+          <span class="icon-tile-brand"><i class="pi pi-lock"></i></span>
+          <div>
+            <p class="text-sm font-semibold text-ink">Paiement protégé</p>
+            <p class="text-xs text-ink-2">Votre argent ne part qu'à la remise de l'animal</p>
+          </div>
+        </div>
+
+        <ol class="mt-6 space-y-5">
+          <li class="flex gap-4">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">1</span>
+            <div>
+              <p class="text-sm font-semibold text-ink">Vous payez en ligne</p>
+              <p class="mt-0.5 text-[13px] leading-relaxed text-ink-2">Orange Money, Wave ou MTN. Les fonds sont bloqués par la plateforme.</p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">2</span>
+            <div>
+              <p class="text-sm font-semibold text-ink">Vous recevez un code de remise</p>
+              <p class="mt-0.5 text-[13px] leading-relaxed text-ink-2">Quatre chiffres, connus de vous seul.</p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">3</span>
+            <div>
+              <p class="text-sm font-semibold text-ink">Vous donnez le code à la remise</p>
+              <p class="mt-0.5 text-[13px] leading-relaxed text-ink-2">L'éleveur est payé seulement quand l'animal est entre vos mains.</p>
+            </div>
+          </li>
+        </ol>
+      </aside>
     </div>
   </section>
 
-  <!-- ════ CATÉGORIES ════ -->
-  <section class="max-w-6xl mx-auto px-4 lg:px-8 -mt-0 pt-8">
-    <div class="flex items-center gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 sm:justify-center">
-      <button
-        *ngFor="let cat of categories"
-        type="button"
-        (click)="setCategory(cat.value)"
-        class="flex-shrink-0 flex flex-col items-center gap-2 px-5 py-4 rounded-2xl border transition-all min-w-[96px]"
-        [ngClass]="animalFilter === cat.value
-          ? 'bg-[#2D6A4F] border-[#2D6A4F] text-white shadow-lg shadow-emerald-900/20'
-          : 'bg-white border-[#E7E0D2] text-gray-700 hover:border-[#2D6A4F] hover:shadow-md'">
-        <span class="w-10 h-10 rounded-full flex items-center justify-center"
-          [ngClass]="animalFilter === cat.value ? 'bg-white/15' : 'bg-[#F6F1E7]'">
-          <img [src]="cat.icon" [alt]="cat.label" class="w-6 h-6 object-contain"/>
-        </span>
-        <span class="text-xs font-semibold whitespace-nowrap">{{ cat.label }}</span>
-      </button>
+  <!-- ════ TEMPS FORT : TABASKI ════ -->
+  <section *ngIf="tabaskiVisible" class="mx-auto max-w-wide px-4 pt-10 sm:px-6 lg:px-8 lg:pt-14">
+    <div class="grid overflow-hidden rounded-2xl border border-accent-200 bg-accent-50 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+
+      <div class="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+        <p class="eyebrow text-accent-700">Temps fort · Tabaski {{ tabaskiDate | date:'yyyy' }}</p>
+        <h2 class="display mt-3 text-[1.875rem] font-semibold leading-[1.12] text-ink sm:text-[2.25rem]">
+          Préparez la Tabaski sereinement
+        </h2>
+        <p class="mt-3 max-w-md text-[15px] leading-relaxed text-ink-2">
+          Choisissez votre mouton auprès d'éleveurs vérifiés, payez en toute sécurité
+          et faites-le livrer avant la fête.
+        </p>
+
+        <div class="mt-6 flex items-center gap-4">
+          <p class="text-[2.75rem] font-bold leading-none tracking-[-0.03em] text-ink tabular">
+            <ng-container *ngIf="joursAvantTabaski > 0">J-{{ joursAvantTabaski }}</ng-container>
+            <ng-container *ngIf="joursAvantTabaski <= 0">C'est la fête</ng-container>
+          </p>
+          <p class="text-[13px] leading-snug text-ink-2">
+            Fête prévue le<br>
+            <strong class="font-semibold text-ink">{{ tabaskiDate | date:'d MMMM yyyy' }}</strong>
+            <span *ngIf="tabaskiDateEstimee" class="text-ink-3"> · date estimée</span>
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-wrap gap-2.5">
+          <button type="button" class="btn-primary btn-lg" (click)="voirMoutons(annonces)">
+            <span *ngIf="nombreMoutons === 1">Voir le mouton en vente</span>
+            <span *ngIf="nombreMoutons > 1">Voir les {{ nombreMoutons }} moutons en vente</span>
+            <span *ngIf="nombreMoutons === 0">Voir les moutons</span>
+            <i class="pi pi-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Les moutons réellement en vente, posés sur l'illustration de l'espèce -->
+      <div class="relative min-h-[260px] overflow-hidden border-t border-accent-200 lg:border-l lg:border-t-0">
+        <img src="assets/images/especes/ovin-tabaski.svg" alt="" class="absolute inset-0 h-full w-full object-cover" aria-hidden="true"/>
+        <div *ngIf="moutonsEnVente.length" class="relative flex h-full items-end gap-3 overflow-x-auto p-4 scrollbar-hide sm:p-6">
+          <a *ngFor="let mouton of moutonsEnVente; trackBy: trackByListing" [routerLink]="['/annonces', mouton.id]"
+             class="group flex w-40 shrink-0 flex-col overflow-hidden rounded-xl bg-surface shadow-card-hover ring-1 ring-black/5 transition-transform hover:-translate-y-0.5 sm:w-44">
+            <div class="aspect-[4/3] overflow-hidden bg-muted">
+              <img [src]="mouton.image | visuelAnimal : mouton.animalType" [alt]="mouton.title" loading="lazy"
+                   class="h-full w-full object-cover"/>
+            </div>
+            <div class="px-3 py-2.5">
+              <p class="truncate text-[13px] font-semibold text-ink">{{ mouton.title }}</p>
+              <p class="text-[13px] font-bold text-ink tabular">{{ mouton.price | number:'1.0-0' }} <span class="text-[11px] font-semibold text-ink-2">FCFA</span></p>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ════ ANNONCES ════ -->
-  <div class="max-w-[1600px] mx-auto py-8 px-4 lg:px-8">
-    <section>
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-        <div>
-          <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">Animaux disponibles</h2>
-          <p class="text-gray-500 mt-2">
-            {{ filteredListings.length }} animal<span *ngIf="filteredListings.length > 1">aux</span> disponible<span *ngIf="filteredListings.length > 1">s</span> à la vente
-          </p>
-        </div>
-
-        <a
-          routerLink="/annonces"
-          class="inline-flex items-center gap-2 rounded-full border border-[#2D6A4F]/30 bg-white px-5 py-2.5 text-sm font-semibold text-[#2D6A4F] hover:bg-[#F2F7F3] hover:border-[#2D6A4F] transition-colors self-start lg:self-auto"
-        >
-          Voir toutes les annonces
-          <i class="pi pi-arrow-right text-xs"></i>
-        </a>
+  <section #annonces class="scroll-mt-24 mx-auto max-w-wide px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 class="display text-[1.75rem] font-semibold leading-tight text-ink sm:text-[2rem]">Animaux disponibles</h2>
+        <p class="mt-1 text-sm text-ink-2">
+          {{ filteredListings.length }} animal<span *ngIf="filteredListings.length > 1">aux</span> disponible<span *ngIf="filteredListings.length > 1">s</span> à la vente
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" *ngIf="filteredListings.length; else emptyState">
-        <app-listing-card
-          *ngFor="let listing of filteredListings; trackBy: trackByListing"
-          [listing]="listing"
-        ></app-listing-card>
-      </div>
+      <a routerLink="/annonces" class="link inline-flex items-center gap-1.5 self-start text-sm sm:self-auto">
+        Voir toutes les annonces
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+    </div>
 
-      <ng-template #emptyState>
-        <div class="rounded-3xl border border-dashed border-[#DFD2B8] bg-white p-12 text-center">
-          <span class="inline-flex w-16 h-16 rounded-full bg-[#F6F1E7] items-center justify-center mb-4">
-            <i class="pi pi-search text-2xl text-[#8B6F55]"></i>
-          </span>
-          <h2 class="text-xl font-bold text-gray-900 mb-2">Aucun animal trouvé</h2>
-          <p class="text-gray-500 max-w-md mx-auto">Essayez une autre catégorie ou modifiez votre recherche pour découvrir plus d'annonces.</p>
-          <button type="button" (click)="setCategory('')"
-            class="mt-6 inline-flex items-center gap-2 rounded-full bg-[#2D6A4F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#245540] transition-colors">
-            Tout afficher
+    <!-- Catégories -->
+    <div class="-mx-4 mb-7 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide sm:mx-0 sm:flex-wrap sm:px-0">
+      <button
+        *ngFor="let cat of categories"
+        type="button"
+        (click)="setCategory(cat.value)"
+        class="chip py-2"
+        [class.chip-active]="animalFilter === cat.value">
+        <span *ngIf="cat.icon; else toutVoir" class="espece-icone h-[18px] w-[18px]"
+              [style.mask-image]="'url(' + cat.icon + ')'" [style.-webkit-mask-image]="'url(' + cat.icon + ')'"
+              aria-hidden="true"></span>
+        <ng-template #toutVoir><i class="pi pi-th-large text-[13px]" aria-hidden="true"></i></ng-template>
+        {{ cat.label }}
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" *ngIf="filteredListings.length; else emptyState">
+      <app-listing-card
+        *ngFor="let listing of filteredListings; trackBy: trackByListing"
+        [listing]="listing"
+      ></app-listing-card>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty">
+        <div class="empty-icon"><i class="pi pi-search"></i></div>
+        <h2 class="empty-title">Aucun animal dans cette catégorie</h2>
+        <p class="empty-text">Essayez une autre espèce ou élargissez votre recherche.</p>
+        <button type="button" (click)="setCategory('')" class="btn-primary mt-5">
+          Tout afficher
+        </button>
+      </div>
+    </ng-template>
+  </section>
+
+  <!-- ════ POUR LES ÉLEVEURS ════ -->
+  <section class="mx-auto max-w-wide px-4 pb-14 sm:px-6 lg:px-8 lg:pb-20">
+    <div class="grid items-center gap-10 overflow-hidden rounded-2xl bg-brand-800 p-6 text-white sm:p-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:p-14">
+      <div>
+        <p class="eyebrow text-accent-200">Pour les éleveurs</p>
+        <h2 class="display mt-3 text-[1.875rem] font-semibold leading-[1.12] text-white sm:text-[2.375rem]">
+          Vendez votre bétail sans risque d'impayé
+        </h2>
+        <ul class="mt-6 space-y-3 text-[15px] text-white/80">
+          <li class="flex items-start gap-3"><i class="pi pi-check mt-1 text-xs text-accent-300"></i> L'argent de l'acheteur est bloqué avant même que vous livriez.</li>
+          <li class="flex items-start gap-3"><i class="pi pi-check mt-1 text-xs text-accent-300"></i> Vous êtes payé sur votre Mobile Money dès la remise de l'animal.</li>
+          <li class="flex items-start gap-3"><i class="pi pi-check mt-1 text-xs text-accent-300"></i> Des transporteurs vérifiés livrent pour vous, partout en Côte d'Ivoire.</li>
+        </ul>
+        <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <button type="button" (click)="handlePublishClick()" class="btn-accent btn-lg">
+            <i class="pi pi-plus text-xs"></i>
+            Publier une annonce
           </button>
+          <span class="text-[13px] text-white/60">Publication gratuite · commission uniquement à la vente</span>
         </div>
-      </ng-template>
-    </section>
-  </div>
-
-  <!-- ════ COMMENT ÇA MARCHE / CONFIANCE ════ -->
-  <section class="bg-white border-t border-[#EDE4D3]">
-    <div class="max-w-6xl mx-auto px-4 lg:px-8 py-14">
-      <div class="text-center mb-10">
-        <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">Achetez en toute sérénité</h2>
-        <p class="text-gray-500 mt-2 max-w-xl mx-auto">Parce qu'acheter un animal est un acte de confiance, nous contrôlons chaque étape.</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="rounded-3xl bg-[#FBF9F4] border border-[#EDE4D3] p-6">
-          <span class="inline-flex w-12 h-12 rounded-2xl bg-[#E0EEE4] items-center justify-center mb-4">
-            <i class="pi pi-verified text-xl text-[#2D6A4F]"></i>
-          </span>
-          <h3 class="font-bold text-gray-900 mb-1.5">Vendeurs vérifiés</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Identité et activité des éleveurs contrôlées avant toute mise en vente.</p>
+      <!-- Exemple de versement : la transparence des frais vaut argument -->
+      <div class="rounded-2xl bg-surface p-6 text-ink shadow-pop">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-semibold text-ink">Vente d'un taureau</p>
+          <span class="badge-success badge-dot">Remis</span>
         </div>
-
-        <div class="rounded-3xl bg-[#FBF9F4] border border-[#EDE4D3] p-6">
-          <span class="inline-flex w-12 h-12 rounded-2xl bg-[#E0EEE4] items-center justify-center mb-4">
-            <i class="pi pi-shield text-xl text-[#2D6A4F]"></i>
-          </span>
-          <h3 class="font-bold text-gray-900 mb-1.5">Annonces contrôlées</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Chaque dossier animal est validé, avec suivi sanitaire et traçabilité.</p>
+        <dl class="mt-5 space-y-2.5 text-sm">
+          <div class="flex justify-between"><dt class="text-ink-2">Prix de vente</dt><dd class="text-ink tabular">300 000 FCFA</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-2">Frais de paiement (1 % + 100)</dt><dd class="text-ink-2 tabular">− 3 100 FCFA</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-2">Commission BétailMarket (3 %)</dt><dd class="text-ink-2 tabular">− 9 000 FCFA</dd></div>
+        </dl>
+        <div class="mt-4 flex items-baseline justify-between border-t border-line pt-4">
+          <span class="text-sm font-semibold text-ink">Vous recevez</span>
+          <span class="text-2xl font-bold tracking-[-0.02em] text-brand-700 tabular">287 900 FCFA</span>
         </div>
+        <p class="mt-3 text-xs text-ink-3">Exemple de calcul. Versé sur Wave, Orange Money, MTN ou Moov.</p>
+      </div>
+    </div>
+  </section>
 
-        <div class="rounded-3xl bg-[#FBF9F4] border border-[#EDE4D3] p-6">
-          <span class="inline-flex w-12 h-12 rounded-2xl bg-[#FAEAD2] items-center justify-center mb-4">
-            <i class="pi pi-lock text-xl text-[#B96416]"></i>
-          </span>
-          <h3 class="font-bold text-gray-900 mb-1.5">Paiement sécurisé</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Fonds bloqués en séquestre et libérés après réception de l'animal. Orange Money, Wave, MTN.</p>
+  <!-- ════ CONFIANCE ════ -->
+  <section class="border-t border-line bg-surface">
+    <div class="mx-auto max-w-page px-4 py-14 sm:px-6 lg:py-20">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Pourquoi BétailMarket</p>
+        <h2 class="display mt-3 text-[1.75rem] font-semibold leading-tight text-ink sm:text-[2.25rem]">
+          Acheter un animal est un acte de confiance. Nous contrôlons chaque étape.
+        </h2>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <span class="icon-tile-brand"><i class="pi pi-verified"></i></span>
+          <h3 class="mt-4 text-[15px] font-semibold text-ink">Vendeurs vérifiés</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-ink-2">Identité contrôlée par pièce d'identité et selfie avant toute mise en vente.</p>
         </div>
-
-        <div class="rounded-3xl bg-[#FBF9F4] border border-[#EDE4D3] p-6">
-          <span class="inline-flex w-12 h-12 rounded-2xl bg-[#FAEAD2] items-center justify-center mb-4">
-            <i class="pi pi-flag text-xl text-[#B96416]"></i>
-          </span>
-          <h3 class="font-bold text-gray-900 mb-1.5">Signalement facile</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Une annonce suspecte ? Signalez-la en un clic, notre équipe intervient rapidement.</p>
+        <div>
+          <span class="icon-tile-brand"><i class="pi pi-shield"></i></span>
+          <h3 class="mt-4 text-[15px] font-semibold text-ink">Annonces contrôlées</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-ink-2">Chaque animal est validé par un vétérinaire, avec historique et traçabilité.</p>
+        </div>
+        <div>
+          <span class="icon-tile-brand"><i class="pi pi-lock"></i></span>
+          <h3 class="mt-4 text-[15px] font-semibold text-ink">Paiement sécurisé</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-ink-2">Fonds bloqués en séquestre et libérés à la remise. Orange Money, Wave, MTN.</p>
+        </div>
+        <div>
+          <span class="icon-tile-brand"><i class="pi pi-flag"></i></span>
+          <h3 class="mt-4 text-[15px] font-semibold text-ink">Signalement facile</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-ink-2">Une annonce suspecte ? Signalez-la : notre équipe intervient rapidement.</p>
         </div>
       </div>
 
       <!-- Conseils avant achat -->
-      <div class="mt-10 rounded-3xl bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] p-7 lg:p-9 flex flex-col lg:flex-row lg:items-center gap-6">
+      <div class="mt-14 flex flex-col gap-6 rounded-2xl border border-line bg-canvas p-6 sm:p-8 lg:flex-row lg:items-center">
         <div class="flex-1">
-          <h3 class="text-xl font-bold text-white">Conseils avant d'acheter</h3>
-          <ul class="mt-3 space-y-2 text-sm text-white/85">
-            <li class="flex items-start gap-2"><i class="pi pi-check-circle text-[#ECB867] mt-0.5"></i> Vérifiez le badge « Vendeur vérifié » et le certificat sanitaire de l'animal.</li>
-            <li class="flex items-start gap-2"><i class="pi pi-check-circle text-[#ECB867] mt-0.5"></i> Privilégiez le paiement sécurisé de la plateforme plutôt que les transferts directs.</li>
-            <li class="flex items-start gap-2"><i class="pi pi-check-circle text-[#ECB867] mt-0.5"></i> Si possible, rendez visite à l'éleveur ou demandez une vidéo récente de l'animal.</li>
+          <h3 class="text-lg font-semibold text-ink">Conseils avant d'acheter</h3>
+          <ul class="mt-3 space-y-2 text-sm text-ink-2">
+            <li class="flex items-start gap-2.5"><i class="pi pi-check mt-1 text-xs text-brand-600"></i> Vérifiez le badge « Vendeur vérifié » et le certificat sanitaire de l'animal.</li>
+            <li class="flex items-start gap-2.5"><i class="pi pi-check mt-1 text-xs text-brand-600"></i> Payez par la plateforme plutôt que par transfert direct : c'est ce qui vous protège.</li>
+            <li class="flex items-start gap-2.5"><i class="pi pi-check mt-1 text-xs text-brand-600"></i> Si possible, rendez visite à l'éleveur ou demandez une vidéo récente de l'animal.</li>
           </ul>
         </div>
-        <a routerLink="/annonces"
-          class="self-start lg:self-center inline-flex items-center gap-2 bg-white text-[#1B4332] font-bold px-7 py-3.5 rounded-2xl hover:bg-[#F6F1E7] transition-colors">
+        <a routerLink="/annonces" class="btn-primary btn-lg self-start lg:self-center">
           Explorer les annonces
-          <i class="pi pi-arrow-right text-sm"></i>
+          <i class="pi pi-arrow-right text-xs"></i>
         </a>
       </div>
     </div>

@@ -106,7 +106,11 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('bm_saved_user', JSON.stringify(toSave));
   
         this.toast.success('Connexion réussie');
-        this.router.navigate(['/']);
+        // Seulement un chemin interne : « //site » ou une URL complète
+        // ouvriraient une redirection vers l'extérieur.
+        const retourSur = this.retour && this.retour.startsWith('/') && !this.retour.startsWith('//')
+          && !this.retour.startsWith('/auth');
+        this.router.navigateByUrl(retourSur ? this.retour! : '/');
       },
       error: (err) => {
         this.toast.error('Email ou mot de passe incorrect');
