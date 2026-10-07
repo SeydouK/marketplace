@@ -4,6 +4,7 @@ import com.marketplace.model.CommandeItem;
 import com.marketplace.model.User;
 import com.marketplace.repository.UserRepository;
 import com.marketplace.service.email.EmailSender;
+import com.marketplace.service.email.GabaritEmail;
 import com.marketplace.service.sms.SmsSender;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class NotificationLivraisonService {
     private final EmailSender emailSender;
     private final SmsSender smsSender;
     private final UserRepository userRepository;
+    private final GabaritEmail gabaritEmail;
 
     @Value("${app.mail.enabled:true}")
     private boolean mailEnabled;
@@ -62,20 +64,19 @@ public class NotificationLivraisonService {
 
         String animaux = nommer(articles);
         String sujet = "Votre code de remise — commande #" + commandeId;
-        String html = gabarit(
-                "Votre code de remise",
-                "<p>Votre paiement est confirmé. Voici le code à communiquer à <strong>"
+        String html = gabaritEmail.page(
+                "Paiement confirmé : voici le code à donner à la remise de l'animal.",
+                "Votre ticket de remise",
+                "<p style=\"margin:0\">Votre paiement est confirmé. Voici le code à communiquer à <strong>"
                         + echapper(vendeurNom) + "</strong> au moment où il vous remettra "
                         + echapper(animaux) + ".</p>"
-                        + "<p style=\"text-align:center;margin:32px 0\">"
-                        + "<span style=\"display:inline-block;font-family:monospace;font-size:38px;"
-                        + "font-weight:700;letter-spacing:12px;color:#1B4332;background:#E0EEE4;"
-                        + "border:2px solid #2D6A4F;border-radius:12px;padding:18px 28px\">"
-                        + echapper(code) + "</span></p>"
-                        + "<p><strong>Ne communiquez ce code qu'au moment où vous avez l'animal devant vous.</strong> "
+                        + GabaritEmail.code(echapper(code), "Code de remise · commande #" + commandeId)
+                        + GabaritEmail.encadre("<strong>Ne donnez ce code qu'au moment où l'animal est entre vos mains.</strong> "
                         + "Sa saisie déclenche le paiement du vendeur : tant qu'il n'est pas donné, "
-                        + "votre argent reste protégé par BétailMarket.</p>",
-                "Suivre ma commande", frontendUrl + "/acheteur/mes-achats");
+                        + "votre argent reste protégé par BétailMarket.", true),
+                "Ouvrir mon ticket de remise", frontendUrl + "/acheteur/ticket?commande=" + commandeId,
+                "Votre ticket reste disponible à tout moment dans «&nbsp;Mes achats&nbsp;» : vous pourrez "
+                        + "l'enregistrer en image ou l'envoyer par WhatsApp à la personne qui récupère l'animal.");
 
         envoyerEmail(acheteur.getEmail(), sujet, html);
         envoyerSms(acheteur.getPhone(), "BetailMarket : votre code de remise pour la commande #"
@@ -87,12 +88,12 @@ public class NotificationLivraisonService {
         User acheteur = userRepository.findById(acheteurId).orElse(null);
         if (acheteur == null) return;
 
-        String html = gabarit(
+        String html = gabaritEmail.page(
                 "Votre animal est prêt",
-                "<p><strong>" + echapper(article.getAnimalNom()) + "</strong> est prêt à être remis"
+                "<p style=\"margin:0 0 14px\"><strong>" + echapper(article.getAnimalNom()) + "</strong> est prêt à être remis"
                         + (article.getLocalisation() != null
                                 ? " à " + echapper(article.getLocalisation()) : "") + ".</p>"
-                        + "<p>Munissez-vous de votre code de remise le jour de la récupération.</p>",
+                        + "<p style=\"margin:0\">Munissez-vous de votre ticket de remise le jour de la récupération.</p>",
                 "Voir ma commande", frontendUrl + "/acheteur/mes-achats");
 
         envoyerEmail(acheteur.getEmail(), "« " + article.getAnimalNom() + " » est prêt — BétailMarket", html);
@@ -105,13 +106,12 @@ public class NotificationLivraisonService {
         User acheteur = userRepository.findById(acheteurId).orElse(null);
         if (acheteur == null) return;
 
-        String html = gabarit(
+        String html = gabaritEmail.page(
                 "La remise n'a pas pu avoir lieu",
-                "<p>La remise de <strong>" + echapper(article.getAnimalNom())
+                "<p style=\"margin:0\">La remise de <strong>" + echapper(article.getAnimalNom())
                         + "</strong> n'a pas abouti.</p>"
-                        + "<p style=\"background:#FDF6EC;border-left:3px solid #D97E1F;padding:12px 16px;"
-                        + "border-radius:4px\">" + echapper(motif) + "</p>"
-                        + "<p>Votre paiement reste protégé. Contactez le vendeur pour convenir "
+                        + GabaritEmail.encadre(echapper(motif), true)
+                        + "<p style=\"margin:0\">Votre paiement reste protégé. Contactez le vendeur pour convenir "
                         + "d'une nouvelle date.</p>",
                 "Voir ma commande", frontendUrl + "/acheteur/mes-achats");
 
@@ -127,12 +127,11 @@ public class NotificationLivraisonService {
         User vendeur = userRepository.findById(vendeurId).orElse(null);
         if (vendeur == null) return;
 
-        String montant = montantNet == null ? "" : montantNet.toPlainString() + " FCFA";
-        String html = gabarit(
+        String montant = montantNet == null ? "" : fcfa(montantNet);
+        String html = gabaritEmail.page(
                 "Vos fonds sont débloqués",
-                "<p>La remise de la commande #" + commandeId + " est confirmée.</p>"
-                        + "<p style=\"font-size:22px;font-weight:700;color:#1B4332\">" + montant + "</p>"
-                        + "<p>Ce montant sort du séquestre et part au prochain versement.</p>",
+                "<p style=\"margin:0\">La remise de la commande #" + commandeId + " est confirmée.</p>"
+                        + GabaritEmail.montant(montant, "Ce montant sort du séquestre et part au prochain versement."),
                 "Voir mes ventes", frontendUrl + "/vendeur/mes-ventes");
 
         envoyerEmail(vendeur.getEmail(), "Fonds débloqués — commande #" + commandeId, html);
@@ -162,23 +161,20 @@ public class NotificationLivraisonService {
         }
 
         String animaux = nommer(articles);
-        String html = gabarit(
+        String html = gabaritEmail.page(
                 "Vous avez vendu !",
-                "<p><strong>" + echapper(animaux) + "</strong> vient d'etre paye"
+                "<p style=\"margin:0\"><strong>" + echapper(animaux) + "</strong> vient d'être payé"
                         + (articles.size() > 1 ? "s" : "") + " par l'acheteur.</p>"
-                        + "<p style=\"font\"-size:26px;font-weight:700;color:#1B4332;margin:8px 0 4px\">"
-                        + fcfa(montantNet) + "</p>"
-                        + "<p style=\"font-size:13px;color:#6B6358;margin-top:0\">"
-                        + "Prix de vente " + fcfa(montantBrut)
-                        + " &minus; frais de paiement " + fcfa(fraisPaiement)
-                        + " &minus; commission BetailMarket " + fcfa(commission) + "</p>"
-                        + "<p style=\"background:#E0EEE4;border-left:3px solid #2D6A4F;padding:12px 16px;"
-                        + "border-radius:4px\"><strong>Preparez l'animal.</strong> "
-                        + "L'argent est encaisse mais reste bloque chez BetailMarket : il vous sera verse "
-                        + "des que l'acheteur vous aura donne son code de remise, a la livraison.</p>",
+                        + GabaritEmail.montant(fcfa(montantNet),
+                                "Prix de vente " + fcfa(montantBrut)
+                                + " &minus; frais de paiement " + fcfa(fraisPaiement)
+                                + " &minus; commission BétailMarket " + fcfa(commission))
+                        + GabaritEmail.encadre("<strong>Préparez l'animal.</strong> "
+                        + "L'argent est encaissé mais reste bloqué chez BétailMarket : il vous sera versé "
+                        + "dès que l'acheteur vous aura donné son code de remise, à la livraison.", false),
                 "Voir ma vente", frontendUrl + "/vendeur/mes-ventes");
 
-        envoyerEmail(vendeur.getEmail(), "Vente confirmee — commande #" + commandeId, html);
+        envoyerEmail(vendeur.getEmail(), "Vente confirmée — commande #" + commandeId, html);
         envoyerSms(vendeur.getPhone(), "BetailMarket : " + animaux + " vendu(s). "
                 + fcfa(montantNet) + " a recevoir apres remise. Preparez l'animal.");
     }
@@ -196,26 +192,24 @@ public class NotificationLivraisonService {
 
         String nom = echapper(transporteurNom == null ? "Le transporteur" : transporteurNom);
         String html = accepte
-                ? gabarit("Course acceptee",
-                        "<p><strong>" + nom + "</strong> a accepte la livraison de la commande #"
+                ? gabaritEmail.page("Course acceptée",
+                        "<p style=\"margin:0 0 14px\"><strong>" + nom + "</strong> a accepté la livraison de la commande #"
                                 + commandeId + ".</p>"
-                                + "<p>Convenez avec lui du moment du chargement. "
+                                + "<p style=\"margin:0\">Convenez avec lui du moment du chargement. "
                                 + "C'est lui qui partagera sa position et saisira le code de remise "
-                                + "a l'arrivee.</p>",
+                                + "à l'arrivée.</p>",
                         "Voir la livraison", frontendUrl + "/vendeur/mes-ventes")
-                : gabarit("Course refusee",
-                        "<p><strong>" + nom + "</strong> a decline la livraison de la commande #"
+                : gabaritEmail.page("Course refusée",
+                        "<p style=\"margin:0\"><strong>" + nom + "</strong> a décliné la livraison de la commande #"
                                 + commandeId + ".</p>"
                                 + (motifRefus == null || motifRefus.isBlank() ? ""
-                                        : "<p style=\"background:#FDF6EC;border-left:3px solid #D97E1F;"
-                                        + "padding:12px 16px;border-radius:4px\">"
-                                        + echapper(motifRefus) + "</p>")
-                                + "<p>La course est de nouveau libre : proposez-la a un autre "
-                                + "transporteur, ou livrez vous-meme.</p>",
+                                        : GabaritEmail.encadre(echapper(motifRefus), true))
+                                + "<p style=\"margin:14px 0 0\">La course est de nouveau libre : proposez-la à un autre "
+                                + "transporteur, ou livrez vous-même.</p>",
                         "Choisir un transporteur", frontendUrl + "/vendeur/mes-ventes");
 
         envoyerEmail(vendeur.getEmail(),
-                (accepte ? "Course acceptee" : "Course refusee") + " — commande #" + commandeId, html);
+                (accepte ? "Course acceptée" : "Course refusée") + " — commande #" + commandeId, html);
         envoyerSms(vendeur.getPhone(), nom
                 + (accepte ? " a accepte" : " a refuse") + " la livraison #" + commandeId + ".");
     }
@@ -226,18 +220,16 @@ public class NotificationLivraisonService {
         User vendeur = userRepository.findById(vendeurId).orElse(null);
         if (vendeur == null) return;
 
-        String html = gabarit(
+        String html = gabaritEmail.page(
                 "Votre versement est parti",
-                "<p style=\"font-size:26px;font-weight:700;color:#1B4332;margin-bottom:4px\">"
-                        + fcfa(montantNet) + "</p>"
-                        + "<p style=\"margin-top:0\">Envoye sur votre Mobile Money"
+                GabaritEmail.montant(fcfa(montantNet), "Envoyé sur votre Mobile Money"
                         + (telephoneDestinataire == null || telephoneDestinataire.isBlank() ? ""
                                 : " (" + echapper(telephoneDestinataire) + ")")
-                        + " pour la commande #" + commandeId + ".</p>"
-                        + "<p>Si vous ne le voyez pas arriver sous 24 h, signalez-le nous.</p>",
+                        + " pour la commande #" + commandeId + ".")
+                        + "<p style=\"margin:18px 0 0\">Si vous ne le voyez pas arriver sous 24 h, signalez-le nous.</p>",
                 "Voir mes ventes", frontendUrl + "/vendeur/mes-ventes");
 
-        envoyerEmail(vendeur.getEmail(), "Versement envoye — commande #" + commandeId, html);
+        envoyerEmail(vendeur.getEmail(), "Versement envoyé — commande #" + commandeId, html);
         envoyerSms(vendeur.getPhone(), "BetailMarket : " + fcfa(montantNet)
                 + " envoyes sur votre Mobile Money pour la commande #" + commandeId + ".");
     }
@@ -261,19 +253,18 @@ public class NotificationLivraisonService {
         }
 
         String animaux = nommer(articles);
-        String html = gabarit(
-                "Une course vous est proposee",
-                "<p>Un vendeur vous propose de livrer <strong>" + echapper(animaux) + "</strong>.</p>"
-                        + "<p><strong>Chargement :</strong> "
-                        + echapper(lieuChargement == null ? "a convenir avec le vendeur" : lieuChargement)
+        String html = gabaritEmail.page(
+                "Une course vous est proposée",
+                "<p style=\"margin:0\">Un vendeur vous propose de livrer <strong>" + echapper(animaux) + "</strong>.</p>"
+                        + GabaritEmail.encadre("<strong>Chargement :</strong> "
+                        + echapper(lieuChargement == null ? "à convenir avec le vendeur" : lieuChargement)
                         + "<br><strong>Livraison :</strong> "
-                        + echapper(destination == null ? "adresse communiquee a l'acceptation" : destination)
-                        + "</p>"
-                        + "<p>Vous restez libre tant que vous n'avez pas accepte. Une fois la course "
-                        + "acceptee, elle vous est reservee jusqu'a la remise.</p>",
+                        + echapper(destination == null ? "adresse communiquée à l'acceptation" : destination), false)
+                        + "<p style=\"margin:0\">Vous restez libre tant que vous n'avez pas accepté. Une fois la course "
+                        + "acceptée, elle vous est réservée jusqu'à la remise.</p>",
                 "Voir la course", frontendUrl + "/transporteur/mes-courses");
 
-        envoyerEmail(transporteur.getEmail(), "Course proposee — " + animaux, html);
+        envoyerEmail(transporteur.getEmail(), "Course proposée — " + animaux, html);
         envoyerSms(transporteur.getPhone(), "BetailMarket : une course vous est proposee ("
                 + animaux + "). Repondez depuis l'application.");
     }
@@ -292,13 +283,13 @@ public class NotificationLivraisonService {
 
         String animaux = nommer(articles);
         String qui = livreurNom == null || livreurNom.isBlank() ? "Le livreur" : echapper(livreurNom);
-        String html = gabarit(
+        String html = gabaritEmail.page(
                 "Votre livraison est en route",
-                "<p><strong>" + qui + "</strong> vient de partir avec "
+                "<p style=\"margin:0 0 14px\"><strong>" + qui + "</strong> vient de partir avec "
                         + echapper(animaux) + ".</p>"
-                        + "<p>Vous pouvez suivre sa progression sur la carte, en direct.</p>"
-                        + "<p><strong>Gardez votre code de remise a portee</strong> — il vous sera "
-                        + "demande a l'arrivee, et c'est sa saisie qui declenche le paiement du vendeur.</p>",
+                        + "<p style=\"margin:0\">Vous pouvez suivre sa progression sur la carte, en direct.</p>"
+                        + GabaritEmail.encadre("<strong>Gardez votre ticket de remise à portée</strong> — le code vous sera "
+                        + "demandé à l'arrivée, et c'est sa saisie qui déclenche le paiement du vendeur.", false),
                 "Suivre la livraison", frontendUrl + "/livraison/suivi/" + remiseId);
 
         envoyerEmail(acheteur.getEmail(), "En route — " + animaux, html);
@@ -347,22 +338,7 @@ public class NotificationLivraisonService {
         }
     }
 
-    // ══ Gabarit ═════════════════════════════════════════════════════════════
-
-    /** Reprend l'identité visuelle des emails existants : vert BétailMarket sur fond clair. */
-    private String gabarit(String titre, String corps, String libelleBouton, String lien) {
-        return """
-                <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;color:#2A2620">
-                  <h2 style="color:#1B4332">%s</h2>
-                  %s
-                  <p style="text-align:center;margin:28px 0">
-                    <a href="%s" style="background:#2D6A4F;color:#fff;text-decoration:none;
-                       padding:14px 28px;border-radius:12px;font-weight:700;display:inline-block">%s</a>
-                  </p>
-                  <p style="font-size:13px;color:#6B6358">— L'équipe BétailMarket</p>
-                </div>
-                """.formatted(titre, corps, lien, libelleBouton);
-    }
+    // ══ Outils ══════════════════════════════════════════════════════════════
 
     private String nommer(List<CommandeItem> articles) {
         if (articles == null || articles.isEmpty()) return "votre animal";

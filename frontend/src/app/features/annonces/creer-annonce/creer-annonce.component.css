@@ -4,9 +4,7 @@
 
 .listing-bridge {
   min-height: calc(100vh - 140px);
-  background:
-    radial-gradient(circle at top left, rgba(220, 38, 38, 0.12), transparent 30%),
-    linear-gradient(180deg, #fff7f7 0%, #ffffff 55%, #fef2f2 100%);
+  background: var(--canvas);
 }
 
 .bridge-hero {
@@ -17,7 +15,7 @@
   border-radius: 2rem;
   border: 1px solid rgba(220, 38, 38, 0.12);
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 24px 56px rgba(17, 24, 39, 0.08);
+  box-shadow: 0 24px 56px rgba(31, 28, 23, 0.08);
 }
 
 .bridge-kicker {
@@ -26,20 +24,20 @@
   letter-spacing: 0.18em;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2D6A4F;
+  color: var(--brand);
 }
 
 .bridge-hero h1 {
   margin: 0;
   font-size: clamp(2rem, 4vw, 3.25rem);
   line-height: 1.05;
-  color: #111827;
+  color: var(--ink);
 }
 
 .bridge-copy {
   margin: 1rem 0 0;
   max-width: 56ch;
-  color: #4b5563;
+  color: var(--ink-2);
   line-height: 1.7;
 }
 
@@ -57,27 +55,27 @@
   min-height: 52px;
   padding: 0.95rem 1.2rem;
   border-radius: 1rem;
-  border: 1px solid rgba(17, 24, 39, 0.12);
+  border: 1px solid rgba(31, 28, 23, 0.10);
   background: #ffffff;
-  color: #111827;
+  color: var(--ink);
   font-weight: 700;
   transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 
 .bridge-cta:hover {
-  border-color: #2D6A4F;
-  color: #2D6A4F;
+  border-color: var(--brand);
+  color: var(--brand);
 }
 
 .bridge-cta--solid {
   border-color: transparent;
-  background: linear-gradient(135deg, #2D6A4F 0%, #245540 100%);
+  background: var(--brand);
   color: #ffffff;
 }
 
 .bridge-cta--solid:hover {
   color: #ffffff;
-  background: linear-gradient(135deg, #245540 0%, #1B4332 100%);
+  background: var(--brand-hover);
 }
 
 .bridge-grid {
@@ -92,7 +90,7 @@
   border-radius: 1.75rem;
   border: 1px solid rgba(220, 38, 38, 0.12);
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.06);
+  box-shadow: 0 18px 40px rgba(31, 28, 23, 0.06);
 }
 
 .bridge-step {
@@ -103,19 +101,19 @@
   height: 42px;
   border-radius: 0.9rem;
   background: rgba(220, 38, 38, 0.1);
-  color: #2D6A4F;
+  color: var(--brand);
   font-weight: 800;
 }
 
 .bridge-card h2 {
   margin: 1rem 0 0.5rem;
   font-size: 1.25rem;
-  color: #111827;
+  color: var(--ink);
 }
 
 .bridge-card p {
   margin: 0;
-  color: #4b5563;
+  color: var(--ink-2);
   line-height: 1.6;
 }
 

@@ -3,6 +3,12 @@ export const environment = {
   apiUrl: 'http://localhost:8080/api',
 
   /**
+   * Temps forts commerciaux (Tabaski…) de la page d'accueil — en développement : visibles en permanence, pour les relire.
+   * Voir core/config/temps-forts.ts.
+   */
+  apercuTempsForts: true,
+
+  /**
    * Fournisseurs cartographiques.
    *
    * Regroupés ici, et non en dur dans les services, parce qu'ils changeront :

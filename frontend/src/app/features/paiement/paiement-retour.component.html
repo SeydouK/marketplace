@@ -1,64 +1,63 @@
-<div class="min-h-screen bg-[#FBF9F4] flex items-center justify-center px-4">
-  <div class="bg-white rounded-2xl shadow-sm border border-[#F0EAD9] max-w-md w-full p-10 text-center">
+<div class="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-canvas px-4 py-10">
+  <div class="card w-full max-w-md p-8 text-center sm:p-10">
 
     <!-- VÉRIFICATION EN COURS -->
     <ng-container *ngIf="affichage === 'verification'">
-      <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i class="pi pi-spin pi-spinner text-amber-500 text-2xl"></i>
+      <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-warning-soft">
+        <i class="pi pi-spin pi-spinner text-2xl text-warning"></i>
       </div>
-      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Vérification du paiement…</h1>
-      <p class="text-gray-500 text-sm leading-relaxed mb-6">
+      <h1 class="page-title mb-3">Vérification du paiement…</h1>
+      <p class="mb-2 text-sm leading-relaxed text-ink-2">
         Nous confirmons votre paiement auprès de GeniusPay. Cela ne prend que quelques secondes.
       </p>
     </ng-container>
 
     <!-- SUCCÈS -->
     <ng-container *ngIf="affichage === 'succes'">
-      <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i class="pi pi-check-circle text-green-500 text-2xl"></i>
+      <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-brand-50">
+        <i class="pi pi-check-circle text-2xl text-brand-600"></i>
       </div>
-      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Paiement confirmé !</h1>
-      <p class="text-gray-500 text-sm leading-relaxed mb-8">
-        Votre commande a bien été payée. Le vendeur a été notifié.
+      <h1 class="page-title mb-3">Paiement confirmé&nbsp;!</h1>
+      <p class="mb-6 text-sm leading-relaxed text-ink-2">
+        Votre commande a bien été payée et le vendeur a été prévenu.
+        Votre <span class="font-semibold text-ink">ticket de remise</span> est prêt&nbsp;: présentez-le le jour où vous prenez l'animal.
       </p>
-      <button
-        (click)="retourAccueil()"
-        class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
-      >
+      <a routerLink="/acheteur/ticket" [queryParams]="{ commande: commande?.id }" class="btn-primary btn-lg btn-block">
+        <i class="pi pi-ticket text-sm"></i> Voir mon ticket de remise
+      </a>
+      <button (click)="retourAccueil()" class="btn-ghost btn-block mt-2">
         Retour à l'accueil
       </button>
+      <p class="mt-6 flex items-start gap-2 border-t border-line pt-5 text-left text-[13px] leading-relaxed text-ink-2">
+        <i class="pi pi-shield mt-0.5 text-brand-600"></i>
+        <span>Vos fonds restent bloqués par BétailMarket jusqu'à ce que vous donniez votre code au vendeur.</span>
+      </p>
     </ng-container>
 
     <!-- ÉCHEC / ANNULÉ / EXPIRÉ -->
     <ng-container *ngIf="affichage === 'echec'">
-      <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i class="pi pi-times-circle text-red-400 text-2xl"></i>
+      <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft">
+        <i class="pi pi-times-circle text-2xl text-danger"></i>
       </div>
-      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Paiement non abouti</h1>
-      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+      <h1 class="page-title mb-3">Paiement non abouti</h1>
+      <p class="mb-8 text-sm leading-relaxed text-ink-2">
         Le paiement a été annulé, refusé ou a expiré. Votre panier est toujours disponible, vous pouvez réessayer.
       </p>
-      <button
-        (click)="retourAuPanier()"
-        class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
-      >
+      <button (click)="retourAuPanier()" class="btn-primary btn-lg btn-block">
         Retourner au panier
       </button>
     </ng-container>
 
     <!-- COMMANDE INTROUVABLE -->
     <ng-container *ngIf="affichage === 'introuvable'">
-      <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i class="pi pi-times-circle text-red-400 text-2xl"></i>
+      <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft">
+        <i class="pi pi-times-circle text-2xl text-danger"></i>
       </div>
-      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Commande introuvable</h1>
-      <p class="text-gray-500 text-sm leading-relaxed mb-8">
+      <h1 class="page-title mb-3">Commande introuvable</h1>
+      <p class="mb-8 text-sm leading-relaxed text-ink-2">
         Impossible de retrouver cette commande. Contactez le support si le montant a été débité.
       </p>
-      <button
-        (click)="retourAuPanier()"
-        class="w-full bg-[#2D6A4F] hover:bg-[#245540] text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200"
-      >
+      <button (click)="retourAuPanier()" class="btn-primary btn-lg btn-block">
         Retourner au panier
       </button>
     </ng-container>

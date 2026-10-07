@@ -3,6 +3,12 @@ export const environment = {
   apiUrl: 'https://marketplace-uq3c.onrender.com/api',
 
   /**
+   * Temps forts commerciaux (Tabaski…) de la page d'accueil — en production : seulement dans leur fenêtre de dates.
+   * Voir core/config/temps-forts.ts.
+   */
+  apercuTempsForts: false,
+
+  /**
    * Fournisseurs cartographiques — voir environment.ts pour le detail.
    *
    * Ces deux adresses sont des services publics de demonstration. Elles tiennent

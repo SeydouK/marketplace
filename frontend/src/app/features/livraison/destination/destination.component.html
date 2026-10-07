@@ -1,13 +1,13 @@
 <!-- livraison/destination/destination.component.html -->
 <section class="max-w-2xl mx-auto py-6 px-4 space-y-5">
 
-  <div *ngIf="chargement" class="py-20 text-center text-gray-400">
+  <div *ngIf="chargement" class="py-20 text-center text-ink-3">
     <i class="pi pi-spin pi-spinner text-2xl"></i>
     <p class="mt-3 text-sm">Chargement…</p>
   </div>
 
   <div *ngIf="erreur && !chargement"
-    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    class="p-4 bg-danger-soft border border-danger-line rounded-2xl text-sm text-danger">
     Cette livraison est introuvable ou ne concerne pas vos commandes.
   </div>
 
@@ -16,13 +16,13 @@
     <!-- ═══ EN-TÊTE ═══ -->
     <div>
       <a routerLink="/acheteur/mes-achats"
-        class="inline-flex items-center gap-1 text-xs font-semibold text-[#2D6A4F] mb-3">
+        class="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 mb-3">
         <i class="pi pi-arrow-left text-[10px]"></i> Mes achats
       </a>
-      <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">
+      <h1 class="page-title">
         Comment récupérer votre animal
       </h1>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-1 text-sm text-ink-3">
         {{ suivi.animaux.join(', ') }} · vendu par {{ suivi.vendeurNom || 'le vendeur' }}
       </p>
     </div>
@@ -33,15 +33,15 @@
       <button type="button" (click)="choisirMode('RETRAIT_SUR_PLACE')"
         class="text-left p-5 rounded-2xl border-2 transition-all"
         [ngClass]="mode === 'RETRAIT_SUR_PLACE'
-          ? 'border-[#2D6A4F] bg-[#E0EEE4] shadow-card'
-          : 'border-[#E7E0D2] bg-white hover:border-[#C9BCA3]'">
+          ? 'border-brand-600 bg-brand-100 shadow-card'
+          : 'border-line bg-white hover:border-line-strong'">
         <div class="flex items-start justify-between gap-2">
           <i class="pi pi-home text-2xl"
-            [ngClass]="mode === 'RETRAIT_SUR_PLACE' ? 'text-[#2D6A4F]' : 'text-[#8B6F55]'"></i>
-          <i *ngIf="mode === 'RETRAIT_SUR_PLACE'" class="pi pi-check-circle text-[#2D6A4F]"></i>
+            [ngClass]="mode === 'RETRAIT_SUR_PLACE' ? 'text-brand-600' : 'text-ink-3'"></i>
+          <i *ngIf="mode === 'RETRAIT_SUR_PLACE'" class="pi pi-check-circle text-brand-600"></i>
         </div>
-        <p class="mt-3 text-sm font-bold text-gray-900">Je viens le chercher</p>
-        <p class="mt-1 text-xs text-gray-600">
+        <p class="mt-3 text-sm font-bold text-ink">Je viens le chercher</p>
+        <p class="mt-1 text-xs text-ink-2">
           Vous vous rendez chez le vendeur. Aucun frais de transport.
         </p>
       </button>
@@ -49,15 +49,15 @@
       <button type="button" (click)="choisirMode('TRANSPORT')"
         class="text-left p-5 rounded-2xl border-2 transition-all"
         [ngClass]="mode === 'TRANSPORT'
-          ? 'border-[#2D6A4F] bg-[#E0EEE4] shadow-card'
-          : 'border-[#E7E0D2] bg-white hover:border-[#C9BCA3]'">
+          ? 'border-brand-600 bg-brand-100 shadow-card'
+          : 'border-line bg-white hover:border-line-strong'">
         <div class="flex items-start justify-between gap-2">
           <i class="pi pi-truck text-2xl"
-            [ngClass]="mode === 'TRANSPORT' ? 'text-[#2D6A4F]' : 'text-[#8B6F55]'"></i>
-          <i *ngIf="mode === 'TRANSPORT'" class="pi pi-check-circle text-[#2D6A4F]"></i>
+            [ngClass]="mode === 'TRANSPORT' ? 'text-brand-600' : 'text-ink-3'"></i>
+          <i *ngIf="mode === 'TRANSPORT'" class="pi pi-check-circle text-brand-600"></i>
         </div>
-        <p class="mt-3 text-sm font-bold text-gray-900">Faites-le moi livrer</p>
-        <p class="mt-1 text-xs text-gray-600">
+        <p class="mt-3 text-sm font-bold text-ink">Faites-le moi livrer</p>
+        <p class="mt-1 text-xs text-ink-2">
           Le vendeur vous l'amène. Vous suivez le trajet en direct.
         </p>
       </button>
@@ -66,83 +66,83 @@
     <!-- ═══ ADRESSE ═══ -->
     <div *ngIf="mode === 'TRANSPORT'" class="space-y-4">
 
-      <div class="p-5 bg-white border border-[#E7E0D2] rounded-2xl space-y-4">
+      <div class="p-5 bg-white border border-line rounded-2xl space-y-4">
         <div>
-          <label for="adresse" class="block text-xs font-bold text-gray-700 mb-1.5">
-            Adresse de livraison <span class="text-[#D9342B]">*</span>
+          <label for="adresse" class="block text-xs font-bold text-ink-2 mb-1.5">
+            Adresse de livraison <span class="text-danger">*</span>
           </label>
           <input id="adresse" [(ngModel)]="adresseLigne" name="adresse"
             placeholder="Ex. : Cocody Angré, 8e tranche, rue des Jardins"
-            class="w-full px-4 py-3 text-sm border border-[#E7E0D2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+            class="w-full px-4 py-3 text-sm border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-600" />
         </div>
 
         <div>
-          <label for="ville" class="block text-xs font-bold text-gray-700 mb-1.5">Ville</label>
+          <label for="ville" class="block text-xs font-bold text-ink-2 mb-1.5">Ville</label>
           <input id="ville" [(ngModel)]="ville" name="ville" placeholder="Abidjan"
-            class="w-full px-4 py-3 text-sm border border-[#E7E0D2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+            class="w-full px-4 py-3 text-sm border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-600" />
         </div>
 
         <div>
-          <label for="reperes" class="block text-xs font-bold text-gray-700 mb-1.5">
+          <label for="reperes" class="block text-xs font-bold text-ink-2 mb-1.5">
             Points de repère
           </label>
           <textarea id="reperes" [(ngModel)]="indications" name="reperes" rows="2"
             placeholder="Ex. : après le marché, portail vert en face de la pharmacie"
-            class="w-full px-4 py-3 text-sm border border-[#E7E0D2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]"></textarea>
-          <p class="mt-1.5 text-xs text-[#8B6F55]">
+            class="w-full px-4 py-3 text-sm border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-600"></textarea>
+          <p class="mt-1.5 text-xs text-ink-3">
             C'est souvent ce qui permet vraiment au livreur de vous trouver.
           </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label for="dest-nom" class="block text-xs font-bold text-gray-700 mb-1.5">
+            <label for="dest-nom" class="block text-xs font-bold text-ink-2 mb-1.5">
               Qui réceptionne
             </label>
             <input id="dest-nom" [(ngModel)]="destinataireNom" name="destNom"
               placeholder="Vous, ou la personne sur place"
-              class="w-full px-4 py-3 text-sm border border-[#E7E0D2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+              class="w-full px-4 py-3 text-sm border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-600" />
           </div>
           <div>
-            <label for="dest-tel" class="block text-xs font-bold text-gray-700 mb-1.5">
+            <label for="dest-tel" class="block text-xs font-bold text-ink-2 mb-1.5">
               Téléphone sur place
             </label>
             <input id="dest-tel" [(ngModel)]="destinataireTelephone" name="destTel" type="tel"
               placeholder="07 00 00 00 00"
-              class="w-full px-4 py-3 text-sm border border-[#E7E0D2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+              class="w-full px-4 py-3 text-sm border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-600" />
           </div>
         </div>
       </div>
 
       <!-- ═══ POINT SUR LA CARTE ═══ -->
-      <div class="p-5 bg-white border border-[#E7E0D2] rounded-2xl">
+      <div class="p-5 bg-white border border-line rounded-2xl">
         <div class="flex items-start justify-between gap-3 mb-3">
           <div>
-            <p class="text-sm font-bold text-gray-900">Placez le point de livraison</p>
-            <p class="text-xs text-gray-500 mt-0.5">
+            <p class="text-sm font-bold text-ink">Placez le point de livraison</p>
+            <p class="text-xs text-ink-3 mt-0.5">
               Appuyez sur la carte, ou faites glisser le repère.
             </p>
           </div>
           <button type="button" (click)="utiliserMaPosition()" [disabled]="localisationEnCours"
-            class="shrink-0 px-3 py-2 bg-[#F6F1E7] text-[#1B4332] text-xs font-semibold rounded-lg hover:bg-[#EDE5D5] transition-colors disabled:opacity-50">
+            class="shrink-0 px-3 py-2 bg-muted text-brand-800 text-xs font-semibold rounded-lg hover:bg-line transition-colors disabled:opacity-50">
             <i class="pi pi-map-marker mr-1"></i>
             {{ localisationEnCours ? 'Recherche…' : 'Ma position' }}
           </button>
         </div>
 
         <div *ngIf="!carteIndisponible" #carte
-          class="w-full h-[280px] rounded-xl overflow-hidden border border-[#E7E0D2] bg-[#F6F1E7]"></div>
+          class="w-full h-[280px] rounded-xl overflow-hidden border border-line bg-muted"></div>
 
-        <p *ngIf="carteIndisponible" class="text-sm text-gray-500 py-6 text-center">
+        <p *ngIf="carteIndisponible" class="text-sm text-ink-3 py-6 text-center">
           La carte n'a pas pu se charger. L'adresse et les points de repère suffisent —
           le livreur vous appellera si besoin.
         </p>
 
-        <p *ngIf="latitude != null" class="mt-3 text-xs text-[#2D6A4F] font-semibold">
+        <p *ngIf="latitude != null" class="mt-3 text-xs text-brand-600 font-semibold">
           <i class="pi pi-check-circle mr-1"></i>
           Point enregistré ({{ latitude }}, {{ longitude }})
         </p>
-        <p *ngIf="latitude == null && !carteIndisponible" class="mt-3 text-xs text-[#8B6F55]">
+        <p *ngIf="latitude == null && !carteIndisponible" class="mt-3 text-xs text-ink-3">
           Aucun point placé — facultatif, mais fortement recommandé.
         </p>
       </div>
@@ -151,16 +151,16 @@
     <!-- ═══ VALIDATION ═══ -->
     <div class="flex flex-col sm:flex-row gap-3">
       <button type="button" [disabled]="!valide || enregistrement" (click)="enregistrer()"
-        class="flex-1 py-4 bg-[#2D6A4F] text-white text-base font-bold rounded-2xl hover:bg-[#245540] transition-colors disabled:opacity-40">
+        class="flex-1 py-4 bg-brand-600 text-white text-base font-bold rounded-2xl hover:bg-brand-700 transition-colors disabled:opacity-40">
         {{ enregistrement ? 'Enregistrement…' : 'Valider mon choix' }}
       </button>
       <a routerLink="/acheteur/mes-achats"
-        class="px-6 py-4 text-center border border-[#E7E0D2] text-gray-700 text-sm font-semibold rounded-2xl hover:bg-[#F6F1E7] transition-colors">
+        class="px-6 py-4 text-center border border-line text-ink-2 text-sm font-semibold rounded-2xl hover:bg-muted transition-colors">
         Annuler
       </a>
     </div>
 
-    <p class="text-xs text-center text-gray-500">
+    <p class="text-xs text-center text-ink-3">
       Vous pourrez modifier ce choix tant que le vendeur n'est pas parti.
     </p>
 

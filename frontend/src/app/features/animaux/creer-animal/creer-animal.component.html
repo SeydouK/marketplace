@@ -10,7 +10,7 @@
 
         <div
           *ngIf="editMode"
-          class="mt-5 rounded-[1.5rem] border border-[#F4D4A3] bg-[#FDF6EC] px-4 py-4 text-sm leading-6 text-[#7A4A10]"
+          class="mt-5 rounded-[1.5rem] border border-accent-200 bg-accent-50 px-4 py-4 text-sm leading-6 text-warning"
         >
           Les informations mises à jour sont conservées dans le dossier, puis soumises à nouveau à la validation sanitaire avant republication.
         </div>
@@ -44,7 +44,7 @@
       <form class="space-y-6" [formGroup]="form" (ngSubmit)="submit()">
         <div
           *ngIf="loadingAnimal"
-          class="rounded-[1.5rem] border border-[#E7E0D2] bg-white/90 px-4 py-4 text-sm text-[#2D6A4F] shadow-sm"
+          class="rounded-[1.5rem] border border-line bg-white/90 px-4 py-4 text-sm text-brand-600 shadow-xs"
         >
           Chargement du dossier en cours...
         </div>
@@ -221,6 +221,45 @@
               <h2>Photos et vidéos du dossier</h2>
             </div>
             <span class="section-badge">Pièces visuelles</span>
+          </div>
+
+          <!-- Guide photo : de bonnes photos font vendre, et servent la confiance -->
+          <div class="mb-5 rounded-2xl border border-line bg-canvas p-4 sm:p-5">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-sm font-semibold text-ink">Réussir ses photos</p>
+              <p class="text-xs text-ink-3">La première photo devient la vignette de l'annonce</p>
+            </div>
+            <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <li class="flex gap-3">
+                <span class="espece-icone mt-0.5 h-6 w-6 text-brand-700" aria-hidden="true"
+                      style="mask-image:url(assets/icons/especes/bovin.svg);-webkit-mask-image:url(assets/icons/especes/bovin.svg)"></span>
+                <span>
+                  <span class="block text-[13px] font-semibold text-ink">L'animal en entier</span>
+                  <span class="block text-xs leading-relaxed text-ink-2">De profil, du museau à la queue, sabots visibles.</span>
+                </span>
+              </li>
+              <li class="flex gap-3">
+                <i class="pi pi-sun mt-1 text-lg text-brand-700" aria-hidden="true"></i>
+                <span>
+                  <span class="block text-[13px] font-semibold text-ink">À la lumière du jour</span>
+                  <span class="block text-xs leading-relaxed text-ink-2">Dehors, soleil dans le dos, jamais à contre-jour.</span>
+                </span>
+              </li>
+              <li class="flex gap-3">
+                <i class="pi pi-images mt-1 text-lg text-brand-700" aria-hidden="true"></i>
+                <span>
+                  <span class="block text-[13px] font-semibold text-ink">Trois angles au moins</span>
+                  <span class="block text-xs leading-relaxed text-ink-2">Profil, face, et trois-quarts arrière.</span>
+                </span>
+              </li>
+              <li class="flex gap-3">
+                <i class="pi pi-eye mt-1 text-lg text-brand-700" aria-hidden="true"></i>
+                <span>
+                  <span class="block text-[13px] font-semibold text-ink">Un fond dégagé</span>
+                  <span class="block text-xs leading-relaxed text-ink-2">Un seul animal dans le cadre, sans obstacle devant.</span>
+                </span>
+              </li>
+            </ul>
           </div>
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">

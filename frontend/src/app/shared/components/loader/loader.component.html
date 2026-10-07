@@ -1,3 +1,6 @@
-<div class="loader-overlay" *ngIf="loading$ | async">
-  <p-progressSpinner strokeWidth="4" styleClass="loader-spinner"></p-progressSpinner>
+<!-- Barre de progression globale : discrète et non bloquante. Les écrans
+     gardent leur propre indicateur de chargement, contextuel ; un voile plein
+     écran par-dessus faisait apparaître deux chargeurs à la fois. -->
+<div class="loader-bar" *ngIf="loading$ | async" role="progressbar" aria-label="Chargement en cours">
+  <span class="loader-bar__trait"></span>
 </div>
