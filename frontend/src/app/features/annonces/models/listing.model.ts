@@ -21,6 +21,8 @@ export interface Listing {
   description?: string;
   qrCode?: string;
   groupedLot?: boolean;
+  healthRecords?: Array<{ id?: number | string; validationStatus?: string }>;
+  hasHealthDocuments?: boolean; // = healthRecords.length > 0
   createdAt?: string;
 
   title?: string;         // = displayName

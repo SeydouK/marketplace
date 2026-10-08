@@ -103,6 +103,7 @@ export class ListingService {
       animalType: a.type,
       location: a.lieuNaissance || '',
       breed: a.race,
+      hasHealthDocuments: (a.healthRecords?.length ?? 0) > 0,
       image: photos[0] || '',
       gallery: photos,
     };

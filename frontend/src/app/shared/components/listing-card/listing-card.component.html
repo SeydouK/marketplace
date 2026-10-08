@@ -43,6 +43,21 @@
     </div>
   </div>
 
+  <!-- Bandeau documents sanitaires -->
+  <div
+    *ngIf="listing.hasHealthDocuments; else sansDocs"
+    class="flex items-center gap-2 px-4 py-2 bg-[#2D6A4F] text-white text-xs font-bold"
+  >
+    <i class="pi pi-file-check text-sm"></i>
+    Documents sanitaires fournis
+  </div>
+  <ng-template #sansDocs>
+    <div class="flex items-center gap-2 px-4 py-2 bg-[#FFF1DC] text-[#B45309] border-y border-[#F5C27A] text-xs font-bold">
+      <i class="pi pi-exclamation-triangle text-sm"></i>
+      Sans documents sanitaires
+    </div>
+  </ng-template>
+
   <!-- Infos -->
   <div class="p-4">
     <h3 class="font-bold text-gray-900 truncate text-[15px] leading-snug">{{ listing.title }}</h3>

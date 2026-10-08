@@ -58,7 +58,7 @@
         <span class="filters-toggle__left">
           <i class="pi pi-filter"></i>
           <span>Filtres de recherche</span>
-          <span *ngIf="!filtersOpen && (location || animalType || region || maxPrice || statusFilter || dateFrom || dateTo)" class="filters-active-badge">
+          <span *ngIf="!filtersOpen && (location || animalType || region || maxPrice || statusFilter || documentsFilter || dateFrom || dateTo)" class="filters-active-badge">
             Actifs
           </span>
         </span>
@@ -137,6 +137,20 @@
             </select>
           </div>
 
+          <!-- Documents sanitaires -->
+          <div class="toolbar-field">
+            <label for="documentsFilter">Documents sanitaires</label>
+            <select
+              id="documentsFilter"
+              [ngModel]="documentsFilter"
+              (ngModelChange)="updateDocumentsFilter($event)"
+            >
+              <option value="">Tous</option>
+              <option value="avec">Avec documents</option>
+              <option value="sans">Sans documents</option>
+            </select>
+          </div>
+
           <!-- Date de publication : du -->
           <div class="toolbar-field">
             <label for="dateFrom">Publié depuis</label>
@@ -196,6 +210,7 @@
               *ngFor="let listing of paginatedListings; trackBy: trackByListing"
               class="animal-card"
               [class.animal-card--active]="listing.id === activeListingId"
+              [class.animal-card--no-docs]="!listing.hasHealthDocuments"
             >
               <div class="animal-card__media">
                 <p-carousel
@@ -231,6 +246,15 @@
                 >
                   <i class="pi pi-map-marker"></i>
                 </button>
+              </div>
+
+              <div
+                class="doc-band"
+                [class.doc-band--ok]="listing.hasHealthDocuments"
+                [class.doc-band--missing]="!listing.hasHealthDocuments"
+              >
+                <i class="pi" [ngClass]="listing.hasHealthDocuments ? 'pi-file-check' : 'pi-exclamation-triangle'"></i>
+                {{ listing.hasHealthDocuments ? 'Documents sanitaires fournis' : 'Sans documents sanitaires' }}
               </div>
 
               <div class="animal-card__content">

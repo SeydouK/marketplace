@@ -65,6 +65,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   region = '';
   maxPrice: number | null = null;
   statusFilter = '';
+  documentsFilter: '' | 'avec' | 'sans' = '';
   dateFrom = '';
   dateTo = '';
   sortBy: 'recent' | 'prix-asc' | 'prix-desc' = 'recent';
@@ -280,13 +281,17 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
         !this.statusFilter ||
         this.normalizeText(listing.status ?? '') === this.normalizeText(this.statusFilter);
 
+      const matchesDocuments =
+        !this.documentsFilter ||
+        (this.documentsFilter === 'avec' ? !!listing.hasHealthDocuments : !listing.hasHealthDocuments);
+
       const createdAt = listing.createdAt ? new Date(listing.createdAt).getTime() : null;
       const matchesDateFrom =
         !this.dateFrom || (createdAt !== null && createdAt >= new Date(this.dateFrom).getTime());
       const matchesDateTo =
         !this.dateTo || (createdAt !== null && createdAt <= new Date(this.dateTo + 'T23:59:59').getTime());
 
-      return matchesLocation && matchesAnimal && matchesRegion && matchesPrice && matchesStatus && matchesDateFrom && matchesDateTo;
+      return matchesLocation && matchesAnimal && matchesRegion && matchesPrice && matchesStatus && matchesDocuments && matchesDateFrom && matchesDateTo;
     }).sort((a, b) => {
       switch (this.sortBy) {
         case 'prix-asc':  return (a.price ?? 0) - (b.price ?? 0);
@@ -412,6 +417,11 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.onFilterChange();
   }
 
+  updateDocumentsFilter(value: '' | 'avec' | 'sans'): void {
+    this.documentsFilter = value;
+    this.onFilterChange();
+  }
+
   updateDateFrom(value: string): void {
     this.dateFrom = value;
     this.onFilterChange();
@@ -433,6 +443,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.region       = '';
     this.maxPrice     = null;
     this.statusFilter = '';
+    this.documentsFilter = '';
     this.dateFrom     = '';
     this.dateTo       = '';
     this.sortBy       = 'recent';

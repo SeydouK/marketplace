@@ -614,3 +614,21 @@
   .animal-grid { grid-template-columns: 1fr; }
   .preview-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Bandeau documents sanitaires ── */
+.doc-band {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.doc-band--ok { background: #2D6A4F; color: #fff; }
+.doc-band--missing {
+  background: #FFF1DC;
+  color: #B45309;
+  border-top: 1px solid #F5C27A;
+  border-bottom: 1px solid #F5C27A;
+}
+.animal-card--no-docs { border-color: #F5C27A; }
