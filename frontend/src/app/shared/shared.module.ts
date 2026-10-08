@@ -13,10 +13,11 @@ import { StatusBannerComponent } from './components/status-banner/status-banner.
 import { SellerRequestModalComponent } from './components/seller-request-modal/seller-request-modal.component';
 import { MobileNavComponent } from './components/mobile-nav/mobile-nav.component';
 import { AssetUrlPipe } from './pipes/asset-url.pipe';
+import { VisuelAnimalPipe } from './pipes/visuel-animal.pipe';
 
 @NgModule({
   declarations: [HeaderComponent, FooterComponent, LoaderComponent, ListingCardComponent, CitySectionComponent, StatusBannerComponent, SellerRequestModalComponent, MobileNavComponent],
-  imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner, AssetUrlPipe],
+  imports: [CommonModule, RouterModule, Menubar, Button, ProgressSpinner, AssetUrlPipe, VisuelAnimalPipe],
   exports: [
     HeaderComponent,
     FooterComponent,
@@ -31,6 +32,7 @@ import { AssetUrlPipe } from './pipes/asset-url.pipe';
     SellerRequestModalComponent,
     MobileNavComponent,
     AssetUrlPipe,
+    VisuelAnimalPipe,
   ],
 })
 export class SharedModule {}

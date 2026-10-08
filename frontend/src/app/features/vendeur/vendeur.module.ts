@@ -1,5 +1,6 @@
 // vendeur/vendeur.module.ts
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { VendeurRoutingModule } from './vendeur-routing.module';
 import { DashboardVendeurComponent } from './dashboard-vendeur/dashboard-vendeur.component';
@@ -13,6 +14,6 @@ import { ListeAnnoncesModule } from '../annonces/liste-annonces/liste-annonces.m
     MesAnnoncesComponent,
     MesVentesComponent,
   ],
-  imports: [SharedModule, ListeAnnoncesModule, VendeurRoutingModule],
+  imports: [SharedModule, FormsModule, ListeAnnoncesModule, VendeurRoutingModule],
 })
 export class VendeurModule {}

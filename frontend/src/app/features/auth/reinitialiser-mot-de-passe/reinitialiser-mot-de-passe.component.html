@@ -1,0 +1,103 @@
+<div class="auth-shell">
+  <app-auth-aside titre="Choisissez un mot de passe que vous seul connaissez."></app-auth-aside>
+
+  <div class="auth-main">
+    <div class="auth-card">
+
+      <!-- Vérification du lien -->
+      <div *ngIf="etape === 'verification'" class="flex flex-col items-center py-16 text-center text-ink-2">
+        <i class="pi pi-spin pi-spinner text-2xl text-brand-600"></i>
+        <p class="mt-4 text-sm">Vérification du lien…</p>
+      </div>
+
+      <!-- Nouveau mot de passe -->
+      <ng-container *ngIf="etape === 'formulaire'">
+        <h1 class="auth-title">Nouveau mot de passe</h1>
+        <p class="auth-lead">
+          Au moins {{ longueurMin }} caractères. Après validation, toutes vos sessions ouvertes seront déconnectées.
+        </p>
+
+        <form [formGroup]="form" (ngSubmit)="valider()" class="auth-form" novalidate>
+          <div class="field">
+            <label for="motDePasse" class="field-label">Nouveau mot de passe</label>
+            <div class="password-field">
+              <input id="motDePasse" [type]="afficher ? 'text' : 'password'" formControlName="motDePasse"
+                     autocomplete="new-password" class="field-input"
+                     [class.is-invalid]="controlInvalid('motDePasse', 'required') || controlInvalid('motDePasse', 'minlength')" />
+              <button type="button" class="password-toggle" (click)="afficher = !afficher"
+                      [attr.aria-label]="afficher ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+                <i class="pi text-sm" [ngClass]="afficher ? 'pi-eye-slash' : 'pi-eye'"></i>
+              </button>
+            </div>
+
+            <!-- Robustesse -->
+            <div *ngIf="robustesse.niveau > 0" class="mt-1 flex items-center gap-3">
+              <div class="grid flex-1 grid-cols-3 gap-1.5" aria-hidden="true">
+                <span class="h-1 rounded-full"
+                      [ngClass]="robustesse.niveau === 1 ? 'bg-danger' : robustesse.niveau === 2 ? 'bg-accent-500' : 'bg-brand-600'"></span>
+                <span class="h-1 rounded-full"
+                      [ngClass]="robustesse.niveau === 2 ? 'bg-accent-500' : robustesse.niveau === 3 ? 'bg-brand-600' : 'bg-line'"></span>
+                <span class="h-1 rounded-full"
+                      [ngClass]="robustesse.niveau === 3 ? 'bg-brand-600' : 'bg-line'"></span>
+              </div>
+              <span class="w-16 text-right text-xs font-medium text-ink-2">{{ robustesse.libelle }}</span>
+            </div>
+
+            <p *ngIf="controlInvalid('motDePasse', 'required')" class="field-error">Choisissez un mot de passe.</p>
+            <p *ngIf="controlInvalid('motDePasse', 'minlength')" class="field-error">Au moins {{ longueurMin }} caractères.</p>
+          </div>
+
+          <div class="field">
+            <label for="confirmation" class="field-label">Confirmez le mot de passe</label>
+            <input id="confirmation" [type]="afficher ? 'text' : 'password'" formControlName="confirmation"
+                   autocomplete="new-password" class="field-input"
+                   [class.is-invalid]="controlInvalid('confirmation', 'required') || confirmationDifferente" />
+            <p *ngIf="controlInvalid('confirmation', 'required')" class="field-error">Retapez le mot de passe.</p>
+            <p *ngIf="confirmationDifferente" class="field-error">Les deux mots de passe ne correspondent pas.</p>
+          </div>
+
+          <div *ngIf="erreur" class="alert-danger" role="alert">
+            <i class="pi pi-exclamation-circle mt-0.5"></i>
+            <p>{{ erreur }}</p>
+          </div>
+
+          <button type="submit" class="btn-primary btn-lg btn-block" [disabled]="envoiEnCours">
+            <i *ngIf="envoiEnCours" class="pi pi-spin pi-spinner text-sm"></i>
+            {{ envoiEnCours ? 'Enregistrement…' : 'Enregistrer le mot de passe' }}
+          </button>
+        </form>
+      </ng-container>
+
+      <!-- Lien inutilisable -->
+      <ng-container *ngIf="etape === 'invalide'">
+        <span class="icon-tile-warning h-12 w-12 rounded-2xl text-lg">
+          <i class="pi pi-clock"></i>
+        </span>
+        <h1 class="auth-title mt-6">Ce lien n'est plus valable</h1>
+        <p class="auth-lead">
+          Un lien de réinitialisation expire au bout de 60 minutes et ne sert qu'une fois.
+          Seul le dernier lien demandé fonctionne.
+        </p>
+        <div class="mt-7 flex flex-col gap-2.5">
+          <a routerLink="/auth/mot-de-passe-oublie" class="btn-primary btn-lg btn-block">Demander un nouveau lien</a>
+          <a routerLink="/auth/login" class="btn-secondary btn-lg btn-block">Retour à la connexion</a>
+        </div>
+      </ng-container>
+
+      <!-- Terminé -->
+      <ng-container *ngIf="etape === 'termine'">
+        <span class="icon-tile-brand h-12 w-12 rounded-2xl text-lg">
+          <i class="pi pi-check"></i>
+        </span>
+        <h1 class="auth-title mt-6">Mot de passe modifié</h1>
+        <p class="auth-lead">
+          Votre nouveau mot de passe est actif. Par sécurité, vos autres sessions ont été déconnectées
+          et un email de confirmation vous a été envoyé.
+        </p>
+        <button type="button" class="btn-primary btn-lg btn-block mt-7" (click)="allerALaConnexion()">
+          Se connecter
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>

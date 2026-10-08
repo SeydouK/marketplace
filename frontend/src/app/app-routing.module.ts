@@ -57,6 +57,16 @@ const routes: Routes = [
         title: 'Mon Panier — BétailMarket',
     },
 
+    // ── RETOUR DE PAIEMENT — success_url / error_url de GeniusPay ─────────────
+    // Le composant était importé mais la route manquait : l'acheteur revenant
+    // du paiement retombait sur le joker, donc sur l'accueil.
+    {
+        path: 'paiement/retour',
+        component: PaiementRetourComponent,
+        canActivate: [AuthGuard],
+        title: 'Paiement — BétailMarket',
+    },
+
     {
         path: 'dashboard',
         canActivate: [AuthGuard, RoleRedirectGuard],

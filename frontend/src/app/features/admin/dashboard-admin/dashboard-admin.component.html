@@ -2,18 +2,17 @@
 <section class="max-w-7xl mx-auto py-8 px-4 space-y-8">
 
   <!-- ═══ HERO ═══ -->
-  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/20">
-    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-[#D97E1F]/10 blur-3xl pointer-events-none"></div>
-    <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div class="border-b border-line pb-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#ECB867] mb-2">Administration</p>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Tableau de bord global</h1>
-        <p class="mt-2 text-sm text-white/75 max-w-xl leading-relaxed">
+        <p class="eyebrow mb-2">Administration</p>
+        <h1 class="page-title">Tableau de bord global</h1>
+        <p class="page-lead">
           Pilotage de la plateforme : utilisateurs, annonces, transactions et litiges.
         </p>
       </div>
-      <span class="hidden sm:flex w-16 h-16 rounded-2xl bg-white/10 border border-white/15 items-center justify-center flex-shrink-0">
-        <i class="pi pi-shield text-2xl text-[#ECB867]"></i>
+      <span class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-brand-100 bg-brand-50 sm:flex">
+        <i class="pi pi-shield text-2xl text-brand-700"></i>
       </span>
     </div>
   </div>
@@ -21,60 +20,60 @@
   <!-- ═══ KPI ═══ -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
-    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+    <article class="bg-white border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Utilisateurs</p>
-          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.totalUsers ?? '—' }}</p>
-          <p class="mt-2 text-xs text-gray-400">Comptes inscrits</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">Utilisateurs</p>
+          <p class="mt-2 text-3xl font-bold text-brand-800 leading-none">{{ stats?.totalUsers ?? '—' }}</p>
+          <p class="mt-2 text-xs text-ink-3">Comptes inscrits</p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-users text-lg text-[#2D6A4F]"></i>
+        <span class="w-11 h-11 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-users text-lg text-brand-600"></i>
         </span>
       </div>
     </article>
 
-    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+    <article class="bg-white border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">KYC en attente</p>
-          <p class="mt-2 text-3xl font-extrabold leading-none"
-            [ngClass]="(stats?.pendingKyc ?? 0) > 0 ? 'text-[#B96416]' : 'text-[#1B4332]'">
+          <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">KYC en attente</p>
+          <p class="mt-2 text-3xl font-bold leading-none"
+            [ngClass]="(stats?.pendingKyc ?? 0) > 0 ? 'text-accent-600' : 'text-brand-800'">
             {{ stats?.pendingKyc ?? '—' }}
           </p>
-          <p class="mt-2 text-xs text-gray-400">Identités à vérifier</p>
+          <p class="mt-2 text-xs text-ink-3">Identités à vérifier</p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-id-card text-lg text-[#B96416]"></i>
+        <span class="w-11 h-11 rounded-xl bg-accent-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-id-card text-lg text-accent-600"></i>
         </span>
       </div>
     </article>
 
-    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+    <article class="bg-white border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Annonces actives</p>
-          <p class="mt-2 text-3xl font-extrabold text-[#1B4332] leading-none">{{ stats?.activeListings ?? '—' }}</p>
-          <p class="mt-2 text-xs text-gray-400">Publiées sur la marketplace</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">Annonces actives</p>
+          <p class="mt-2 text-3xl font-bold text-brand-800 leading-none">{{ stats?.activeListings ?? '—' }}</p>
+          <p class="mt-2 text-xs text-ink-3">Publiées sur la marketplace</p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-megaphone text-lg text-[#2D6A4F]"></i>
+        <span class="w-11 h-11 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-megaphone text-lg text-brand-600"></i>
         </span>
       </div>
     </article>
 
-    <article class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
+    <article class="bg-white border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-shadow">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Litiges ouverts</p>
-          <p class="mt-2 text-3xl font-extrabold leading-none"
-            [ngClass]="(stats?.openDisputes ?? 0) > 0 ? 'text-red-600' : 'text-[#1B4332]'">
+          <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">Litiges ouverts</p>
+          <p class="mt-2 text-3xl font-bold leading-none"
+            [ngClass]="(stats?.openDisputes ?? 0) > 0 ? 'text-danger' : 'text-brand-800'">
             {{ stats?.openDisputes ?? '—' }}
           </p>
-          <p class="mt-2 text-xs text-gray-400">À arbitrer</p>
+          <p class="mt-2 text-xs text-ink-3">À arbitrer</p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-exclamation-triangle text-lg text-red-500"></i>
+        <span class="w-11 h-11 rounded-xl bg-danger-soft flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-exclamation-triangle text-lg text-danger"></i>
         </span>
       </div>
     </article>
@@ -82,11 +81,11 @@
 
   <!-- ═══ GESTION ═══ -->
   <div>
-    <h2 class="text-lg font-bold text-gray-900 mb-4">Gestion</h2>
+    <h2 class="text-lg font-bold text-ink mb-4">Gestion</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
       <a routerLink="/admin/utilisateurs"
-        class="group flex items-center gap-4 rounded-2xl bg-[#2D6A4F] hover:bg-[#245540] text-white p-5 shadow-cta transition-colors">
+        class="group flex items-center gap-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white p-5 shadow-cta transition-colors">
         <span class="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
           <i class="pi pi-users text-lg"></i>
         </span>
@@ -98,75 +97,75 @@
       </a>
 
       <a routerLink="/admin/annonces"
-        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
-        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-megaphone text-lg text-[#7A5C43]"></i>
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-line hover:border-brand-600 p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-megaphone text-lg text-ink-2"></i>
         </span>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm text-gray-900">Modération annonces</p>
-          <p class="text-xs text-gray-400 mt-0.5">Approuver ou suspendre les publications</p>
+          <p class="font-bold text-sm text-ink">Modération annonces</p>
+          <p class="text-xs text-ink-3 mt-0.5">Approuver ou suspendre les publications</p>
         </div>
-        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+        <i class="pi pi-arrow-right text-sm text-line-strong group-hover:text-brand-600 group-hover:translate-x-1 transition-all"></i>
       </a>
 
       <a routerLink="/admin/litiges"
-        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
-        <span class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-exclamation-triangle text-lg text-red-500"></i>
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-line hover:border-brand-600 p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-danger-soft flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-exclamation-triangle text-lg text-danger"></i>
         </span>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm text-gray-900">Litiges &amp; arbitrage escrow</p>
-          <p class="text-xs text-gray-400 mt-0.5">Libérer les fonds ou rembourser</p>
+          <p class="font-bold text-sm text-ink">Litiges &amp; arbitrage escrow</p>
+          <p class="text-xs text-ink-3 mt-0.5">Libérer les fonds ou rembourser</p>
         </div>
-        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+        <i class="pi pi-arrow-right text-sm text-line-strong group-hover:text-brand-600 group-hover:translate-x-1 transition-all"></i>
       </a>
 
       <a routerLink="/admin/transactions"
-        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
-        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-wallet text-lg text-[#7A5C43]"></i>
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-line hover:border-brand-600 p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-wallet text-lg text-ink-2"></i>
         </span>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm text-gray-900">Transactions &amp; paiements</p>
-          <p class="text-xs text-gray-400 mt-0.5">Commandes GeniusPay, commission et frais</p>
+          <p class="font-bold text-sm text-ink">Transactions &amp; paiements</p>
+          <p class="text-xs text-ink-3 mt-0.5">Commandes GeniusPay, commission et frais</p>
         </div>
-        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+        <i class="pi pi-arrow-right text-sm text-line-strong group-hover:text-brand-600 group-hover:translate-x-1 transition-all"></i>
       </a>
 
       <a routerLink="/admin/versements"
-        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
-        <span class="w-11 h-11 rounded-xl bg-[#F2F7F3] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-send text-lg text-[#2D6A4F]"></i>
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-line hover:border-brand-600 p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-send text-lg text-brand-600"></i>
         </span>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm text-gray-900">Versements vendeurs</p>
-          <p class="text-xs text-gray-400 mt-0.5">Envoyer les paiements dus via GeniusPay</p>
+          <p class="font-bold text-sm text-ink">Versements vendeurs</p>
+          <p class="text-xs text-ink-3 mt-0.5">Envoyer les paiements dus via GeniusPay</p>
         </div>
-        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+        <i class="pi pi-arrow-right text-sm text-line-strong group-hover:text-brand-600 group-hover:translate-x-1 transition-all"></i>
       </a>
 
       <a routerLink="/admin/utilisateurs" [queryParams]="{ filter: 'pending-kyc' }"
-        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
-        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-id-card text-lg text-[#B96416]"></i>
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-line hover:border-brand-600 p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-accent-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-id-card text-lg text-accent-600"></i>
         </span>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm text-gray-900">Valider KYC en attente</p>
-          <p class="text-xs text-gray-400 mt-0.5">{{ stats?.pendingKyc ?? 0 }} dossier(s) à traiter</p>
+          <p class="font-bold text-sm text-ink">Valider KYC en attente</p>
+          <p class="text-xs text-ink-3 mt-0.5">{{ stats?.pendingKyc ?? 0 }} dossier(s) à traiter</p>
         </div>
-        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+        <i class="pi pi-arrow-right text-sm text-line-strong group-hover:text-brand-600 group-hover:translate-x-1 transition-all"></i>
       </a>
 
       <a routerLink="/admin/actualites"
-        class="group flex items-center gap-4 rounded-2xl bg-white border border-[#E7E0D2] hover:border-[#2D6A4F] p-5 shadow-card transition-colors">
-        <span class="w-11 h-11 rounded-xl bg-[#F6F1E7] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-file-edit text-lg text-[#7A5C43]"></i>
+        class="group flex items-center gap-4 rounded-2xl bg-white border border-line hover:border-brand-600 p-5 shadow-card transition-colors">
+        <span class="w-11 h-11 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-file-edit text-lg text-ink-2"></i>
         </span>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm text-gray-900">Actualités</p>
-          <p class="text-xs text-gray-400 mt-0.5">Rédiger et publier les articles de la rubrique</p>
+          <p class="font-bold text-sm text-ink">Actualités</p>
+          <p class="text-xs text-ink-3 mt-0.5">Rédiger et publier les articles de la rubrique</p>
         </div>
-        <i class="pi pi-arrow-right text-sm text-gray-300 group-hover:text-[#2D6A4F] group-hover:translate-x-1 transition-all"></i>
+        <i class="pi pi-arrow-right text-sm text-line-strong group-hover:text-brand-600 group-hover:translate-x-1 transition-all"></i>
       </a>
     </div>
   </div>
@@ -175,12 +174,12 @@
   <div>
     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
       <div>
-        <h2 class="text-lg font-bold text-gray-900">Demandes vendeur</h2>
-        <p class="text-sm text-gray-500">Validez les acheteurs qui demandent l'accès vendeur.</p>
+        <h2 class="text-lg font-bold text-ink">Demandes vendeur</h2>
+        <p class="text-sm text-ink-3">Validez les acheteurs qui demandent l'accès vendeur.</p>
       </div>
       <button
         type="button"
-        class="self-start sm:self-auto inline-flex items-center gap-2 rounded-xl border border-[#E7E0D2] bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#2D6A4F] hover:text-[#2D6A4F] transition-colors"
+        class="self-start sm:self-auto inline-flex items-center gap-2 rounded-xl border border-line bg-white px-4 py-2 text-sm font-semibold text-ink-2 hover:border-brand-600 hover:text-brand-600 transition-colors"
         (click)="loadSellerRequests()"
       >
         <i class="pi pi-refresh text-xs"></i>
@@ -188,45 +187,45 @@
       </button>
     </div>
 
-    <div *ngIf="!sellerRequests.length" class="rounded-2xl border border-dashed border-[#DFD2B8] bg-white p-10 text-center">
-      <span class="inline-flex w-12 h-12 rounded-full bg-[#F6F1E7] items-center justify-center mb-3">
-        <i class="pi pi-inbox text-lg text-[#8B6F55]"></i>
+    <div *ngIf="!sellerRequests.length" class="rounded-2xl border border-dashed border-line-strong bg-white p-10 text-center">
+      <span class="inline-flex w-12 h-12 rounded-full bg-muted items-center justify-center mb-3">
+        <i class="pi pi-inbox text-lg text-ink-3"></i>
       </span>
-      <p class="text-sm font-semibold text-gray-700">Aucune demande vendeur en attente</p>
-      <p class="text-xs text-gray-400 mt-1">Les nouvelles demandes apparaîtront ici.</p>
+      <p class="text-sm font-semibold text-ink-2">Aucune demande vendeur en attente</p>
+      <p class="text-xs text-ink-3 mt-1">Les nouvelles demandes apparaîtront ici.</p>
     </div>
 
     <div *ngIf="sellerRequests.length" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <article *ngFor="let request of sellerRequests" class="rounded-2xl border border-[#E7E0D2] bg-white p-5 shadow-card">
+      <article *ngFor="let request of sellerRequests" class="rounded-2xl border border-line bg-white p-5 shadow-card">
         <div class="flex items-start justify-between gap-4">
           <div class="flex items-center gap-3 min-w-0">
-            <span class="w-10 h-10 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#1B4332] text-white font-bold flex items-center justify-center flex-shrink-0">
+            <span class="w-10 h-10 rounded-full bg-brand-600 text-white font-bold flex items-center justify-center flex-shrink-0">
               {{ (request.name || 'U').charAt(0) | uppercase }}
             </span>
             <div class="min-w-0">
-              <h3 class="font-bold text-gray-900 truncate">{{ request.name }} {{ request.surname }}</h3>
-              <p class="text-sm text-gray-500 truncate">{{ request.email }}</p>
+              <h3 class="font-bold text-ink truncate">{{ request.name }} {{ request.surname }}</h3>
+              <p class="text-sm text-ink-3 truncate">{{ request.email }}</p>
             </div>
           </div>
-          <span class="rounded-full bg-[#FDF6EC] border border-[#F4D4A3] px-3 py-1 text-xs font-bold text-[#7A4A10] whitespace-nowrap">
+          <span class="rounded-full bg-accent-50 border border-accent-200 px-3 py-1 text-xs font-bold text-warning whitespace-nowrap">
             En attente
           </span>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-          <div class="rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-3 py-2">
-            <p class="text-xs text-gray-400">Rôle actuel</p>
-            <p class="font-bold text-gray-900">{{ request.role }}</p>
+          <div class="rounded-xl bg-canvas border border-line px-3 py-2">
+            <p class="text-xs text-ink-3">Rôle actuel</p>
+            <p class="font-bold text-ink">{{ request.role }}</p>
           </div>
-          <div class="rounded-xl bg-[#FBF9F4] border border-[#F0EAD9] px-3 py-2">
-            <p class="text-xs text-gray-400">KYC</p>
-            <p class="font-bold text-gray-900">{{ request.kycStatus || 'N/A' }}</p>
+          <div class="rounded-xl bg-canvas border border-line px-3 py-2">
+            <p class="text-xs text-ink-3">KYC</p>
+            <p class="font-bold text-ink">{{ request.kycStatus || 'N/A' }}</p>
           </div>
         </div>
 
         <button
           type="button"
-          class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#2D6A4F] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#245540] disabled:opacity-60 transition-colors"
+          class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-700 disabled:opacity-60 transition-colors"
           [disabled]="approvingSellerRequestId === request.id"
           (click)="approveSellerRequest(request)"
         >

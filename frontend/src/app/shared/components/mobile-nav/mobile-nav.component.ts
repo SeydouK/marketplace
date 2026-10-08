@@ -53,11 +53,13 @@ export interface NavSection {
 }
 
 /**
- * Navigation mobile : un seul bouton flottant "Menu" qui ouvre la liste des
- * destinations disponibles pour le rôle de l'utilisateur connecté.
+ * Navigation mobile : une barre basse de quatre entrées (accueil, annonces,
+ * raccourci du rôle, menu), et un menu qui liste toutes les destinations du
+ * rôle connecté.
  *
- * Remplace l'ancienne barre du bas. Composant autonome : le bouton et la fenêtre
- * vivent ici, sans dépendance au HeaderComponent.
+ * La barre réserve sa propre hauteur au lieu de flotter au-dessus du contenu :
+ * l'ancien bouton « Menu » flottant recouvrait les cartes pendant le défilement.
+ * Composant autonome, sans dépendance au HeaderComponent.
  */
 @Component({
   selector: 'app-mobile-nav',
@@ -166,6 +168,20 @@ export class MobileNavComponent implements OnInit, OnDestroy {
   /** Demande vendeur déjà envoyée, en attente de l'administration. */
   get sellerRequestPending(): boolean {
     return this.isAcheteur && !!this.user?.devenirVendeur && !this.user?.estTransporteur;
+  }
+
+  /**
+   * Troisième entrée de la barre basse : la destination la plus utile au rôle.
+   * Le reste des destinations demeure dans le menu, organisé par rôle.
+   */
+  get raccourci(): NavItem {
+    if (this.isAdmin)        return { label: 'Admin',    route: '/admin/utilisateurs',       icon: 'users' };
+    if (this.isVendeur)      return { label: 'Ventes',   route: '/vendeur/mes-ventes',       icon: 'sales' };
+    if (this.isVeterinaire)  return { label: 'Dossiers', route: '/veterinaire/dashboard',    icon: 'check' };
+    if (this.isAnader)       return { label: 'ANADER',   route: '/anader/dashboard',         icon: 'badge' };
+    if (this.isTransporteur) return { label: 'Courses',  route: '/transporteur/mes-courses', icon: 'truck' };
+    if (this.user)           return { label: 'Panier',   route: '/panier',                   icon: 'cart', badge: 'panier' };
+    return { label: 'Actualités', route: '/actualites', icon: 'news' };
   }
 
   // ── Contenu du menu selon le rôle ────────────────────────────────────────

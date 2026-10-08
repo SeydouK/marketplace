@@ -1,5 +1,6 @@
 // features/anader/anader.module.ts
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { AnaderRoutingModule } from './anader-routing.module';
 import { DashboardAnaderComponent } from './dashboard-anader/dashboard-anader.component';
@@ -11,6 +12,7 @@ import { DashboardAnaderComponent } from './dashboard-anader/dashboard-anader.co
     // StatistiquesZoneComponent,     // à décommenter quand le composant sera créé
   ],
   imports: [
+    FormsModule,
     SharedModule,
     AnaderRoutingModule,
   ],

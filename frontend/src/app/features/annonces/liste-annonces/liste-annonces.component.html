@@ -1,54 +1,56 @@
-<section class="catalog-shell py-6 px-4 sm:py-8 lg:px-8">
-  <div class="max-w-[1600px] mx-auto">
-    <div class="catalog-hero mb-8">
-      <div>
-        <p class="catalog-kicker">{{ heroKicker }}</p>
-        <h1>{{ heroTitle }}</h1>
-        <p class="catalog-copy">{{ heroCopy }}</p>
+<section class="catalog-shell">
+  <div class="catalog-container">
 
-        <div class="hero-chips" *ngIf="animalTypeChips.length">
-          <button
-            *ngFor="let chip of animalTypeChips"
-            type="button"
-            class="hero-chip"
-            [class.hero-chip--active]="animalType === chip.value"
-            (click)="updateAnimalType(chip.value)"
-          >
-            <span>{{ chip.label }}</span>
-            <strong>{{ chip.count }}</strong>
-          </button>
-        </div>
+    <!-- ── En-tête ── -->
+    <header class="catalog-hero">
+      <div class="catalog-hero__text">
+        <p class="eyebrow">{{ heroKicker }}</p>
+        <h1 class="page-title">{{ heroTitle }}</h1>
+        <p class="page-lead">{{ heroCopy }}</p>
 
-        <button
-          *ngIf="isMineCatalog && auth.canAccessSellerArea"
-          type="button"
-          class="hero-primary-action"
-          (click)="goToCreateAnimal()"
-        >
-          Enregistrer un animal
-        </button>
+        <p class="catalog-stats">
+          <span><strong>{{ filteredListings.length }}</strong> {{ publishedStatLabel }}</span>
+          <span class="catalog-stats__sep" aria-hidden="true">·</span>
+          <span><strong>{{ mappedListings.length }}</strong> sur la carte</span>
+          <ng-container *ngIf="missingCoordinatesCount > 0">
+            <span class="catalog-stats__sep" aria-hidden="true">·</span>
+            <span><strong>{{ missingCoordinatesCount }}</strong> sans position</span>
+          </ng-container>
+        </p>
       </div>
 
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat__value">{{ filteredListings.length }}</span>
-          <span class="hero-stat__label">{{ publishedStatLabel }}</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat__value">{{ mappedListings.length }}</span>
-          <span class="hero-stat__label">repères cartographiques</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat__value">{{ missingCoordinatesCount }}</span>
-          <span class="hero-stat__label">dossiers sans repère cartographique</span>
-        </div>
-      </div>
+      <button
+        *ngIf="isMineCatalog && auth.canAccessSellerArea"
+        type="button"
+        class="btn-accent btn-lg shrink-0"
+        (click)="goToCreateAnimal()"
+      >
+        <i class="pi pi-plus text-xs"></i>
+        Enregistrer un animal
+      </button>
+    </header>
+
+    <!-- ── Espèces ── -->
+    <div class="catalog-chips scrollbar-hide" *ngIf="animalTypeChips.length">
+      <button
+        *ngFor="let chip of animalTypeChips"
+        type="button"
+        class="chip"
+        [class.chip-active]="animalType === chip.value"
+        (click)="updateAnimalType(chip.value)"
+      >
+        <span *ngIf="['BOVIN', 'OVIN', 'CAPRIN', 'PORCIN', 'AVICOLE'].includes(chip.value)"
+              class="espece-icone h-4 w-4" aria-hidden="true"
+              [style.mask-image]="'url(assets/icons/especes/' + (chip.value | lowercase) + '.svg)'"
+              [style.-webkit-mask-image]="'url(assets/icons/especes/' + (chip.value | lowercase) + '.svg)'"></span>
+        <span>{{ chip.label }}</span>
+        <span class="catalog-chip__count">{{ chip.count }}</span>
+      </button>
     </div>
 
-    <!-- ── Barre de filtres collapsible ── -->
-    <div class="filters-panel mb-6" [class.filters-panel--open]="filtersOpen">
+    <!-- ── Filtres ── -->
+    <div class="filters-panel" [class.filters-panel--open]="filtersOpen">
 
-      <!-- En-tête cliquable -->
       <button
         type="button"
         class="filters-toggle"
@@ -56,33 +58,33 @@
         [attr.aria-expanded]="filtersOpen"
       >
         <span class="filters-toggle__left">
-          <i class="pi pi-filter"></i>
-          <span>Filtres de recherche</span>
-          <span *ngIf="!filtersOpen && (location || animalType || region || maxPrice || statusFilter || documentsFilter || dateFrom || dateTo)" class="filters-active-badge">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" d="M4 6h16M7 12h10M10 18h4"/>
+          </svg>
+          <span>Filtres</span>
+          <span *ngIf="!filtersOpen && (location || animalType || region || maxPrice || statusFilter || dateFrom || dateTo)" class="badge-brand">
             Actifs
           </span>
         </span>
         <span class="filters-toggle__right">
           <span class="filters-toggle__hint">{{ filtersOpen ? 'Masquer' : 'Afficher' }}</span>
-          <i class="pi" [class.pi-chevron-down]="!filtersOpen" [class.pi-chevron-up]="filtersOpen"></i>
+          <i class="pi text-xs" [class.pi-chevron-down]="!filtersOpen" [class.pi-chevron-up]="filtersOpen"></i>
         </span>
       </button>
 
-      <!-- Contenu des filtres -->
       <div class="filters-body" [class.filters-body--visible]="filtersOpen">
         <div class="catalog-toolbar">
           <div class="toolbar-field toolbar-field--wide">
-            <label for="location">Trouver un éleveur</label>
+            <label for="location">Éleveur</label>
             <input
               id="location"
               [ngModel]="location"
               (ngModelChange)="updateLocation($event)"
               type="text"
-              placeholder="Entrez le nom de l'éleveur..."
+              placeholder="Nom de l'éleveur"
             />
           </div>
 
-          <!-- Espèce -->
           <div class="toolbar-field">
             <label for="animalType">Espèce</label>
             <select
@@ -96,7 +98,6 @@
             </select>
           </div>
 
-          <!-- Région -->
           <div class="toolbar-field">
             <label for="region">Région</label>
             <select id="region" [ngModel]="region" (ngModelChange)="updateRegion($event)">
@@ -109,7 +110,6 @@
             </select>
           </div>
 
-          <!-- Prix max -->
           <div class="toolbar-field">
             <label for="maxPrice">Prix max (FCFA)</label>
             <input
@@ -117,11 +117,10 @@
               type="number"
               [ngModel]="maxPrice"
               (ngModelChange)="updateMaxPrice($event)"
-              placeholder="ex : 500 000"
+              placeholder="500 000"
             />
           </div>
 
-          <!-- Statut -->
           <div class="toolbar-field">
             <label for="statusFilter">Statut</label>
             <select
@@ -137,21 +136,6 @@
             </select>
           </div>
 
-          <!-- Documents sanitaires -->
-          <div class="toolbar-field">
-            <label for="documentsFilter">Documents sanitaires</label>
-            <select
-              id="documentsFilter"
-              [ngModel]="documentsFilter"
-              (ngModelChange)="updateDocumentsFilter($event)"
-            >
-              <option value="">Tous</option>
-              <option value="avec">Avec documents</option>
-              <option value="sans">Sans documents</option>
-            </select>
-          </div>
-
-          <!-- Date de publication : du -->
           <div class="toolbar-field">
             <label for="dateFrom">Publié depuis</label>
             <input
@@ -162,7 +146,6 @@
             />
           </div>
 
-          <!-- Date de publication : au -->
           <div class="toolbar-field">
             <label for="dateTo">Publié jusqu'au</label>
             <input
@@ -173,7 +156,6 @@
             />
           </div>
 
-          <!-- Tri -->
           <div class="toolbar-field">
             <label for="sortBy">Trier par</label>
             <select id="sortBy" [ngModel]="sortBy" (ngModelChange)="updateSortBy($event)">
@@ -183,7 +165,7 @@
             </select>
           </div>
 
-          <button type="button" class="toolbar-reset" (click)="resetFilters()">
+          <button type="button" class="btn-ghost toolbar-reset" (click)="resetFilters()">
             Réinitialiser
           </button>
         </div>
@@ -194,15 +176,9 @@
       <div class="catalog-results" #resultsPanel>
         <ng-container *ngIf="filteredListings.length; else emptyState">
           <div class="results-header">
-            <div>
-              <p class="results-title">Catalogue disponible</p>
-              <p class="results-caption">
-                Cliquez sur un dossier pour l’ouvrir en aperçu, ou utilisez la carte pour cibler un animal.
-              </p>
-            </div>
-            <div class="results-badge">
-              {{ visibleRangeStart }}-{{ visibleRangeEnd }} sur {{ filteredListings.length }}
-            </div>
+            <p class="results-caption">
+              {{ visibleRangeStart }}–{{ visibleRangeEnd }} sur {{ filteredListings.length }}
+            </p>
           </div>
 
           <div class="animal-grid">
@@ -210,8 +186,8 @@
               *ngFor="let listing of paginatedListings; trackBy: trackByListing"
               class="animal-card"
               [class.animal-card--active]="listing.id === activeListingId"
-              [class.animal-card--no-docs]="!listing.hasHealthDocuments"
             >
+              <!-- Photos -->
               <div class="animal-card__media">
                 <p-carousel
                   [value]="galleryFor(listing)"
@@ -223,109 +199,100 @@
                   styleClass="animal-carousel"
                 >
                   <ng-template let-image #item>
-                    <img [src]="image" [alt]="listing.title" class="animal-card__image" />
+                    <img [src]="image" [alt]="listing.title" class="animal-card__image" loading="lazy" />
                   </ng-template>
                 </p-carousel>
 
                 <div class="animal-card__badges">
-                  <span class="animal-badge animal-badge--solid">
-                    {{ listing.animalType | titlecase }}
-                  </span>
-                  <span class="animal-badge">
+                  <span class="animal-badge">{{ listing.animalType | titlecase }}</span>
+                  <span *ngIf="listing.status !== 'DISPONIBLE'" class="animal-badge animal-badge--status">
                     {{ listing.status | titlecase }}
                   </span>
-
                 </div>
 
-                <button
-                  *ngIf="hasCoordinates(listing)"
-                  type="button"
-                  class="map-focus-btn"
-                  (click)="focusListing(listing, $event)"
-                  title="Voir sur la carte"
-                >
-                  <i class="pi pi-map-marker"></i>
-                </button>
+                <div class="animal-card__tools">
+                  <button
+                    type="button"
+                    class="card-tool"
+                    (click)="openPreview(listing, $event)"
+                    title="Aperçu rapide"
+                    aria-label="Aperçu rapide"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7S2.5 12 2.5 12z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+                  <button
+                    *ngIf="hasCoordinates(listing)"
+                    type="button"
+                    class="card-tool"
+                    (click)="focusListing(listing, $event)"
+                    title="Voir sur la carte"
+                    aria-label="Voir sur la carte"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-6.2-7-11.5a7 7 0 1114 0C19 14.8 12 21 12 21z"/>
+                      <circle cx="12" cy="9.5" r="2.5"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
 
-              <div
-                class="doc-band"
-                [class.doc-band--ok]="listing.hasHealthDocuments"
-                [class.doc-band--missing]="!listing.hasHealthDocuments"
-              >
-                <i class="pi" [ngClass]="listing.hasHealthDocuments ? 'pi-file-check' : 'pi-exclamation-triangle'"></i>
-                {{ listing.hasHealthDocuments ? 'Documents sanitaires fournis' : 'Sans documents sanitaires' }}
-              </div>
-
-              <div class="animal-card__content">
-                <div class="animal-location">
-                  <i class="pi pi-map-marker"></i>
-                  <span>{{ listing.location }}</span>
+              <!-- Informations : la zone entière ouvre la fiche -->
+              <div class="animal-card__content" (click)="openListingDetails(listing, $event)">
+                <div class="animal-card__head">
+                  <h2 class="animal-title">{{ listing.title }}</h2>
                 </div>
 
-                <h2 class="animal-title">{{ listing.title }}</h2>
-                <p class="animal-description">
-                  {{ listing.description || "Dossier animal validé et prêt à être consulté." }}
+                <p class="animal-location">
+                  <span class="truncate">{{ listing.location }}</span>
+                  <ng-container *ngIf="listing.breed">
+                    <span aria-hidden="true">·</span>
+                    <span class="truncate">{{ listing.breed }}</span>
+                  </ng-container>
                 </p>
 
-                <div class="animal-meta">
-                  <div class="animal-meta__item">
-                    <span class="animal-meta__label">Race</span>
-                    <strong>{{ listing.breed || 'Non renseignée' }}</strong>
-                  </div>
-                  <div class="animal-meta__item">
-                    <span class="animal-meta__label">Quantité</span>
-                    <strong>{{ listing.quantity }} tête<span *ngIf="listing.quantity > 1">s</span></strong>
-                  </div>
-                  <div class="animal-meta__item">
-                    <span class="animal-meta__label">Propriétaire</span>
-                    <strong>{{ listing.sellerName }}</strong>
-                  </div>
+                <div class="animal-card__foot">
+                  <p class="animal-price">
+                    {{ listing.price | number:'1.0-0' }}<span class="animal-price__unit">FCFA</span>
+                  </p>
+                  <p class="animal-qty">
+                    {{ listing.quantity }} tête<span *ngIf="listing.quantity > 1">s</span>
+                  </p>
                 </div>
 
-                <div class="animal-footer">
-                  <div class="animal-price">
-                    <span class="animal-price__label">Prix indicatif</span>
-                    <strong>{{ listing.price | number:'1.0-0' }} FCFA</strong>
-                  </div>
+                <p class="animal-seller" *ngIf="listing.sellerName">
+                  <span class="animal-seller__avatar">{{ listing.sellerName.charAt(0) }}</span>
+                  <span class="truncate">{{ listing.sellerName }}</span>
+                </p>
+              </div>
 
-                  <div class="animal-actions">
-                    <button
-                      *ngIf="isMineCatalog && (listing.status === 'DISPONIBLE' || listing.status === 'INDISPONIBLE')"
-                      type="button"
-                      class="animal-action animal-action--ghost"
-                      (click)="toggleStatus(listing, $event)"
-                    >
-                      {{ listing.status === 'DISPONIBLE' ? 'Désactiver' : 'Remettre en ligne' }}
-                    </button>
-                    <button type="button" class="animal-action animal-action--ghost" (click)="openPreview(listing, $event)">
-                      Aperçu
-                    </button>
-                    <button
-                      type="button"
-                      class="animal-action animal-action--solid"
-                      (click)="openListingDetails(listing, $event)"
-                    >
-                      Voir détails
-                    </button>
-                    <button
-                      *ngIf="isMineCatalog"
-                      type="button"
-                      class="animal-action animal-action--ghost"
-                      (click)="editListing(listing, $event)"
-                    >
-                      Modifier
-                    </button>
-                  </div>
-                </div>
+              <!-- Actions du vendeur, sur son propre catalogue -->
+              <div class="animal-card__owner" *ngIf="isMineCatalog">
+                <button
+                  *ngIf="listing.status === 'DISPONIBLE' || listing.status === 'INDISPONIBLE'"
+                  type="button"
+                  class="btn-secondary btn-sm"
+                  (click)="toggleStatus(listing, $event)"
+                >
+                  {{ listing.status === 'DISPONIBLE' ? 'Désactiver' : 'Remettre en ligne' }}
+                </button>
+                <button
+                  type="button"
+                  class="btn-secondary btn-sm"
+                  (click)="editListing(listing, $event)"
+                >
+                  Modifier
+                </button>
               </div>
             </article>
           </div>
 
-          <div class="catalog-pagination" *ngIf="filteredListings.length > pageSize">
-            <div class="catalog-pagination__summary">
+          <nav class="catalog-pagination" *ngIf="filteredListings.length > pageSize" aria-label="Pagination">
+            <p class="catalog-pagination__summary">
               Page {{ currentPage }} sur {{ totalPages }}
-            </div>
+            </p>
 
             <div class="catalog-pagination__controls">
               <button
@@ -333,8 +300,9 @@
                 class="pagination-btn pagination-btn--nav"
                 (click)="goToPreviousPage()"
                 [disabled]="!hasPreviousPage"
+                aria-label="Page précédente"
               >
-                Précédent
+                <i class="pi pi-chevron-left text-xs"></i>
               </button>
 
               <ng-container *ngFor="let item of paginationItems">
@@ -358,23 +326,21 @@
                 class="pagination-btn pagination-btn--nav"
                 (click)="goToNextPage()"
                 [disabled]="!hasNextPage"
+                aria-label="Page suivante"
               >
-                Suivant
+                <i class="pi pi-chevron-right text-xs"></i>
               </button>
             </div>
-          </div>
+          </nav>
         </ng-container>
       </div>
 
+      <!-- ── Carte ── -->
       <aside class="catalog-map-wrap">
         <div class="catalog-map-panel">
           <div class="map-panel__header">
-            <div>
-              <p class="map-panel__kicker">Vue cartographique</p>
-              <h2>Animaux positionnés sur la carte</h2>
-            </div>
-
-            <button type="button" class="map-panel__action" (click)="recenterMap()">
+            <h2>Sur la carte</h2>
+            <button type="button" class="btn-secondary btn-sm" (click)="recenterMap()">
               Recentrer
             </button>
           </div>
@@ -389,7 +355,7 @@
           </ng-template>
 
           <div class="map-panel__footer">
-            <span>{{ mappedListings.length }} dossier<span *ngIf="mappedListings.length > 1">s</span> géolocalisé<span *ngIf="mappedListings.length > 1">s</span></span>
+            <span>{{ mappedListings.length }} annonce<span *ngIf="mappedListings.length > 1">s</span> géolocalisée<span *ngIf="mappedListings.length > 1">s</span></span>
             <span *ngIf="missingCoordinatesCount > 0">{{ missingCoordinatesCount }} sans coordonnées</span>
           </div>
         </div>
@@ -403,15 +369,15 @@
           </div>
 
           <div class="map-focus-card__content">
-            <p class="map-focus-card__eyebrow">Repère sélectionné</p>
+            <p class="map-focus-card__eyebrow">Sélection</p>
             <h3>{{ highlightedListing.title }}</h3>
-            <p>{{ highlightedListing.location }} • {{ highlightedListing.price | number:'1.0-0' }} FCFA</p>
+            <p>{{ highlightedListing.location }} · {{ highlightedListing.price | number:'1.0-0' }} FCFA</p>
             <div class="map-focus-card__actions">
-              <button type="button" class="animal-action animal-action--ghost" (click)="openPreview(highlightedListing)">
+              <button type="button" class="btn-secondary btn-sm" (click)="openPreview(highlightedListing)">
                 Aperçu
               </button>
-              <button type="button" class="animal-action animal-action--solid" (click)="openListingDetails(highlightedListing, $event)">
-                Fiche complète
+              <button type="button" class="btn-primary btn-sm" (click)="openListingDetails(highlightedListing, $event)">
+                Voir la fiche
               </button>
             </div>
           </div>
@@ -422,26 +388,18 @@
 </section>
 
 <ng-template #emptyState>
-  <div class="empty-state empty-state--inline">
-    <i class="pi pi-inbox"></i>
-    <h2>Aucun animal trouvé</h2>
-    <p>Modifiez vos critères de recherche pour relancer le catalogue.</p>
+  <div class="empty">
+    <div class="empty-icon"><i class="pi pi-search"></i></div>
+    <h2 class="empty-title">Aucun animal ne correspond</h2>
+    <p class="empty-text">Élargissez la région, le budget ou l'espèce pour voir plus d'annonces.</p>
   </div>
 </ng-template>
 
+<!-- ── Aperçu rapide ── -->
 <div class="preview-backdrop" *ngIf="previewListing" (click)="closePreview()">
-  <div class="preview-modal" (click)="$event.stopPropagation()">
+  <div class="preview-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
     <button type="button" class="preview-close" (click)="closePreview()" aria-label="Fermer">
-      <i class="pi pi-times"></i>
-    </button>
-
-    <button
-      *ngIf="canEditPreview && (previewListing.status === 'DISPONIBLE' || previewListing.status === 'INDISPONIBLE')"
-      type="button"
-      class="animal-action animal-action--ghost"
-      (click)="toggleStatus(previewListing)"
-    >
-      {{ previewListing.status === 'DISPONIBLE' ? 'Désactiver l\'annonce' : 'Remettre en ligne' }}
+      <i class="pi pi-times text-sm"></i>
     </button>
 
     <div class="preview-modal__media">
@@ -462,65 +420,74 @@
 
     <div class="preview-modal__content">
       <div class="preview-topline">
-        <span class="animal-badge animal-badge--solid">{{ previewListing.animalType | titlecase }}</span>
-        <span class="animal-badge">{{ previewListing.status | titlecase }}</span>
-
+        <span class="badge-neutral">{{ previewListing.animalType | titlecase }}</span>
+        <span class="badge-success">{{ previewListing.status | titlecase }}</span>
       </div>
 
       <h2>{{ previewListing.title }}</h2>
       <p class="preview-location">
-        <i class="pi pi-map-marker"></i>
+        <i class="pi pi-map-marker text-xs"></i>
         <span>{{ previewListing.location }}</span>
       </p>
 
       <div class="preview-price">
-        {{ previewListing.price | number:'1.0-0' }} FCFA
+        {{ previewListing.price | number:'1.0-0' }} <span>FCFA</span>
       </div>
 
       <p class="preview-description">
-        {{ previewListing.description || "Dossier animal validé et prêt à être consulté." }}
+        {{ previewListing.description || "Dossier validé par un vétérinaire et prêt à être consulté." }}
       </p>
 
-      <div class="preview-grid">
+      <dl class="preview-grid">
         <div class="preview-tile">
-          <span>Race</span>
-          <strong>{{ previewListing.breed || 'Non renseignée' }}</strong>
+          <dt>Race</dt>
+          <dd>{{ previewListing.breed || 'Non renseignée' }}</dd>
         </div>
         <div class="preview-tile">
-          <span>Quantité</span>
-          <strong>{{ previewListing.quantity }} tête<span *ngIf="previewListing.quantity > 1">s</span></strong>
+          <dt>Quantité</dt>
+          <dd>{{ previewListing.quantity }} tête<span *ngIf="previewListing.quantity > 1">s</span></dd>
         </div>
         <div class="preview-tile">
-          <span>Propriétaire</span>
-          <strong>{{ previewListing.sellerName }}</strong>
+          <dt>Éleveur</dt>
+          <dd>{{ previewListing.sellerName }}</dd>
         </div>
         <div class="preview-tile">
-          <span>Référence</span>
-          <strong>{{ previewListing.qrCode || 'Non renseignée' }}</strong>
+          <dt>Référence</dt>
+          <dd class="truncate">{{ previewListing.qrCode || 'Non renseignée' }}</dd>
         </div>
-      </div>
+      </dl>
 
       <div class="preview-actions">
-        <button type="button" class="animal-action animal-action--solid" (click)="openListingDetails(previewListing, $event)">
-          Ouvrir la fiche complète
+        <button type="button" class="btn-primary btn-lg btn-block" (click)="openListingDetails(previewListing, $event)">
+          Voir la fiche complète
         </button>
 
         <a
           *ngIf="!isMineCatalog && auth.isLoggedIn() && previewListing.sellerEmail"
           [href]="'mailto:' + previewListing.sellerEmail"
-          class="animal-action animal-action--ghost"
+          class="btn-secondary btn-lg btn-block"
         >
           Contacter le vendeur
         </a>
 
-        <button
-          *ngIf="canEditPreview"
-          type="button"
-          class="animal-action animal-action--ghost"
-          (click)="editListing(previewListing, $event)"
-        >
-          Modifier ce dossier
-        </button>
+        <div class="preview-actions__row" *ngIf="canEditPreview">
+          <button
+            *ngIf="canEditPreview && (previewListing.status === 'DISPONIBLE' || previewListing.status === 'INDISPONIBLE')"
+            type="button"
+            class="btn-secondary"
+            (click)="toggleStatus(previewListing)"
+          >
+            {{ previewListing.status === 'DISPONIBLE' ? 'Désactiver l\'annonce' : 'Remettre en ligne' }}
+          </button>
+          <button
+            *ngIf="canEditPreview"
+            type="button"
+            class="btn-secondary"
+            (click)="editListing(previewListing, $event)"
+          >
+            Modifier
+          </button>
+        </div>
       </div>
     </div>
   </div>

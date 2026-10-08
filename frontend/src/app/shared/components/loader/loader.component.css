@@ -1,20 +1,37 @@
-.loader-overlay {
+.loader-bar {
   position: fixed;
-  inset: 0;
-  background: rgba(20, 47, 36, 0.28);
-  backdrop-filter: blur(2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 9999;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(45, 106, 79, 0.12);
+  pointer-events: none;
+  animation: loader-apparition 160ms ease-out;
 }
 
-.loader-spinner {
-  width: 60px;
-  height: 60px;
+.loader-bar__trait {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  border-radius: 999px;
+  background: var(--brand);
+  animation: loader-glisse 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
-:host ::ng-deep .loader-spinner .p-progress-spinner-circle,
-:host ::ng-deep .loader-spinner .p-progressspinner-circle {
-  stroke: #2D6A4F !important;
+@keyframes loader-glisse {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(260%); }
+}
+
+@keyframes loader-apparition {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-bar__trait { animation-duration: 2.4s; }
 }

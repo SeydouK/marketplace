@@ -87,6 +87,31 @@ public class User {
     @Column(name = "verification_email_sent_at")
     private java.time.LocalDateTime verificationEmailSentAt;
 
+    // ── Mot de passe oublie ─────────────────────────────────────────────────
+    // Le jeton de reinitialisation n'est jamais stocke en clair : seule son
+    // empreinte SHA-256 l'est. Une fuite de la base ne doit pas suffire a
+    // prendre la main sur un compte.
+
+    @Column(name = "reinitialisation_jeton_hash", length = 64)
+    private String reinitialisationJetonHash;
+
+    @Column(name = "reinitialisation_expire_at")
+    private java.time.LocalDateTime reinitialisationExpireAt;
+
+    /** Derniere demande, pour espacer les envois. */
+    @Column(name = "reinitialisation_demandee_at")
+    private java.time.LocalDateTime reinitialisationDemandeeAt;
+
+    /**
+     * Dernier changement de mot de passe.
+     *
+     * Les jetons JWT emis avant cette date sont refuses : changer un mot de
+     * passe vole doit deconnecter le voleur, pas attendre l'expiration de sa
+     * session.
+     */
+    @Column(name = "mot_de_passe_modifie_at")
+    private java.time.LocalDateTime motDePasseModifieAt;
+
     // ── Moyen de retrait : ou part l'argent des ventes ──────────────────────
     // Renseigne par le vendeur lui-meme depuis son espace. Deux champs et non
     // un seul : l'API de payout exige l'operateur en plus du numero, et le

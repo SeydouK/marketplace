@@ -49,6 +49,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    /** Même contrôle de révocation que la chaîne HTTP, résolu à la connexion. */
+    private final ObjectProvider<com.marketplace.security.UserDetailsServiceImpl> comptes;
+
     /**
      * Résolu à l'abonnement, pas au démarrage.
      *
@@ -121,6 +124,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         }
 
         String email = jwtTokenProvider.getUsernameFromToken(jeton);
+        // Un jeton révoqué par un changement de mot de passe ne doit pas plus
+        // ouvrir le canal temps réel que les routes HTTP.
+        if (comptes.getObject().loadUserForToken(email, jwtTokenProvider.getIssuedAtFromToken(jeton)) == null) {
+            throw new IllegalArgumentException("Connexion refusée : session révoquée.");
+        }
         accessor.setUser((Principal) () -> email);
     }
 

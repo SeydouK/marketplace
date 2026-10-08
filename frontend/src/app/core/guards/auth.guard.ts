@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { SessionExpiryService } from '../services/session-expiry.service';
 
@@ -12,9 +12,11 @@ export class AuthGuard implements CanActivate {
     private router: Router,
   ) {}
 
-  canActivate(): boolean {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    // La page demandée est rouverte après connexion : un lien d'email (ticket
+    // de remise, suivi de livraison) ne doit pas se perdre sur l'accueil.
     if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/auth/login']);
+      this.router.navigate(['/auth/login'], { queryParams: { retour: state.url } });
       return false;
     }
 
@@ -22,7 +24,7 @@ export class AuthGuard implements CanActivate {
     // sur une page qui echouait ensuite requete apres requete.
     if (!this.sessionExpiry.jetonValide()) {
       this.authService.logout();
-      this.router.navigate(['/auth/login'], { queryParams: { raison: 'expiree' } });
+      this.router.navigate(['/auth/login'], { queryParams: { raison: 'expiree', retour: state.url } });
       return false;
     }
     return true;

@@ -1,0 +1,245 @@
+<!-- acheteur/ticket-remise/ticket-remise.component.html -->
+<div class="page-narrow">
+
+  <a routerLink="/acheteur/mes-achats" class="link inline-flex items-center gap-1.5 text-sm">
+    <i class="pi pi-arrow-left text-xs"></i> Mes achats
+  </a>
+
+  <header class="mb-6 mt-4">
+    <p class="eyebrow">Remise de l'animal</p>
+    <h1 class="page-title mt-1.5">Mon ticket de remise</h1>
+    <p class="page-lead">Présentez-le le jour où vous prenez l'animal. Le vendeur n'est payé qu'une fois le code saisi.</p>
+  </header>
+
+  <!-- Copie locale, faute de réseau -->
+  <div class="alert-info mb-5" *ngIf="horsLigneDepuis">
+    <i class="pi pi-wifi mt-0.5"></i>
+    <div>
+      <p class="alert-title">Hors connexion</p>
+      <p class="alert-text">Ticket enregistré sur votre téléphone le {{ horsLigneDepuis | date:'dd/MM/yyyy à HH:mm' }}. Le code reste valable.</p>
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div class="mx-auto max-w-[440px] space-y-3" *ngIf="chargement" aria-busy="true">
+    <div class="skeleton h-20 rounded-t-[22px] rounded-b-md"></div>
+    <div class="skeleton h-56 rounded-md"></div>
+    <div class="skeleton h-52 rounded-b-[22px] rounded-t-md"></div>
+  </div>
+
+  <!-- Erreur sans copie locale -->
+  <div class="empty" *ngIf="!chargement && erreur">
+    <div class="empty-icon"><i class="pi pi-wifi"></i></div>
+    <h2 class="empty-title">Impossible d'afficher le ticket</h2>
+    <p class="empty-text">Vérifiez votre connexion puis réessayez.</p>
+    <button type="button" class="btn-primary mt-5" (click)="charger()">Réessayer</button>
+  </div>
+
+  <!-- Aucun ticket -->
+  <div class="empty" *ngIf="!chargement && !erreur && !actif">
+    <div class="empty-icon"><i class="pi pi-ticket"></i></div>
+    <h2 class="empty-title">Aucun ticket à présenter</h2>
+    <p class="empty-text">Votre ticket de remise apparaît ici dès que le paiement d'un animal est confirmé.</p>
+    <a routerLink="/acheteur/mes-achats" class="btn-secondary mt-5">Voir mes achats</a>
+  </div>
+
+  <ng-container *ngIf="!chargement && actif as t">
+
+    <!-- Plusieurs remises : une par vendeur -->
+    <div class="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1" *ngIf="tickets.length > 1" role="tablist">
+      <button type="button" *ngFor="let autre of tickets" role="tab"
+              [attr.aria-selected]="autre === t"
+              (click)="choisir(autre)"
+              [ngClass]="autre === t ? 'chip-active' : 'chip'"
+              class="shrink-0">
+        {{ nommerAnimaux(autre) }} · {{ autre.vendeurNom }}
+      </button>
+    </div>
+
+    <!-- ═══ Le ticket ═══ -->
+    <article class="mx-auto max-w-[440px]" aria-label="Ticket de remise">
+
+      <!-- Bandeau de marque -->
+      <div class="flex items-center justify-between gap-4 rounded-t-[22px] bg-brand-800 px-5 py-4 text-white sm:px-6">
+        <span class="inline-flex items-center gap-2.5">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-white/10">
+            <svg class="h-5 w-5 text-accent-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 12.5c-2.9 0-5.5 2.1-5.5 4.6 0 1.7 1.3 2.9 3 2.9.9 0 1.6-.4 2.5-.4s1.6.4 2.5.4c1.7 0 3-1.2 3-2.9 0-2.5-2.6-4.6-5.5-4.6zM7.4 8.1c-.4-1.6-1.6-2.7-2.8-2.4-1.2.3-1.8 1.8-1.4 3.4.4 1.6 1.6 2.7 2.8 2.4 1.2-.3 1.8-1.8 1.4-3.4zM11.2 6.6c.3-1.7-.4-3.2-1.6-3.4C8.4 3 7.3 4.2 7 5.9c-.3 1.7.4 3.2 1.6 3.4 1.2.2 2.3-1 2.6-2.7zM16.6 8.1c.4-1.6 1.6-2.7 2.8-2.4 1.2.3 1.8 1.8 1.4 3.4-.4 1.6-1.6 2.7-2.8 2.4-1.2-.3-1.8-1.8-1.4-3.4zM12.8 6.6c-.3-1.7.4-3.2 1.6-3.4 1.2-.2 2.3 1 2.6 2.7.3 1.7-.4 3.2-1.6 3.4-1.2.2-2.3-1-2.6-2.7z"/>
+            </svg>
+          </span>
+          <span class="display text-lg font-semibold leading-none">Bétail<span class="text-accent-300">Market</span></span>
+        </span>
+        <span class="min-w-0 text-right leading-tight">
+          <span class="block text-[10px] font-bold uppercase tracking-[0.14em] text-white/60">Ticket de remise</span>
+          <span class="mt-1 block text-sm font-semibold tabular">Commande {{ t.reference }}</span>
+        </span>
+      </div>
+
+      <!-- Animal et remise -->
+      <div class="border-x border-line bg-surface px-5 pb-5 pt-5 sm:px-6">
+        <div class="flex items-center gap-4">
+          <div class="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-muted">
+            <img [src]="t.animaux[0]?.photoUrl | assetUrl : 'assets/images/especes/autre.svg'"
+                 [alt]="t.animaux[0]?.nom"
+                 class="h-full w-full object-cover"
+                 onerror="this.src='assets/images/especes/autre.svg'">
+          </div>
+          <div class="min-w-0">
+            <h2 class="display truncate text-xl font-semibold text-ink">{{ nommerAnimaux(t) }}</h2>
+            <p class="mt-0.5 truncate text-sm text-ink-2">
+              <span *ngIf="t.animaux[0]?.race">{{ t.animaux[0].race }} · </span>{{ libelleStatut(t.statutLivraison) }}
+            </p>
+          </div>
+        </div>
+
+        <dl class="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-line pt-4">
+          <div class="min-w-0">
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3">Vendeur</dt>
+            <dd class="mt-1 truncate text-sm font-semibold text-ink">{{ t.vendeurNom }}</dd>
+          </div>
+          <div class="min-w-0">
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3">Mode de remise</dt>
+            <dd class="mt-1 truncate text-sm font-semibold text-ink">{{ libelleMode(t.modeRemise) }}</dd>
+          </div>
+          <div class="min-w-0">
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3">Lieu</dt>
+            <dd class="mt-1 truncate text-sm font-semibold text-ink">{{ t.localisation || 'À convenir' }}</dd>
+          </div>
+          <div class="min-w-0">
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3">Montant protégé</dt>
+            <dd class="mt-1 truncate text-sm font-semibold text-ink tabular">{{ formaterFcfa(t.montant) }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Perforation -->
+      <!-- Sans bordure latérale : les demi-cercles, rognés par overflow-hidden, dessinent l'encoche -->
+      <div class="relative h-7 overflow-hidden bg-surface" aria-hidden="true">
+        <span class="absolute -left-3.5 top-0 h-7 w-7 rounded-full border border-line bg-canvas"></span>
+        <span class="absolute -right-3.5 top-0 h-7 w-7 rounded-full border border-line bg-canvas"></span>
+        <span class="absolute inset-x-6 top-1/2 border-t-2 border-dashed border-line"></span>
+      </div>
+
+      <!-- Code -->
+      <div class="rounded-b-[22px] border-x border-b border-line bg-surface px-5 pb-6 pt-3 sm:px-6">
+
+        <!-- Animal déjà remis : le code a servi -->
+        <div class="py-4 text-center" *ngIf="remiseEffectuee">
+          <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+            <i class="pi pi-check text-lg"></i>
+          </span>
+          <p class="mt-3 font-semibold text-ink">Remise effectuée</p>
+          <p class="mt-1 text-sm text-ink-2" *ngIf="t.receptionneAt">Le {{ t.receptionneAt | date:'dd/MM/yyyy à HH:mm' }}. Ce ticket n'est plus utilisable.</p>
+        </div>
+
+        <!-- Code pas encore disponible -->
+        <div class="py-4 text-center" *ngIf="!remiseEffectuee && !t.code">
+          <p class="font-semibold text-ink">Votre code arrive</p>
+          <p class="mt-1 text-sm text-ink-2">Il est créé quelques instants après la confirmation du paiement.</p>
+          <button type="button" class="btn-secondary btn-sm mt-4" (click)="charger()">
+            <i class="pi pi-refresh text-xs"></i> Actualiser
+          </button>
+        </div>
+
+        <ng-container *ngIf="!remiseEffectuee && t.code">
+          <p class="text-center text-[11px] font-bold uppercase tracking-[0.16em] text-ink-3">Code de remise</p>
+
+          <button type="button" (click)="basculerCode()"
+                  class="mx-auto mt-3 flex justify-center gap-2.5 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/40"
+                  [attr.aria-label]="codeVisible ? 'Masquer le code' : 'Afficher le code'">
+            <span *ngFor="let chiffre of chiffres(t)"
+                  class="flex h-[4.25rem] w-14 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-[2.1rem] font-extrabold text-brand-800 tabular sm:w-16">
+              {{ codeVisible ? chiffre : '•' }}
+            </span>
+          </button>
+
+          <p class="mt-3 text-center">
+            <button type="button" class="link text-[13px]" (click)="basculerCode()">
+              <i class="pi text-xs" [ngClass]="codeVisible ? 'pi-eye-slash' : 'pi-eye'"></i>
+              {{ codeVisible ? 'Masquer le code' : 'Afficher le code' }}
+            </button>
+          </p>
+
+          <div class="alert-warning mt-5">
+            <i class="pi pi-exclamation-triangle mt-0.5"></i>
+            <p><span class="font-semibold">Ne donnez ce code qu'au moment où l'animal est entre vos mains.</span>
+              Sa saisie déclenche le paiement du vendeur.</p>
+          </div>
+        </ng-container>
+
+        <p class="mt-5 text-center text-xs text-ink-3">
+          <span *ngIf="t.paidAt">Payé le {{ t.paidAt | date:'dd/MM/yyyy' }} · </span>
+          <i class="pi pi-lock text-[10px]"></i> Fonds bloqués jusqu'à la remise
+        </p>
+      </div>
+    </article>
+
+    <!-- ═══ Actions ═══ -->
+    <div class="mx-auto mt-6 max-w-[440px] space-y-3" *ngIf="!remiseEffectuee && t.code">
+      <button type="button" class="btn-primary btn-lg btn-block" (click)="ouvrirGrandEcran()">
+        <i class="pi pi-expand text-sm"></i> Afficher en grand
+      </button>
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" class="btn-secondary btn-block" (click)="enregistrerImage()" [disabled]="exportEnCours">
+          <i class="pi text-sm" [ngClass]="exportEnCours ? 'pi-spin pi-spinner' : 'pi-download'"></i> Enregistrer l'image
+        </button>
+        <a class="btn-secondary btn-block" [href]="lienWhatsApp" target="_blank" rel="noopener">
+          <i class="pi pi-whatsapp text-sm"></i> Envoyer par WhatsApp
+        </a>
+      </div>
+      <a *ngIf="t.remiseId && t.statutLivraison === 'EN_LIVRAISON'"
+         [routerLink]="['/livraison/suivi', t.remiseId]" class="btn-soft btn-block">
+        <i class="pi pi-map text-sm"></i> Suivre la livraison en direct
+      </a>
+      <p class="px-2 text-center text-xs leading-relaxed text-ink-3">
+        Quelqu'un d'autre récupère l'animal pour vous&nbsp;? Envoyez-lui le ticket&nbsp;: le code suffit.
+      </p>
+    </div>
+
+    <!-- ═══ Déroulé ═══ -->
+    <section class="card card-pad mx-auto mt-8 max-w-[440px]" *ngIf="!remiseEffectuee">
+      <h2 class="section-title">Le jour de la remise</h2>
+      <ol class="mt-4 space-y-4">
+        <li class="flex gap-3">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">1</span>
+          <p class="text-sm text-ink-2"><span class="font-semibold text-ink">Rencontrez le vendeur</span> ou le transporteur, au lieu convenu.</p>
+        </li>
+        <li class="flex gap-3">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">2</span>
+          <p class="text-sm text-ink-2"><span class="font-semibold text-ink">Vérifiez l'animal</span>&nbsp;: état, race, poids, conformité à l'annonce.</p>
+        </li>
+        <li class="flex gap-3">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">3</span>
+          <p class="text-sm text-ink-2"><span class="font-semibold text-ink">Donnez le code</span> une fois l'animal en main. Le vendeur le saisit et reçoit son paiement.</p>
+        </li>
+      </ol>
+      <p class="mt-5 border-t border-line pt-4 text-[13px] text-ink-2">
+        Un problème avec l'animal&nbsp;? Ne donnez pas le code et
+        <a routerLink="/acheteur/mes-achats" class="link">signalez-le depuis Mes achats</a>.
+      </p>
+    </section>
+
+    <!-- ═══ Grand écran : le code lisible à un mètre ═══ -->
+    <div *ngIf="grandEcran"
+         class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-brand-900 px-6 text-white"
+         role="dialog" aria-modal="true" aria-label="Code de remise en grand"
+         (click)="fermerGrandEcran()">
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-white/55">Code de remise</p>
+      <div class="mt-6 flex gap-3 sm:gap-4">
+        <span *ngFor="let chiffre of chiffres(t)"
+              class="flex aspect-[4/5] w-[19vw] max-w-[8.5rem] items-center justify-center rounded-3xl bg-white/10 text-[15vw] font-extrabold leading-none tabular sm:text-[6.5rem]">
+          {{ chiffre }}
+        </span>
+      </div>
+      <p class="display mt-8 text-center text-xl font-semibold">{{ nommerAnimaux(t) }}</p>
+      <p class="mt-1 text-center text-sm text-white/65">Vendeur&nbsp;: {{ t.vendeurNom }} · {{ t.reference }}</p>
+      <p class="mt-8 max-w-xs text-center text-sm font-semibold text-accent-300">
+        Ne donnez ce code qu'au moment où l'animal est entre vos mains.
+      </p>
+      <button type="button" class="btn mt-10 border border-white/25 text-white hover:bg-white/10" (click)="fermerGrandEcran()">
+        <i class="pi pi-times text-sm"></i> Fermer
+      </button>
+    </div>
+
+  </ng-container>
+</div>

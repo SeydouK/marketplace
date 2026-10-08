@@ -103,6 +103,31 @@ export class AuthService {
             );
     }
 
+    // ── Mot de passe oublié ──────────────────────────────────────────────────
+    // Les trois appels gèrent leurs erreurs dans l'écran : pas de toast global,
+    // et surtout pas de redirection vers la connexion sur un 401 éventuel.
+
+    /** Demande un lien de réinitialisation. La réponse est la même que le compte existe ou non. */
+    demanderReinitialisation(email: string): Observable<{ message: string }> {
+        return this.http.post<{ message: string }>(
+            `${environment.apiUrl}/auth/mot-de-passe/oublie`, { email },
+            { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) });
+    }
+
+    /** Le lien reçu est-il encore utilisable ? */
+    verifierJetonReinitialisation(jeton: string): Observable<{ valide: boolean }> {
+        return this.http.post<{ valide: boolean }>(
+            `${environment.apiUrl}/auth/mot-de-passe/verifier`, { jeton },
+            { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) });
+    }
+
+    /** Choisit le nouveau mot de passe ; le lien devient inutilisable. */
+    reinitialiserMotDePasse(jeton: string, motDePasse: string): Observable<void> {
+        return this.http.post<void>(
+            `${environment.apiUrl}/auth/mot-de-passe/reinitialiser`, { jeton, motDePasse },
+            { context: new HttpContext().set(SKIP_GLOBAL_ERROR, true) });
+    }
+
     refreshCurrentUser(): Observable<User> {
         return this.http
             .get<User>(`${environment.apiUrl}/users/me`)

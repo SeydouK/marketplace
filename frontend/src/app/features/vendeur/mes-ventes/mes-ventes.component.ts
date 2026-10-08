@@ -50,6 +50,10 @@ export class MesVentesComponent implements OnInit {
   photoFichier: File | null = null;
   photoApercu: string | null = null;
   remiseEnCours = false;
+  /** Le champ du code a-t-il le focus ? Sert à éclairer la case en cours. */
+  codeFocus = false;
+  /** Remise tout juste confirmée : écran de réussite, plutôt qu'une simple notification. */
+  remiseReussie: { animalNom: string; montantNet?: number } | null = null;
 
   // ── Déclaration d'échec ────────────────────────────────────────────────────
   echecVente: MaVente | null = null;
@@ -402,6 +406,20 @@ export class MesVentesComponent implements OnInit {
     lecteur.readAsDataURL(fichier);
   }
 
+  /** Le code ne contient que des chiffres : on écarte le reste à la frappe (ou au collage). */
+  nettoyerCode(valeur: string): void {
+    this.codeSaisi = (valeur ?? '').replace(/\D/g, '').slice(0, 4);
+  }
+
+  /** Les quatre cases du code, remplies au fil de la saisie. */
+  get casesCode(): string[] {
+    return [0, 1, 2, 3].map((i) => this.codeSaisi[i] ?? '');
+  }
+
+  fermerReussite(): void {
+    this.remiseReussie = null;
+  }
+
   get remisePrete(): boolean {
     return this.codeSaisi.trim().length === 4 && this.photoFichier !== null;
   }
@@ -425,9 +443,7 @@ export class MesVentesComponent implements OnInit {
             next: () => {
               this.remiseEnCours = false;
               this.fermerRemise();
-              this.toast.success(
-                `Remise de « ${vente.animalNom} » confirmée. Vos fonds sont débloqués.`,
-              );
+              this.remiseReussie = { animalNom: vente.animalNom, montantNet: vente.montantNet };
               this.charger();
             },
             error: (e) => {

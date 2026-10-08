@@ -3,8 +3,8 @@
 
   <!-- ═══ EN-TÊTE ═══ -->
   <div>
-    <h1 class="text-2xl font-extrabold tracking-tight text-[#1B4332]">Mes ventes</h1>
-    <p class="mt-1 text-sm text-gray-500">
+    <h1 class="page-title">Mes ventes</h1>
+    <p class="mt-1 text-sm text-ink-3">
       Suivez vos animaux vendus et le règlement de vos fonds.
     </p>
   </div>
@@ -16,30 +16,30 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
     <!-- ── Sous séquestre ── -->
-    <article class="relative bg-white border border-[#E7E0D2] rounded-2xl p-5">
+    <article class="relative bg-white border border-line rounded-2xl p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
-            <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Sous séquestre</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">Sous séquestre</p>
             <button type="button" (click)="basculerInfo('sequestre', $event)"
               [attr.aria-expanded]="infoOuverte === 'sequestre'"
               aria-label="Que signifie « sous séquestre » ?"
-              class="w-5 h-5 rounded-full flex items-center justify-center text-[#8B6F55] hover:bg-[#F6F1E7] focus:outline-none focus:ring-2 focus:ring-[#2D6A4F] transition-colors">
+              class="w-5 h-5 rounded-full flex items-center justify-center text-ink-3 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-600 transition-colors">
               <i class="pi pi-question-circle text-[13px]"></i>
             </button>
           </div>
-          <p class="mt-2 text-2xl font-extrabold text-[#B96416] leading-none">
+          <p class="mt-2 text-2xl font-bold text-accent-600 leading-none">
             {{ totalSousSequestre | number }} <span class="text-sm">FCFA</span>
           </p>
-          <p class="mt-2 text-xs text-gray-400">En attente de remise</p>
+          <p class="mt-2 text-xs text-ink-3">En attente de remise</p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-[#FDF6EC] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-lock text-lg text-[#B96416]"></i>
+        <span class="w-11 h-11 rounded-xl bg-accent-50 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-lock text-lg text-accent-600"></i>
         </span>
       </div>
 
       <div *ngIf="infoOuverte === 'sequestre'" (click)="$event.stopPropagation()" role="tooltip"
-        class="absolute z-30 top-full left-0 right-0 mt-2 p-4 bg-[#1B4332] text-white rounded-xl shadow-2xl text-xs leading-relaxed">
+        class="absolute z-30 top-full left-0 right-0 mt-2 p-4 bg-brand-800 text-white rounded-xl shadow-pop text-xs leading-relaxed">
         <p class="font-bold text-sm mb-1.5">L'argent est déjà payé, mais bloqué</p>
         <p class="text-white/80">
           L'acheteur a réglé ces ventes. BétailMarket conserve les fonds jusqu'à
@@ -53,27 +53,27 @@
     </article>
 
     <!-- ── À recevoir ── -->
-    <article class="relative bg-white border border-[#E7E0D2] rounded-2xl p-5">
+    <article class="relative bg-white border border-line rounded-2xl p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
-            <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">À recevoir</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">À recevoir</p>
             <button type="button" (click)="basculerInfo('recevoir', $event)"
               [attr.aria-expanded]="infoOuverte === 'recevoir'"
               aria-label="Que signifie « à recevoir » ?"
-              class="w-5 h-5 rounded-full flex items-center justify-center text-[#8B6F55] hover:bg-[#F6F1E7] focus:outline-none focus:ring-2 focus:ring-[#2D6A4F] transition-colors">
+              class="w-5 h-5 rounded-full flex items-center justify-center text-ink-3 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-600 transition-colors">
               <i class="pi pi-question-circle text-[13px]"></i>
             </button>
           </div>
-          <p class="mt-2 text-2xl font-extrabold text-[#1B4332] leading-none">
+          <p class="mt-2 text-2xl font-bold text-brand-800 leading-none">
             {{ totalALiberer | number }} <span class="text-sm">FCFA</span>
           </p>
-          <p class="mt-2 text-xs text-gray-400">
+          <p class="mt-2 text-xs text-ink-3">
             {{ totalRetirable > 0 ? 'Débloqué, retirable maintenant' : 'Débloqué, versement en cours' }}
           </p>
 
           <button *ngIf="totalRetirable > 0 && retraitsOuverts" type="button" (click)="ouvrirRetrait()"
-            class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2D6A4F] hover:bg-[#245540] text-white text-sm font-bold shadow-cta transition-colors">
+            class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-cta transition-colors">
             <i class="pi pi-send text-xs"></i>
             Retirer {{ totalRetirable | number }} FCFA
           </button>
@@ -81,18 +81,18 @@
           <!-- Canal d'envoi pas encore ouvert : on le dit, plutot que d'offrir un
                bouton qui echouerait. L'argent, lui, est bien acquis au vendeur. -->
           <p *ngIf="totalRetirable > 0 && !retraitsOuverts"
-            class="mt-3 text-xs text-[#8B6F55] bg-[#FBF7EE] border border-[#EEE3CE] rounded-xl px-3 py-2 leading-relaxed">
+            class="mt-3 text-xs text-ink-3 bg-canvas border border-line rounded-xl px-3 py-2 leading-relaxed">
             Ce montant vous est acquis. Les retraits en libre-service ouvrent bientôt —
             d'ici là, l'équipe BétailMarket procède aux versements.
           </p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-clock text-lg text-[#2D6A4F]"></i>
+        <span class="w-11 h-11 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-clock text-lg text-brand-600"></i>
         </span>
       </div>
 
       <div *ngIf="infoOuverte === 'recevoir'" (click)="$event.stopPropagation()" role="tooltip"
-        class="absolute z-30 top-full left-0 right-0 mt-2 p-4 bg-[#1B4332] text-white rounded-xl shadow-2xl text-xs leading-relaxed">
+        class="absolute z-30 top-full left-0 right-0 mt-2 p-4 bg-brand-800 text-white rounded-xl shadow-pop text-xs leading-relaxed">
         <p class="font-bold text-sm mb-1.5">Ce qui vous est dû, pas encore envoyé</p>
         <p class="text-white/80">
           L'animal a été remis et le code validé : le séquestre est levé. Ce montant
@@ -114,30 +114,30 @@
     </article>
 
     <!-- ── Déjà versé ── -->
-    <article class="relative bg-white border border-[#E7E0D2] rounded-2xl p-5">
+    <article class="relative bg-white border border-line rounded-2xl p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
-            <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55]">Déjà versé</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-3">Déjà versé</p>
             <button type="button" (click)="basculerInfo('verse', $event)"
               [attr.aria-expanded]="infoOuverte === 'verse'"
               aria-label="Que signifie « déjà versé » ?"
-              class="w-5 h-5 rounded-full flex items-center justify-center text-[#8B6F55] hover:bg-[#F6F1E7] focus:outline-none focus:ring-2 focus:ring-[#2D6A4F] transition-colors">
+              class="w-5 h-5 rounded-full flex items-center justify-center text-ink-3 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-600 transition-colors">
               <i class="pi pi-question-circle text-[13px]"></i>
             </button>
           </div>
-          <p class="mt-2 text-2xl font-extrabold text-[#2D6A4F] leading-none">
+          <p class="mt-2 text-2xl font-bold text-brand-600 leading-none">
             {{ totalVerse | number }} <span class="text-sm">FCFA</span>
           </p>
-          <p class="mt-2 text-xs text-gray-400">Reçu sur votre Mobile Money</p>
+          <p class="mt-2 text-xs text-ink-3">Reçu sur votre Mobile Money</p>
         </div>
-        <span class="w-11 h-11 rounded-xl bg-[#E0EEE4] flex items-center justify-center flex-shrink-0">
-          <i class="pi pi-check-circle text-lg text-[#2D6A4F]"></i>
+        <span class="w-11 h-11 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+          <i class="pi pi-check-circle text-lg text-brand-600"></i>
         </span>
       </div>
 
       <div *ngIf="infoOuverte === 'verse'" (click)="$event.stopPropagation()" role="tooltip"
-        class="absolute z-30 top-full left-0 right-0 mt-2 p-4 bg-[#1B4332] text-white rounded-xl shadow-2xl text-xs leading-relaxed">
+        class="absolute z-30 top-full left-0 right-0 mt-2 p-4 bg-brand-800 text-white rounded-xl shadow-pop text-xs leading-relaxed">
         <p class="font-bold text-sm mb-1.5">Envoyé sur votre Mobile Money</p>
         <p class="text-white/80">
           Ces versements ont quitté BétailMarket et sont arrivés sur le numéro
@@ -153,84 +153,84 @@
   </div>
 
   <!-- ═══ COMMENT VOUS ÊTES PAYÉ ═══ -->
-  <div class="flex items-start gap-3 p-4 bg-[#FDF6EC] border border-[#F4D4A3] rounded-2xl">
-    <i class="pi pi-key text-lg text-[#B96416] flex-shrink-0 mt-0.5"></i>
-    <p class="text-sm text-[#8B6F55] leading-relaxed">
-      <span class="font-semibold text-amber-800">Comment vous êtes payé.</span>
-      L'acheteur détient un code à 4 chiffres. Au moment où vous lui remettez l'animal,
+  <div class="flex items-start gap-3 p-4 bg-accent-50 border border-accent-200 rounded-2xl">
+    <i class="pi pi-key text-lg text-accent-600 flex-shrink-0 mt-0.5"></i>
+    <p class="text-sm text-ink-3 leading-relaxed">
+      <span class="font-semibold text-warning">Comment vous êtes payé.</span>
+      L'acheteur détient un ticket de remise avec un code à 4 chiffres. Au moment où vous lui remettez l'animal,
       demandez-lui ce code et saisissez-le avec une photo : vos fonds sont débloqués
       immédiatement, sans attendre.
     </p>
   </div>
 
   <!-- ═══ ONGLETS ═══ -->
-  <div class="flex gap-2 border-b border-[#E7E0D2] overflow-x-auto">
+  <div class="flex gap-2 border-b border-line overflow-x-auto">
     <button *ngFor="let tab of tabs"
       type="button"
       (click)="setTab(tab.value)"
       class="px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors"
       [ngClass]="activeTab === tab.value
-        ? 'border-[#2D6A4F] text-[#2D6A4F]'
-        : 'border-transparent text-gray-500 hover:text-gray-700'">
+        ? 'border-brand-600 text-brand-600'
+        : 'border-transparent text-ink-3 hover:text-ink'">
       {{ tab.label }}
-      <span class="ml-1 text-xs text-gray-400">({{ compteOnglet(tab.value) }})</span>
+      <span class="ml-1 text-xs text-ink-3">({{ compteOnglet(tab.value) }})</span>
     </button>
   </div>
 
   <!-- ═══ CHARGEMENT / ERREUR ═══ -->
-  <div *ngIf="chargement" class="py-16 text-center text-gray-400">
+  <div *ngIf="chargement" class="py-16 text-center text-ink-3">
     <i class="pi pi-spin pi-spinner text-2xl"></i>
     <p class="mt-3 text-sm">Chargement de vos ventes…</p>
   </div>
 
   <div *ngIf="erreur && !chargement"
-    class="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+    class="p-4 bg-danger-soft border border-danger-line rounded-2xl text-sm text-danger">
     Impossible de charger vos ventes pour le moment. Réessayez dans quelques instants.
   </div>
 
   <!-- ═══ VIDE ═══ -->
   <div *ngIf="!chargement && !erreur && ventesFiltrees.length === 0"
-    class="text-center py-16 border border-dashed border-[#E7E0D2] rounded-2xl">
-    <i class="pi pi-inbox text-3xl text-[#C9BCA3]"></i>
-    <p class="mt-3 text-gray-500">Aucune vente dans cette catégorie.</p>
+    class="text-center py-16 border border-dashed border-line rounded-2xl">
+    <i class="pi pi-inbox text-3xl text-line-strong"></i>
+    <p class="mt-3 text-ink-3">Aucune vente dans cette catégorie.</p>
     <a routerLink="/vendeur/mes-annonces"
-      class="mt-4 inline-block text-sm font-semibold text-[#2D6A4F] underline">
+      class="mt-4 inline-block text-sm font-semibold text-brand-600 underline">
       Voir mes annonces
     </a>
   </div>
 
   <!-- ═══ LISTE DES VENTES ═══ -->
   <article *ngFor="let vente of ventesFiltrees"
-    class="bg-white border border-[#E7E0D2] rounded-2xl p-5 shadow-card">
+    class="bg-white border border-line rounded-2xl p-5 shadow-card">
 
     <div class="flex flex-col sm:flex-row gap-4">
       <img *ngIf="vente.photoUrl" [src]="vente.photoUrl | assetUrl" [alt]="vente.animalNom"
-        class="w-full sm:w-28 h-28 object-cover rounded-xl flex-shrink-0 bg-[#F6F1E7]" />
+        class="w-full sm:w-28 h-28 object-cover rounded-xl flex-shrink-0 bg-muted" />
 
       <div class="flex-1 min-w-0">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="font-semibold text-gray-900">{{ vente.animalNom }}</span>
+          <span class="font-semibold text-ink">{{ vente.animalNom }}</span>
           <span class="text-xs px-2.5 py-1 rounded-full font-semibold"
             [ngClass]="badgeClass(vente.etatGlobal)">
             {{ vente.etatLibelle }}
           </span>
         </div>
 
-        <p class="text-sm text-gray-500 mt-1">
+        <p class="text-sm text-ink-3 mt-1">
           <span *ngIf="vente.animalRace">{{ vente.animalRace }} · </span>
           Acheteur : {{ vente.acheteurNom || 'non renseigné' }}
           · Payé le {{ vente.paidAt | date:'dd/MM/yyyy' }}
         </p>
-        <p class="text-xs text-gray-400 mt-0.5">
+        <p class="text-xs text-ink-3 mt-0.5">
           Commande {{ vente.commandeReference || '#' + vente.commandeId }}
         </p>
 
         <!-- Montants -->
         <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 mt-2">
-          <span class="text-sm text-gray-500">
-            Prix de vente : <span class="font-semibold text-gray-700">{{ vente.montantBrut | number }} FCFA</span>
+          <span class="text-sm text-ink-3">
+            Prix de vente : <span class="font-semibold text-ink-2">{{ vente.montantBrut | number }} FCFA</span>
           </span>
-          <span *ngIf="vente.montantNet != null" class="text-sm font-bold text-[#2D6A4F]">
+          <span *ngIf="vente.montantNet != null" class="text-sm font-bold text-brand-600">
             Vous recevrez : {{ vente.montantNet | number }} FCFA
           </span>
         </div>
@@ -240,47 +240,47 @@
           <ng-container *ngFor="let etape of etapes(vente); let last = last">
             <div class="flex items-center gap-1.5">
               <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                [ngClass]="etape.done ? 'bg-[#2D6A4F]' : 'bg-[#E7E0D2]'"></span>
+                [ngClass]="etape.done ? 'bg-brand-600' : 'bg-line'"></span>
               <span class="text-[11px] whitespace-nowrap"
-                [ngClass]="etape.done ? 'text-[#1B4332] font-semibold' : 'text-gray-400'">
+                [ngClass]="etape.done ? 'text-brand-800 font-semibold' : 'text-ink-3'">
                 {{ etape.label }}
               </span>
             </div>
             <span *ngIf="!last" class="flex-1 h-px min-w-[8px]"
-              [ngClass]="etape.done ? 'bg-[#2D6A4F]/30' : 'bg-[#E7E0D2]'"></span>
+              [ngClass]="etape.done ? 'bg-brand-600/30' : 'bg-line'"></span>
           </ng-container>
         </div>
 
         <!-- Suivi transporteur -->
-        <p *ngIf="vente.trackingReference" class="text-xs text-gray-500 mt-2">
+        <p *ngIf="vente.trackingReference" class="text-xs text-ink-3 mt-2">
           <i class="pi pi-truck mr-1"></i>
           {{ vente.transporteur }} · suivi {{ vente.trackingReference }}
         </p>
 
         <!-- Échec de remise -->
         <div *ngIf="vente.statutLivraison === 'ECHEC_LIVRAISON'"
-          class="mt-3 p-3 bg-[#FDF6EC] border border-[#F4D4A3] rounded-xl">
-          <p class="text-xs font-semibold text-amber-800">Dernière remise non aboutie</p>
-          <p class="text-xs text-[#8B6F55] mt-1">
+          class="mt-3 p-3 bg-accent-50 border border-accent-200 rounded-xl">
+          <p class="text-xs font-semibold text-warning">Dernière remise non aboutie</p>
+          <p class="text-xs text-ink-3 mt-1">
             Convenez d'une nouvelle date avec l'acheteur, puis saisissez son code.
           </p>
         </div>
 
         <!-- Litige -->
         <div *ngIf="vente.statutLivraison === 'LITIGE'"
-          class="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl">
-          <p class="text-xs font-semibold text-red-800">
+          class="mt-3 p-3 bg-danger-soft border border-danger-line rounded-xl">
+          <p class="text-xs font-semibold text-danger">
             Litige ouvert par l'acheteur — vos fonds sont gelés
           </p>
-          <p class="text-xs text-red-600 mt-1">{{ vente.litigeMotif }}</p>
-          <p class="text-xs text-red-500 mt-1.5">
+          <p class="text-xs text-danger mt-1">{{ vente.litigeMotif }}</p>
+          <p class="text-xs text-danger mt-1.5">
             Un administrateur va arbitrer. Contactez le support si besoin.
           </p>
         </div>
 
         <!-- Versement effectué -->
         <p *ngIf="vente.statutVersement === 'CONFIRME'"
-          class="mt-3 text-xs text-[#2D6A4F] font-semibold">
+          class="mt-3 text-xs text-brand-600 font-semibold">
           <i class="pi pi-check-circle mr-1"></i>
           Versement reçu le {{ vente.versementEnvoyeAt | date:'dd/MM/yyyy' }}
         </p>
@@ -292,7 +292,7 @@
           type="button"
           [disabled]="enCours.has(vente.itemId)"
           (click)="declarerPret(vente)"
-          class="px-4 py-2.5 border border-[#2D6A4F] text-[#2D6A4F] text-sm font-semibold rounded-xl hover:bg-[#E0EEE4] transition-colors disabled:opacity-50">
+          class="px-4 py-2.5 border border-brand-600 text-brand-600 text-sm font-semibold rounded-xl hover:bg-brand-100 transition-colors disabled:opacity-50">
           <i class="pi pi-check-square mr-1"></i>
           Signaler prêt
         </button>
@@ -301,7 +301,7 @@
           type="button"
           [disabled]="enCours.has(vente.itemId)"
           (click)="declarerPriseEnCharge(vente)"
-          class="px-4 py-2.5 border border-[#E7E0D2] text-gray-700 text-sm font-medium rounded-xl hover:bg-[#F6F1E7] transition-colors disabled:opacity-50">
+          class="px-4 py-2.5 border border-line text-ink-2 text-sm font-medium rounded-xl hover:bg-muted transition-colors disabled:opacity-50">
           <i class="pi pi-send mr-1"></i>
           Marquer en livraison
         </button>
@@ -312,15 +312,15 @@
         <button *ngIf="vente.remiseId && vente.modeRemise === 'TRANSPORT' && remisableParCode(vente)
                        && !vente.livreParTransporteur"
           type="button" (click)="ouvrirTransporteurs(vente)"
-          class="px-4 py-2.5 border border-[#2D6A4F] text-[#2D6A4F] text-sm font-semibold rounded-xl hover:bg-[#E0EEE4] transition-colors">
+          class="px-4 py-2.5 border border-brand-600 text-brand-600 text-sm font-semibold rounded-xl hover:bg-brand-100 transition-colors">
           <i class="pi pi-users mr-1"></i> Confier à un transporteur
         </button>
 
         <!-- A la place : qui conduit. Le vendeur reste responsable de sa vente,
              il doit pouvoir joindre le convoyeur sans quitter cet ecran. -->
         <span *ngIf="vente.livreParTransporteur"
-          class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#F6F1E7] border border-[#E7E0D2] text-[#1B4332] text-sm font-semibold rounded-xl">
-          <i class="pi pi-truck text-[#8B6F55]"></i>
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-muted border border-line text-brand-800 text-sm font-semibold rounded-xl">
+          <i class="pi pi-truck text-ink-3"></i>
           {{ vente.transporteurNom || 'Transporteur affecté' }}
         </span>
 
@@ -332,14 +332,14 @@
         <a *ngIf="vente.remiseId && vente.modeRemise === 'TRANSPORT' && remisableParCode(vente)
                   && !vente.livreParTransporteur"
           [routerLink]="['/livraison/livreur', vente.remiseId]"
-          class="px-4 py-2.5 bg-[#D97E1F] text-white text-sm font-bold rounded-xl text-center hover:bg-[#B96416] transition-colors">
+          class="px-4 py-2.5 bg-accent-500 text-white text-sm font-bold rounded-xl text-center hover:bg-accent-600 transition-colors">
           <i class="pi pi-truck mr-1"></i> Écran de livraison
         </a>
 
         <a *ngIf="vente.remiseId && vente.modeRemise === 'TRANSPORT' && remisableParCode(vente)
                   && vente.livreParTransporteur"
           [routerLink]="['/livraison/suivi', vente.remiseId]"
-          class="px-4 py-2.5 bg-[#D97E1F] text-white text-sm font-bold rounded-xl text-center hover:bg-[#B96416] transition-colors">
+          class="px-4 py-2.5 bg-accent-500 text-white text-sm font-bold rounded-xl text-center hover:bg-accent-600 transition-colors">
           <i class="pi pi-map mr-1"></i> Suivre sur la carte
         </a>
 
@@ -347,7 +347,7 @@
         <button *ngIf="remisableParCode(vente)"
           type="button"
           (click)="ouvrirRemise(vente)"
-          class="px-4 py-2.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors">
+          class="px-4 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700 transition-colors">
           <i class="pi pi-key mr-1"></i>
           Saisir le code de remise
         </button>
@@ -355,17 +355,17 @@
         <button *ngIf="remisableParCode(vente)"
           type="button"
           (click)="ouvrirEchec(vente)"
-          class="px-4 py-2 text-xs text-[#8B6F55] underline hover:text-[#B96416] transition-colors">
+          class="px-4 py-2 text-xs text-ink-3 underline hover:text-accent-600 transition-colors">
           La remise n'a pas pu avoir lieu
         </button>
 
         <span *ngIf="vente.statutVersement === 'BLOQUE' && vente.statutLivraison !== 'LITIGE'"
-          class="text-[11px] text-center text-[#8B6F55] leading-snug">
+          class="text-[11px] text-center text-ink-3 leading-snug">
           <i class="pi pi-lock"></i> Fonds sous séquestre
         </span>
 
         <button type="button" (click)="basculerFrise(vente)"
-          class="px-4 py-2 text-xs font-semibold text-[#2D6A4F] hover:text-[#1B4332] transition-colors">
+          class="px-4 py-2 text-xs font-semibold text-brand-600 hover:text-brand-800 transition-colors">
           {{ frisesOuvertes.has(vente.itemId) ? 'Masquer' : 'Voir' }} le suivi
           <i class="pi text-[10px] ml-1"
             [ngClass]="frisesOuvertes.has(vente.itemId) ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
@@ -374,91 +374,144 @@
     </div>
 
     <!-- ═══ FRISE DE SUIVI ═══ -->
-    <div *ngIf="frisesOuvertes.has(vente.itemId)" class="mt-5 pt-4 border-t border-[#F0EAD9]">
-      <p class="text-xs font-semibold uppercase tracking-wider text-[#8B6F55] mb-3">Suivi détaillé</p>
+    <div *ngIf="frisesOuvertes.has(vente.itemId)" class="mt-5 pt-4 border-t border-line">
+      <p class="text-xs font-semibold uppercase tracking-wider text-ink-3 mb-3">Suivi détaillé</p>
 
-      <p *ngIf="!vente.evenements?.length" class="text-sm text-gray-400">
+      <p *ngIf="!vente.evenements?.length" class="text-sm text-ink-3">
         Aucun événement enregistré pour le moment.
       </p>
 
-      <ol class="relative border-l border-[#E7E0D2] ml-1.5 space-y-4">
+      <ol class="relative border-l border-line ml-1.5 space-y-4">
         <li *ngFor="let ev of vente.evenements" class="pl-5 relative">
           <span class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full"
             [ngClass]="ev.type === 'CODE_REFUSE' || ev.type === 'ECHEC_LIVRAISON' || ev.type === 'LITIGE_OUVERT'
-              ? 'bg-red-500' : 'bg-[#2D6A4F]'"></span>
-          <p class="text-sm font-semibold text-gray-900">{{ ev.libelle }}</p>
-          <p class="text-xs text-gray-500">
+              ? 'bg-danger' : 'bg-brand-600'"></span>
+          <p class="text-sm font-semibold text-ink">{{ ev.libelle }}</p>
+          <p class="text-xs text-ink-3">
             {{ ev.date | date:'dd/MM/yyyy à HH:mm' }} · {{ ev.auteurType | titlecase }}
           </p>
-          <p *ngIf="ev.commentaire" class="text-xs text-gray-600 mt-0.5">{{ ev.commentaire }}</p>
+          <p *ngIf="ev.commentaire" class="text-xs text-ink-2 mt-0.5">{{ ev.commentaire }}</p>
           <img *ngIf="ev.photoUrl" [src]="ev.photoUrl | assetUrl" alt="Preuve de remise"
-            class="mt-2 w-28 h-28 object-cover rounded-lg border border-[#E7E0D2]" />
+            class="mt-2 w-28 h-28 object-cover rounded-lg border border-line" />
         </li>
       </ol>
     </div>
 
     <!-- ═══ SAISIE DU CODE DE REMISE ═══ -->
     <div *ngIf="remiseVente?.itemId === vente.itemId"
-      class="mt-5 p-5 bg-[#E0EEE4] border border-[#B7D8C3] rounded-2xl">
-      <h3 class="text-sm font-bold text-[#1B4332]">Confirmer la remise de « {{ vente.animalNom }} »</h3>
-      <p class="text-xs text-[#2D6A4F] mt-1 mb-4">
-        Demandez son code à l'acheteur au moment où vous lui remettez l'animal.
-        Sa saisie débloque immédiatement vos fonds.
-      </p>
+      class="mt-5 overflow-hidden rounded-2xl border border-brand-200 bg-surface">
 
-      <label class="block text-xs font-semibold text-[#1B4332] mb-1.5">Code à 4 chiffres</label>
-      <input
-        [(ngModel)]="codeSaisi"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="0000"
-        class="w-40 px-4 py-3 text-2xl font-mono tracking-[0.4em] text-center border border-[#B7D8C3] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]" />
+      <div class="flex flex-col gap-3 border-b border-brand-200 bg-brand-50 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div class="min-w-0">
+          <h3 class="font-semibold text-ink">Confirmer la remise de « {{ vente.animalNom }} »</h3>
+          <p class="mt-1 text-[13px] leading-relaxed text-ink-2">
+            Demandez son code à l'acheteur au moment où vous lui remettez l'animal.
+            Sa saisie débloque immédiatement vos fonds.
+          </p>
+        </div>
+        <span *ngIf="vente.montantNet != null" class="shrink-0 sm:text-right">
+          <span class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3">À débloquer</span>
+          <span class="mt-0.5 block font-bold text-brand-800 tabular">{{ vente.montantNet | number }} FCFA</span>
+        </span>
+      </div>
 
-      <label class="block text-xs font-semibold text-[#1B4332] mt-4 mb-1.5">
-        Photo de l'animal remis <span class="text-[#B96416]">(obligatoire)</span>
-      </label>
-      <input type="file" accept="image/*" capture="environment" (change)="choisirPhoto($event)"
-        class="block w-full text-xs text-gray-600 file:mr-3 file:px-4 file:py-2 file:rounded-lg
-               file:border-0 file:bg-[#2D6A4F] file:text-white file:text-xs file:font-semibold
-               hover:file:bg-[#245540] file:cursor-pointer" />
+      <ol class="divide-y divide-line">
+        <!-- Étape 1 : le code -->
+        <li class="px-5 py-5">
+          <p class="flex items-center gap-2.5 text-sm font-semibold text-ink">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold"
+              [ngClass]="codeSaisi.length === 4 ? 'bg-brand-600 text-white' : 'bg-muted text-ink-2'">
+              <i *ngIf="codeSaisi.length === 4" class="pi pi-check text-[10px]"></i>
+              <span *ngIf="codeSaisi.length !== 4">1</span>
+            </span>
+            Code de remise de l'acheteur
+          </p>
 
-      <img *ngIf="photoApercu" [src]="photoApercu" alt="Aperçu de la photo de remise"
-        class="mt-3 w-32 h-32 object-cover rounded-xl border border-[#B7D8C3]" />
+          <label class="relative mt-4 flex w-fit cursor-text gap-2.5">
+            <span class="sr-only">Code à 4 chiffres</span>
+            <span *ngFor="let chiffre of casesCode; let i = index"
+              class="flex h-16 w-14 items-center justify-center rounded-2xl border-2 bg-surface text-3xl font-extrabold text-ink tabular transition-colors"
+              [ngClass]="codeFocus && (i === codeSaisi.length || (i === 3 && codeSaisi.length === 4))
+                ? 'border-brand-600 ring-4 ring-brand-600/10'
+                : (chiffre ? 'border-brand-200' : 'border-line-strong')">
+              {{ chiffre }}
+            </span>
+            <input
+              [(ngModel)]="codeSaisi"
+              (ngModelChange)="nettoyerCode($event)"
+              (focus)="codeFocus = true"
+              (blur)="codeFocus = false"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="one-time-code"
+              maxlength="4"
+              aria-label="Code à 4 chiffres"
+              class="absolute inset-0 h-full w-full cursor-text opacity-0" />
+          </label>
+          <p class="mt-2 text-xs text-ink-3">L'acheteur le trouve sur son ticket de remise.</p>
+        </li>
 
-      <div class="flex gap-2 mt-5">
+        <!-- Étape 2 : la photo -->
+        <li class="px-5 py-5">
+          <p class="flex items-center gap-2.5 text-sm font-semibold text-ink">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold"
+              [ngClass]="photoApercu ? 'bg-brand-600 text-white' : 'bg-muted text-ink-2'">
+              <i *ngIf="photoApercu" class="pi pi-check text-[10px]"></i>
+              <span *ngIf="!photoApercu">2</span>
+            </span>
+            Photo de l'animal remis <span class="font-normal text-ink-3">(obligatoire)</span>
+          </p>
+
+          <label class="mt-4 flex cursor-pointer items-center gap-4 rounded-2xl border-2 border-dashed p-3 transition-colors"
+            [ngClass]="photoApercu ? 'border-brand-200 bg-brand-50/40' : 'border-line-strong hover:border-brand-400 hover:bg-muted/50'">
+            <input type="file" accept="image/*" capture="environment" (change)="choisirPhoto($event)" class="sr-only" />
+            <span class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted text-ink-3">
+              <img *ngIf="photoApercu" [src]="photoApercu" alt="Aperçu de la photo de remise" class="h-full w-full object-cover" />
+              <i *ngIf="!photoApercu" class="pi pi-camera text-2xl"></i>
+            </span>
+            <span class="min-w-0">
+              <span class="block text-sm font-semibold text-ink">{{ photoApercu ? 'Photo prête' : 'Prendre une photo' }}</span>
+              <span class="mt-0.5 block text-xs text-ink-3">
+                {{ photoApercu ? 'Touchez pour la remplacer.' : "L'animal et l'acheteur, au moment de la remise : c'est votre preuve en cas de litige." }}
+              </span>
+            </span>
+          </label>
+        </li>
+      </ol>
+
+      <div class="flex flex-col-reverse gap-2 border-t border-line bg-canvas px-5 py-4 sm:flex-row sm:justify-end">
+        <button type="button" (click)="fermerRemise()" class="btn-ghost">
+          Annuler
+        </button>
         <button type="button"
           [disabled]="!remisePrete || remiseEnCours"
           (click)="validerRemise()"
-          class="px-5 py-2.5 bg-[#2D6A4F] text-white text-sm font-bold rounded-xl hover:bg-[#245540] transition-colors disabled:opacity-40">
-          <i class="pi pi-check mr-1"></i>
+          class="btn-primary">
+          <i class="pi text-sm" [ngClass]="remiseEnCours ? 'pi-spin pi-spinner' : 'pi-check'"></i>
           {{ remiseEnCours ? 'Validation…' : 'Valider la remise' }}
-        </button>
-        <button type="button" (click)="fermerRemise()"
-          class="px-4 py-2.5 border border-[#B7D8C3] text-[#1B4332] text-sm rounded-xl hover:bg-white transition-colors">
-          Annuler
         </button>
       </div>
     </div>
 
     <!-- ═══ CHOIX DU TRANSPORTEUR ═══ -->
     <div *ngIf="transporteurVente?.itemId === vente.itemId"
-      class="mt-5 p-5 bg-white border-2 border-[#2D6A4F] rounded-2xl">
-      <h3 class="text-sm font-bold text-[#1B4332]">
+      class="mt-5 p-5 bg-white border-2 border-brand-600 rounded-2xl">
+      <h3 class="text-sm font-bold text-brand-800">
         Confier « {{ vente.animalNom }} » à un transporteur
       </h3>
-      <p class="text-xs text-gray-600 mt-1 mb-4">
+      <p class="text-xs text-ink-2 mt-1 mb-4">
         Il devra accepter la course avant de partir. Vous restez informé de sa réponse.
       </p>
 
-      <div *ngIf="chargementTransporteurs" class="py-6 text-center text-gray-400">
+      <div *ngIf="chargementTransporteurs" class="py-6 text-center text-ink-3">
         <i class="pi pi-spin pi-spinner"></i>
         <p class="mt-2 text-xs">Recherche des transporteurs disponibles…</p>
       </div>
 
       <div *ngIf="!chargementTransporteurs && transporteurs.length === 0"
-        class="p-4 bg-[#FDF6EC] border border-[#F4D4A3] rounded-xl">
-        <p class="text-sm font-semibold text-amber-800">Aucun transporteur disponible</p>
-        <p class="text-xs text-[#8B6F55] mt-1">
+        class="p-4 bg-accent-50 border border-accent-200 rounded-xl">
+        <p class="text-sm font-semibold text-warning">Aucun transporteur disponible</p>
+        <p class="text-xs text-ink-3 mt-1">
           Soit ils sont tous en course, soit aucun n'a encore été validé.
           Vous pouvez livrer vous-même avec l'écran de livraison.
         </p>
@@ -467,46 +520,46 @@
       <div *ngIf="!chargementTransporteurs && transporteurs.length > 0" class="space-y-2">
         <button *ngFor="let t of transporteurs" type="button"
           [disabled]="propositionEnCours" (click)="proposerA(t)"
-          class="w-full flex items-center justify-between gap-3 p-4 bg-white border border-[#E7E0D2] rounded-xl hover:border-[#2D6A4F] hover:bg-[#E0EEE4] transition-colors text-left disabled:opacity-50">
+          class="w-full flex items-center justify-between gap-3 p-4 bg-white border border-line rounded-xl hover:border-brand-600 hover:bg-brand-100 transition-colors text-left disabled:opacity-50">
           <div class="min-w-0">
-            <p class="text-sm font-bold text-gray-900">{{ t.nom }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">
+            <p class="text-sm font-bold text-ink">{{ t.nom }}</p>
+            <p class="text-xs text-ink-3 mt-0.5">
               <span *ngIf="t.typeVehicule">{{ libellesVehicule[t.typeVehicule] }}</span>
               <span *ngIf="t.capaciteTetes"> · {{ t.capaciteTetes }} tête(s)</span>
               <span *ngIf="t.telephone"> · {{ t.telephone }}</span>
             </p>
           </div>
-          <i class="pi pi-arrow-right text-[#2D6A4F] flex-shrink-0"></i>
+          <i class="pi pi-arrow-right text-brand-600 flex-shrink-0"></i>
         </button>
       </div>
 
       <button type="button" (click)="fermerTransporteurs()"
-        class="mt-4 px-4 py-2 border border-[#E7E0D2] text-gray-600 text-sm rounded-lg hover:bg-[#F6F1E7] transition-colors">
+        class="mt-4 px-4 py-2 border border-line text-ink-2 text-sm rounded-lg hover:bg-muted transition-colors">
         Fermer
       </button>
     </div>
 
     <!-- ═══ DÉCLARATION D'ÉCHEC ═══ -->
     <div *ngIf="echecVente?.itemId === vente.itemId"
-      class="mt-5 p-5 bg-[#FDF6EC] border border-[#F4D4A3] rounded-2xl">
-      <h3 class="text-sm font-bold text-amber-800">Pourquoi la remise n'a-t-elle pas abouti ?</h3>
+      class="mt-5 p-5 bg-accent-50 border border-accent-200 rounded-2xl">
+      <h3 class="text-sm font-bold text-warning">Pourquoi la remise n'a-t-elle pas abouti ?</h3>
       <textarea
         [(ngModel)]="echecMotif"
         rows="3"
         placeholder="Ex. : acheteur absent au rendez-vous, accès impossible au village…"
-        class="mt-3 w-full px-3 py-2 text-sm border border-[#F4D4A3] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#D97E1F]"></textarea>
-      <p class="text-xs text-[#8B6F55] mt-2">
+        class="mt-3 w-full px-3 py-2 text-sm border border-accent-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-accent-500"></textarea>
+      <p class="text-xs text-ink-3 mt-2">
         L'acheteur sera prévenu. Vos fonds restent séquestrés jusqu'à une remise réussie.
       </p>
       <div class="flex gap-2 mt-4">
         <button type="button"
           [disabled]="!echecMotif.trim() || echecEnCours"
           (click)="envoyerEchec()"
-          class="px-4 py-2 bg-[#D97E1F] text-white text-sm font-semibold rounded-lg hover:bg-[#B96416] transition-colors disabled:opacity-40">
+          class="px-4 py-2 bg-accent-500 text-white text-sm font-semibold rounded-lg hover:bg-accent-600 transition-colors disabled:opacity-40">
           Enregistrer
         </button>
         <button type="button" (click)="fermerEchec()"
-          class="px-4 py-2 border border-[#F4D4A3] text-[#8B6F55] text-sm rounded-lg hover:bg-white transition-colors">
+          class="px-4 py-2 border border-accent-200 text-ink-3 text-sm rounded-lg hover:bg-white transition-colors">
           Annuler
         </button>
       </div>
@@ -516,68 +569,97 @@
 
 </section>
 
+<!-- ── Remise confirmée ──────────────────────────────────────────────────────── -->
+<div *ngIf="remiseReussie"
+  class="fixed inset-0 z-50 flex items-end justify-center bg-black/50 px-0 sm:items-center sm:px-4"
+  (click)="fermerReussite()">
+  <div class="w-full rounded-t-3xl bg-surface px-6 pb-8 pt-10 text-center shadow-pop sm:max-w-sm sm:rounded-2xl"
+    role="dialog" aria-modal="true" aria-labelledby="titre-remise-reussie"
+    (click)="$event.stopPropagation()">
+    <span class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-600 text-white">
+      <i class="pi pi-check text-2xl"></i>
+    </span>
+    <h2 id="titre-remise-reussie" class="display mt-5 text-2xl font-semibold text-ink">Remise confirmée</h2>
+    <p class="mt-1.5 text-sm text-ink-2">« {{ remiseReussie.animalNom }} » est entre les mains de l'acheteur.</p>
+    <div class="mt-6 rounded-2xl bg-brand-50 px-4 py-4" *ngIf="remiseReussie.montantNet != null">
+      <p class="text-3xl font-bold tracking-[-0.02em] text-brand-800 tabular">{{ remiseReussie.montantNet | number }} <span class="text-base font-semibold">FCFA</span></p>
+      <p class="mt-1 text-[13px] font-semibold text-brand-700">débloqués pour vous</p>
+    </div>
+    <p class="mt-4 text-[13px] leading-relaxed text-ink-3">
+      Les fonds sortent du séquestre. Vous pouvez les retirer vers votre Mobile Money depuis vos ventes.
+    </p>
+    <div class="mt-6 flex flex-col gap-2">
+      <button *ngIf="totalRetirable > 0 && retraitsOuverts" type="button" class="btn-primary btn-block"
+        (click)="fermerReussite(); ouvrirRetrait()">
+        <i class="pi pi-wallet text-sm"></i> Retirer mes gains
+      </button>
+      <button type="button" class="btn-secondary btn-block" (click)="fermerReussite()">Parfait</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Retrait des gains ────────────────────────────────────────────────────── -->
 <div *ngIf="retraitOuvert"
   class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 px-0 sm:px-4"
   (click)="fermerRetrait()">
 
-  <div class="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh]"
+  <div class="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-pop flex flex-col max-h-[92vh]"
     (click)="$event.stopPropagation()">
 
-    <div class="flex items-center justify-between p-5 border-b border-[#F0EAD9]">
-      <h2 class="text-base font-extrabold text-gray-900">Retirer mes gains</h2>
+    <div class="flex items-center justify-between p-5 border-b border-line">
+      <h2 class="text-base font-bold text-ink">Retirer mes gains</h2>
       <button type="button" (click)="fermerRetrait()"
-        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F6F1E7] text-gray-500">
+        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-ink-3">
         <i class="pi pi-times"></i>
       </button>
     </div>
 
     <div class="overflow-y-auto p-5 flex-1 flex flex-col gap-4">
 
-      <div class="rounded-xl bg-[#F2F7F3] p-4">
-        <p class="text-xs font-semibold uppercase tracking-wider text-[#2D6A4F]">Montant</p>
-        <p class="mt-1 text-2xl font-extrabold text-[#1B4332] leading-none">
+      <div class="rounded-xl bg-brand-50 p-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-brand-600">Montant</p>
+        <p class="mt-1 text-2xl font-bold text-brand-800 leading-none">
           {{ totalRetirable | number }} <span class="text-sm">FCFA</span>
         </p>
-        <p class="mt-2 text-xs text-gray-500">
+        <p class="mt-2 text-xs text-ink-3">
           Seuls les animaux effectivement remis sont inclus. Ce qui est encore en cours
           de livraison reste sous séquestre jusqu'à la confirmation de l'acheteur.
         </p>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-gray-700 mb-1.5">Opérateur</label>
+        <label class="block text-xs font-bold text-ink-2 mb-1.5">Opérateur</label>
         <div class="grid grid-cols-2 gap-2">
           <button *ngFor="let op of operateurs" type="button"
             (click)="operateurChoisi = op[0]"
             class="px-3 py-2.5 rounded-xl border text-sm font-semibold transition-colors"
             [ngClass]="operateurChoisi === op[0]
-              ? 'border-[#2D6A4F] bg-[#F2F7F3] text-[#2D6A4F]'
-              : 'border-[#E7E0D2] bg-white text-gray-600 hover:border-[#2D6A4F]'">
+              ? 'border-brand-600 bg-brand-50 text-brand-600'
+              : 'border-line bg-white text-ink-2 hover:border-brand-600'">
             {{ op[1] }}
           </button>
         </div>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-gray-700 mb-1.5">Numéro à créditer</label>
+        <label class="block text-xs font-bold text-ink-2 mb-1.5">Numéro à créditer</label>
         <input type="tel" [(ngModel)]="numeroSaisi" name="numeroRetrait"
           placeholder="+225 07 00 00 00 00"
-          class="w-full px-3 py-2.5 rounded-xl border border-[#E7E0D2] focus:border-[#2D6A4F] focus:outline-none text-sm" />
-        <p class="mt-1.5 text-[11px] text-gray-400">
+          class="w-full px-3 py-2.5 rounded-xl border border-line focus:border-brand-600 focus:outline-none text-sm" />
+        <p class="mt-1.5 text-[11px] text-ink-3">
           Vérifiez-le : un numéro valide mais erroné crédite quelqu'un d'autre, et
           l'opérateur ne permet pas d'annuler un envoi abouti.
         </p>
       </div>
     </div>
 
-    <div class="flex items-center justify-end gap-3 p-5 border-t border-[#F0EAD9]">
+    <div class="flex items-center justify-end gap-3 p-5 border-t border-line">
       <button type="button" (click)="fermerRetrait()" [disabled]="retraitEnCours"
-        class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-[#F6F1E7] transition-colors disabled:opacity-60">
+        class="px-4 py-2.5 rounded-xl text-sm font-semibold text-ink-2 hover:bg-muted transition-colors disabled:opacity-60">
         Annuler
       </button>
       <button type="button" (click)="confirmerRetrait()" [disabled]="retraitEnCours"
-        class="px-5 py-2.5 rounded-xl bg-[#2D6A4F] hover:bg-[#245540] text-white text-sm font-bold shadow-cta transition-colors disabled:opacity-60">
+        class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-cta transition-colors disabled:opacity-60">
         {{ retraitEnCours ? 'Envoi…' : 'Confirmer le retrait' }}
       </button>
     </div>

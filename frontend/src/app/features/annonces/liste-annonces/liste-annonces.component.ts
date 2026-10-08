@@ -11,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { visuelEspece } from '../../../shared/pipes/visuel-animal.pipe';
 import { LeafletLoaderService } from '../../../shared/services/leaflet-loader.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -78,7 +79,7 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   pageSize = 4;
   catalogMode: ListingCatalogMode = 'public';
 
-  readonly placeholderImage = 'https://placehold.co/960x720/F6F1E7/2D6A4F?text=Animal';
+  readonly placeholderImage = visuelEspece(null);
   readonly defaultMapCenter = {
     latitude: 7.539989,
     longitude: -5.54708,
@@ -123,23 +124,23 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get heroKicker(): string {
-    return this.isMineCatalog ? 'Espace vendeur' : 'Marché bétail';
+    return this.isMineCatalog ? 'Espace vendeur' : 'Catalogue';
   }
 
   get heroTitle(): string {
     return this.isMineCatalog
       ? 'Mes animaux publiés'
-      : 'Parcourir les animaux disponibles avec une vraie lecture terrain';
+      : 'Animaux à vendre';
   }
 
   get heroCopy(): string {
     return this.isMineCatalog
-      ? 'Retrouvez uniquement les dossiers animaux rattachés à votre compte vendeur.'
-      : 'Ce catalogue réunit les dossiers validés, leur implantation sur la carte et un aperçu rapide avant consultation complète.';
+      ? 'Vos dossiers, leur statut de validation et leur visibilité dans le catalogue.'
+      : 'Chaque annonce est contrôlée par un vétérinaire, et votre paiement reste protégé jusqu’à la remise de l’animal.';
   }
 
   get publishedStatLabel(): string {
-    return this.isMineCatalog ? 'mes dossiers' : 'dossiers publiés';
+    return this.isMineCatalog ? 'dossiers' : 'annonces';
   }
 
   get resultsTitle(): string {
@@ -535,8 +536,9 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   galleryFor(listing?: Listing): string[] {
-    const gallery = (listing?.gallery ?? []).filter((img) => !!img);
-    return gallery.length ? gallery : [this.placeholderImage];
+    // Une image placehold.co n'est pas une photo : la vignette de l'espèce la remplace.
+    const gallery = (listing?.gallery ?? []).filter((img) => !!img && !/placehold\.co/i.test(img));
+    return gallery.length ? gallery : [visuelEspece(listing?.animalType)];
   }
 
   // ── Privé ────────────────────────────────────────────────────────────────────
@@ -725,25 +727,29 @@ export class ListeAnnoncesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+  /**
+   * Pastille de prix posée sur la carte.
+   *
+   * Compacte, à la manière des grandes plateformes d'annonces : le prix suffit
+   * à repérer un animal, l'espèce figure déjà sur la carte d'annonce. Le repère
+   * actif s'inverse (fond sombre) plutôt que de grossir.
+   */
   private buildMarkerIcon(listing: Listing, active: boolean): any {
-    const bg = active ? 'linear-gradient(135deg,#1B4332 0%,#2D6A4F 100%)' : 'rgba(255,255,255,0.96)';
-    const color = active ? '#ffffff' : '#1B4332';
-    const shadow = active ? '0 18px 34px rgba(27,67,50,0.32)' : '0 16px 30px rgba(27,67,50,0.14)';
-    const typeLabel = this.formatAnimalType(listing.animalType ?? '');
     const priceLabel = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(listing.price);
+    const bg = active ? '#1F1C17' : '#FFFFFF';
+    const color = active ? '#FFFFFF' : '#1F1C17';
+    const border = active ? '#1F1C17' : '#D7CEBE';
 
     return (window as any).L.divIcon({
       className: 'animal-marker-shell',
       html: `
-        <div style="min-width:110px;padding:10px 12px;border-radius:18px;background:${bg};color:${color};border:1px solid rgba(255,255,255,0.18);box-shadow:${shadow};text-align:left;position:relative;font-family:inherit;">
-          <div style="font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;opacity:${active ? 0.78 : 0.66};">${typeLabel}</div>
-          <div style="font-size:15px;font-weight:800;line-height:1.1;margin-top:3px;">${priceLabel} FCFA</div>
-          <div style="position:absolute;left:16px;bottom:-8px;width:16px;height:16px;background:${active ? '#245540' : '#ffffff'};transform:rotate(45deg);border-right:1px solid rgba(45,106,79,0.14);border-bottom:1px solid rgba(45,106,79,0.14);"></div>
+        <div style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap;padding:6px 10px;border-radius:999px;background:${bg};color:${color};border:1px solid ${border};box-shadow:0 2px 6px rgba(31,28,23,0.14);font-family:'Figtree Variable',Figtree,system-ui,sans-serif;font-size:13px;font-weight:700;line-height:1;transform:translate(-50%,-100%);position:absolute;left:0;top:0;${active ? 'z-index:2;' : ''}">
+          ${priceLabel}<span style="font-size:10px;font-weight:600;opacity:.7;">F</span>
         </div>
       `,
-      iconSize: [110, 54],
-      iconAnchor: [55, 54],
-      popupAnchor: [0, -42],
+      iconSize: [0, 0],
+      iconAnchor: [0, 0],
+      popupAnchor: [0, -30],
     });
   }
 
